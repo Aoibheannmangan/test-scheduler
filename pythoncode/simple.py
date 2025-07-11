@@ -3,19 +3,9 @@ import pandas as pd
 
 today = date.today()
 
-"""
-gest_agew = int(input("Enter the gestational age in weeks please:"))
-gest_aged = int(input("Enter the gestational age in days please:"))
-gest_age_days = gest_agew * 7
-gest_age = gest_aged + gest_age_days
-baby_age = int(input("Please enter the baby's age in weeks:"))
-"""
 baby_early = int(input("How many weeks early was the baby born?"))
-"""
-corrected_age = baby_age - baby_early
-print(f"Baby's corrected age is {corrected_age} weeks.")
-"""
 
+#Aim High dates
 today = date.today()
 visit2_min = today + timedelta(weeks = (15 + baby_early))
 visit2_max = today + timedelta(weeks = (18 + baby_early))
