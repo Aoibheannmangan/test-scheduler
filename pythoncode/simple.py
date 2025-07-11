@@ -3,31 +3,37 @@ import pandas as pd
 
 today = date.today()
 
-visitnum = input("Enter todays visit number:")
+"""
+gest_agew = int(input("Enter the gestational age in weeks please:"))
+gest_aged = int(input("Enter the gestational age in days please:"))
+gest_age_days = gest_agew * 7
+gest_age = gest_aged + gest_age_days
+baby_age = int(input("Please enter the baby's age in weeks:"))
+"""
+baby_early = int(input("How many weeks early was the baby born?"))
+"""
+corrected_age = baby_age - baby_early
+print(f"Baby's corrected age is {corrected_age} weeks.")
+"""
 
-if visitnum == "1":
-    next_visit_min = today + timedelta(weeks=15)
-    next_visit_max = today + timedelta(weeks=18)
+today = date.today()
+visit2_min = today + timedelta(weeks = (15 + baby_early))
+visit2_max = today + timedelta(weeks = (18 + baby_early))
+print(f"Visit 2 should be between {visit2_min} and {visit2_max}")
 
-elif visitnum == "2":
-    next_visit_min = today + timedelta(weeks= 21)
-    next_visit_max = today + timedelta(weeks= 34)
-    
-    
-elif visitnum == "3":
-    next_visit_min = today + timedelta(weeks=20)
-    next_visit_max = today + timedelta(weeks=30)
+visit3_min = visit2_min + timedelta(weeks = (21 + baby_early))
+visit3_max = visit2_max + timedelta(weeks = (34 + baby_early))
+print(f"Visit 3 should be between {visit3_min} and {visit3_max}")
 
-elif visitnum == "4":
-    next_visit_min = today + timedelta(weeks=17)
-    next_visit_max = today + timedelta(weeks=26)
+visit4_min = visit3_min + timedelta(weeks = (20 + baby_early))
+visit4_max = visit3_max + timedelta(weeks = (30 + baby_early))
+print(f"Visit 4 should be between {visit4_min} and {visit4_max}")
 
-elif visitnum == "5":
-    next_visit_min = today + timedelta(weeks=17)
-    next_visit_max = today + timedelta(weeks=26)
-else:
-    print("Invalid visit number. Please enter a number between 1 and 5.")
-    next_visit_min = None
-    next_visit_max = None
+visit5_min = visit4_min + timedelta(weeks = (17 + baby_early))
+visit5_max = visit4_max + timedelta(weeks = (26 + baby_early))
+print(f"Visit 5 should be between {visit5_min} and {visit5_max}")
 
-print(f"Next visit should be between {next_visit_min} and {next_visit_max}")
+visit6_min = visit5_min + timedelta(weeks = (17 + baby_early))
+visit6_max = visit5_max + timedelta(weeks = (26 + baby_early))
+print(f"Visit 6 should be between {visit6_min} and {visit6_max}")
+
