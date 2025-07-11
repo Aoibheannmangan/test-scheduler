@@ -1,0 +1,89 @@
+/* Page Background */
+body {
+  background: #f3f3f3;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+/* Wrapper Container for Calendar */
+.calendar-wrapper {
+  background-color: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  width: 90%;
+  max-width: 1000px;
+  margin: 30px auto;
+  overflow: hidden;
+}
+
+/* Base Calendar Styling */
+.rbc-calendar {
+  background-color: #FFEAEC;
+  color: #212B32;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* Toolbar */
+.rbc-toolbar {
+  background-color: #7bc7b0;
+  color: #00473E;
+  padding: 10px;
+  border-bottom: 2px solid #02A78B;
+  border-radius: 10px 10px 0 0;
+}
+
+/* Toolbar Buttons */
+.rbc-btn-group button {
+  background-color: #ffffff;
+  color: #00473E;
+  border: 1px solid #76cfc0;
+  margin: 0 2px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.rbc-btn-group button:hover {
+  background-color: #8bceba;
+}
+
+/* Day Headers */
+.rbc-header {
+  background-color: #7bc7b0;
+  color: #00473E;
+  border-bottom: 1px solid #AEB7BD;
+  padding: 8px;
+}
+
+/* Timeslots & Day Grid */
+.rbc-time-slot,
+.rbc-day-slot {
+  border-color: #AEB7BD;
+}
+
+/* Calendar Events */
+.rbc-event {
+  background-color: #02A78B;
+  color: #ffffff;
+  padding: 4px 6px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+/* Today Highlight */
+.rbc-today {
+  background-color: #90F3FF;
+}
+
+/* Agenda View */
+.rbc-agenda-view table {
+  border: 1px solid #AEB7BD;
+}
+
+.rbc-agenda-view td,
+.rbc-agenda-view th {
+  padding: 8px;
+  border: 1px solid #AEB7BD;
+}

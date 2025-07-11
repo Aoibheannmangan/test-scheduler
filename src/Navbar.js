@@ -20,6 +20,9 @@ const Navbar = () => {
                     <li>
                         <Link to="/info">My information</Link>
                     </li>
+                    <li>
+                        <Link to="/calender">Calender</Link>
+                    </li>
                 </ul>
             </div>
             <div className='navbar-right'>
