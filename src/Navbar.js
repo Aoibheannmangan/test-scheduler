@@ -18,10 +18,13 @@ const Navbar = () => {
                         <Link to="/book">Book an appointment</Link>
                     </li>
                     <li>
+                        <Link to="/calender">Calender</Link>
+                    </li>
+                    <li>
                         <Link to="/info">My information</Link>
                     </li>
                     <li>
-                        <Link to="/calender">Calender</Link>
+                      <Link to="/account">Account</Link>
                     </li>
                 </ul>
             </div>

@@ -13,7 +13,7 @@ body {
   padding: 20px;
   width: 95%;
   max-width: 1000px;
-  margin: 20px auto;
+  margin: 18px auto;
   overflow: hidden;
 }
 
@@ -39,15 +39,33 @@ body {
   align-items: center;
 }
 
-/* Toolbar Buttons */
-.rbc-btn-group {
+
+.rbc-toolbar button {
   background-color: #ffffff;
+  border: none;
   color: #00473E;
+  padding: 8px 12px;
+  margin: 0 5px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.rbc-btn-group {
+  display:flex;
+  background-color: #ffffff;
   border: 1px solid #76cfc0;
-  margin: 0 2px;
+  border-radius: 10px;
+  padding: 0;
+  overflow: visible;
+
+}
+
+
+.rbc-btn-group button {
+  background-color: white;
+  border: none;
+  cursor: pointer;
   padding: 6px 12px;
-  border-radius: 8px;
-  transition: background-color 0.3s ease;
 }
 
 .rbc-btn-group button:hover {
@@ -56,10 +74,13 @@ body {
 
 /* Day Headers */
 .rbc-header {
-  background-color: #7bc7b0;
+  background-color: transparent;
   color: #00473E;
-  border-bottom: 1px solid #AEB7BD;
-  padding: 8px;
+  border: none;
+  padding: 10px 16px;
+  margin: 0;
+  cursor: pointer;
+  flex: 1;
 }
 
 /* Timeslots & Day Grid */
