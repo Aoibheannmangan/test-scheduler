@@ -8,18 +8,18 @@ body {
 /* Wrapper Container for Calendar */
 .calendar-wrapper {
   background-color: #ffffff;
-  border-radius: 15px;
+  border-radius: 20px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
   padding: 20px;
-  width: 90%;
+  width: 95%;
   max-width: 1000px;
-  margin: 30px auto;
+  margin: 20px auto;
   overflow: hidden;
 }
 
 /* Base Calendar Styling */
 .rbc-calendar {
-  background-color: #FFEAEC;
+  background-color: #ffffff;
   color: #212B32;
   border-radius: 10px;
   overflow: hidden;
@@ -32,10 +32,15 @@ body {
   padding: 10px;
   border-bottom: 2px solid #02A78B;
   border-radius: 10px 10px 0 0;
+  font-style: italic;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
 }
 
 /* Toolbar Buttons */
-.rbc-btn-group button {
+.rbc-btn-group {
   background-color: #ffffff;
   color: #00473E;
   border: 1px solid #76cfc0;
@@ -74,7 +79,7 @@ body {
 
 /* Today Highlight */
 .rbc-today {
-  background-color: #90F3FF;
+  background-color: #90ffa8;
 }
 
 /* Agenda View */
@@ -87,3 +92,4 @@ body {
   padding: 8px;
   border: 1px solid #AEB7BD;
 }
+

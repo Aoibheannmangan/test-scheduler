@@ -7,7 +7,7 @@ const Navbar = () => {
         <nav className="navbar">
             <div className = "navbar-left">
                 <a href="/" className = "logo">
-                Schedule Website</a>
+                INFANT</a>
             </div>
             <div className="navbar-center">
                 <ul className="nav-links">
