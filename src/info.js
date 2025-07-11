@@ -11,21 +11,25 @@ const UserInfo = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(
-      patientFirstName,
-      patientLastName,
-      patientDOB,
-      patientAge,
-      patientSex,
-      patientAddress
-    );
-  };
+    let userData = {
+      FirstName: patientFirstName,
+      LastName: patientLastName,
+      DOB: patientDOB,
+      Age: patientAge,
+      Sex: patientSex,
+      Address: patientAddress
+    };
+    localStorage.setItem("userInfo", JSON.stringify(userData));
+    alert("Data recorded successfully!");
+    window.location.reload(); // Reload the page to clear the form
+  }
 
   return (
     <div className="App">
       <h1>Patient Info</h1>
       <fieldset>
-        <form onSubmit={handleSubmit}>
+        <div className="form-border">
+           <form onSubmit={handleSubmit}>
           <label htmlFor="firstname">First Name</label>
           <input
             type="text"
@@ -87,7 +91,9 @@ const UserInfo = () => {
           />
 
           <button type="submit">Submit</button>
-        </form>
+        </form> 
+        </div>
+        
       </fieldset>
     </div>
   );
