@@ -30,6 +30,7 @@ const Account = () => {
           <li><strong>General Practitioner:</strong> {userData.GP}</li>
         </ul>
       </div>
+      <a href="info" className="edit">Edit Information</a>
       
     </div>
   );
