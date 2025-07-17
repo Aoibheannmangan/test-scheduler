@@ -75,7 +75,7 @@ body {
 
 /* Toolbar */
 .rbc-toolbar {
-  background-color: #7bc7b0;
+  background-color: #ffffff;
   color: #00473E;
   padding: 10px;
   border-bottom: 2px solid #02A78B;
@@ -91,7 +91,7 @@ body {
 .rbc-toolbar button {
   background-color: #ffffff;
   border: none;
-  color: #00473E;
+  color: #ffffff;
   padding: 8px 12px;
   margin: 0 5px;
   cursor: pointer;
@@ -102,7 +102,7 @@ body {
 .rbc-btn-group {
   display:flex;
   background-color: #ffffff;
-  border: 1px solid #76cfc0;
+  border: 1px solid #7f9e99;
   border-radius: 10px;
   padding: 0;
   overflow: visible;

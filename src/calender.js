@@ -7,6 +7,7 @@ import { generateAimHighAppointments } from './data/windowEventCalc';
 import { getBookedAppointments } from './data/bookedAppointments';
 import ClickableDateCell from './components/clickableCell';
 import { eventPropGetter } from './data/eventPropGetter';
+import ToggleContainer from './components/toggleAppointment';
 
 const localizer = momentLocalizer(moment);
 
@@ -71,8 +72,14 @@ const MyCalendar = () => {
         style={{ height: 600 }}
       />
     </div>
+
+    <div className='AppointmentToggle'>
+      <h1>Add Appointment</h1>
+      <ToggleContainer />
+    </div>
+
     {/* Filter Container BELOW calendar */}
-    <div className="filter-container" style={{ margin: '24px auto 0 auto', maxWidth: '1000px' }}>
+    <div className="filter-container">
       <h4>Show Event Types</h4>
       <div className="filter-checkbox">
         <label>
@@ -96,6 +103,7 @@ const MyCalendar = () => {
       </div>
     </div>
   </div>
+
 );
 
   };
