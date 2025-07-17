@@ -17,6 +17,54 @@ body {
   overflow: hidden;
 }
 
+/* Wrapper container for filter */
+.filter-container {
+  min-width: 220px;
+  max-width: 1000px;
+  margin: 24px auto 0 auto; 
+  background: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 0 8px #ccc;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Heading for filter container*/
+.filter-container h4 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  color: #00473E;
+  font-size: 1.1rem;
+}
+
+/* Checkbox styling */
+.filter-checkbox {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+}
+
+/* Checkbox label sty;ing */
+.filter-checkbox label {
+  font-size: 1rem;
+  color: #212B32;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Checkbox input*/
+.filter-checkbox input[type="checkbox"] {
+  margin: 0;
+  accent-color: #02A78B;
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+}
+
 /* Base Calendar Styling */
 .rbc-calendar {
   background-color: #ffffff;
@@ -39,7 +87,7 @@ body {
   align-items: center;
 }
 
-
+/* Toolbar button */
 .rbc-toolbar button {
   background-color: #ffffff;
   border: none;
@@ -50,6 +98,7 @@ body {
   border-radius: 5px;
 }
 
+/* Button group calender*/
 .rbc-btn-group {
   display:flex;
   background-color: #ffffff;

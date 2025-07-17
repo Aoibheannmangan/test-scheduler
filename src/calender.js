@@ -11,8 +11,9 @@ import { eventPropGetter } from './data/eventPropGetter';
 const localizer = momentLocalizer(moment);
 
 const MyCalendar = () => {
-  const [view, setView] = useState('month');
-  const [date, setDate] = useState(new Date());
+  const [view, setView] = useState('month'); // View 
+  const [date, setDate] = useState(new Date()); // Set date decleration
+  const [selectedTypes, setSelectedTypes] = useState(['window', 'booked']) // Types to filter
 
   const birthDate = new Date();
   const babyWeeksEarly = 0;
@@ -22,11 +23,30 @@ const MyCalendar = () => {
 
   const allEvents = [...visitWindowEvents, ...bookedEvents]; // When trying to book within window, shows people's bookings so if available
 
+  // filtering event function
+  function filterEventsByType(events, selectedTypes) {
+    return events.filter(event => selectedTypes.includes(event.type));
+  }
+
+  // filtering events 
+  const filteredEvents = filterEventsByType(allEvents, selectedTypes);
+
+  // UI for selecting event types
+  function handleTypeChange(type) {
+    setSelectedTypes(prev =>
+      prev.includes(type)
+        ? prev.filter(t => t !== type)
+        : [...prev, type]
+    );
+  }
+
   return (
+   <div>
+    {/* Calendar Container */}
     <div className="calendar-wrapper">
       <Calendar
         localizer={localizer}
-        events={allEvents}
+        events={filteredEvents}
         startAccessor="start"
         endAccessor="end"
         eventPropGetter={eventPropGetter}
@@ -45,13 +65,39 @@ const MyCalendar = () => {
               setDate(slot.start);
               setView('day');
             }} 
-      />
-      ),
-      }}
-      style={{ height: 600 }}
+            />
+          ),
+        }}
+        style={{ height: 600 }}
       />
     </div>
-  );
+    {/* Filter Container BELOW calendar */}
+    <div className="filter-container" style={{ margin: '24px auto 0 auto', maxWidth: '1000px' }}>
+      <h4>Show Event Types</h4>
+      <div className="filter-checkbox">
+        <label>
+          <input
+            type="checkbox"
+            checked={selectedTypes.includes('window')}
+            onChange={() => handleTypeChange('window')}
+          />
+          Visit Window
+        </label>
+      </div>
+      <div className="filter-checkbox">
+        <label>
+          <input
+            type="checkbox"
+            checked={selectedTypes.includes('booked')}
+            onChange={() => handleTypeChange('booked')}
+          />
+          Booked Appointments
+        </label>
+      </div>
+    </div>
+  </div>
+);
+
   };
 
 export default MyCalendar;
