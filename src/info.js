@@ -8,6 +8,9 @@ const UserInfo = () => {
   const [patientAge, setPatientAge] = useState('');
   const [patientSex, setPatientSex] = useState('');
   const [patientAddress, setPatientAddress] = useState('');
+  const [patientCondition, setPatientCondition] = useState('');
+  const [patientGP, setPatientGP] = useState('');
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -17,7 +20,9 @@ const UserInfo = () => {
       DOB: patientDOB,
       Age: patientAge,
       Sex: patientSex,
-      Address: patientAddress
+      Address: patientAddress,
+      Condition: patientCondition,
+      GP: patientGP
     };
     localStorage.setItem("userInfo", JSON.stringify(userData));
     alert("Data recorded successfully!");
@@ -52,7 +57,7 @@ const UserInfo = () => {
 
             <label htmlFor="patientDOB">Patient Date of Birth</label>
             <input
-              type="text"
+              type="date"
               id="patientDOB"
               value={patientDOB}
               onChange={(e) => setPatientDOB(e.target.value)}
@@ -71,14 +76,14 @@ const UserInfo = () => {
             />
 
             <label htmlFor="sex">Patient's Sex</label>
-            <input
-              type="text"
-              id="sex"
-              value={patientSex}
-              onChange={(e) => setPatientSex(e.target.value)}
-              placeholder="Enter Sex"
-              required
-            />
+            <select 
+                id="sex" 
+                name="sex"
+                value={patientSex}
+                onChange={(e) => setPatientSex(e.target.value)}>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
 
             <label htmlFor="address">Patient's Address</label>
             <input
@@ -87,6 +92,26 @@ const UserInfo = () => {
               value={patientAddress}
               onChange={(e) => setPatientAddress(e.target.value)}
               placeholder="Enter Address"
+              required
+            />
+
+            <label htmlFor="condition">Patient's Condition</label>
+            <input
+              type="text"
+              id="condition"
+              value={patientCondition}
+              onChange={(e) => setPatientCondition(e.target.value)}
+              placeholder="Enter Patient Condition"
+              required
+            />
+
+              <label htmlFor="gp">Patient's General Practitioner</label>
+            <input
+              type="text"
+              id="gp"
+              value={patientGP}
+              onChange={(e) => setPatientGP(e.target.value)}
+              placeholder="Enter Patient GP"
               required
             />
 
