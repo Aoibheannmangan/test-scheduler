@@ -4,10 +4,9 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { generateAimHighAppointments } from './data/windowEventCalc';
-import { getBookedAppointments } from './data/bookedAppointments';
 import ClickableDateCell from './components/clickableCell';
 import { eventPropGetter } from './data/eventPropGetter';
-import ToggleContainer from './components/toggleAppointment';
+import ToggleAppointment from './components/toggleAppointment';
 
 const localizer = momentLocalizer(moment);
 
@@ -15,7 +14,7 @@ const MyCalendar = () => {
   const [view, setView] = useState('month'); // View 
   const [date, setDate] = useState(new Date()); // Set date decleration
   const [selectedTypes, setSelectedTypes] = useState(['window', 'booked']) // Types to filter
-  const [selectedStudies, setSelectedStudy] = useState(['AIMHIGH' , 'COOLPRIME']) // Studies to filter
+  const [selectedStudies, setSelectedStudy] = useState(['AIMHIGH' , 'COOLPRIME' , 'EDI']) // Studies to filter
   const [generalView, setGeneralView] = useState(false); // General filter
   const [isBookingCollapsed, setIsBookingCollapsed] = useState(true);
 
@@ -23,7 +22,15 @@ const MyCalendar = () => {
   const babyWeeksEarly = 0;
 
   const visitWindowEvents = generateAimHighAppointments(birthDate, babyWeeksEarly);
-  const bookedEvents = getBookedAppointments();
+  
+  // Booked appointments state
+  const [bookedEvents, setBookedEvents] = useState([]);
+
+  // Add new appointment from form
+  const handleAddAppointment = (appointment) => {
+    setBookedEvents(prev => [...prev, appointment]);
+    console.log(appointment)
+  };
 
   const allEvents = [...visitWindowEvents, ...bookedEvents]; // When trying to book within window, shows people's bookings so if available
 
@@ -84,7 +91,7 @@ const MyCalendar = () => {
             />
           ),
         }}
-        style={{ height: 600 }}
+        
       />
     </div>
 
@@ -131,12 +138,11 @@ const MyCalendar = () => {
                 <div>
                   <div className="filter-checkbox">
                     <label>
-                      <input
-                        type="checkbox"
-                        checked={selectedStudies.includes('AIMHIGH')}
-                        onChange={() => handleStudyChange('AIMHIGH')}
+                      <input type="checkbox" className="AHCheck"
+                      checked={selectedStudies.includes('AIMHIGH')}
+                      onChange={() => handleStudyChange('AIMHIGH')}
                       />
-                      AIMHIGH
+                      <label for="styled-checkbox-1">AIMHIGH</label>
                     </label>
                   </div>
                 </div>
@@ -145,11 +151,24 @@ const MyCalendar = () => {
                   <div className="filter-checkbox">
                     <label>
                       <input
-                        type="checkbox"
+                        type="checkbox" className="CPCheck"
                         checked={selectedStudies.includes('COOLPRIME')}
                         onChange={() => handleStudyChange('COOLPRIME')}
                       />
                       COOLPRIME
+                    </label>
+                  </div>
+                </div>
+
+                <div>
+                  <div className="filter-checkbox">
+                    <label>
+                      <input
+                        type="checkbox" className="EDICheck"
+                        checked={selectedStudies.includes('EDI')}
+                        onChange={() => handleStudyChange('EDI')}
+                      />
+                      EDI
                     </label>
                   </div>
                 </div>
@@ -160,11 +179,11 @@ const MyCalendar = () => {
       </div>
     </div>
 
+ 
     <div className='AppointmentToggle'>
       <h1>Add Appointment</h1>
-      <ToggleContainer />
+      <ToggleAppointment onAddAppointment={handleAddAppointment} />
     </div>
-
   </div>
 
 );

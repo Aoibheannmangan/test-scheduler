@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Appointments from './appoint';
 import BookAppointment from './book';
 import UserInfo from './info';
-import Navbar from './Navbar';
+import Navbar from './components/Navbar';
 import MyCalendar from './calender';
 import Account from './account'; 
 

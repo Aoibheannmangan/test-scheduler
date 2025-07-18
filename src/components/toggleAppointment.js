@@ -1,113 +1,92 @@
 import React, { useState } from 'react';
-import "./toggleAppointment.css";
+import './toggleAppointment.css';
 
-const ToggleContainer = () => {
+const ToggleAppointment = ({ onAddAppointment }) => {
   const [isVisible, setIsVisible] = useState(false);
 
   const toggleVisibility = () => {
     setIsVisible(prev => !prev);
   };
 
-  const [patientFirstName, setPatientFirstName] = useState('');
-  const [patientLastName, setPatientLastName] = useState('');
-  const [patientDOB, setPatientDOB] = useState('');
-  const [patientGestAge, setPatientGestAge] = useState('');
-  const [patientSex, setPatientSex] = useState('');
+  const [appTitle, setAppTitle] = useState('');
+  const [appDateTimeStart, setAppDateTimeStart] = useState('');
+  const [appDateTimeEnd, setAppDateTimeEnd] = useState('');
   const [patientStudy, setPatientStudy] = useState('');
 
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      const userData = {
-        FirstName: patientFirstName,
-        LastName: patientLastName,
-        DOB: patientDOB,
-        GestAge: patientGestAge,
-        Sex: patientSex,
-      };
-    }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const newAppointment = {
+      title: appTitle,
+      start: new Date(appDateTimeStart),
+      end: new Date(appDateTimeEnd),
+      type: 'booked',
+      study: patientStudy.toUpperCase(),
+    };
+
+    console.log("Submitted appointment:", newAppointment);
+    onAddAppointment(newAppointment);
+  };
 
   return (
     <div>
-      <button onClick={toggleVisibility}>
+      <button 
+      onClick={toggleVisibility}>
         {isVisible ? 'Hide' : 'Show'} Appointment Booking
       </button>
 
       {isVisible && (
         <div className='AppointmentToggle'>
-          
           <fieldset>
-        <div className="form-border">
-          <form onSubmit={handleSubmit}>
-            <label htmlFor="firstname">First Name</label>
-            <input
-              type="text"
-              id="firstname"
-              value={patientFirstName}
-              onChange={(e) => setPatientFirstName(e.target.value)}
-              placeholder="Enter First Name"
-              required
-            />
+            <div className="form-border">
+              <form onSubmit={handleSubmit}>
+                <label htmlFor="title">Title of Appointment</label>
+                <input
+                  type="text"
+                  id="title"
+                  value={appTitle}
+                  onChange={(e) => setAppTitle(e.target.value)}
+                  placeholder="Enter Title of Appointment"
+                  required
+                />
 
-            <label htmlFor="lastname">Last Name</label>
-            <input
-              type="text"
-              id="lastname"
-              value={patientLastName}
-              onChange={(e) => setPatientLastName(e.target.value)}
-              placeholder="Enter Last Name"
-              required
-            />
+                <label htmlFor="startDateTime">Start date and time</label>
+                <input
+                  type="datetime-local"
+                  id="startDateTime"
+                  value={appDateTimeStart}
+                  onChange={(e) => setAppDateTimeStart(e.target.value)}
+                  required
+                />
 
-            <label htmlFor="patientDOB">Patient Date of Birth</label>
-            <input
-              type="date"
-              id="patientDOB"
-              value={patientDOB}
-              onChange={(e) => setPatientDOB(e.target.value)}
-              placeholder="Enter the Patient's Date of Birth"
-              required
-            />
+                <label htmlFor="endDateTime">End date and time</label>
+                <input
+                  type="datetime-local"
+                  id="endDateTime"
+                  value={appDateTimeEnd}
+                  onChange={(e) => setAppDateTimeEnd(e.target.value)}
+                  required
+                />
 
-            <label htmlFor="GestAge">Gestational Age in Weeks</label>
-            <input
-              type="text"
-              id="GestAge"
-              value={patientGestAge}
-              onChange={(e) => setPatientGestAge(e.target.value)}
-              placeholder="Enter Gestational Age in weeks"
-              required
-            />
+                <label htmlFor="study">Study Patient is in</label>
+                <select
+                  id="study"
+                  value={patientStudy}
+                  onChange={(e) => setPatientStudy(e.target.value)}
+                >
+                  <option value="AIMHIGH">AIMHIGH</option>
+                  <option value="COOLPRIME">COOLPRIME</option>
+                  <option value="EDI">EDI</option>
+                </select>
 
-            <label htmlFor="sex">Patient's Sex</label>
-            <select 
-                id="sex" 
-                name="sex"
-                value={patientSex}
-                onChange={(e) => setPatientSex(e.target.value)}>
-              <option value="Male">Male</option>
-              <option value="Female">Female</option>
-            </select>
-
-            <label htmlFor="study">Study Patient is in</label>
-            <select 
-                id="study" 
-                name="study"
-                value={patientStudy}
-                onChange={(e) => setPatientStudy(e.target.value)}>
-              <option value="AIMHIGH">AIMHIGH</option>
-              <option value="Coolprime">COOLPRIME</option>
-            </select>
-
-            <button type="submit">Submit</button>
-          </form>
-        </div>
-      </fieldset>
-
+                <button type="submit">Submit</button>
+              </form>
+            </div>
+          </fieldset>
         </div>
       )}
     </div>
   );
 };
 
-
-export default ToggleContainer;
+export default ToggleAppointment;
