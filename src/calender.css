@@ -17,6 +17,8 @@ body {
   overflow: hidden;
 }
 
+/*----------------------------------------Filter Box Styling----------------------------------------*/
+
 /* Wrapper container for filter */
 .filter-container {
   min-width: 220px;
@@ -65,7 +67,7 @@ body {
   vertical-align: middle;
 }
 
-/* Base Calendar Styling */
+/*----------------------------------------Base Calendar Styling----------------------------------------*/
 .rbc-calendar {
   background-color: #ffffff;
   color: #212B32;
@@ -162,4 +164,32 @@ body {
   padding: 8px;
   border: 1px solid #AEB7BD;
 }
+
+/*----------------------------------------Collapsable Booking Filter----------------------------------------*/
+
+/* Styling for collapsable, sets red line on left*/
+ul.collapsable {
+  border-left: solid 5px #b62a1d;
+  background: #efefef; 
+  border-radius: 5px;
+  list-style: none;
+  padding: 10px; 
+  min-width: 220px;
+  max-width: 1000px;
+  width: flex;
+}
+
+/* Styling for listed objects*/
+ul.collapsable ul li {
+  line-height: 1.2em; 
+  cursor: pointer;
+}
+ul.collapsable li a {
+  display: block; 
+  margin-left: 0em; 
+  padding: .5em;
+  text-decoration: none;
+  color: #444;
+}   
+
 

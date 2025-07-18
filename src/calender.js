@@ -15,6 +15,9 @@ const MyCalendar = () => {
   const [view, setView] = useState('month'); // View 
   const [date, setDate] = useState(new Date()); // Set date decleration
   const [selectedTypes, setSelectedTypes] = useState(['window', 'booked']) // Types to filter
+  const [selectedStudies, setSelectedStudy] = useState(['AIMHIGH' , 'COOLPRIME']) // Studies to filter
+  const [generalView, setGeneralView] = useState(false); // General filter
+  const [isBookingCollapsed, setIsBookingCollapsed] = useState(true);
 
   const birthDate = new Date();
   const babyWeeksEarly = 0;
@@ -24,13 +27,16 @@ const MyCalendar = () => {
 
   const allEvents = [...visitWindowEvents, ...bookedEvents]; // When trying to book within window, shows people's bookings so if available
 
-  // filtering event function
-  function filterEventsByType(events, selectedTypes) {
-    return events.filter(event => selectedTypes.includes(event.type));
+  // Combine filters for both type and study for calender functionality
+  const filteredEvents = allEvents.filter(event => {
+  // If user selectes general view for bookings
+    if (generalView) {
+    return selectedTypes.includes(event.type); // Show all studies if general is checked
   }
-
-  // filtering events 
-  const filteredEvents = filterEventsByType(allEvents, selectedTypes);
+  // If not then return whatever selected studies
+  return selectedTypes.includes(event.type) && selectedStudies.includes(event.study);
+});
+  
 
   // UI for selecting event types
   function handleTypeChange(type) {
@@ -38,6 +44,15 @@ const MyCalendar = () => {
       prev.includes(type)
         ? prev.filter(t => t !== type)
         : [...prev, type]
+    );
+  }
+
+  // UI for selecting event study
+  function handleStudyChange(study) {
+    setSelectedStudy(prev =>
+      prev.includes(study)
+        ? prev.filter(t => t !== study)
+        : [...prev, study]
     );
   }
 
@@ -73,14 +88,10 @@ const MyCalendar = () => {
       />
     </div>
 
-    <div className='AppointmentToggle'>
-      <h1>Add Appointment</h1>
-      <ToggleContainer />
-    </div>
-
     {/* Filter Container BELOW calendar */}
     <div className="filter-container">
       <h4>Show Event Types</h4>
+      {/* Visit Window Box*/ }
       <div className="filter-checkbox">
         <label>
           <input
@@ -91,17 +102,69 @@ const MyCalendar = () => {
           Visit Window
         </label>
       </div>
+      {/* Booked Appointment Box*/ }
       <div className="filter-checkbox">
-        <label>
-          <input
-            type="checkbox"
-            checked={selectedTypes.includes('booked')}
-            onChange={() => handleTypeChange('booked')}
-          />
-          Booked Appointments
-        </label>
+        <ul className="collapsable">
+          <li>
+            <div
+              style={{ cursor: 'pointer' }}
+              onClick={() => setIsBookingCollapsed(prev => !prev)}
+              >
+              <b>Booked Appointments</b>
+            </div>
+            {/* Study Filter Box in collapsable*/ }
+            <ul style={{ display: isBookingCollapsed ? 'none' : 'block' }}>
+              <li>
+                <div>
+                  <div className="filter-checkbox">
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={generalView}
+                        onChange={() => setGeneralView(prev => !prev)}
+                      />
+                      All Booked Studies
+                    </label>
+                  </div>
+                </div>
+                
+                <div>
+                  <div className="filter-checkbox">
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={selectedStudies.includes('AIMHIGH')}
+                        onChange={() => handleStudyChange('AIMHIGH')}
+                      />
+                      AIMHIGH
+                    </label>
+                  </div>
+                </div>
+
+                <div>
+                  <div className="filter-checkbox">
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={selectedStudies.includes('COOLPRIME')}
+                        onChange={() => handleStudyChange('COOLPRIME')}
+                      />
+                      COOLPRIME
+                    </label>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </li>
+        </ul>  
       </div>
     </div>
+
+    <div className='AppointmentToggle'>
+      <h1>Add Appointment</h1>
+      <ToggleContainer />
+    </div>
+
   </div>
 
 );

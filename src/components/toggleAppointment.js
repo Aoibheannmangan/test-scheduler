@@ -9,10 +9,11 @@ const ToggleContainer = () => {
   };
 
   const [patientFirstName, setPatientFirstName] = useState('');
-    const [patientLastName, setPatientLastName] = useState('');
-    const [patientDOB, setPatientDOB] = useState('');
-    const [patientGestAge, setPatientGestAge] = useState('');
-    const [patientSex, setPatientSex] = useState('');
+  const [patientLastName, setPatientLastName] = useState('');
+  const [patientDOB, setPatientDOB] = useState('');
+  const [patientGestAge, setPatientGestAge] = useState('');
+  const [patientSex, setPatientSex] = useState('');
+  const [patientStudy, setPatientStudy] = useState('');
 
     const handleSubmit = (e) => {
       e.preventDefault();
@@ -85,6 +86,16 @@ const ToggleContainer = () => {
                 onChange={(e) => setPatientSex(e.target.value)}>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
+            </select>
+
+            <label htmlFor="study">Study Patient is in</label>
+            <select 
+                id="study" 
+                name="study"
+                value={patientStudy}
+                onChange={(e) => setPatientStudy(e.target.value)}>
+              <option value="AIMHIGH">AIMHIGH</option>
+              <option value="Coolprime">COOLPRIME</option>
             </select>
 
             <button type="submit">Submit</button>
