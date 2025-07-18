@@ -27,6 +27,15 @@ body {
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 }
 
+.windowView {
+  flex: 1;
+  min-width: 250px;
+  width: 500px;
+  padding-right: 50px;
+}
+
+
+
 /*----------------------------------------Filter Box Styling----------------------------------------*/
 
 /* Wrapper container for filter */
@@ -56,6 +65,23 @@ body {
   margin-bottom: 12px;
   display: flex;
   align-items: center;
+}
+
+/* Checkbox styling */
+.filterMain {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 250px;
+  
+}
+
+.filter-row {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  flex-wrap: wrap;
 }
 
 /* Checkbox label sty;ing */

@@ -5,6 +5,7 @@ export function generateAimHighAppointments(birthDate, babyEarly) { // Generate 
     const events = [
     {
         title: 'AimHigh Visit',
+        id: "123",
         start: addWeeks(birthDate, 15 + babyEarly),
         end: addWeeks(birthDate, 18 + babyEarly),
         type: 'window',
@@ -12,6 +13,7 @@ export function generateAimHighAppointments(birthDate, babyEarly) { // Generate 
     },
     {
         title: 'AimHigh Visit 2',
+        id: "456",
         start: addWeeks(birthDate, 21 + 2 * babyEarly),
         end: addWeeks(birthDate, 34 + 2 * babyEarly),
         type: 'window',

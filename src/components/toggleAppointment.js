@@ -9,6 +9,7 @@ const ToggleAppointment = ({ onAddAppointment }) => {
   };
 
   const [appTitle, setAppTitle] = useState('');
+  const [appPatID, setAppPatID] = useState('')
   const [appDateTimeStart, setAppDateTimeStart] = useState('');
   const [appDateTimeEnd, setAppDateTimeEnd] = useState('');
   const [patientStudy, setPatientStudy] = useState('');
@@ -18,6 +19,7 @@ const ToggleAppointment = ({ onAddAppointment }) => {
 
     const newAppointment = {
       title: appTitle,
+      patID: appPatID,
       start: new Date(appDateTimeStart),
       end: new Date(appDateTimeEnd),
       type: 'booked',
@@ -47,6 +49,16 @@ const ToggleAppointment = ({ onAddAppointment }) => {
                   value={appTitle}
                   onChange={(e) => setAppTitle(e.target.value)}
                   placeholder="Enter Title of Appointment"
+                  required
+                />
+
+                <label htmlFor="patientID">Patient ID</label>
+                <input
+                  type="text"
+                  id="patID"
+                  value={appPatID}
+                  onChange={(e) => setAppPatID(e.target.value)}
+                  placeholder="Enter Patient ID"
                   required
                 />
 
