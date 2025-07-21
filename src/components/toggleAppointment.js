@@ -33,6 +33,7 @@ const ToggleAppointment = ({ onAddAppointment }) => {
   return (
     <div>
       <button 
+      className='hideButton'
       onClick={toggleVisibility}>
         {isVisible ? 'Hide' : 'Show'} Appointment Booking
       </button>

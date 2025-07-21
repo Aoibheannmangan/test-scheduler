@@ -34,111 +34,6 @@ body {
   padding-right: 50px;
 }
 
-
-
-/*----------------------------------------Filter Box Styling----------------------------------------*/
-
-/* Wrapper container for filter */
-.filter-container {
-  min-width: 220px;
-  max-width: 1000px;
-  margin: 24px auto 0 auto; 
-  background: #f9f9f9;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-  padding: 18px 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-/* Heading for filter container*/
-.filter-container h4 {
-  margin-top: 0;
-  margin-bottom: 16px;
-  color: #00473E;
-  font-size: 1.1rem;
-}
-
-/* Checkbox styling */
-.filter-checkbox {
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-}
-
-/* Checkbox styling */
-.filterMain {
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  flex: 1;
-  min-width: 250px;
-  
-}
-
-.filter-row {
-  display: flex;
-  gap: 20px;
-  align-items: flex-start;
-  flex-wrap: wrap;
-}
-
-/* Checkbox label sty;ing */
-.filter-checkbox label {
-  font-size: 1rem;
-  color: #212B32;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* Checkbox input*/
-.filter-checkbox input[type="checkbox"] {
-  margin: 0;
-  accent-color: #02A78B;
-  width: 20px;
-  height: 20px;
-  vertical-align: middle;
-}
-
-input[type="checkbox"] {
-  width: 30px;
-  height: 30px;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background-color: #ffffff;
-  border: 2px solid #ccc;
-  border-radius: 5px;
-  cursor: pointer;
-  position: relative;
-  margin: 10px;
-}
-input[type="checkbox"]:checked {
-  background-color: #4CAF50;
-  border: 2px solid #4CAF50;
-  box-shadow: inset 0 0 0 4px white;
-}
-input[type="checkbox"].AHCheck:checked {
-    background-color: #af4c4c;
-    border: 2px solid #af4c4c;
-    box-shadow: inset 0 0 0 4px white;
-}
-input[type="checkbox"].CPCheck:checked{
-    background-color: #614caf;
-    border: 2px solid #614caf;
-    box-shadow: inset 0 0 0 4px white;
-}
-input[type="checkbox"].EDICheck:checked{
-    background-color: #afa04c;
-    border: 2px solid #afa04c;
-    box-shadow: inset 0 0 0 4px white;
-}
-
-
-
 /*----------------------------------------Base Calendar Styling----------------------------------------*/
 .rbc-calendar {
   background-color: #ffffff;
@@ -206,7 +101,7 @@ input[type="checkbox"].EDICheck:checked{
   flex: 1;
 }
 
-/* Timeslots & Day Grid */
+/* Time slots & Day Grid */
 .rbc-time-slot,
 .rbc-day-slot {
   border-color: #AEB7BD;

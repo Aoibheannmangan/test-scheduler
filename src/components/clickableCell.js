@@ -1,3 +1,5 @@
+// Makes it so date can be clicked instead of the small number on the calender
+
 const ClickableDateCell = ({ children, value, onSelectSlot }) => {
   const handleClick = () => {
     if (onSelectSlot) {

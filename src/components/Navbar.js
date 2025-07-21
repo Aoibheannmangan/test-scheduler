@@ -12,8 +12,8 @@ const Navbar = () => {
             <div className="navbar-center">
                 <ul className="nav-links">
                     <li><Link to="/appoint">My Appointments</Link></li>
-                    <li><Link to="/book">Book an Appointment</Link></li>
                     <li><Link to="/calender">Calendar</Link></li>
+                    <li><Link to="https://redcap.ucc.ie/index.php?action=myprojects">REDCap</Link></li>
                 </ul>
             </div>
 
