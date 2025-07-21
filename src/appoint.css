@@ -61,3 +61,10 @@ label:hover {
     align-items: flex-start;
     height:90px;
 }
+
+.filterRowBox {
+    align-items: center;
+    display: flex;
+    gap: 15px;
+    padding-left: 30px;
+}

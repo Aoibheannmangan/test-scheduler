@@ -7,13 +7,14 @@ import { generateAimHighAppointments } from './data/windowEventCalc';
 import ClickableDateCell from './components/clickableCell';
 import { eventPropGetter } from './data/eventPropGetter';
 import ToggleAppointment from './components/toggleAppointment';
+import { useAppointmentFilters } from './components/useAppointmentFilters';
+import './components/useAppointmentFilters.css';
 
 const localizer = momentLocalizer(moment);
 
 const MyCalendar = () => {
   const [view, setView] = useState('month'); // View 
   const [date, setDate] = useState(new Date()); // Set date decleration
-  const [selectedStudies, setSelectedStudy] = useState(['AIMHIGH' , 'COOLPRIME' , 'EDI']) // Studies to filter
   const [isBookingCollapsed, setIsBookingCollapsed] = useState(true);
   const [searchPatientId, setSearchPatientId] = useState('');
   const [windowEvents, setWindowEvents] = useState([]);
@@ -34,27 +35,18 @@ const handleSearchWindow = () => {
   // Add new appointment from form
   const handleAddAppointment = (appointment) => {
     setBookedEvents(prev => [...prev, appointment]);
-    console.log(appointment)
+    //console.log(appointment)
   };
 
 const allEvents = [...windowEvents, ...bookedEvents];
 
-  // Combine filters for both type and study for calender functionality
-  const filteredEvents = allEvents.filter(event => {
-    // If not then return whatever selected studies
-    return selectedStudies.includes(event.study);
-    }
-  );
+const {
+  selectedStudies,
+  handleStudyChange,
+  filteredAppointments: filteredEvents,
+} = useAppointmentFilters(allEvents);
 
 
-  // UI for selecting event study
-  function handleStudyChange(study) {
-    setSelectedStudy(prev =>
-      prev.includes(study)
-        ? prev.filter(t => t !== study)
-        : [...prev, study]
-    );
-  }
 
   return (
    <div>

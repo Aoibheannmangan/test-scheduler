@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import './appoint.css';
 import dummyEvents from './data/dummyEvents.json';
+import { useAppointmentFilters } from './components/useAppointmentFilters';
+import './components/useAppointmentFilters.css'
 
 const Appointments = () => {
-
-    // Search Bar queries
-    const [searchQuery, setSearchQuery] = useState('');
 
     // Convert start and end strings to Date objects
     const processedAppointments = dummyEvents.map((event) => ({
@@ -34,15 +33,13 @@ const Appointments = () => {
         }));
     };
 
-    // Filtered appointments by searchbar
-    const filteredAppointments = processedAppointments.filter(event => {
-    const searchLower = searchQuery.toLowerCase();
-    return (
-        event.title.toLowerCase().includes(searchLower) ||
-        event.id.toLowerCase().includes(searchLower)
-    );
-    });
-
+    const {
+    searchQuery,
+    setSearchQuery,
+    selectedStudies,
+    handleStudyChange,
+    filteredAppointments
+    } = useAppointmentFilters(processedAppointments);
   // ---------------------------------HTML--------------------------------------
     return (
         <div className="App">
@@ -56,6 +53,45 @@ const Appointments = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
             style={{ padding: '8px', width: '220px', marginBottom: '12px' }}
             />
+
+            <div className="filterRowBox">
+                <div className="filter-checkbox">
+                    <label>
+                    <input 
+                        className='AHCheck'
+                        type="checkbox"
+                        checked={selectedStudies.includes('AIMHIGH')}
+                        onChange={() => handleStudyChange('AIMHIGH')}
+                    />
+                    AIMHIGH
+                    </label>
+                </div>
+
+                <div className="filter-checkbox">
+                    <label>
+                    <input 
+                        className='CPCheck'
+                        type="checkbox"
+                        checked={selectedStudies.includes('COOLPRIME')}
+                        onChange={() => handleStudyChange('COOLPRIME')}
+                    />
+                    COOLPRIME
+                    </label>
+                </div>
+
+                <div className="filter-checkbox">
+                    <label>
+                    <input 
+                        className='EDICheck'
+                        type="checkbox"
+                        checked={selectedStudies.includes('EDI')}
+                        onChange={() => handleStudyChange('EDI')}
+                    />
+                    EDI
+                    </label>
+                </div>
+                </div>
+            
         </div>
 
         <ul className="appointmentList">
@@ -81,16 +117,16 @@ const Appointments = () => {
                     
                     {/*Additional Notes Dropdown*/}
                     <label
-                style={{ cursor: 'pointer', fontWeight: 'bold' }}
-                onClick={() => toggleCollapseNotes(event.notes)}
-                >
-                Additional Notes: {expandedNotes[event.notes] ? '-' : '+'}
-                </label>
+                        style={{ cursor: 'pointer', fontWeight: 'bold' }}
+                        onClick={() => toggleCollapseNotes(event.notes)}
+                        >
+                        Additional Notes: {expandedNotes[event.notes] ? '-' : '+'}
+                    </label>
 
                 {expandedNotes[event.notes] && (
-                <div className="info">
-                    <strong>{event.notes}</strong><br />
-                </div>
+                    <div className="info">
+                        <strong>{event.notes}</strong><br />
+                    </div>
                 )}
                 
                 </div>
@@ -104,7 +140,7 @@ const Appointments = () => {
             )}
         </ul>
 
-        </div>
+    </div>
   );
 };
 
