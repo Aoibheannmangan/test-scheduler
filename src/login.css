@@ -1,3 +1,9 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
 form {
     border: 3px solid #f1f1f1;
 }
@@ -36,16 +42,23 @@ span.psw {
     }
 }
 
-.form-border {
+.login-form-border {
     background-color: #fff;
     border-radius: 15px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
     padding: 10px 20px;
-    transition: transorm 0.2s;
+    transition: transform 0.2s;
     width: 500px;
     text-align: center;
-    margin:auto;
-    margin-top: 20px;
+    margin:auto; 
+}
+
+.center-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f2f5;
 }
 
 .link-row {
@@ -64,4 +77,21 @@ span.psw {
     margin-left: 10px;
     text-decoration: none;
     color: #007bff;
+}
+
+
+.headers {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #8D5A97;
+    padding: 1rem 2rem;
+    flex-wrap: wrap;
+    color: white;
+}
+
+.headers h1 {
+    color: white;
+    text-align: center;
+    font-size: xx-large;
 }
