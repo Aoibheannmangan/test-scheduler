@@ -1,4 +1,9 @@
 * {box-sizing: border-box} 
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
 
 input[type=text], input[type=password], input[type=email], input[type=number] {
     width: 100%;
@@ -65,7 +70,7 @@ button:hover {
     }
 }
 
-.form-border {
+.signup-form-border {
     background-color: #fff;
     border-radius: 15px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);

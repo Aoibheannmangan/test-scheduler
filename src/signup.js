@@ -34,55 +34,57 @@ const SignUp = () => {
 
     return (
         <div className="signupscreen">
-            <div className="form-border">
-             <form onSubmit={handleSubmit}>
-                <div class="container">
-                    <div class="headers">
-                        <h1>Sign Up</h1>
-                    </div>
+            <div className="center-wrapper">
+                <div className="signup-form-border">
+                    <form onSubmit={handleSubmit}>
+                        <div class="container">
+                            <div class="headers">
+                                <h1>Sign Up</h1>
+                            </div>
 
-                    <label for="email"><b>Email</b></label>
-                    <input 
-                        type="email" 
-                        placeholder="Enter Email" 
-                        value= {email} 
-                        onChange={(e) => setEmail(e.target.value)}
-                        required />
+                            <label for="email"><b>Email</b></label>
+                            <input 
+                                type="email" 
+                                placeholder="Enter Email" 
+                                value= {email} 
+                                onChange={(e) => setEmail(e.target.value)}
+                                required />
 
-                    <label for="sid"><b>Staff ID</b></label>
-                    <input 
-                        type="number" 
-                        placeholder="Enter Staff ID" 
-                        value={staffId} 
-                        onChange={(e) => setStaffId(e.target.value)}
-                        required />
+                            <label for="sid"><b>Staff ID</b></label>
+                            <input 
+                                type="number" 
+                                placeholder="Enter Staff ID" 
+                                value={staffId} 
+                                onChange={(e) => setStaffId(e.target.value)}
+                                required />
 
-                    <label for="psw"><b>Password</b></label>
-                    <input 
-                        type="password" 
-                        placeholder="Enter Password" 
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required />
+                            <label for="psw"><b>Password</b></label>
+                            <input 
+                                type="password" 
+                                placeholder="Enter Password" 
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required />
 
-                    <label for="psw-repeat"><b>Repeat Password</b></label>
-                    <input 
-                        type="password" 
-                        placeholder='Please re-enter your password' 
-                        value={repeatPassword}
-                        onChange={(e) => setRepeatPassword(e.target.value)} 
-                        required />
+                            <label for="psw-repeat"><b>Repeat Password</b></label>
+                            <input 
+                                type="password" 
+                                placeholder='Please re-enter your password' 
+                                value={repeatPassword}
+                                onChange={(e) => setRepeatPassword(e.target.value)} 
+                                required />
 
-                    <div class="clearfix">
-                        <div class="button-row">
-                            <button type="button" class="cancelbtn">Cancel</button>
-                            <button type="submit" class="signupbtn">Sign Up</button>
+                            <div class="clearfix">
+                                <div class="button-row">
+                                    <button type="button" class="cancelbtn">Cancel</button>
+                                    <button type="submit" class="signupbtn">Sign Up</button>
+                                </div>
+                                
+                            </div>
                         </div>
-                        
-                    </div>
+                    </form>
                 </div>
-            </form>
-        </div>
+            </div>
         </div>
     );
 };
