@@ -23,7 +23,8 @@ const LogIn = () => {
 
     return (
         <div className="loginscreen">
-            <form onSubmit={handleLogin}>
+            <div className="form-border">
+                <form onSubmit={handleLogin}>
                 <div className="container">
                     <label htmlFor="sid"><b>Staff ID</b></label>
                     <input 
@@ -44,9 +45,13 @@ const LogIn = () => {
                     />
 
                     <button type="submit">Login</button>
-                    <span className="psw">Forgot <a href="#">password?</a></span>
+                    <div className="link-row">
+                        <span className="change">Don't have an account?  <a href="/signup">Sign Up</a></span>
+                    </div>
                 </div>
             </form>
+            </div>
+
         </div>
     );
 };

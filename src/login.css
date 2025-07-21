@@ -35,3 +35,33 @@ span.psw {
         float: none;
     }
 }
+
+.form-border {
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    padding: 10px 20px;
+    transition: transorm 0.2s;
+    width: 500px;
+    text-align: center;
+    margin:auto;
+    margin-top: 20px;
+}
+
+.link-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+    align-items: center;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+}
+
+.link-row span, .link-row a {
+    white-space: nowrap;
+}
+.link-row a {
+    margin-left: 10px;
+    text-decoration: none;
+    color: #007bff;
+}
