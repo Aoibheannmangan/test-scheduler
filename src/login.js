@@ -22,14 +22,14 @@ const LogIn = () => {
     };
 
     return (
-        <div className="loginscreen">
-            <div className="center-wrapper">
-                <div className="login-form-border">
+        <div className="login-container">
+            <div className="form-wrapper">
+                <div className="login-card">
                     <form onSubmit={handleLogin}>
-                        <div className="headers">
+                        <div className="form-headers">
                             <h1>Log In</h1>
                         </div>
-                    <div className="container">
+                    <div className="form-body">
                         <label htmlFor="sid"><b>Staff ID</b></label>
                         <input 
                             type="number" 
@@ -49,7 +49,7 @@ const LogIn = () => {
                         />
 
                         <button type="submit">Login</button>
-                        <div className="link-row">
+                        <div className="signup-link">
                             <span className="change">Don't have an account?  <a href="/signup">Sign Up</a></span>
                         </div>
                     </div>
