@@ -1,28 +1,28 @@
 export function generateAimHighAppointments(birthDate, babyEarly) { // Generate AIMHIGH appointment window
 
-    const addWeeks = (date, weeks) => new Date(date.getTime() + weeks * 7 * 24 * 60 * 60 * 1000);
+    // Adds a given number of weeks to a date and returns the new date. 
+    const addWeeks = (date, weeks) => new Date(date.getTime() + weeks * 7 * 24 * 60 * 60 * 1000); // Date + Weeks + Days + Hours + Seconds + Milliseconds
   
     const events = [
     {
         title: 'AimHigh Visit',
         id: "123",
-        start: addWeeks(birthDate, 15 + babyEarly),
-        end: addWeeks(birthDate, 18 + babyEarly),
+        start: addWeeks(birthDate, 15 + babyEarly), // Window open date
+        end: addWeeks(birthDate, 18 + babyEarly),   //Window close date
         type: 'window',
         study: 'AIMHIGH'
     },
     {
         title: 'COOLPRIME Visit',
         id: "456",
-        start: addWeeks(birthDate, 21 + 2 * babyEarly),
-        end: addWeeks(birthDate, 34 + 2 * babyEarly),
-        type: 'window',
-        study: 'COOLPRIME'
+        start: addWeeks(birthDate, 21 + 2 * babyEarly), // Window open date
+        end: addWeeks(birthDate, 34 + 2 * babyEarly),   //Window close date
+        type: 'window', // Window or booking
+        study: 'COOLPRIME' 
     },
     
   ];
 
   return events;
 }
-
-//Study number maybe date of birth for patient identification
+// Type the id in the search bar in the calender to display the window

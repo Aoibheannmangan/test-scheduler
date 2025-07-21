@@ -1,4 +1,4 @@
-export function eventPropGetter(event)  { // Event property getter function. See if its booked, window appointment, etc
+export function eventPropGetter(event)  { // Event study getter function. See if AIMHIGH, COOLPRIME OR EDI
   let style = {};
 
   if (event.study === 'AIMHIGH') {

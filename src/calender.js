@@ -10,21 +10,23 @@ import ToggleAppointment from './components/toggleAppointment';
 import { useAppointmentFilters } from './components/useAppointmentFilters';
 import './components/useAppointmentFilters.css';
 
+// Sets current date and time for calender
 const localizer = momentLocalizer(moment);
+
 
 const MyCalendar = () => {
   const [view, setView] = useState('month'); // View 
   const [date, setDate] = useState(new Date()); // Set date decleration
-  const [isBookingCollapsed, setIsBookingCollapsed] = useState(true);
-  const [searchPatientId, setSearchPatientId] = useState('');
-  const [windowEvents, setWindowEvents] = useState([]);
+  const [isBookingCollapsed, setIsBookingCollapsed] = useState(true); // Hides booking form by default
+  const [searchPatientId, setSearchPatientId] = useState(''); // Search for ID -  Window view
+  const [windowEvents, setWindowEvents] = useState([]); // Sets window view
 
 const handleSearchWindow = () => {
   // TODO: Replace with actual patient lookup logic
   const birthDate = new Date(); 
   const babyWeeksEarly = 0;
 
-  const events = generateAimHighAppointments(birthDate, babyWeeksEarly);
+  const events = generateAimHighAppointments(birthDate, babyWeeksEarly); // Calculates visit
   setWindowEvents(events);
 };
 
@@ -38,6 +40,7 @@ const handleSearchWindow = () => {
     //console.log(appointment)
   };
 
+  // States all events 
 const allEvents = [...windowEvents, ...bookedEvents];
 
 const {
@@ -47,7 +50,7 @@ const {
 } = useAppointmentFilters(allEvents);
 
 
-
+// ----------------------------------------HTML--------------------------------------
   return (
    <div>
     {/* Calendar Container */}

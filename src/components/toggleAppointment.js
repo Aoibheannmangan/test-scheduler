@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './toggleAppointment.css';
 
+// Toggle is not visible by default
 const ToggleAppointment = ({ onAddAppointment }) => {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -8,15 +9,18 @@ const ToggleAppointment = ({ onAddAppointment }) => {
     setIsVisible(prev => !prev);
   };
 
+  // States vars for appointment booking
   const [appTitle, setAppTitle] = useState('');
   const [appPatID, setAppPatID] = useState('')
   const [appDateTimeStart, setAppDateTimeStart] = useState('');
   const [appDateTimeEnd, setAppDateTimeEnd] = useState('');
   const [patientStudy, setPatientStudy] = useState('');
 
+  // Handles putting in a booking
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // The new appointment info
     const newAppointment = {
       title: appTitle,
       patID: appPatID,
@@ -26,25 +30,25 @@ const ToggleAppointment = ({ onAddAppointment }) => {
       study: patientStudy.toUpperCase(),
     };
 
-    console.log("Submitted appointment:", newAppointment);
+    //console.log("Submitted appointment:", newAppointment); *testing*
     onAddAppointment(newAppointment);
   };
 
   return (
     <div>
-      <button 
+      <button // Visibility button
       className='hideButton'
       onClick={toggleVisibility}>
         {isVisible ? 'Hide' : 'Show'} Appointment Booking
       </button>
 
-      {isVisible && (
+      {isVisible && ( // Shows the form when visible
         <div className='AppointmentToggle'>
           <fieldset>
             <div className="form-border">
               <form onSubmit={handleSubmit}>
                 <label htmlFor="title">Title of Appointment</label>
-                <input
+                <input // Input for title
                   type="text"
                   id="title"
                   value={appTitle}
@@ -54,7 +58,7 @@ const ToggleAppointment = ({ onAddAppointment }) => {
                 />
 
                 <label htmlFor="patientID">Patient ID</label>
-                <input
+                <input // input for ID
                   type="text"
                   id="patID"
                   value={appPatID}
@@ -64,7 +68,7 @@ const ToggleAppointment = ({ onAddAppointment }) => {
                 />
 
                 <label htmlFor="startDateTime">Start date and time</label>
-                <input
+                <input // datetime input for start app (Replace with one date selector and a time selector as appointments won't stretch a day long)
                   type="datetime-local"
                   id="startDateTime"
                   value={appDateTimeStart}
@@ -82,7 +86,7 @@ const ToggleAppointment = ({ onAddAppointment }) => {
                 />
 
                 <label htmlFor="study">Study Patient is in</label>
-                <select
+                <select // Dropdown for which study app is for
                   id="study"
                   value={patientStudy}
                   onChange={(e) => setPatientStudy(e.target.value)}
@@ -92,7 +96,10 @@ const ToggleAppointment = ({ onAddAppointment }) => {
                   <option value="EDI">EDI</option>
                 </select>
 
-                <button type="submit">Submit</button>
+                <button // Submit button 
+                type="submit">
+                  Submit
+                  </button>
               </form>
             </div>
           </fieldset>

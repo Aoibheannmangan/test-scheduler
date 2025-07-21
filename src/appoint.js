@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import './appoint.css';
-import dummyEvents from './data/dummyEvents.json';
+import dummyEvents from './data/dummyEvents.json'; // Dummy data needs to be replaced with actual data in proper DB
 import { useAppointmentFilters } from './components/useAppointmentFilters';
 import './components/useAppointmentFilters.css'
 
 const Appointments = () => {
 
-    // Convert start and end strings to Date objects
+    // Convert start and end strings to Date objects for proper parsing
     const processedAppointments = dummyEvents.map((event) => ({
         ...event,
         start: new Date(event.start),
@@ -23,7 +23,7 @@ const Appointments = () => {
         }));
     };
 
-    // Track collapsed state for notes
+    // Track collapsed state for notes (same logic from IDs) **TODO: Make modular**
     const [expandedNotes, setExpandedNotes] = useState({});
 
         const toggleCollapseNotes = (notes) => {
@@ -33,6 +33,7 @@ const Appointments = () => {
         }));
     };
 
+    // Extracts search and filter-related data and functions from useAppointmentFilters to manage appointment filtering.
     const {
     searchQuery,
     setSearchQuery,
@@ -44,7 +45,8 @@ const Appointments = () => {
     return (
         <div className="App">
             <h1>Visit Window Overview</h1>
-      
+        
+        {/*Container for searchbar and filter*/}
         <div className='searchContainer'>
             <input
             type='text'
@@ -53,7 +55,8 @@ const Appointments = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
             style={{ padding: '8px', width: '220px', marginBottom: '12px' }}
             />
-
+            
+            {/*Filter boxes*/}
             <div className="filterRowBox">
                 <div className="filter-checkbox">
                     <label>
@@ -106,7 +109,7 @@ const Appointments = () => {
                 Patient ID: {event.id} {expandedIds[event.id] ? '-' : '+'}
                 </label>
 
-                {/*Main Info Body Dropdown*/}
+                {/*Main Info Body when expanded*/}
                 {expandedIds[event.id] && (
                 <div className="info">
                     <strong>{event.title}</strong><br />
@@ -123,7 +126,8 @@ const Appointments = () => {
                         Additional Notes: {expandedNotes[event.notes] ? '-' : '+'}
                     </label>
 
-                {expandedNotes[event.notes] && (
+                    {/*Shows notes when expanded*/}
+                    {expandedNotes[event.notes] && (
                     <div className="info">
                         <strong>{event.notes}</strong><br />
                     </div>
