@@ -6,6 +6,7 @@ import UserInfo from './info';
 import Navbar from './components/Navbar';
 import MyCalendar from './calender';
 import Account from './account'; 
+import LogIn from './login';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/info" element={<UserInfo />} />
           <Route path="/calender" element={<MyCalendar />} />
           <Route path="/account" element={<Account />} />
+          <Route path="/login" element={<LogIn />}/>
         </Routes>
       </div>
     </Router>

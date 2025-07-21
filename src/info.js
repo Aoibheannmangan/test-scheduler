@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './info.css';
+import { useNavigate } from 'react-router-dom';
 
 const UserInfo = () => {
   const [patientFirstName, setPatientFirstName] = useState('');
@@ -10,6 +11,8 @@ const UserInfo = () => {
   const [patientAddress, setPatientAddress] = useState('');
   const [patientCondition, setPatientCondition] = useState('');
   const [patientGP, setPatientGP] = useState('');
+
+  const navigate = useNavigate();
 
 
   const handleSubmit = (e) => {
@@ -26,7 +29,8 @@ const UserInfo = () => {
     };
     localStorage.setItem("userInfo", JSON.stringify(userData));
     alert("Data recorded successfully!");
-    window.location.reload(); // Optional: reload to reset form
+    navigate('/account');
+    
   };
 
   return (
