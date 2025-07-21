@@ -12,12 +12,12 @@ export function generateAimHighAppointments(birthDate, babyEarly) { // Generate 
         study: 'AIMHIGH'
     },
     {
-        title: 'AimHigh Visit 2',
+        title: 'COOLPRIME Visit',
         id: "456",
         start: addWeeks(birthDate, 21 + 2 * babyEarly),
         end: addWeeks(birthDate, 34 + 2 * babyEarly),
         type: 'window',
-        study: 'AIMHIGH'
+        study: 'COOLPRIME'
     },
     
   ];

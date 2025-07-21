@@ -2,6 +2,47 @@ h1 {
     text-align: center;
 }
 
-/* PROBLEM: know when appointments are coming
+/* Collapsed state: hidden */
+.collapsed .ID_element {
+    display:none;
+}
 
-Create app put in dob, get corrected age, appointment window + when appointment is due.  */
+.appointmentList {
+    min-width: 220px;
+    max-width: 1000px;
+    margin: 24px auto 0 auto; 
+    background: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    padding: 18px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+/* Wrapper list item */
+ul.appointmentList li.ID_element {
+  padding-left: 1em;
+  list-style: none;
+  width: 100%;
+}
+
+/* Expanded info section */
+ul.appointmentList li .info {
+  padding: 0.75em 1em;
+  margin-top: 6px;
+  margin-right: 20px;
+  background: rgba(182, 182, 182, 0.349);
+  border-radius: 6px;
+  transition: all 1s ease-in-out;
+}
+
+/* Icon and label hover */
+label {
+  font-size: 1rem;
+  display: block;
+  padding: 0.5em 0;
+}
+label:hover {
+  color: #0077cc;
+}

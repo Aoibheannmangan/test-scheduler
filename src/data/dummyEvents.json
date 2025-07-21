@@ -1,0 +1,24 @@
+[
+  {
+    "id": "001",
+    "name": "Sophie Turner",
+    "title": "NICU Visit",
+    "start": "2025-07-08",
+    "end": "2025-07-15",
+    "location": "Exam Room 1.14",
+    "notes": "Initial check-up with Doctor",
+    "type": "booked",
+    "study": "AIMHIGH"
+  },
+  {
+    "id": "002",
+    "name": "Liam Murphy",
+    "title": "6-Month Wellness Visit",
+    "start": "2025-08-08",
+    "end": "2025-08-15",
+    "location": "Exam Room 2.12",
+    "notes": "Behavioural Checklist needed",
+    "type": "booked",
+    "study": "COOLPRIME"
+  }
+]
