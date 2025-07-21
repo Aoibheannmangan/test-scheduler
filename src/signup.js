@@ -15,6 +15,22 @@ const SignUp = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        //Email Validation (Only lets you register with a UCC Email)
+        const emailPattern = /^[a-zA-Z0-9._+-]+@ucc\.ie$/;
+        if(!emailPattern.test(email)) {
+            alert("Invalid email. Please use your UCC email");
+            return;
+        }
+
+        //Staff ID format validation 
+        const staffIdPattern = /^\d{5}$/;
+        if (!staffIdPattern.test(staffId)) {
+            alert("Invalid Staff ID. Please use the correct format");
+            return;
+        }
+
+
+
         if (password !== repeatPassword) {
             alert("Passwords do not match! Please try again");
             return;
