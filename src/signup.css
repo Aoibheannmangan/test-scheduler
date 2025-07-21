@@ -29,9 +29,20 @@ button:hover {
     opacity: 1;
 }
 
-.cancelbtn, signupbtn {
+.cancelbtn, signupbtn {  
     float: left;
     width: 50%;
+    box-sizing: border-box;
+
+}
+
+.button-row {
+    display: flex;
+    gap: 10px;
+}
+
+.button-row button {
+    flex: 1;
 }
 
 .container {
