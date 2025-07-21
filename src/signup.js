@@ -30,8 +30,7 @@ const SignUp = () => {
             return;
         }
 
-
-
+        //Tests if both passwords are the same and if not, doesnt let you signup
         if (password !== repeatPassword) {
             alert("Passwords do not match! Please try again");
             return;
@@ -43,6 +42,7 @@ const SignUp = () => {
             password
         }
 
+     // Account creation
         localStorage.setItem('user', JSON.stringify(userData));
         alert("Account Successfully Created!")
         navigate('/calender')
