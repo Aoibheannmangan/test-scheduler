@@ -20,5 +20,49 @@
     "notes": "Behavioural Checklist needed",
     "type": "booked",
     "study": "COOLPRIME"
+  },
+  {
+    "id": "003",
+    "name": "Emily O'Connell",
+    "title": "12-Month Developmental Screening",
+    "start": "2025-09-10",
+    "end": "2025-09-17",
+    "location": "Pediatric Pod A",
+    "notes": "EDI questionnaire and speech evaluation",
+    "type": "scheduled",
+    "study": "EDI"
+  },
+  {
+    "id": "004",
+    "name": "Noah Byrne",
+    "title": "3-Month Check-in",
+    "start": "2025-08-22",
+    "end": "2025-08-29",
+    "location": "Exam Room 3.01",
+    "notes": "Follow-up after NICU discharge",
+    "type": "booked",
+    "study": "AIMHIGH"
+  },
+  {
+    "id": "005",
+    "name": "Isla Fitzgerald",
+    "title": "Postnatal Depression Assessment",
+    "start": "2025-07-28",
+    "end": "2025-08-04",
+    "location": "Mental Health Unit",
+    "notes": "Parent involved in EDI longitudinal tracking",
+    "type": "pending",
+    "study": "COOLPRIME"
+  },
+  {
+    "id": "006",
+    "name": "Finn Walsh",
+    "title": "2-Year Language Milestone Check",
+    "start": "2025-10-05",
+    "end": "2025-10-12",
+    "location": "Exam Room 4.17",
+    "notes": "Language screen and EDI record update",
+    "type": "booked",
+    "study": "EDI"
   }
 ]

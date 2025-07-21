@@ -1,17 +1,25 @@
 export function eventPropGetter(event)  { // Event property getter function. See if its booked, window appointment, etc
   let style = {};
 
-  if (event.type === 'booked') {
+  if (event.study === 'AIMHIGH') {
     style = {
-      backgroundColor: '#dc3545', // red for booked if viewing visit windows
+      backgroundColor: '#af4c4c', // Color for AIMHIGH
+      borderRadius: '4px',
+      border: 'none',
+      padding: '2px',
+    };
+  } else if (event.study === 'COOLPRIME') {
+    style = {
+      backgroundColor: '#614caf', // Color for COOLPRIME
       color: '#fff',
       borderRadius: '4px',
       border: 'none',
       padding: '2px',
     };
-  } else if (event.type === 'window') {
+  }
+    else{
     style = {
-      backgroundColor: '#0d6efd', // blue for visit windows
+      backgroundColor: '#afa04c', // Color for EDI
       color: '#fff',
       borderRadius: '4px',
       border: 'none',
