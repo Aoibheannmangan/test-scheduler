@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import './login.css';
+import { useNavigate } from 'react-router-dom';
+
 
 const LogIn = () => {
-
-    const [value, onChange] = useState(new Date());
 
     return (
         <div className="loginscreen">
@@ -13,7 +13,7 @@ const LogIn = () => {
                     <input type="text" placeholder="Enter Username" name="uname" required />
 
                     <label for="sid"><b>Staff ID</b></label>
-                    <input type="text" placeholder="Enter Staff ID" name="sid" required />
+                    <input type="number" placeholder="Enter Staff ID" name="sid" required />
 
                     <label for="psw"><b>Password</b></label>
                     <input type="password" placeholder="Enter Password" name="psw" required />
