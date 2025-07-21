@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import './login.css';
 import { useNavigate } from 'react-router-dom';
+import {FaUser, FaLock} from 'react-icons/fa';
+
 
 const LogIn = () => {
     const [staffId, setStaffId] = useState('');
@@ -29,31 +31,37 @@ const LogIn = () => {
                         <div className="form-headers">
                             <h1>Log In</h1>
                         </div>
-                    <div className="form-body">
-                        <label htmlFor="sid"><b>Staff ID</b></label>
-                        <input 
-                            type="number" 
-                            placeholder="Enter Staff ID" 
-                            value={staffId}
-                            onChange={(e) => setStaffId(e.target.value)} 
-                            required 
-                        />
-
-                        <label htmlFor="psw"><b>Password</b></label>
-                        <input 
-                            type="password" 
-                            placeholder="Enter Password" 
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required 
-                        />
-
-                        <button type="submit">Login</button>
-                        <div className="signup-link">
-                            <span className="change">Don't have an account?  <a href="/signup">Sign Up</a></span>
+                        <div className="form-body">
+                            <div className ="input-group">
+                                <label htmlFor="sid"><b>Staff ID</b></label>
+                                <div className="input-icon-wrapper">
+                                    <FaUser className="icon" />
+                                    <input 
+                                        type="number" 
+                                        value={staffId}
+                                        onChange={(e) => setStaffId(e.target.value)} 
+                                        required 
+                                    />
+                                </div>
+                            </div>
+                            <div className="input-group">
+                                <label htmlFor="psw"><b>Password</b></label>
+                                <div className="input-icon-wrapper">
+                                    <FaLock className="icon" />
+                                    <input 
+                                        type="password" 
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        required 
+                                    />  
+                                </div>
+                            </div>
+                            <button type="submit">Login</button>
+                            <div className="signup-link">
+                                <span className="change">Don't have an account?  <a href="/signup">Sign Up</a></span>
+                            </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
                 </div>
             </div>
 
