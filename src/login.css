@@ -1,101 +1,4 @@
-/* html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-}
 
-form {
-    border: 3px solid #f1f1f1;
-}
-
-input[type=text], input[type=password] {
-    width: 100%;
-    padding: 12px 20px;
-    margin: 8px 0;
-    display: inline-block;
-    border: 1px solid #ccc;
-    box-sizing: border-box;
-}
-
-button {
-    background-color: #04AA6D;
-    color: white;
-    padding: 14px 20px;
-    margin: 8px 0;
-    border: none;
-    box-sizing: border-box;
-}
-
-button:hover {
-    opacity: 0.8;
-}
-
-span.psw {
-    float: right;
-    padding-top: 16px;
-}
-
-@media screen and (max-width: 300px) {
-    span.psw {
-        display: block;
-        float: none;
-    }
-}
-
-.login-form-border {
-    background-color: #fff;
-    border-radius: 15px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-    padding: 10px 20px;
-    transition: transform 0.2s;
-    width: 500px;
-    text-align: center;
-    margin:auto; 
-}
-
-.center-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #f0f2f5;
-}
-
-.link-row {
-    display: flex;
-    justify-content: flex-end;
-    gap: 20px;
-    align-items: center;
-    margin-top: 1rem;
-    font-size: 0.9rem;
-}
-
-.link-row span, .link-row a {
-    white-space: nowrap;
-}
-.link-row a {
-    margin-left: 10px;
-    text-decoration: none;
-    color: #007bff;
-}
-
-
-.headers {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #8D5A97;
-    padding: 1rem 2rem;
-    flex-wrap: wrap;
-    color: white;
-}
-
-.headers h1 {
-    color: white;
-    text-align: center;
-    font-size: xx-large;
-}
-    */
 .login-container {
     display: flex;
     justify-content: center;
@@ -163,7 +66,7 @@ span.psw {
 .signup-link {
     text-align: center;
     margin-top: 1rem;
-    color: blue;
+    color: rgb(0, 0, 0);
 }
 
 .signup-link a {
@@ -174,4 +77,31 @@ span.psw {
 
 .signup-link a:hover {
     text-decoration: underline;
+}
+
+.input-group {
+  margin-bottom: 20px;
+}
+
+.input-icon-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ffffff;
+  border-radius: 4px;
+  padding: 8px 10px;
+  background-color: #fff;
+}
+
+.input-icon-wrapper .icon {
+  margin-right: 10px;
+  color: #888;
+  font-size: 1.2rem;
+}
+
+.input-icon-wrapper input {
+  border: none;
+  outline: none;
+  flex: 1;
+  font-size: 1rem;
+  background: transparent;
 }
