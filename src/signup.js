@@ -34,10 +34,12 @@ const SignUp = () => {
 
     return (
         <div className="signupscreen">
-            <form onSubmit={handleSubmit}>
+            <div className="form-border">
+             <form onSubmit={handleSubmit}>
                 <div class="container">
-                    <h1>Sign Up</h1>
-                    <p>Please fill in this form to create an account.</p>
+                    <div class="headers">
+                        <h1>Sign Up</h1>
+                    </div>
 
                     <label for="email"><b>Email</b></label>
                     <input 
@@ -80,6 +82,7 @@ const SignUp = () => {
                     </div>
                 </div>
             </form>
+        </div>
         </div>
     );
 };

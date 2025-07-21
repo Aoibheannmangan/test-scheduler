@@ -14,8 +14,12 @@ input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, inp
     outline: none;
 }
 
+label {
+    font-size: 18px;
+}
+
 button {
-    background-color: #04AA6D;
+    background-color: #8D5A97;
     color: white;
     padding: 14px 20px;
     margin: 8px 0;
@@ -59,4 +63,32 @@ button:hover {
     .cancelbtn, .signupbtn {
         width: 100%;
     }
+}
+
+.form-border {
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    padding: 10px 20px;
+    transition: transorm 0.2s;
+    width: 500px;
+    text-align: center;
+    margin:auto;
+    margin-top: 20px;
+}
+
+.headers {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #8D5A97;
+    padding: 1rem 2rem;
+    flex-wrap: wrap;
+    color: white;
+}
+
+.headers h1 {
+    color: white;
+    text-align: center;
+    font-size: xx-large;
 }
