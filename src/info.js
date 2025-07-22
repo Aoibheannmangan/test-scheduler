@@ -37,10 +37,10 @@ const UserInfo = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const newPatient = {
-      id: uuidv4(),
+      id: isEditing ? editId : uuidv4(),
       Name: patientName,
       DOB: patientDOB,
-      WeeksEarly: patientEarly,
+      Early: patientEarly,
       Sex: patientSex,
       Condition: patientCondition,
       Study: patientStudy,
@@ -89,13 +89,13 @@ const UserInfo = () => {
               required
             />
 
-            <label htmlFor="early">Amount of weeks early:</label>
+            <label htmlFor="early">Amount of Days early:</label>
             <input
               type="text"
               id="age"
               value={patientEarly}
               onChange={(e) => setPatientEarly(e.target.value)}
-              placeholder="Enter the Amount of Weeks the Patient was Early"
+              placeholder="Enter the Amount of Days the Patient was Early"
               required
             />
 
@@ -105,6 +105,7 @@ const UserInfo = () => {
                 name="sex"
                 value={patientSex}
                 onChange={(e) => setPatientSex(e.target.value)}>
+              <option value="">-- Select Sex --</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
             </select>
@@ -125,6 +126,7 @@ const UserInfo = () => {
               name="study"
               value={patientStudy}
               onChange={(e) => setPatientStudy(e.target.value)}>
+                <option value="">-- Select Study --</option>
                 <option value="AIMHIGH">AIMHIGH</option>
                 <option value="COOLPRIME">COOLPRIME</option>
                 <option value="EDI">EDI</option>

@@ -45,7 +45,7 @@ const Account = () => {
             <ul>
           <li><strong>Name:</strong> {user.Name}</li>
           <li><strong>Date of Birth:</strong> {user.DOB}</li>
-          <li><strong>Weeks Early:</strong> {user.Early}</li>
+          <li><strong>Days Early:</strong> {user.Early}</li>
           <li><strong>Sex:</strong> {user.Sex}</li>
           <li><strong>Condition:</strong> {user.Condition}</li>
           <li><strong>Study:</strong> {user.Study}</li>
