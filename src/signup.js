@@ -9,6 +9,7 @@ const SignUp = () => {
   const [password, setPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
   const [showPasswordMessage, setShowPasswordMessage] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [passwordValidations, setPasswordValidations] = useState({
     lowercase: false,
     uppercase: false,
@@ -18,33 +19,51 @@ const SignUp = () => {
 
   const navigate = useNavigate();
 
+  //Password Validation for making sure the password has the different requirements
   const handlePasswordChange = (e) => {
     const value = e.target.value;
     setPassword(value);
 
     setPasswordValidations({
-      lowercase: /[a-z]/.test(value),
+    //Password needs a lowercase letter, an uppercase letter, a number and needs to be longer than eight characters
+      lowercase: /[a-z]/.test(value),  
       uppercase: /[A-Z]/.test(value),
       number: /[0-9]/.test(value),
       length: value.length >= 8,
     });
   };
 
+  const isEmailRegistered = (email) => {
+      const users = JSON.parse(localStorage.getItem("users")) || [];
+
+      return users.some((user) => user.email === email);
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    //For email validation, makes sure it ends in @ucc.ie 
     const emailPattern = /^[a-zA-Z0-9._+-]+@ucc\.ie$/;
     if (!emailPattern.test(email)) {
       alert('Invalid email. Please use your UCC email');
       return;
     }
 
+    //For ID validation, makes sure it is exactly 5 numbers long
     const staffIdPattern = /^\d{5}$/;
     if (!staffIdPattern.test(staffId)) {
       alert('Invalid Staff ID. Please use the correct format');
       return;
     }
 
+    if (isEmailRegistered(email)) {
+      alert("Email is already registered!");
+      return;
+    }
+    
+
+  
+    //Makes sure password and initial password works
     if (password !== repeatPassword) {
       alert('Passwords do not match! Please try again');
       return;
@@ -56,9 +75,18 @@ const SignUp = () => {
       password,
     };
 
-    localStorage.setItem('user', JSON.stringify(userData));
-    alert('Account Successfully Created!');
-    navigate('/calender');
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    users.push(userData);
+    localStorage.setItem("users", JSON.stringify(users));
+
+    setIsSubmitting(true);
+    setTimeout(() => {
+      alert('Account Successfully Created');
+      setIsSubmitting(false);
+      navigate('/calender');
+    }, 2000);
+
+
   };
 
   return (
@@ -130,7 +158,16 @@ const SignUp = () => {
 
               <div className="clearfix">
                 <div className="button-row">
-                  <button type="submit" className="signupbtn">Sign Up</button>
+                  <button 
+                    type="submit" 
+                    className="signupbtn"
+                    disabled={isSubmitting}>
+                    {isSubmitting ? (
+                        <div className="spinner"></div>
+                    ) : ( 
+                        'Sign Up'
+                    )}
+                        </button>
                 </div>
               </div>
             </div>
