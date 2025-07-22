@@ -7,10 +7,11 @@ import MyCalendar from './calender';
 import Account from './account'; 
 import LogIn from './login';
 import SignUp from './signup';
+import ForgotPsw from './forgotpsw'
 
 function App() {
   const location = useLocation();
-  const hideNavbarPaths = ['/signup', '/login'];
+  const hideNavbarPaths = ['/signup', '/login', '/forgotpsw'];
 
   return (
     <>
@@ -24,6 +25,7 @@ function App() {
           <Route path="/account" element={<Account />} />
           <Route path="/login" element={<LogIn />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/forgotpsw" element={<ForgotPsw />} />
         </Routes>
       </div>
     </>

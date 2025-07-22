@@ -42,6 +42,11 @@ const SignUp = () => {
     return users.some((user) => user.email === email);
   };
 
+  const isIdInUse = (staffId) => {
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    return users.some((user) => user.staffId === staffId);
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -55,6 +60,11 @@ const SignUp = () => {
     // Also Checks if the email has already been used
     if (isEmailRegistered(email)) {
       setAlert({ message: "Email is already registered", type: "info" });
+      return;
+    }
+
+    if (isIdInUse(staffId)) {
+      setAlert({message: "ID is already registered", type: "info"});
       return;
     }
 
