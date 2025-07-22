@@ -135,13 +135,13 @@ const Appointments = () => {
                     {/*Visit window in info if a window patient*/}
                     {event.type === "window" && (() => {
                     const birthDate = new Date(event.dob);
-                    const weeksEarly = event.weeksEarly || 0;
+                    const daysEarly = event.daysEarly || 0;
                     let windowData = [];
 
                     if (event.study === 'AIMHIGH') {
-                        windowData = generateAimHighAppointments(birthDate, weeksEarly);
+                        windowData = generateAimHighAppointments(birthDate, daysEarly);
                     } else if (event.study === 'COOLPRIME') {
-                        windowData = generateCoolPrimeAppointments(birthDate, weeksEarly);
+                        windowData = generateCoolPrimeAppointments(birthDate, daysEarly);
                     }
 
                     const { start, end } = windowData[0];
@@ -164,6 +164,32 @@ const Appointments = () => {
                         </div>
                     );
                     })()}
+
+                    
+                    {/*Visit window in info if a booked patient*/}
+                    {event.type === "booked" && (() => {
+
+                    const startDate = new Date(event.start);
+
+                    return (
+                        <div>
+                        <strong>Appointment Date:</strong>{' '}
+                        {startDate.toLocaleDateString(undefined, {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                        })}
+                        <br />
+                        <strong>Time of Appointment: </strong>{' '}
+                        {startDate.toLocaleTimeString(undefined, {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                        })}
+                        <br />
+                        </div>
+                    );
+                    })()}
+
 
                     {/*Additional Notes Dropdown*/}
                     <label

@@ -23,7 +23,7 @@ const UserInfo = () => {
       const patient = JSON.parse(editData);
       setPatientName(patient.Name);
       setPatientDOB(patient.DOB);
-      setPatientEarly(patient.WeeksEarly);
+      setPatientEarly(patient.DaysEarly);
       setPatientSex(patient.Sex);
       setPatientCondition(patient.Condition);
       setPatientStudy(patient.Study);
@@ -40,7 +40,7 @@ const UserInfo = () => {
       id: uuidv4(),
       Name: patientName,
       DOB: patientDOB,
-      WeeksEarly: patientEarly,
+      DaysEarly: patientEarly,
       Sex: patientSex,
       Condition: patientCondition,
       Study: patientStudy,
@@ -89,13 +89,13 @@ const UserInfo = () => {
               required
             />
 
-            <label htmlFor="early">Amount of weeks early:</label>
+            <label htmlFor="early">Amount of days early:</label>
             <input
               type="text"
               id="age"
               value={patientEarly}
               onChange={(e) => setPatientEarly(e.target.value)}
-              placeholder="Enter the Amount of Weeks the Patient was Early"
+              placeholder="Enter the Amount of Days the Patient was Early"
               required
             />
 
