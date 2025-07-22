@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './calender.css';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
@@ -22,33 +22,46 @@ const MyCalendar = () => {
   const [searchPatientId, setSearchPatientId] = useState(''); // Search for ID -  Window view
   const [windowEvents, setWindowEvents] = useState([]); // Sets window view
 
+  // Grab all dummy info from JSON file
+  useEffect(() => {
+    const bookedFromDummy = dummyEvents
+    .filter(event => event.type === 'booked')
+    .map(event => ({
+      ...event,
+      start: new Date(event.start),
+      end: new Date(event.end),
+      title: event.title || event.name // Uses title to display on calender 
+    }))
+    setBookedEvents(bookedFromDummy);
+  },[]);
 
-const handleSearchWindow = () => {
-  const patient = dummyEvents.find(patient => patient.id === searchPatientId.trim());
 
-  // Error searching 
-  if (!patient) {
-    alert("Patient ID not found.");
-    return;
-  }
+  const handleSearchWindow = () => {
+    const patient = dummyEvents.find(patient => patient.id === searchPatientId.trim());
 
-  // Skip if already booked or scheduled
-  if (["booked"].includes(patient.type)) {
-    alert("This patient's visit is already booked or scheduled.");
-    return;
-  }
+    // Error searching 
+    if (!patient) {
+      alert("Patient ID not found.");
+      return;
+    }
 
-  // Sets patient bday and early weeks for calculations
+    // Skip if already booked or scheduled
+    if (["booked"].includes(patient.type)) {
+      alert("This patient's visit is already booked or scheduled.");
+      return;
+    }
+
+  // Sets patient bday and early days for calculations
   const birthDate = new Date(patient.dob);
-  const babyWeeksEarly = patient.weeksEarly || 0;
+  const babyDaysEarly = patient.daysEarly || 0;
 
   let studyWindows = [];
 
   // Only generate the window that matches the patient's study
   if (patient.study === "AIMHIGH") {
-    studyWindows = generateAimHighAppointments(birthDate, babyWeeksEarly);
+    studyWindows = generateAimHighAppointments(birthDate, babyDaysEarly);
   } else if (patient.study === "COOLPRIME") {
-    studyWindows = generateCoolPrimeAppointments(birthDate, babyWeeksEarly);
+    studyWindows = generateCoolPrimeAppointments(birthDate, babyDaysEarly);
   }
 
   // Filter only window type (just in case)

@@ -1,23 +1,27 @@
 // AIMHIGH Visit 2: 15 - 18 weeks after corrected due date
 export function generateAimHighAppointments(birthDate, babyEarly) {
-  const addWeeks = (date, weeks) =>
-    new Date(date.getTime() + weeks * 7 * 24 * 60 * 60 * 1000);
+ const addDays = (date, days) =>
+    new Date(date.getTime() + days * 24 * 60 * 60 * 1000);
 
-  // Corrected due date: birth + weeksEarly
-  const correctedDueDate = new Date(birthDate.getTime() + babyEarly * 7 * 24 * 60 * 60 * 1000);
+    // Corrected due date = birthDate + (babyEarly * 7 days)
+    const correctedDueDate = addDays(birthDate, babyEarly * 7);
 
-  const events = [
-    {
-      title: 'AIMHIGH Visit 2',
-      id: '000',
-      dob: birthDate,
-      weeksEarly: babyEarly,
-      start: addWeeks(correctedDueDate, 15),
-      end: addWeeks(correctedDueDate, 18),
-      type: 'window',
-      study: 'AIMHIGH',
-    },
-  ];
+    // 15–18 weeks = 105 to 126 days
+    const start = addDays(correctedDueDate, 105);
+    const end = addDays(correctedDueDate, 126);
+
+    const events = [
+        {
+            title: 'AIMHIGH Visit 2',
+            id: '000',
+            dob: birthDate,
+            daysEarly: babyEarly,
+            start,
+            end,
+            type: 'window',
+            study: 'AIMHIGH',
+        },
+    ];
 
   return events;
 }
@@ -28,7 +32,7 @@ export function generateCoolPrimeAppointments(birthDate, babyEarly) {
     // COOLPRIME Visit 2: in clinic 3 - 4 mnths
 
   // Corrected age starts from due date, not birth date
-  const dueDate = new Date(birthDate.getTime() + babyEarly * 7 * 24 * 60 * 60 * 1000);
+  const dueDate = new Date(birthDate.getTime() + babyEarly * 24 * 60 * 60 * 1000);
 
   // Calculates start of window from due date
   const startWindow = new Date(dueDate.getTime());
@@ -43,7 +47,7 @@ export function generateCoolPrimeAppointments(birthDate, babyEarly) {
       title: 'COOLPRIME Visit 2',
       id: '000',
       dob: birthDate,
-      weeksEarly: babyEarly,
+      daysEarly: babyEarly,
       start: startWindow,
       end: endWindow,
       type: 'window',
