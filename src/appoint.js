@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './appoint.css';
-import dummyEvents from './data/dummyEvents.json'; // Dummy data needs to be replaced with actual data in proper DB
+import dummyEvents from './data/dummyEvents'; // Dummy data needs to be replaced with actual data in proper DB
 import { useAppointmentFilters } from './components/useAppointmentFilters';
 import './components/useAppointmentFilters.css'
 
@@ -113,10 +113,10 @@ const Appointments = () => {
                 {expandedIds[event.id] && (
                 <div className="info">
                     <strong>{event.title}</strong><br />
-                    Visit Window: {event.start.toDateString()} – {event.end.toDateString()}<br />
-                    Name: {event.name}<br />
-                    Location: {event.location}<br />
-                    Study: {event.study}<br />
+                    <strong>Visit Window:</strong> {event.start.toDateString()} – {event.end.toDateString()}<br />
+                    <strong>Name:</strong> {event.name}<br />
+                    <strong>Location:</strong> {event.location}<br />
+                    <strong>Study:</strong> {event.study}<br />
                     
                     {/*Additional Notes Dropdown*/}
                     <label

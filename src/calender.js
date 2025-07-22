@@ -3,12 +3,13 @@ import './calender.css';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { generateAimHighAppointments } from './data/windowEventCalc';
+import { generateAimHighAppointments, generateCoolPrimeAppointments } from './data/windowEventCalc';
 import ClickableDateCell from './components/clickableCell';
 import { eventPropGetter } from './data/eventPropGetter';
 import ToggleAppointment from './components/toggleAppointment';
 import { useAppointmentFilters } from './components/useAppointmentFilters';
 import './components/useAppointmentFilters.css';
+import dummyEvents from './data/dummyEvents';
 
 // Sets current date and time for calender
 const localizer = momentLocalizer(moment);
@@ -21,15 +22,54 @@ const MyCalendar = () => {
   const [searchPatientId, setSearchPatientId] = useState(''); // Search for ID -  Window view
   const [windowEvents, setWindowEvents] = useState([]); // Sets window view
 
-const handleSearchWindow = () => {
-  // TODO: Replace with actual patient lookup logic
-  const birthDate = new Date(); 
-  const babyWeeksEarly = 0;
 
-  const events = generateAimHighAppointments(birthDate, babyWeeksEarly); // Calculates visit
-  setWindowEvents(events);
+const handleSearchWindow = () => {
+  const patient = dummyEvents.find(patient => patient.id === searchPatientId.trim());
+
+  // Error searching 
+  if (!patient) {
+    alert("Patient ID not found.");
+    return;
+  }
+
+  // Skip if already booked or scheduled
+  if (["booked"].includes(patient.type)) {
+    alert("This patient's visit is already booked or scheduled.");
+    return;
+  }
+
+  // Sets patient bday and early weeks for calculations
+  const birthDate = new Date(patient.dob);
+  const babyWeeksEarly = patient.weeksEarly || 0;
+
+  let studyWindows = [];
+
+  // Only generate the window that matches the patient's study
+  if (patient.study === "AIMHIGH") {
+    studyWindows = generateAimHighAppointments(birthDate, babyWeeksEarly);
+  } else if (patient.study === "COOLPRIME") {
+    studyWindows = generateCoolPrimeAppointments(birthDate, babyWeeksEarly);
+  }
+
+  // Filter only window type (just in case)
+  const windowEvents = studyWindows
+    .filter(event => event.type === "window")
+    .map(event => ({
+      ...event,
+      name: patient.name,
+      id: `${patient.id}-${event.study}-${event.title}`,
+      start: new Date(event.start),
+      end: new Date(event.end),
+    }));
+
+  setWindowEvents(windowEvents);
 };
 
+// Clear displaying window and reset search
+  const handleClearWindow = () => {
+    setWindowEvents([]);
+    setSearchPatientId('');
+  };
   
   // Booked appointments state
   const [bookedEvents, setBookedEvents] = useState([]);
@@ -103,6 +143,11 @@ const {
             className='Search Button'
             onClick={handleSearchWindow}
             >Search Window
+            </button>
+            <button
+            className='clearButton'
+            onClick={handleClearWindow}>
+              Clear Window
             </button>
         </label>
       </div>

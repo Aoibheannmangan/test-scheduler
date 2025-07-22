@@ -1,7 +1,9 @@
-[
-  {
+  [
+    {
     "id": "001",
     "name": "Sophie Turner",
+    "dob": "2025-05-01",
+    "weeksEarly": 0,
     "title": "NICU Visit",
     "start": "2025-07-08",
     "end": "2025-07-15",
@@ -13,6 +15,8 @@
   {
     "id": "002",
     "name": "Liam Murphy",
+    "dob": "2025-05-01",
+    "weeksEarly": 0,
     "title": "6-Month Wellness Visit",
     "start": "2025-08-08",
     "end": "2025-08-15",
@@ -24,6 +28,8 @@
   {
     "id": "003",
     "name": "Emily O'Connell",
+    "dob": "2025-05-01",  
+    "weeksEarly": 0,  
     "title": "12-Month Developmental Screening",
     "start": "2025-09-10",
     "end": "2025-09-17",
@@ -35,6 +41,8 @@
   {
     "id": "004",
     "name": "Noah Byrne",
+    "dob": "2025-05-01",
+    "weeksEarly": 0,
     "title": "3-Month Check-in",
     "start": "2025-08-22",
     "end": "2025-08-29",
@@ -46,6 +54,8 @@
   {
     "id": "005",
     "name": "Isla Fitzgerald",
+    "dob": "2025-05-01",
+    "weeksEarly": 0,
     "title": "Postnatal Depression Assessment",
     "start": "2025-07-28",
     "end": "2025-08-04",
@@ -57,6 +67,8 @@
   {
     "id": "006",
     "name": "Finn Walsh",
+    "dob": "2025-05-01",
+    "weeksEarly": 0,
     "title": "2-Year Language Milestone Check",
     "start": "2025-10-05",
     "end": "2025-10-12",
@@ -64,5 +76,31 @@
     "notes": "Language screen and EDI record update",
     "type": "booked",
     "study": "EDI"
+  },
+  {
+    "id": "007",
+    "name": "Fionn Murphy",
+    "dob": "2025-05-01",
+    "weeksEarly": 0,
+    "title": "AIMHIGH Visit Window",
+    "start": "2025-10-05",
+    "end": "2025-10-12",
+    "location": "Exam Room 5.03",
+    "notes": "Mobility Checkup Required",
+    "type": "window",
+    "study": "AIMHIGH"
+  },
+    {
+    "id": "008",
+    "name": "Hugh Feehan",
+    "dob": "2025-05-01",
+    "weeksEarly": "1",
+    "title": "COOLPRIME Visit Window",
+    "start": "2025-10-05",
+    "end": "2025-10-12",
+    "location": "Exam Room 5.05",
+    "notes": "MRI Required",
+    "type": "window",
+    "study": "COOLPRIME"
   }
 ]
