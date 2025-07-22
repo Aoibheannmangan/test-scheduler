@@ -12,20 +12,25 @@ const ToggleAppointment = ({ onAddAppointment }) => {
   // States vars for appointment booking
   const [appTitle, setAppTitle] = useState('');
   const [appPatID, setAppPatID] = useState('')
-  const [appDateTimeStart, setAppDateTimeStart] = useState('');
-  const [appDateTimeEnd, setAppDateTimeEnd] = useState('');
+  const [appDate, setAppDate] = useState('');
+  const [appTimeStart, setAppTimeStart] = useState('');
+  const [appTimeEnd, setAppTimeEnd] = useState('');
   const [patientStudy, setPatientStudy] = useState('');
 
   // Handles putting in a booking
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // Combine date and time so event can process them properly
+    const startDateTime = new Date(`${appDate}T${appTimeStart}`);
+    const endDateTime = new Date(`${appDate}T${appTimeEnd}`);
+
     // The new appointment info
     const newAppointment = {
       title: appTitle,
       patID: appPatID,
-      start: new Date(appDateTimeStart),
-      end: new Date(appDateTimeEnd),
+      start: startDateTime,
+      end: endDateTime,
       type: 'booked',
       study: patientStudy.toUpperCase(),
     };
@@ -67,21 +72,34 @@ const ToggleAppointment = ({ onAddAppointment }) => {
                   required
                 />
 
-                <label htmlFor="startDateTime">Start date and time</label>
-                <input // datetime input for start app (Replace with one date selector and a time selector as appointments won't stretch a day long)
-                  type="datetime-local"
-                  id="startDateTime"
-                  value={appDateTimeStart}
-                  onChange={(e) => setAppDateTimeStart(e.target.value)}
+                <label htmlFor="date">Appointment Date</label>
+                <input // date input for app
+                  type="date"
+                  id="date"
+                  value={appDate}
+                  onChange={(e) => setAppDate(e.target.value)}
                   required
                 />
 
-                <label htmlFor="endDateTime">End date and time</label>
-                <input
-                  type="datetime-local"
-                  id="endDateTime"
-                  value={appDateTimeEnd}
-                  onChange={(e) => setAppDateTimeEnd(e.target.value)}
+                <label htmlFor="startTime">Start Time</label>
+                <input // Start time for app. Increments in 15 mins
+                  type="time"
+                  id="startTime"
+                  min="09:00" max="18:00"
+                  step={900}
+                  value={appTimeStart}
+                  onChange={(e) => setAppTimeStart(e.target.value)}
+                  required
+                />
+
+                <label htmlFor="endTime">End Time</label>
+                <input // End time for app. Increments in 15 mins
+                  type="time"
+                  id="endTime"
+                  min="09:00" max="18:00"
+                  step={900}
+                  value={appTimeEnd}
+                  onChange={(e) => setAppTimeEnd(e.target.value)}
                   required
                 />
 
