@@ -18,7 +18,7 @@ const Navbar = () => {
             </div>
 
             <div className="navbar-right">
-                <Link to="/account" className="nav-link">Account</Link>
+                <Link to="/account" className="nav-link">My Patients</Link>
                 <Link to="/account" className="user-icon">
                     <i className="fas fa-user"></i>
                 </Link>

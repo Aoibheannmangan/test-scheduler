@@ -63,4 +63,25 @@ ul li strong {
     background-color: #56365c;
 }
 
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
+.icon-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.icon-actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6a1b9a;
+    font-size: 18px;
+}
+
+.icon-actions button:hover {
+    color: #c1aeda;
+}
