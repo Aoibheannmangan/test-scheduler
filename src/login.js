@@ -73,6 +73,7 @@ const LogIn = () => {
                     type="number"
                     value={staffId}
                     onChange={(e) => setStaffId(e.target.value)}
+                    autocomplete="off"
                     required
                   />
                 </div>
@@ -85,6 +86,7 @@ const LogIn = () => {
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    autocomplete="off"
                     required
                   />
                 </div>

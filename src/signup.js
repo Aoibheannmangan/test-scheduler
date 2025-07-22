@@ -115,6 +115,7 @@ const SignUp = () => {
                     placeholder="Enter Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    autocomplete="off"
                     required
                   />
                 </div>
@@ -129,6 +130,7 @@ const SignUp = () => {
                     placeholder="Enter Staff ID"
                     value={staffId}
                     onChange={(e) => setStaffId(e.target.value)}
+                    autocomplete="off"
                     required
                   />
                 </div>
@@ -145,6 +147,7 @@ const SignUp = () => {
                     onChange={handlePasswordChange}
                     onFocus={() => setShowPasswordMessage(true)}
                     onBlur={() => setShowPasswordMessage(false)}
+                    autocomplete="off"
                     required
                   />
                 </div>
@@ -159,6 +162,7 @@ const SignUp = () => {
                     placeholder="Please re-enter your password"
                     value={repeatPassword}
                     onChange={(e) => setRepeatPassword(e.target.value)}
+                    autocomplete="off"
                     required
                   />
                 </div>

@@ -80,6 +80,7 @@ const UserInfo = () => {
               value={patientName}
               onChange={(e) => setPatientName(e.target.value)}
               placeholder="Enter Patient Name"
+              autocomplete="off"
               required
             />
             <label htmlFor="patientDOB">Patient Date of Birth:</label>
@@ -94,7 +95,7 @@ const UserInfo = () => {
 
             <label htmlFor="early">Amount of Days early:</label>
             <input
-              type="text"
+              type="number"
               id="age"
               value={patientEarly}
               onChange={(e) => setPatientEarly(e.target.value)}
@@ -120,6 +121,7 @@ const UserInfo = () => {
               value={patientCondition}
               onChange={(e) => setPatientCondition(e.target.value)}
               placeholder="Enter Patient Condition"
+              autocomplete="off"
               required
             />
 
@@ -159,6 +161,7 @@ const UserInfo = () => {
               value={patientInfo}
               onChange={(e) => setPatientInfo(e.target.value)}
               placeholder="Enter Additional Notes"
+              autocomplete="off"
               required
             />
 
