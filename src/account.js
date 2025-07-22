@@ -49,6 +49,7 @@ const Account = () => {
           <li><strong>Sex:</strong> {user.Sex}</li>
           <li><strong>Condition:</strong> {user.Condition}</li>
           <li><strong>Study:</strong> {user.Study}</li>
+          <li><strong>Site:</strong> {user.Site}</li>
           <li><strong>Additional Notes:</strong> {user.Info}</li>
         </ul>
         <button onClick={() => handleEdit(user)}>Edit Information</button>
