@@ -166,22 +166,29 @@ const Appointments = () => {
                     })()}
 
                     
-                    {/*Visit window in info if a booked patient*/}
+                    {/*Visit window in info if a booked patient
+                    Displays date of app and time from and to*/}
                     {event.type === "booked" && (() => {
 
-                    const startDate = new Date(event.start);
+                    const startDateTime = new Date(event.start);
+                    const endDateTime = new Date(event.end)
 
                     return (
                         <div>
                         <strong>Appointment Date:</strong>{' '}
-                        {startDate.toLocaleDateString(undefined, {
+                        {startDateTime.toLocaleDateString(undefined, {
                             year: 'numeric',
                             month: 'long',
                             day: 'numeric',
                         })}
                         <br />
                         <strong>Time of Appointment: </strong>{' '}
-                        {startDate.toLocaleTimeString(undefined, {
+                        {startDateTime.toLocaleTimeString(undefined, {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                        })
+                        }{' - '}
+                        {endDateTime.toLocaleTimeString(undefined, {
                             hour: '2-digit',
                             minute: '2-digit',
                         })}

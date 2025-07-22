@@ -1,3 +1,5 @@
+
+//-------------------------------AIMHIGH-----------------------------------------------------
 // AIMHIGH Visit 2: 15 - 18 weeks after corrected due date
 export function generateAimHighAppointments(birthDate, babyEarly) {
  const addDays = (date, days) =>
@@ -26,7 +28,7 @@ export function generateAimHighAppointments(birthDate, babyEarly) {
   return events;
 }
 
-
+// ---------------------------------------COOLPRIME---------------------------------------
 
 export function generateCoolPrimeAppointments(birthDate, babyEarly) {
     // COOLPRIME Visit 2: in clinic 3 - 4 mnths
@@ -57,3 +59,46 @@ export function generateCoolPrimeAppointments(birthDate, babyEarly) {
 
   return events;
 }
+// ---------------------------------------EDI---------------------------------------
+
+export function generateEDIAppointment(birthDate, babyEarly) {
+    // EDI Visit 2: in clinic 3 - 4 months
+
+  // Corrected age starts from due date, not birth date
+    const dueDate = new Date(birthDate.getTime() + babyEarly * 24 * 60 * 60 * 1000);
+
+    // Calculates start of window from due date
+    const startWindow = new Date(dueDate.getTime());
+    startWindow.setMonth(startWindow.getMonth() + 3);
+
+    // Calculates start of window from due date
+    const endWindow = new Date(dueDate.getTime());
+    endWindow.setMonth(endWindow.getMonth() + 4);
+
+    const events = [
+        {
+            title: 'EDI Visit 2', 
+            id: '000',
+            dob: birthDate,
+            daysEarly: babyEarly,
+            start: startWindow,
+            end: endWindow,
+            type: 'window',
+            study: 'EDI'
+        }
+    ]
+
+    return events
+}
+
+
+
+
+
+
+
+
+
+
+
+

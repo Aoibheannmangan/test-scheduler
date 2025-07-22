@@ -108,7 +108,7 @@ const ToggleAppointment = ({ onAddAppointment }) => {
                   id="study"
                   value={patientStudy}
                   onChange={(e) => setPatientStudy(e.target.value)}
-                >
+                  required>
                   <option value="AIMHIGH">AIMHIGH</option>
                   <option value="COOLPRIME">COOLPRIME</option>
                   <option value="EDI">EDI</option>

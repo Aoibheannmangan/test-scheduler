@@ -3,7 +3,7 @@ import './calender.css';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { generateAimHighAppointments, generateCoolPrimeAppointments } from './data/windowEventCalc';
+import { generateAimHighAppointments, generateCoolPrimeAppointments, generateEDIAppointment } from './data/windowEventCalc';
 import ClickableDateCell from './components/clickableCell';
 import { eventPropGetter } from './data/eventPropGetter';
 import ToggleAppointment from './components/toggleAppointment';
@@ -62,6 +62,8 @@ const MyCalendar = () => {
     studyWindows = generateAimHighAppointments(birthDate, babyDaysEarly);
   } else if (patient.study === "COOLPRIME") {
     studyWindows = generateCoolPrimeAppointments(birthDate, babyDaysEarly);
+  } else if (patient.study === "EDI") {
+    studyWindows = generateEDIAppointment(birthDate, babyDaysEarly);
   }
 
   // Filter only window type (just in case)
