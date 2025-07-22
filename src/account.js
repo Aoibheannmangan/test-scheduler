@@ -38,7 +38,6 @@ const Account = () => {
     <div className="AccountInfo">
       <h1>My Patient Information</h1>
       <a href="info" className="edit">Add Patients</a>
-      <a href="login" className="logout">Log Out</a>
       {userList.map((user) => (
         <div className="display" key={user.id}>
           <div className="card-header">

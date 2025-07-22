@@ -19,9 +19,7 @@ const Navbar = () => {
 
             <div className="navbar-right">
                 <Link to="/account" className="nav-link">My Patients</Link>
-                <Link to="/account" className="user-icon">
-                    <i className="fas fa-user"></i>
-                </Link>
+                <Link to="/login" className="nav-link">Log Out</Link>
             </div>
         </nav>
     );

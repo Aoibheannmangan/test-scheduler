@@ -90,6 +90,9 @@ const LogIn = () => {
                     required
                   />
                 </div>
+                <div className="forgot-password-link">
+                    <a href="/forgotpsw">Forgot Password?</a>
+                </div>
               </div>
               <button 
                 type="submit"
