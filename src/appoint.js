@@ -3,7 +3,7 @@ import './appoint.css';
 import dummyEvents from './data/dummyEvents'; // Dummy data needs to be replaced with actual data in proper DB
 import { useAppointmentFilters } from './components/useAppointmentFilters';
 import './components/useAppointmentFilters.css'
-import { generateAimHighAppointments, generateCoolPrimeAppointments } from './data/windowEventCalc';
+import { generateAimHighAppointments, generateCoolPrimeAppointments, generateEDIAppointment } from './data/windowEventCalc';
 
 const Appointments = () => {
 
@@ -99,30 +99,34 @@ const Appointments = () => {
         </div>
 
         <ul className="appointmentList">
+            <li className='headings-row'>
+            <div className='heading-left'><strong>Patient ID</strong></div>
+            <div className='heading-center'><strong>Kildare</strong></div>
+            <div className='heading-right'><strong>Placeholder Right</strong></div>
+            </li>
+
+            
             {filteredAppointments.map(event => (
             <li key={event.id} className="ID_element">
-                
+                <div 
+                className='idRow'>
                 {/*Patient ID Row*/}
                 <label
                 className='patientRow'
                 onClick={() => toggleCollapseIds(event.id)}
                 >
-                Patient ID: {event.id} {expandedIds[event.id] ? '-' : '+'} {' '}
+                {event.id} {expandedIds[event.id] ? '-' : '+'} {' '}
                 {event.type === "window" && (
-                <span
-                    style={{
-                    display: 'inline-block',
-                    width: '10px',
-                    height: '10px',
-                    borderRadius: '50%',
-                    backgroundColor: 'red',
-                    marginRight: '6px',
-                    verticalAlign: 'middle',
-                    }}
-                    title="Visit Window Active"
+                <span 
+                    // Red circle that appears showing patient is yet to be booked in their window
+                    className='visitWindowNotifier'
+                    title='Visit Window Active'
                 />
                 )}
                 </label>
+                </div>
+
+
 
                 {/*Main Info Body when expanded*/}
                 {expandedIds[event.id] && (
@@ -142,6 +146,8 @@ const Appointments = () => {
                         windowData = generateAimHighAppointments(birthDate, daysEarly);
                     } else if (event.study === 'COOLPRIME') {
                         windowData = generateCoolPrimeAppointments(birthDate, daysEarly);
+                    } else if (event.study === 'EDI') {
+                        windowData = generateEDIAppointment(birthDate, daysEarly)
                     }
 
                     const { start, end } = windowData[0];

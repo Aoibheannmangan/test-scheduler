@@ -42,6 +42,7 @@ label {
   font-size: 1rem;
   display: block;
   padding: 0.5em 0;
+
 }
 label:hover {
   color: #0077cc;
@@ -62,6 +63,16 @@ label:hover {
   height:90px;
 }
 
+.visitWindowNotifier {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-Radius: 50%;
+  background-Color: #a02020c0;
+  margin-Right: 6px;
+  vertical-Align: middle;
+}
+
 .filterRowBox {
   align-items: center;
   display: flex;
@@ -71,4 +82,39 @@ label:hover {
 .patientRow {
   cursor: pointer;
   font-weight: bold; 
+}
+
+.headings-row,
+.ID_element-row {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.heading-left,
+.heading-center,
+.heading-right{
+  flex: 1;
+}
+
+.heading-center{
+  text-align: center;
+}
+
+.heading-right {
+  text-align: right;
+}
+
+.idRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.patientRow {
+  cursor: pointer;
+  font-weight: bold;
 }
