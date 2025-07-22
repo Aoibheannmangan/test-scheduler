@@ -3,6 +3,7 @@ import './appoint.css';
 import dummyEvents from './data/dummyEvents'; // Dummy data needs to be replaced with actual data in proper DB
 import { useAppointmentFilters } from './components/useAppointmentFilters';
 import './components/useAppointmentFilters.css'
+import { generateAimHighAppointments, generateCoolPrimeAppointments } from './data/windowEventCalc';
 
 const Appointments = () => {
 
@@ -103,21 +104,67 @@ const Appointments = () => {
                 
                 {/*Patient ID Row*/}
                 <label
-                style={{ cursor: 'pointer', fontWeight: 'bold' }}
+                className='patientRow'
                 onClick={() => toggleCollapseIds(event.id)}
                 >
-                Patient ID: {event.id} {expandedIds[event.id] ? '-' : '+'}
+                Patient ID: {event.id} {expandedIds[event.id] ? '-' : '+'} {' '}
+                {event.type === "window" && (
+                <span
+                    style={{
+                    display: 'inline-block',
+                    width: '10px',
+                    height: '10px',
+                    borderRadius: '50%',
+                    backgroundColor: 'red',
+                    marginRight: '6px',
+                    verticalAlign: 'middle',
+                    }}
+                    title="Visit Window Active"
+                />
+                )}
                 </label>
 
                 {/*Main Info Body when expanded*/}
                 {expandedIds[event.id] && (
                 <div className="info">
                     <strong>{event.title}</strong><br />
-                    <strong>Visit Window:</strong> {event.start.toDateString()} – {event.end.toDateString()}<br />
                     <strong>Name:</strong> {event.name}<br />
                     <strong>Location:</strong> {event.location}<br />
                     <strong>Study:</strong> {event.study}<br />
-                    
+
+                    {/*Visit window in info if a window patient*/}
+                    {event.type === "window" && (() => {
+                    const birthDate = new Date(event.dob);
+                    const weeksEarly = event.weeksEarly || 0;
+                    let windowData = [];
+
+                    if (event.study === 'AIMHIGH') {
+                        windowData = generateAimHighAppointments(birthDate, weeksEarly);
+                    } else if (event.study === 'COOLPRIME') {
+                        windowData = generateCoolPrimeAppointments(birthDate, weeksEarly);
+                    }
+
+                    const { start, end } = windowData[0];
+
+                    return (
+                        <div>
+                        <strong>Visit Window:</strong>{' '}
+                        {new Date(start).toLocaleDateString(undefined, {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                        })}{' '}
+                        –{' '}
+                        {new Date(end).toLocaleDateString(undefined, {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                        })}
+                        <br />
+                        </div>
+                    );
+                    })()}
+
                     {/*Additional Notes Dropdown*/}
                     <label
                         style={{ cursor: 'pointer', fontWeight: 'bold' }}

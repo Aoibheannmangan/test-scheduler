@@ -49,22 +49,26 @@ label:hover {
 
 /* Search Bar */
 .searchContainer {
-    min-width: 220px;
-    max-width: 1000px;
-    margin: 2px auto 0 auto; 
-    background: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-    padding: 16px 16px;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    height:90px;
+  min-width: 220px;
+  max-width: 1000px;
+  margin: 2px auto 0 auto; 
+  background: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  padding: 16px 16px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  height:90px;
 }
 
 .filterRowBox {
-    align-items: center;
-    display: flex;
-    gap: 15px;
-    padding-left: 30px;
+  align-items: center;
+  display: flex;
+  gap: 15px;
+  padding-left: 30px;
+}
+.patientRow {
+  cursor: pointer;
+  font-weight: bold; 
 }
