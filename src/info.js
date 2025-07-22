@@ -10,6 +10,7 @@ const UserInfo = () => {
   const [patientSex, setPatientSex] = useState('');
   const [patientCondition, setPatientCondition] = useState('');
   const [patientStudy, setPatientStudy] = useState('');
+  const [patientSite, setPatientSite] = useState('');
   const [patientInfo, setPatientInfo] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
@@ -27,6 +28,7 @@ const UserInfo = () => {
       setPatientSex(patient.Sex);
       setPatientCondition(patient.Condition);
       setPatientStudy(patient.Study);
+      setPatientSite(patient.site)
       setPatientInfo(patient.Info);
       setEditId(patient.id);
       setIsEditing(true);
@@ -37,13 +39,14 @@ const UserInfo = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const newPatient = {
-      id: uuidv4(),
+      id: isEditing ? editId : uuidv4(),
       Name: patientName,
       DOB: patientDOB,
-      DaysEarly: patientEarly,
+      Early: patientEarly,
       Sex: patientSex,
       Condition: patientCondition,
       Study: patientStudy,
+      Site: patientSite,
       Info: patientInfo,
     };
 
@@ -89,7 +92,7 @@ const UserInfo = () => {
               required
             />
 
-            <label htmlFor="early">Amount of days early:</label>
+            <label htmlFor="early">Amount of Days early:</label>
             <input
               type="text"
               id="age"
@@ -105,6 +108,7 @@ const UserInfo = () => {
                 name="sex"
                 value={patientSex}
                 onChange={(e) => setPatientSex(e.target.value)}>
+              <option value="">-- Select Sex --</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
             </select>
@@ -125,10 +129,27 @@ const UserInfo = () => {
               name="study"
               value={patientStudy}
               onChange={(e) => setPatientStudy(e.target.value)}>
+                <option value="">-- Select Study --</option>
                 <option value="AIMHIGH">AIMHIGH</option>
                 <option value="COOLPRIME">COOLPRIME</option>
                 <option value="EDI">EDI</option>
                 <option value="Other">Other</option>
+            </select>
+
+            
+            <label htmlFor="site">Patient's Site: </label>
+            <select
+              id="site"
+              name="site"
+              value={patientSite}
+              onChange={(e) => setPatientSite(e.target.value)}>
+                <option value="">-- Select Site --</option>
+                <option value="Cork">Cork</option>
+                <option value="Coombe">Coombe</option>
+                <option value="NMH">NMH</option>
+                <option value="Rotunda">Rotunda</option>
+                <option value="UHW">UHW</option>
+                <option value="CHI">CHI</option>
             </select>
 
             <label htmlFor="notes">Additional Notes: </label>

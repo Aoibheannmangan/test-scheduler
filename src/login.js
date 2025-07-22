@@ -3,6 +3,8 @@ import './login.css';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaLock } from 'react-icons/fa';
 import Alert from './components/Alert';
+import backgroundImage from './assets/logo.jpg';
+
 
 const LogIn = () => {
   const [staffId, setStaffId] = useState('');
@@ -38,7 +40,15 @@ const LogIn = () => {
   };
 
   return (
-    <div className="login-container">
+    <div className="login-container" 
+   /* style={{
+        backgroundImage: `linear-gradient(to right, rgba(141, 90, 151, 0.97), rgba(202, 141, 214, 0.97)), url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundBlendMode: 'multiply;',
+    }} */>
+
       <div className="form-wrapper">
         <div className="login-card">
 
