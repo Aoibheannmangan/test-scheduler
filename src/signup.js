@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './signup.css';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaLock, FaEnvelope } from 'react-icons/fa';
+import Alert from './components/Alert';
 
 const SignUp = () => {
   const [email, setEmail] = useState('');
@@ -17,16 +18,19 @@ const SignUp = () => {
     length: false,
   });
 
+  const [showAlert, setShowAlert] = useState(true);
+  const [alert, setAlert] = useState(null);
+
   const navigate = useNavigate();
 
-  //Password Validation for making sure the password has the different requirements
+  // Password Validation for making sure the password has the different requirements
   const handlePasswordChange = (e) => {
     const value = e.target.value;
     setPassword(value);
 
     setPasswordValidations({
-    //Password needs a lowercase letter, an uppercase letter, a number and needs to be longer than eight characters
-      lowercase: /[a-z]/.test(value),  
+      // Password needs a lowercase letter, an uppercase letter, a number and needs to be longer than eight characters
+      lowercase: /[a-z]/.test(value),
       uppercase: /[A-Z]/.test(value),
       number: /[0-9]/.test(value),
       length: value.length >= 8,
@@ -34,38 +38,36 @@ const SignUp = () => {
   };
 
   const isEmailRegistered = (email) => {
-      const users = JSON.parse(localStorage.getItem("users")) || [];
-
-      return users.some((user) => user.email === email);
+    const users = JSON.parse(localStorage.getItem("users")) || [];
+    return users.some((user) => user.email === email);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    //For email validation, makes sure it ends in @ucc.ie 
+    // For email validation, makes sure it ends in @ucc.ie 
     const emailPattern = /^[a-zA-Z0-9._+-]+@ucc\.ie$/;
     if (!emailPattern.test(email)) {
-      alert('Invalid email. Please use your UCC email');
+      setAlert({ message: "Invalid format. Please use your UCC Email", type: "warning" });
       return;
     }
 
-    //For ID validation, makes sure it is exactly 5 numbers long
+    // Also Checks if the email has already been used
+    if (isEmailRegistered(email)) {
+      setAlert({ message: "Email is already registered", type: "info" });
+      return;
+    }
+
+    // For ID validation, makes sure it is exactly 5 numbers long
     const staffIdPattern = /^\d{5}$/;
     if (!staffIdPattern.test(staffId)) {
-      alert('Invalid Staff ID. Please use the correct format');
+      setAlert({ message: "Invalid Staff ID Format", type: "warning" });
       return;
     }
 
-    if (isEmailRegistered(email)) {
-      alert("Email is already registered!");
-      return;
-    }
-    
-
-  
-    //Makes sure password and initial password works
+    // Makes sure password and initial password works
     if (password !== repeatPassword) {
-      alert('Passwords do not match! Please try again');
+      setAlert({ message: "Passwords do not match. Please try again", type: "error" });
       return;
     }
 
@@ -79,20 +81,26 @@ const SignUp = () => {
     users.push(userData);
     localStorage.setItem("users", JSON.stringify(users));
 
+    // Loading
     setIsSubmitting(true);
     setTimeout(() => {
-      alert('Account Successfully Created');
+      setShowAlert({ message: "Login Successful!", type: "success" });
       setIsSubmitting(false);
       navigate('/calender');
     }, 2000);
-
-
   };
 
   return (
     <div className="signup-container">
       <div className="form-wrapper">
         <div className="signup-card">
+          {alert && (
+            <Alert
+              message={alert.message}
+              type={alert.type}
+              onClose={() => setAlert(null)}
+            />
+          )}
           <form onSubmit={handleSubmit}>
             <div className="form-header">
               <h1>Sign Up</h1>
@@ -158,16 +166,17 @@ const SignUp = () => {
 
               <div className="clearfix">
                 <div className="button-row">
-                  <button 
-                    type="submit" 
+                  <button
+                    type="submit"
                     className="signupbtn"
-                    disabled={isSubmitting}>
+                    disabled={isSubmitting}
+                  >
                     {isSubmitting ? (
-                        <div className="spinner"></div>
-                    ) : ( 
-                        'Sign Up'
+                      <div className="spinner"></div>
+                    ) : (
+                      'Sign Up'
                     )}
-                        </button>
+                  </button>
                 </div>
               </div>
             </div>
