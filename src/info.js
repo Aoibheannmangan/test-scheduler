@@ -1,35 +1,66 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './info.css';
 import { useNavigate } from 'react-router-dom';
+import { v4 as uuidv4} from 'uuid';
 
 const UserInfo = () => {
-  const [patientFirstName, setPatientFirstName] = useState('');
-  const [patientLastName, setPatientLastName] = useState('');
+  const [patientName, setPatientName] = useState('');
   const [patientDOB, setPatientDOB] = useState('');
-  const [patientAge, setPatientAge] = useState('');
+  const [patientEarly, setPatientEarly] = useState('');
   const [patientSex, setPatientSex] = useState('');
-  const [patientAddress, setPatientAddress] = useState('');
   const [patientCondition, setPatientCondition] = useState('');
-  const [patientGP, setPatientGP] = useState('');
+  const [patientStudy, setPatientStudy] = useState('');
+  const [patientInfo, setPatientInfo] = useState('');
+  const [isEditing, setIsEditing] = useState(false);
+  const [editId, setEditId] = useState(null);
+
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const editData = localStorage.getItem("editPatient");
+    if (editData) {
+      const patient = JSON.parse(editData);
+      setPatientName(patient.Name);
+      setPatientDOB(patient.DOB);
+      setPatientEarly(patient.WeeksEarly);
+      setPatientSex(patient.Sex);
+      setPatientCondition(patient.Condition);
+      setPatientStudy(patient.Study);
+      setPatientInfo(patient.Info);
+      setEditId(patient.id);
+      setIsEditing(true);
+    }
+  }, []);
 
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const userData = {
-      FirstName: patientFirstName,
-      LastName: patientLastName,
+    const newPatient = {
+      id: uuidv4(),
+      Name: patientName,
       DOB: patientDOB,
-      Age: patientAge,
+      WeeksEarly: patientEarly,
       Sex: patientSex,
-      Address: patientAddress,
       Condition: patientCondition,
-      GP: patientGP
+      Study: patientStudy,
+      Info: patientInfo,
     };
-    localStorage.setItem("userInfo", JSON.stringify(userData));
-    alert("Data recorded successfully!");
+
+    
+    let patients = JSON.parse(localStorage.getItem("userInfoList")) || [];
+
+    if (isEditing) {
+      patients = patients.map(p => p.id === newPatient.id ? newPatient : p);
+      localStorage.removeItem("editPatient");
+    } else {
+      patients.push(newPatient);
+    }
+
+    localStorage.setItem("userInfoList", JSON.stringify(patients));
+    alert("Patient data saved!");
     navigate('/account');
+
     
   };
 
@@ -39,27 +70,16 @@ const UserInfo = () => {
       <fieldset>
         <div className="form-border">
           <form onSubmit={handleSubmit}>
-            <label htmlFor="firstname">First Name</label>
+            <label htmlFor="name">Patient Name:</label>
             <input
               type="text"
               id="firstname"
-              value={patientFirstName}
-              onChange={(e) => setPatientFirstName(e.target.value)}
-              placeholder="Enter First Name"
+              value={patientName}
+              onChange={(e) => setPatientName(e.target.value)}
+              placeholder="Enter Patient Name"
               required
             />
-
-            <label htmlFor="lastname">Last Name</label>
-            <input
-              type="text"
-              id="lastname"
-              value={patientLastName}
-              onChange={(e) => setPatientLastName(e.target.value)}
-              placeholder="Enter Last Name"
-              required
-            />
-
-            <label htmlFor="patientDOB">Patient Date of Birth</label>
+            <label htmlFor="patientDOB">Patient Date of Birth:</label>
             <input
               type="date"
               id="patientDOB"
@@ -69,17 +89,17 @@ const UserInfo = () => {
               required
             />
 
-            <label htmlFor="age">Age</label>
+            <label htmlFor="early">Amount of weeks early:</label>
             <input
               type="text"
               id="age"
-              value={patientAge}
-              onChange={(e) => setPatientAge(e.target.value)}
-              placeholder="Enter Age"
+              value={patientEarly}
+              onChange={(e) => setPatientEarly(e.target.value)}
+              placeholder="Enter the Amount of Weeks the Patient was Early"
               required
             />
 
-            <label htmlFor="sex">Patient's Sex</label>
+            <label htmlFor="sex">Patient's Sex: </label>
             <select 
                 id="sex" 
                 name="sex"
@@ -89,17 +109,7 @@ const UserInfo = () => {
               <option value="Female">Female</option>
             </select>
 
-            <label htmlFor="address">Patient's Address</label>
-            <input
-              type="text"
-              id="address"
-              value={patientAddress}
-              onChange={(e) => setPatientAddress(e.target.value)}
-              placeholder="Enter Address"
-              required
-            />
-
-            <label htmlFor="condition">Patient's Condition</label>
+            <label htmlFor="condition">Patient's Condition: </label>
             <input
               type="text"
               id="condition"
@@ -109,17 +119,31 @@ const UserInfo = () => {
               required
             />
 
-              <label htmlFor="gp">Patient's General Practitioner</label>
+            <label htmlFor="study">Patient's Study: </label>
+            <select
+              id="study"
+              name="study"
+              value={patientStudy}
+              onChange={(e) => setPatientStudy(e.target.value)}>
+                <option value="AIMHIGH">AIMHIGH</option>
+                <option value="COOLPRIME">COOLPRIME</option>
+                <option value="EDI">EDI</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <label htmlFor="notes">Additional Notes: </label>
             <input
               type="text"
-              id="gp"
-              value={patientGP}
-              onChange={(e) => setPatientGP(e.target.value)}
-              placeholder="Enter Patient GP"
+              id="notes"
+              value={patientInfo}
+              onChange={(e) => setPatientInfo(e.target.value)}
+              placeholder="Enter Additional Notes"
               required
             />
 
-            <button type="submit">Submit</button>
+
+
+            <button type="submit">{isEditing ? "Update" : "Submit"}</button>
           </form>
         </div>
       </fieldset>
