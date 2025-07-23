@@ -41,7 +41,8 @@ const Account = () => {
       {userList.map((user) => (
         <div className="display" key={user.id}>
           <div className="card-header">
-            <h3>{user.Name}</h3>
+            <h3><strong>Id: </strong>{user.id}</h3>
+            <h3><strong>Name: </strong>{user.Name}</h3>
             <div className="icon-actions">
               <button onClick={() => handleEdit(user)} title="Edit">
                 <FaEdit />
@@ -51,6 +52,7 @@ const Account = () => {
               </button>
             </div>
           </div>
+          <hr className="divider" /> 
           <ul>
             <li><strong>Date of Birth:</strong> {user.DOB}</li>
             <li><strong>Days Early:</strong> {user.DaysEarly}</li>
