@@ -16,14 +16,14 @@ export function generateAimHighAppointments(birthDate, babyEarly) {
         {
             title: 'AIMHIGH Visit 2',
             visitNum: 2,
-            id: '000',
-            dob: birthDate,
-            daysEarly: babyEarly,
-            ooa: false,
+            id: '000-000',
+            DOB: birthDate,
+            DaysEarly: babyEarly,
+            OutOfArea: false,
             start,
             end,
             type: 'window',
-            study: 'AIMHIGH',
+            Study: 'AIMHIGH',
         },
     ];
 
@@ -57,7 +57,7 @@ export function generateCoolPrimeAppointments(birthDate, babyEarly) {
       start: startWindow,
       end: endWindow,
       type: 'window',
-      study: 'COOLPRIME',
+      Study: 'COOLPRIME',
     },
   ];
 
@@ -90,7 +90,7 @@ export function generateEDIAppointment(birthDate, babyEarly) {
             start: startWindow,
             end: endWindow,
             type: 'window',
-            study: 'EDI'
+            Study: 'EDI'
         }
     ]
 

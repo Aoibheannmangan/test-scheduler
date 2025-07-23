@@ -1,14 +1,14 @@
 export function eventPropGetter(event)  { // Event study getter function. See if AIMHIGH, COOLPRIME OR EDI
   let style = {};
 
-  if (event.study === 'AIMHIGH') {
+  if (event.Study === 'AIMHIGH') {
     style = {
       backgroundColor: '#af4c4c', // Color for AIMHIGH
       borderRadius: '4px',
       border: 'none',
       padding: '2px',
     };
-  } else if (event.study === 'COOLPRIME') {
+  } else if (event.Study === 'COOLPRIME') {
     style = {
       backgroundColor: '#614caf', // Color for COOLPRIME
       color: '#fff',
