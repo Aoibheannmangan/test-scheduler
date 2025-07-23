@@ -50,6 +50,17 @@ const SignUp = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    const isValid = 
+      passwordValidations.lowercase &&
+      passwordValidations.uppercase &&
+      passwordValidations.number &&
+      passwordValidations.length;
+
+    if (!isValid) {
+      setAlert({ message: "Invalid Password. Must contain at least 8 characters, including uppercase and lowercase letters and a number", type: "warning" });
+      return;
+    }
+
     // For email validation, makes sure it ends in @ucc.ie 
     const emailPattern = /^[a-zA-Z0-9._+-]+@ucc\.ie$/;
     if (!emailPattern.test(email)) {
@@ -125,7 +136,7 @@ const SignUp = () => {
                     placeholder="Enter Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    autocomplete="off"
+                    autoComplete="off"
                     required
                   />
                 </div>
@@ -140,7 +151,7 @@ const SignUp = () => {
                     placeholder="Enter Staff ID"
                     value={staffId}
                     onChange={(e) => setStaffId(e.target.value)}
-                    autocomplete="off"
+                    autoComplete="off"
                     required
                   />
                 </div>
@@ -157,7 +168,7 @@ const SignUp = () => {
                     onChange={handlePasswordChange}
                     onFocus={() => setShowPasswordMessage(true)}
                     onBlur={() => setShowPasswordMessage(false)}
-                    autocomplete="off"
+                    autoComplete="off"
                     required
                   />
                 </div>
@@ -172,7 +183,7 @@ const SignUp = () => {
                     placeholder="Please re-enter your password"
                     value={repeatPassword}
                     onChange={(e) => setRepeatPassword(e.target.value)}
-                    autocomplete="off"
+                    autoComplete="off"
                     required
                   />
                 </div>

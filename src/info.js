@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './info.css';
 import { useNavigate } from 'react-router-dom';
-import { v4 as uuidv4} from 'uuid';
 
 const UserInfo = () => {
   const [patientName, setPatientName] = useState('');
@@ -35,11 +34,25 @@ const UserInfo = () => {
     }
   }, []);
 
+  const generatePatientID = () => {
+    const prefix = '230';
+    const patients = JSON.parse(localStorage.getItem('userInfoList')) || [];
+    const numbers = patients
+      .map(p => p.id)
+      .filter(id => id && id.startsWith(prefix + '-'))
+      .map(id => parseInt(id.split('-')[1], 10))
+      .filter(num => !isNaN(num));
+    const maxNumber = numbers.length > 0 ? Math.max(...numbers) : 0;
+    const newNumber = maxNumber + 1;
+
+    return `${prefix}-${String(newNumber).padStart(3, '0')}`;
+  };
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const newPatient = {
-      id: isEditing ? editId : uuidv4(),
+      id: isEditing ? editId : generatePatientID(),
       Name: patientName,
       DOB: patientDOB,
       Early: patientEarly,
