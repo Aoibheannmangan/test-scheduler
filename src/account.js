@@ -53,11 +53,12 @@ const Account = () => {
           </div>
           <ul>
             <li><strong>Date of Birth:</strong> {user.DOB}</li>
-            <li><strong>Days Early:</strong> {user.Early}</li>
+            <li><strong>Days Early:</strong> {user.DaysEarly}</li>
             <li><strong>Sex:</strong> {user.Sex}</li>
             <li><strong>Condition:</strong> {user.Condition}</li>
             <li><strong>Study:</strong> {user.Study}</li>
-            <li><strong>Site:</strong> {user.Site}</li>
+            <li><strong>Site:</strong> {user.site}</li>
+            <li><strong>Out of Area: </strong>{user.OutOfArea}</li>
             <li><strong>Additional Notes:</strong> {user.Info}</li>
           </ul>
         </div>
