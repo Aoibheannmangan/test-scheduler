@@ -10,6 +10,7 @@ import ToggleAppointment from './components/toggleAppointment';
 import { useAppointmentFilters } from './components/useAppointmentFilters';
 import './components/useAppointmentFilters.css';
 import dummyEvents from './data/dummyEvents';
+import CustomToolbar from './components/customToolbar'
 
 // Sets current date and time for calender
 const localizer = momentLocalizer(moment);
@@ -125,7 +126,9 @@ const {
           setView('day');
         }}
         selectable
+        views={['month', 'week', 'day', 'agenda']}
         components={{
+          toolbar: CustomToolbar,
           dateCellWrapper: (props) => (
             <ClickableDateCell {...props} onSelectSlot={(slot) => {
               setDate(slot.start);

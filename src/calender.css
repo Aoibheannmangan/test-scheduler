@@ -11,7 +11,7 @@ body {
   border-radius: 20px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
   padding: 20px;
-  width: 150%;
+  width: 100%;
   height: 700px;
   max-width: 1500px;
   margin: 18px auto;
@@ -40,54 +40,54 @@ body {
   color: #212B32;
   border-radius: 10px;
   overflow: hidden;
+  border: 1px solid #ccc;
 }
 
-/* Toolbar */
-.rbc-toolbar {
-  background-color: #ffffff;
-  color: #00473E;
+.custom-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 10px;
+  background-color: white;
   border-bottom: 2px solid #02A78B;
   border-radius: 10px 10px 0 0;
   font-style: italic;
-  display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
+  gap: 10px;
 }
 
-/* Toolbar button */
-.rbc-toolbar button {
-  background-color: #ffffff;
-  border: none;
-  color: #ffffff;
-  padding: 8px 12px;
-  margin: 0 5px;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-/* Button group calender*/
-.rbc-btn-group {
-  display:flex;
-  background-color: #ffffff;
+.btn-group {
+  display: flex;
   border: 1px solid #7f9e99;
   border-radius: 10px;
-  padding: 0;
-  overflow: visible;
-
+  overflow: hidden;
 }
 
-.rbc-btn-group button {
+.btn-group button {
   background-color: white;
   border: none;
+  padding: 8px 14px;
   cursor: pointer;
-  padding: 6px 12px;
+  font-weight: bold;
+  color: #00473E;
+  transition: 0.2s;
 }
 
-.rbc-btn-group button:hover {
-  background-color: #8bceba;
+.btn-group button:hover {
+  background-color: #d9f4ef;
 }
+
+.btn-group .active {
+  background-color: #02A78B;
+  color: white;
+}
+
+.toolbar-label {
+  font-size: 1.2em;
+  flex-grow: 1;
+  text-align: center;
+}
+
 
 /* Day Headers */
 .rbc-header {
