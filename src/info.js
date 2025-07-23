@@ -10,10 +10,10 @@ const UserInfo = () => {
   const [patientCondition, setPatientCondition] = useState('');
   const [patientStudy, setPatientStudy] = useState('');
   const [patientSite, setPatientSite] = useState('');
+  const [patientOutOfArea, setPatientOutOfArea] = useState('');
   const [patientInfo, setPatientInfo] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
-
 
   const navigate = useNavigate();
 
@@ -27,7 +27,8 @@ const UserInfo = () => {
       setPatientSex(patient.Sex);
       setPatientCondition(patient.Condition);
       setPatientStudy(patient.Study);
-      setPatientSite(patient.site)
+      setPatientSite(patient.site);
+      setPatientOutOfArea(patient.OutOfArea);
       setPatientInfo(patient.Info);
       setEditId(patient.id);
       setIsEditing(true);
@@ -35,7 +36,7 @@ const UserInfo = () => {
   }, []);
 
   const generatePatientID = () => {
-    const prefix = '230';
+    const prefix = '230'; //Will be done in the future to change depending on the site
     const patients = JSON.parse(localStorage.getItem('userInfoList')) || [];
     const numbers = patients
       .map(p => p.id)
@@ -48,22 +49,21 @@ const UserInfo = () => {
     return `${prefix}-${String(newNumber).padStart(3, '0')}`;
   };
 
-
   const handleSubmit = (e) => {
     e.preventDefault();
     const newPatient = {
       id: isEditing ? editId : generatePatientID(),
       Name: patientName,
       DOB: patientDOB,
-      Early: patientEarly,
+      DaysEarly: patientEarly,
       Sex: patientSex,
       Condition: patientCondition,
       Study: patientStudy,
-      Site: patientSite,
+      site: patientSite,
+      OutOfArea: patientOutOfArea,
       Info: patientInfo,
     };
 
-    
     let patients = JSON.parse(localStorage.getItem("userInfoList")) || [];
 
     if (isEditing) {
@@ -76,8 +76,6 @@ const UserInfo = () => {
     localStorage.setItem("userInfoList", JSON.stringify(patients));
     alert("Patient data saved!");
     navigate('/account');
-
-    
   };
 
   return (
@@ -93,92 +91,116 @@ const UserInfo = () => {
               value={patientName}
               onChange={(e) => setPatientName(e.target.value)}
               placeholder="Enter Patient Name"
-              autocomplete="off"
+              autoComplete="off"
               required
             />
+
             <label htmlFor="patientDOB">Patient Date of Birth:</label>
             <input
               type="date"
               id="patientDOB"
               value={patientDOB}
               onChange={(e) => setPatientDOB(e.target.value)}
-              placeholder="Enter the Patient's Date of Birth"
               required
             />
 
-            <label htmlFor="early">Amount of Days early:</label>
+            <label htmlFor="early">Amount of Days Early:</label>
             <input
               type="number"
-              id="age"
+              id="early"
               value={patientEarly}
               onChange={(e) => setPatientEarly(e.target.value)}
               placeholder="Enter the Amount of Days the Patient was Early"
               required
             />
 
-            <label htmlFor="sex">Patient's Sex: </label>
-            <select 
-                id="sex" 
-                name="sex"
-                value={patientSex}
-                onChange={(e) => setPatientSex(e.target.value)}>
+            <label htmlFor="sex">Patient's Sex:</label>
+            <select
+              id="sex"
+              name="sex"
+              value={patientSex}
+              onChange={(e) => setPatientSex(e.target.value)}
+            >
               <option value="">-- Select Sex --</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
             </select>
 
-            <label htmlFor="condition">Patient's Condition: </label>
+            <label htmlFor="condition">Patient's Condition:</label>
             <input
               type="text"
               id="condition"
               value={patientCondition}
               onChange={(e) => setPatientCondition(e.target.value)}
               placeholder="Enter Patient Condition"
-              autocomplete="off"
+              autoComplete="off"
               required
             />
 
-            <label htmlFor="study">Patient's Study: </label>
+            <label htmlFor="study">Patient's Study:</label>
             <select
               id="study"
               name="study"
               value={patientStudy}
-              onChange={(e) => setPatientStudy(e.target.value)}>
-                <option value="">-- Select Study --</option>
-                <option value="AIMHIGH">AIMHIGH</option>
-                <option value="COOLPRIME">COOLPRIME</option>
-                <option value="EDI">EDI</option>
-                <option value="Other">Other</option>
+              onChange={(e) => setPatientStudy(e.target.value)}
+            >
+              <option value="">-- Select Study --</option>
+              <option value="AIMHIGH">AIMHIGH</option>
+              <option value="COOLPRIME">COOLPRIME</option>
+              <option value="EDI">EDI</option>
+              <option value="Other">Other</option>
             </select>
 
-            
-            <label htmlFor="site">Patient's Site: </label>
+            <label htmlFor="site">Patient's Site:</label>
             <select
               id="site"
               name="site"
               value={patientSite}
-              onChange={(e) => setPatientSite(e.target.value)}>
-                <option value="">-- Select Site --</option>
-                <option value="Cork">Cork</option>
-                <option value="Coombe">Coombe</option>
-                <option value="NMH">NMH</option>
-                <option value="Rotunda">Rotunda</option>
-                <option value="UHW">UHW</option>
-                <option value="CHI">CHI</option>
+              onChange={(e) => setPatientSite(e.target.value)}
+            >
+              <option value="">-- Select Site --</option>
+              <option value="Cork">Cork</option>
+              <option value="Coombe">Coombe</option>
+              <option value="NMH">NMH</option>
+              <option value="Rotunda">Rotunda</option>
+              <option value="UHW">UHW</option>
+              <option value="CHI">CHI</option>
             </select>
 
-            <label htmlFor="notes">Additional Notes: </label>
+            <label>Out of Area?</label>
+            <div className="radio-group">
+              <label>
+                <input
+                  type="radio"
+                  name="area"
+                  value="Yes"
+                  checked={patientOutOfArea === "Yes"}
+                  onChange={(e) => setPatientOutOfArea(e.target.value)}
+                />
+                Yes
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="area"
+                  value="No"
+                  checked={patientOutOfArea === "No"}
+                  onChange={(e) => setPatientOutOfArea(e.target.value)}
+                />
+                No
+              </label>
+            </div>
+
+            <label htmlFor="notes">Additional Notes:</label>
             <input
               type="text"
               id="notes"
               value={patientInfo}
               onChange={(e) => setPatientInfo(e.target.value)}
               placeholder="Enter Additional Notes"
-              autocomplete="off"
+              autoComplete="off"
               required
             />
-
-
 
             <button type="submit">{isEditing ? "Update" : "Submit"}</button>
           </form>
