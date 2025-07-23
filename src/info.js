@@ -232,8 +232,9 @@ const UserInfo = () => {
               autoComplete="off"
               required
             />
-
-            <button type="submit">{isEditing ? "Update" : "Submit"}</button>
+            <div >
+              <button type="submit" className="submit-button">{isEditing ? "Update" : "Submit"}</button>
+            </div>
           </form>
         </div>
       </fieldset>
