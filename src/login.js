@@ -65,15 +65,7 @@ const LogIn = () => {
   };
 
   return (
-    <div className="login-container" 
-   /* style={{
-        backgroundImage: `linear-gradient(to right, rgba(141, 90, 151, 0.97), rgba(202, 141, 214, 0.97)), url(${backgroundImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        backgroundBlendMode: 'multiply;',
-    }} */>
-
+    <div className="login-container">
       <div className="form-wrapper">
         <div className="login-card">
 

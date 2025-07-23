@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './signup.css';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaLock, FaEnvelope } from 'react-icons/fa';
@@ -9,6 +9,7 @@ const SignUp = () => {
   const [staffId, setStaffId] = useState('');
   const [password, setPassword] = useState('');
   const [repeatPassword, setRepeatPassword] = useState('');
+
   const [showPasswordMessage, setShowPasswordMessage] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [passwordValidations, setPasswordValidations] = useState({
@@ -21,7 +22,31 @@ const SignUp = () => {
   const [showAlert, setShowAlert] = useState(true);
   const [alert, setAlert] = useState(null);
 
+  const [capsLockOn, setCapsLockOn] = useState(false);
+
+  const passwordInputRef = useRef(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleKeyUp = (event) => {
+      if (event.getModifierState("CapsLock")) {
+        setCapsLockOn(true);
+      } else {
+        setCapsLockOn(false);
+      }
+    };
+
+    const input = passwordInputRef.current;
+    if (input) {
+      input.addEventListener("keyup", handleKeyUp);
+    }
+
+    return () => {
+      if (input) {
+        input.removeEventListener("keyup", handleKeyUp);
+      }
+    };
+  }, []);
 
   // Password Validation for making sure the password has the different requirements
   const handlePasswordChange = (e) => {
@@ -168,6 +193,7 @@ const SignUp = () => {
                     onChange={handlePasswordChange}
                     onFocus={() => setShowPasswordMessage(true)}
                     onBlur={() => setShowPasswordMessage(false)}
+                    ref={passwordInputRef}
                     autoComplete="off"
                     required
                   />
@@ -186,6 +212,12 @@ const SignUp = () => {
                     autoComplete="off"
                     required
                   />
+
+                  {capsLockOn && (
+                    <div className="caps-warning" style={{ color: 'red', marginTop: '5px'}}>
+                      Warning: Caps Lock is ON
+                    </div>
+                  )}
                 </div>
               </div>
 
