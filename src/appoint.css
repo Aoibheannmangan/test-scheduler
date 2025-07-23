@@ -82,13 +82,20 @@ label:hover {
   align-items: right
 }
 
-.KDotContainer {
+.visitNumContainer {
+  flex: 1;
+  text-align: left;
+  font-weight: bold;
+  padding-left: 50px;
+}
+
+.dotContainer {
   text-align: right;
   padding-right: 100px;
 }
 
 /*Cross indicates whether it's an OOA*/
-.kildareNotifier {
+.OoaNotifier {
   display: inline-block;
   width: 10px;
   height: 10px;

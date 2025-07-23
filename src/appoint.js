@@ -102,6 +102,7 @@ const Appointments = () => {
         <ul className="appointmentList">
             <li className='headings-row'>
             <div className='heading-left'><strong>Patient ID</strong></div>
+            <div className='heading-center'><strong>Visit No.</strong></div>
             <div className='heading-right'><strong>Kildare</strong></div>
             </li>
 
@@ -110,38 +111,52 @@ const Appointments = () => {
             <li key={event.id} className="ID_element">
                 <div 
                 className='idRow'>
-                {/*Patient ID Row*/}
-                <label
-                className='patientRow'
-                onClick={() => toggleCollapseIds(event.id)}
-                >
-                {event.id} {expandedIds[event.id] ? '-' : '+'} {' '}
-                {event.type === "window" && (
-                <span 
-                    // Red circle that appears showing patient is yet to be booked in their window
-                    className='notifier'
-                    title='Visit Window Active'
-                />
-                )}
-                </label>
-                
-                {/*Put notifier under Kildare on right to show OOA - (Out Of Area)*/}
-                <div
-                className='KDotContainer'>
-                    {event.ooa === true && (
-                    <span 
-                    // Blue Dot that appears showing patient is OOA
-                    className='kildareNotifier'
-                    />
+                    {/*Patient ID Row*/}
+                    <label
+                    className='patientRow'
+                    onClick={() => toggleCollapseIds(event.id)}
+                    >
+                        {event.id} {expandedIds[event.id] ? '-' : '+'} {' '}
+                        {event.type === "window" && (
+                        <span 
+                        // Red circle that appears showing patient is yet to be booked in their window
+                        className='notifier'
+                        title='Visit Window Active'
+                        />
+                        )}
+                    </label>
+                            
+                    {/*Display Visit Number*/}
+                    <span className='visitNumContainer'>
+                        {event.visitNum}
+                    </span>
+                                
+
+                    {/*Put notifier under OOA - (Out Of Area)*/}
+
+                    <div 
+                    className='dotContainer'>
+                    {event.ooa === true ? (
+                        <span className='OoaNotifier' title='Out Of Area' />
+                    ) : (
+                        <span style={{ visibility: 'hidden' }} className='OoaNotifier'></span>
                     )}
+                    </div>
                 </div>
-            </div>
 
                 {/*Main Info Body when expanded*/}
                 {expandedIds[event.id] && (
                 <div className="info">
                     <strong>{event.title}</strong><br />
                     <strong>Name:</strong> {event.name}<br />
+                    <strong>Date of Birth: </strong>
+                    {/*Format date of birth*/}
+                    {new Date(event.dob).toLocaleDateString(undefined, {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                        })}
+                    <br />
                     <strong>Location:</strong> {event.location}<br />
                     <strong>Study:</strong> {event.study}<br />
 
