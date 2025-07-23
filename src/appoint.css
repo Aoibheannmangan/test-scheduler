@@ -48,7 +48,7 @@ label:hover {
   color: #0077cc;
 }
 
-/* Search Bar */
+/* Search Bar Container*/
 .searchContainer {
   min-width: 220px;
   max-width: 1000px;
@@ -60,28 +60,56 @@ label:hover {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  height:90px;
+  height:75px;
 }
 
-.visitWindowNotifier {
+/*Search Bar styling*/
+.searchBar {
+  flex: 1 1 33%;
+  padding: 8px;
+  margin-bottom: 12px;
+  max-width: 33%;
+}
+
+/*Red Dot that indicates whether it's a window*/
+.notifier {
   display: inline-block;
   width: 10px;
   height: 10px;
   border-Radius: 50%;
   background-Color: #a02020c0;
-  margin-Right: 6px;
   vertical-Align: middle;
+  align-items: right
+}
+
+.KDotContainer {
+  text-align: right;
+  padding-right: 100px;
+}
+
+/*Cross indicates whether it's an OOA*/
+.kildareNotifier {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-Radius: 50%;
+  background-Color: #20a084c0;
+  vertical-Align: middle;
+  align-items: right
 }
 
 .filterRowBox {
-  align-items: center;
   display: flex;
   gap: 15px;
-  padding-left: 30px;
+  margin-left: auto;
+  align-items: center;
+  padding-right: 10%;
 }
+
 .patientRow {
   cursor: pointer;
   font-weight: bold; 
+  flex: 1;
 }
 
 .headings-row,
@@ -93,14 +121,12 @@ label:hover {
   border-bottom: 1px solid #ddd;
 }
 
+/*Make all a flex*/
 .heading-left,
-.heading-center,
 .heading-right{
   flex: 1;
-}
-
-.heading-center{
-  text-align: center;
+  padding-left: 50px;
+  padding-right: 50px
 }
 
 .heading-right {

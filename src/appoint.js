@@ -45,11 +45,12 @@ const Appointments = () => {
   // ---------------------------------HTML--------------------------------------
     return (
         <div className="App">
-            <h1>Visit Window Overview</h1>
+            <h1>Visit Overview</h1>
         
         {/*Container for searchbar and filter*/}
         <div className='searchContainer'>
             <input
+            className='searchBar'
             type='text'
             placeholder='Search Title or ID'
             value={searchQuery}
@@ -101,8 +102,7 @@ const Appointments = () => {
         <ul className="appointmentList">
             <li className='headings-row'>
             <div className='heading-left'><strong>Patient ID</strong></div>
-            <div className='heading-center'><strong>Kildare</strong></div>
-            <div className='heading-right'><strong>Placeholder Right</strong></div>
+            <div className='heading-right'><strong>Kildare</strong></div>
             </li>
 
             
@@ -119,14 +119,23 @@ const Appointments = () => {
                 {event.type === "window" && (
                 <span 
                     // Red circle that appears showing patient is yet to be booked in their window
-                    className='visitWindowNotifier'
+                    className='notifier'
                     title='Visit Window Active'
                 />
                 )}
                 </label>
+                
+                {/*Put notifier under Kildare on right to show OOA - (Out Of Area)*/}
+                <div
+                className='KDotContainer'>
+                    {event.ooa === true && (
+                    <span 
+                    // Blue Dot that appears showing patient is OOA
+                    className='kildareNotifier'
+                    />
+                    )}
                 </div>
-
-
+            </div>
 
                 {/*Main Info Body when expanded*/}
                 {expandedIds[event.id] && (
