@@ -10,10 +10,12 @@ const UserInfo = () => {
   const [patientCondition, setPatientCondition] = useState('');
   const [patientStudy, setPatientStudy] = useState('');
   const [patientSite, setPatientSite] = useState('');
-  const [patientOutOfArea, setPatientOutOfArea] = useState('');
+  const [patientOutOfArea, setPatientOutOfArea] = useState(false);
   const [patientInfo, setPatientInfo] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
+  const [windowType, setWindowType] = useState('');
+  const [visitNum, setVisitNum] = useState(Number);
 
   const navigate = useNavigate();
 
@@ -28,10 +30,12 @@ const UserInfo = () => {
       setPatientCondition(patient.Condition);
       setPatientStudy(patient.Study);
       setPatientSite(patient.site);
-      setPatientOutOfArea(patient.OutOfArea);
+      setPatientOutOfArea(Boolean(patient.OutOfArea)); 
       setPatientInfo(patient.Info);
       setEditId(patient.id);
       setIsEditing(true);
+      setVisitNum(patient.visitNum);
+      setWindowType(patient.type)
     }
   }, []);
 
@@ -51,8 +55,13 @@ const UserInfo = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const id = isEditing ? editId : generatePatientID();
+    const type = isEditing ? windowType : 'window';
+    const visit = isEditing ? visitNum : 1;
+
     const newPatient = {
-      id: isEditing ? editId : generatePatientID(),
+      id,
       Name: patientName,
       DOB: patientDOB,
       DaysEarly: patientEarly,
@@ -62,6 +71,8 @@ const UserInfo = () => {
       site: patientSite,
       OutOfArea: patientOutOfArea,
       Info: patientInfo,
+      type,
+      visitNum: visit,
     };
 
     let patients = JSON.parse(localStorage.getItem("userInfoList")) || [];
@@ -171,24 +182,28 @@ const UserInfo = () => {
             <div className="radio-group">
               <label>
                 <input
+                  id='Out'
                   type="radio"
                   name="area"
-                  value="Yes"
-                  checked={patientOutOfArea === "Yes"}
-                  onChange={(e) => setPatientOutOfArea(e.target.value)}
+                  value="true"
+                  checked={patientOutOfArea === true}
+                  onChange={() => setPatientOutOfArea(true)}
                 />
                 Yes
               </label>
+
               <label>
                 <input
+                  id='NotOut'
                   type="radio"
                   name="area"
-                  value="No"
-                  checked={patientOutOfArea === "No"}
-                  onChange={(e) => setPatientOutOfArea(e.target.value)}
+                  value="false"
+                  checked={patientOutOfArea === false}
+                  onChange={() => setPatientOutOfArea(false)}
                 />
                 No
               </label>
+
             </div>
 
             <label htmlFor="notes">Additional Notes:</label>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './appoint.css';
 import dummyEvents from './data/dummyEvents'; // Dummy data needs to be replaced with actual data in proper DB
 import { useAppointmentFilters } from './components/useAppointmentFilters';
@@ -6,6 +6,19 @@ import './components/useAppointmentFilters.css'
 import { generateAimHighAppointments, generateCoolPrimeAppointments, generateEDIAppointment } from './data/windowEventCalc';
 
 const Appointments = () => {
+
+    //Local storage grab
+    const [userList, setUserList] = useState([]);
+
+    useEffect(() => {
+        const storedList = localStorage.getItem("userInfoList");
+        if (storedList) {
+        setUserList(JSON.parse(storedList));
+        }
+    }, []);
+
+
+    //--------------------------------------------------------------------------------------
 
     // Convert start and end strings to Date objects for proper parsing
     const processedAppointments = dummyEvents.map((event) => ({
@@ -46,7 +59,6 @@ const Appointments = () => {
     return (
         <div className="App">
             <h1>Visit Overview</h1>
-        
         {/*Container for searchbar and filter*/}
         <div className='searchContainer'>
             <input
@@ -107,7 +119,7 @@ const Appointments = () => {
             </li>
 
             
-            {filteredAppointments.map(event => (
+            {userList.map((event) => (
             <li key={event.id} className="ID_element">
                 <div 
                 className='idRow'>
@@ -133,10 +145,9 @@ const Appointments = () => {
                                 
 
                     {/*Put notifier under OOA - (Out Of Area)*/}
-
                     <div 
                     className='dotContainer'>
-                    {event.ooa === true ? (
+                    {event.OutOfArea === true ? (
                         <span className='OoaNotifier' title='Out Of Area' />
                     ) : (
                         <span style={{ visibility: 'hidden' }} className='OoaNotifier'></span>
@@ -148,29 +159,29 @@ const Appointments = () => {
                 {expandedIds[event.id] && (
                 <div className="info">
                     <strong>{event.title}</strong><br />
-                    <strong>Name:</strong> {event.name}<br />
+                    <strong>Name:</strong> {event.Name}<br />
                     <strong>Date of Birth: </strong>
                     {/*Format date of birth*/}
-                    {new Date(event.dob).toLocaleDateString(undefined, {
+                    {new Date(event.DOB).toLocaleDateString(undefined, {
                             year: 'numeric',
                             month: 'long',
                             day: 'numeric',
                         })}
                     <br />
-                    <strong>Location:</strong> {event.location}<br />
-                    <strong>Study:</strong> {event.study}<br />
+                    <strong>Location:</strong> {event.site}<br />
+                    <strong>Study:</strong> {event.Study}<br />
 
                     {/*Visit window in info if a window patient*/}
                     {event.type === "window" && (() => {
-                    const birthDate = new Date(event.dob);
-                    const daysEarly = event.daysEarly || 0;
+                    const birthDate = new Date(event.DOB);
+                    const daysEarly = event.DaysEarly || 0;
                     let windowData = [];
 
-                    if (event.study === 'AIMHIGH') {
+                    if (event.Study === 'AIMHIGH') {
                         windowData = generateAimHighAppointments(birthDate, daysEarly);
-                    } else if (event.study === 'COOLPRIME') {
+                    } else if (event.Study === 'COOLPRIME') {
                         windowData = generateCoolPrimeAppointments(birthDate, daysEarly);
-                    } else if (event.study === 'EDI') {
+                    } else if (event.Study === 'EDI') {
                         windowData = generateEDIAppointment(birthDate, daysEarly)
                     }
 
@@ -231,15 +242,15 @@ const Appointments = () => {
                     {/*Additional Notes Dropdown*/}
                     <label
                         style={{ cursor: 'pointer', fontWeight: 'bold' }}
-                        onClick={() => toggleCollapseNotes(event.notes)}
+                        onClick={() => toggleCollapseNotes(event.Info)}
                         >
-                        Additional Notes: {expandedNotes[event.notes] ? '-' : '+'}
+                        Additional Notes: {expandedNotes[event.Info] ? '-' : '+'}
                     </label>
 
                     {/*Shows notes when expanded*/}
-                    {expandedNotes[event.notes] && (
+                    {expandedNotes[event.Info] && (
                     <div className="info">
-                        <strong>{event.notes}</strong><br />
+                        <strong>{event.Info}</strong><br />
                     </div>
                 )}
                 
