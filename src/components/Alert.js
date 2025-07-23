@@ -3,9 +3,9 @@ import './Alert.css';
 
 const Alert = ({message, type, onClose}) => {
     return (
-        <div className={`alert ${type}`}>
+        <div className={`alert-popup ${type}`}>
             <span>{message}</span>
-            <button onClick={onClose}>X</button>
+            <button className="close-btn" onClick={onClose}>X</button>
         </div>
     );
 };

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './info.css';
 import { useNavigate } from 'react-router-dom';
+import Alert from './components/Alert';
 
 const UserInfo = () => {
   const [patientName, setPatientName] = useState('');
@@ -16,6 +17,10 @@ const UserInfo = () => {
   const [editId, setEditId] = useState(null);
 
   const navigate = useNavigate();
+
+  const [alert, setAlert] = useState(null);
+  const [showAlert, setShowAlert] = useState(true);
+
 
   useEffect(() => {
     const editData = localStorage.getItem("editPatient");
@@ -69,17 +74,28 @@ const UserInfo = () => {
     if (isEditing) {
       patients = patients.map(p => p.id === newPatient.id ? newPatient : p);
       localStorage.removeItem("editPatient");
+      setAlert({message: "Are you sure you want to edit?", type: "warning"});
     } else {
       patients.push(newPatient);
+      setAlert({message: "Patient Successfully Created", type:"success"});
     }
 
     localStorage.setItem("userInfoList", JSON.stringify(patients));
-    alert("Patient data saved!");
-    navigate('/account');
+
+    setTimeout(() => {
+      navigate('/account');
+    }, 2000);
   };
 
   return (
     <div className="App">
+      {alert && (
+        <Alert
+          message={alert.message}
+          type={alert.type}
+          onClose={() => setAlert(null)}
+        />
+      )}
       <h1>Patient Info</h1>
       <fieldset>
         <div className="form-border">
