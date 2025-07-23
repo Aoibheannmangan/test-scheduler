@@ -131,13 +131,13 @@ const UserInfo = () => {
               required
             />
 
-            <label htmlFor="early">Amount of Days Early:</label>
+            <label htmlFor="early">Days born before due date:</label>
             <input
               type="number"
               id="early"
               value={patientEarly}
               onChange={(e) => setPatientEarly(e.target.value)}
-              placeholder="Enter the Amount of Days the Patient was Early"
+              placeholder="Amount of days the patient was born before their due date"
               required
             />
 
