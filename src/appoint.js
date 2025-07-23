@@ -21,11 +21,11 @@ const Appointments = () => {
     //--------------------------------------------------------------------------------------
 
     // Convert start and end strings to Date objects for proper parsing
-    const processedAppointments = dummyEvents.map((event) => ({
+{/*    const processedAppointments = dummyEvents.map((event) => ({
         ...event,
         start: new Date(event.start),
         end: new Date(event.end)
-    }));
+    })); */}
 
     // Track collapsed state for IDs
     const [expandedIds, setExpandedIds] = useState({});
@@ -54,7 +54,7 @@ const Appointments = () => {
     selectedStudies,
     handleStudyChange,
     filteredAppointments
-    } = useAppointmentFilters(processedAppointments);
+    } = useAppointmentFilters(userList);
   // ---------------------------------HTML--------------------------------------
     return (
         <div className="App">
@@ -119,7 +119,7 @@ const Appointments = () => {
             </li>
 
             
-            {userList.map((event) => (
+            {filteredAppointments.map((event) => (
             <li key={event.id} className="ID_element">
                 <div 
                 className='idRow'>

@@ -19,10 +19,11 @@ export const useAppointmentFilters = (appointments) => {
   const filteredAppointments = appointments.filter((event) => {
     // Check if ID matches
     const matchesTitleOrId =
-      event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      event.id.toLowerCase().includes(searchQuery.toLowerCase());
-    // Checks if study matches
-      const matchesStudy = selectedStudies.includes(event.study);
+      (event.title?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
+      (event.id?.toLowerCase() || '').includes(searchQuery.toLowerCase());
+
+    const matchesStudy = selectedStudies.includes(event.Study); // Fixed from event.study
+
     return matchesTitleOrId && matchesStudy;
   });
 
