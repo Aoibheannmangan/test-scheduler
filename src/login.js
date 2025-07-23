@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './login.css';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaLock } from 'react-icons/fa';
@@ -12,10 +12,35 @@ const LogIn = () => {
 
   const [showAlert, setShowAlert] = useState(true);
   const [alert, setAlert] = useState(null);
+  const [capsLockOn, setCapsLockOn] = useState(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const passwordInputRef = useRef(null);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleKeyUp = (event) => {
+        if (event.getModifierState("CapsLock")) {
+            setCapsLockOn(true);
+        } else {
+            setCapsLockOn(false);
+        }
+    };
+
+    const input = passwordInputRef.current;
+    if (input) {
+        input.addEventListener("keyup", handleKeyUp);
+    }
+
+    return () => {
+        if (input) {
+            input.removeEventListener("keyup", handleKeyUp);
+        }
+    };
+  }, []);
+
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -73,7 +98,7 @@ const LogIn = () => {
                     type="number"
                     value={staffId}
                     onChange={(e) => setStaffId(e.target.value)}
-                    autocomplete="off"
+                    autoComplete="off"
                     required
                   />
                 </div>
@@ -86,9 +111,16 @@ const LogIn = () => {
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    autocomplete="off"
+                    autoComplete="off"
+                    ref={passwordInputRef}
                     required
                   />
+                {capsLockOn && (
+                    <div className="caps-warning" style={{ color: 'red', marginTop: '5px' }}>
+                        Warning: Caps Lock is ON
+                    </div>
+                )}
+
                 </div>
                 <div className="forgot-password-link">
                     <a href="/forgotpsw">Forgot Password?</a>
