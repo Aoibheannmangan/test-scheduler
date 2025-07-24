@@ -1,13 +1,12 @@
 body {
-    background:#f3f3f3;
     text-align: center;
 }
 .UserInfo {
-    background-color: #fff;
+    background: linear-gradient(to right, #ffffff, #fae3ff );
     border-radius: 15px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
     padding: 10px 20px;
-    transition: transorm 0.2s;
+    transition: transform 0.2s;
     width: 500px;
     text-align: center;
     margin:auto;
@@ -58,6 +57,12 @@ input[type="password"]
     transition: border-color 0.3s ease;
 }
 
+input:focus, select:focus, textarea:focus {
+    border-color: #8d5a97;
+    outline:none;
+    box-shadow: 0 0 5px rgb(78, 50, 83);
+}
+
 label {
     font-size: 18px;
     display: block;
@@ -70,16 +75,28 @@ label {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-button {
+.submit-button {
     padding: 15px;
     border-radius: 10px;
-    margin: 8px 0 20px 0;
+    margin: 8px auto 20px auto;
     border: none;
     color:white;
     cursor: pointer;
-    background-color: #4caf50;
+    background-color: #8d5a97;
     width: 60%;
     font-size: 16px;
+    font-weight: 600;
+    display: block;
+}
+
+.submit-button:hover {
+    background-color: #4e3253;
+    transform: scale(1.02);
+}
+
+.submit-button:focus {
+    outline: 2px solid  #4e3253;
+    outline-offset: 2px;
 }
 
 textarea {
@@ -114,4 +131,11 @@ select {
     gap: 0.1rem !important;
     margin: 0;
     font-size: 1rem;
+}
+
+@media (max-width: 600px) {
+    .UserInfo, .form-border {
+        width: 90%;
+        padding: 15px;
+    }
 }
