@@ -21,7 +21,8 @@ const MyCalendar = () => {
   const [searchPatientId, setSearchPatientId] = useState(''); // Search for ID -  Window view
   const [windowEvents, setWindowEvents] = useState([]); // Sets window view
   const [currentPatient, setCurrentPatient] = useState(null); // Stores current patient in look up
-
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [editedInfo, setEditedInfo] = useState("");
 
   //Local storage grab
   const [userList, setUserList] = useState([]);
@@ -120,8 +121,58 @@ const deleteEvent = (eventToDelete) => {
   setUserList(updatedUser);
   localStorage.setItem('userInfoList', JSON.stringify(updatedUser));
 };
-  
-const handleEventClick = (event) => {
+
+// Open popup when clicking an event
+const handleSelectEvent = (event) => {
+  setSelectedEvent(event);
+  // Copy all editable properties into editedInfo state
+  setEditedInfo({
+    title: event.title || '',
+    start: event.start,
+    end: event.end,
+  });
+};
+
+const saveEditedInfo = () => {
+  if (!selectedEvent) return;
+
+  // Prepare updated event object
+  const updatedEvent = {
+    ...selectedEvent,
+    title: editedInfo.title,
+    start: new Date(editedInfo.start),
+    end: new Date(editedInfo.end),
+  };
+
+  // Update bookedEvents or windowEvents depending on type
+  if (selectedEvent.type === 'booked') {
+    const updatedBooked = bookedEvents.map(event =>
+      event.id === selectedEvent.id && event.start.getTime() === selectedEvent.start.getTime()
+        ? updatedEvent
+        : event
+    );
+    setBookedEvents(updatedBooked);
+    localStorage.setItem('bookedEvents', JSON.stringify(updatedBooked));
+  } else if (selectedEvent.type === 'window') {
+    const updatedWindows = windowEvents.map(event =>
+      event.id === selectedEvent.id && event.start.getTime() === selectedEvent.start.getTime()
+        ? updatedEvent
+        : event
+    );
+    setWindowEvents(updatedWindows);
+    // Optionally update localStorage if you store windowEvents persistently
+  }
+
+  closePopup();
+};
+
+// Close popup
+const closePopup = () => {
+  setSelectedEvent(null);
+  setEditedInfo("");
+};
+
+const handleEventDelete = (event) => {
   const shouldDelete = window.confirm(`Delete ${event.title} for ${event.patientId}?`)
   if (shouldDelete) {
     deleteEvent(event);
@@ -243,7 +294,7 @@ const filteredAppointments = allEvents.filter(event =>
           setDate(slotInfo.start);
           setView('day');
         }}
-        onSelectEvent={handleEventClick}
+        onSelectEvent={handleSelectEvent}
         selectable
         views={['month', 'week', 'day', 'agenda']}
         components={{
@@ -264,109 +315,151 @@ const filteredAppointments = allEvents.filter(event =>
     <div className="filter-container">
       <h4>Show Event Types</h4>
 
-    {/* Flex Container to look pretty*/}
-    <div className="filter-row">
+      {/* Flex Container to look pretty*/}
+      <div className="filter-row">
 
-      {/* Visit Window Box*/ }
-      <div className="windowView">
-        <label>
-          View Patient Window:
-          <input
-            type="text"
-            placeholder="Enter Patient ID"
-            value={searchPatientId}
-            onChange={(e) => setSearchPatientId(e.target.value)}
-          />
-          <div className="button-row">
-            <button className="search-button" onClick={handleSearchWindow}>Search Window</button>
-            <button className="clear-button" onClick={handleClearWindow}>Clear Window</button>
-          </div>
-        </label>
-
-        {currentPatient && (
-          <div className="patientInfo">
-            <h4>Patient Info</h4>
-            <p><b>Name:</b> {currentPatient.Name}</p>
-            <p><b>ID:</b> {currentPatient.id}</p>
-            <p><b>DOB:</b> {new Date(currentPatient.DOB).toLocaleDateString(undefined, {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                        })}</p>
-            {/* add any other fields you'd like */}
-          </div>
-        )}
-      </div>
-
-      {/* Booked Appointment Box*/ }
-      <div className="filter-Main">
-        <ul className="collapsable">
-          <li>
-            <div
-              style={{ cursor: 'pointer' }}
-              onClick={() => setIsBookingCollapsed(prev => !prev)}
-              >
-              <b>Study Filter</b>
+        {/* Visit Window Box*/ }
+        <div className="windowView">
+          <label>
+            View Patient Window:
+            <input
+              type="text"
+              placeholder="Enter Patient ID"
+              value={searchPatientId}
+              onChange={(e) => setSearchPatientId(e.target.value)}
+            />
+            <div className="button-row">
+              <button className="search-button" onClick={handleSearchWindow}>Search Window</button>
+              <button className="clear-button" onClick={handleClearWindow}>Clear Window</button>
             </div>
-            {/* Study Filter Box in collapsable*/ }
-            <ul style={{ display: isBookingCollapsed ? 'none' : 'block' }}>
-              <li>
-                <div>
-                  <div className="filter-checkbox">
-                    <label>
-                      <input type="checkbox" className="AHCheck"
-                      checked={selectedStudies.includes('AIMHIGH')}
-                      onChange={() => handleStudyChange('AIMHIGH')}
-                      />
+          </label>
+
+          {currentPatient && (
+            <div className="patientInfo">
+              <h4>Patient Info</h4>
+              <p><b>Name:</b> {currentPatient.Name}</p>
+              <p><b>ID:</b> {currentPatient.id}</p>
+              <p><b>DOB:</b> {new Date(currentPatient.DOB).toLocaleDateString(undefined, {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                            })}</p>
+            </div>
+          )}
+        </div>
+
+        {/* Booked Appointment Box*/ }
+        <div className="filter-Main">
+          <ul className="collapsable">
+            <li>
+              <div
+                style={{ cursor: 'pointer' }}
+                onClick={() => setIsBookingCollapsed(prev => !prev)}
+                >
+                <b>Study Filter</b>
+              </div>
+              {/* Study Filter Box in collapsable*/ }
+              <ul style={{ display: isBookingCollapsed ? 'none' : 'block' }}>
+                <li>
+                  <div>
+                    <div className="filter-checkbox">
+                        <label>
+                          <input type="checkbox" className="AHCheck"
+                          checked={selectedStudies.includes('AIMHIGH')}
+                          onChange={() => handleStudyChange('AIMHIGH')}
+                          />
+                          <label>
+                            AIMHIGH
+                          </label>
+                        </label>
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="filter-checkbox">
                       <label>
-                        AIMHIGH
+                        <input
+                          type="checkbox" className="CPCheck"
+                          checked={selectedStudies.includes('COOLPRIME')}
+                          onChange={() => handleStudyChange('COOLPRIME')}
+                        />
+                        COOLPRIME
                       </label>
-                    </label>
+                    </div>
                   </div>
-                </div>
 
-                <div>
-                  <div className="filter-checkbox">
-                    <label>
-                      <input
-                        type="checkbox" className="CPCheck"
-                        checked={selectedStudies.includes('COOLPRIME')}
-                        onChange={() => handleStudyChange('COOLPRIME')}
-                      />
-                      COOLPRIME
-                    </label>
+                  <div>
+                    <div className="filter-checkbox">
+                      <label>
+                        <input
+                          type="checkbox" className="EDICheck"
+                          checked={selectedStudies.includes('EDI')}
+                          onChange={() => handleStudyChange('EDI')}
+                        />
+                        EDI
+                      </label>
+                    </div>
                   </div>
-                </div>
-
-                <div>
-                  <div className="filter-checkbox">
-                    <label>
-                      <input
-                        type="checkbox" className="EDICheck"
-                        checked={selectedStudies.includes('EDI')}
-                        onChange={() => handleStudyChange('EDI')}
-                      />
-                      EDI
-                    </label>
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </li>
-        </ul>  
+                </li>
+              </ul>
+            </li>
+          </ul>  
+        </div>
       </div>
     </div>
-  </div>
+
+    {selectedEvent && (
+      <div className="popup-overlay">
+        <div className="popup-content">
+          <h3>Edit Event for {selectedEvent.Name || selectedEvent.title}</h3>
+
+          <label>
+            Title:
+            <input
+              type="text"
+              value={editedInfo.title}
+              onChange={e => setEditedInfo(prev => ({ ...prev, title: e.target.value }))}
+            />
+          </label>
+
+          <label>
+            Start:
+            <input
+              type="datetime-local"
+              value={moment(editedInfo.start).format('YYYY-MM-DDTHH:mm')}
+              onChange={e => setEditedInfo(prev => ({ ...prev, start: new Date(e.target.value) }))}
+            />
+          </label>
+
+          <label>
+            End:
+            <input
+              type="datetime-local"
+              value={moment(editedInfo.end).format('YYYY-MM-DDTHH:mm')}
+              onChange={e => setEditedInfo(prev => ({ ...prev, end: new Date(e.target.value) }))}
+            />
+          </label>
+
+          <div>
+            <button onClick={saveEditedInfo}>Save</button>
+            <button onClick={closePopup}>Cancel</button>
+          </div>
+
+          <div>
+            <button onClick={() => handleEventDelete(selectedEvent)}>Delete Appointment</button>
+          </div>
+        </div>
+      </div>
+    )}
 
  
-    <div className='AppointmentToggle'>
-      <h1>Add Appointment</h1>
-      <ToggleAppointment onAddAppointment={handleAddAppointment} />
-    </div>
+      <div className='AppointmentToggle'>
+        <h1>Add Appointment</h1>
+        <ToggleAppointment onAddAppointment={handleAddAppointment} />
+      </div>
+
   </div>
-
 );
-
   };
 
 export default MyCalendar;
