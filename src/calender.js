@@ -10,6 +10,7 @@ import ToggleAppointment from './components/toggleAppointment';
 import './components/useAppointmentFilters.css';
 import CustomToolbar from './components/customToolbar';
 import Alert from './components/Alert';
+import PopUp from './components/PopUp';
 
 // Sets current date and time for calender
 const localizer = momentLocalizer(moment);
@@ -23,6 +24,9 @@ const MyCalendar = () => {
   const [windowEvents, setWindowEvents] = useState([]); // Sets window view
   const [currentPatient, setCurrentPatient] = useState(null); // Stores current patient in look up
   const [alert, setAlert] = useState(null);
+  const [popupOpen, setPopupOpen] = useState(false);
+  const [eventToDelete, setEventToDelete] = useState(null);
+
 
   //Local storage grab
   const [userList, setUserList] = useState([]);
@@ -90,44 +94,39 @@ const handleClearWindow = () => {
   setCurrentPatient(null);
 };
 
-const deleteEvent = (eventToDelete) => {
-
-  // Clause to protect if ID is missing 
-  if (!eventToDelete.patientId) {
-    console.error('Missing patientId on event', eventToDelete)
+const confirmDeleteEvent = () => {
+  if (!eventToDelete?.patientId) {
+    console.error("Missing patientId on event", eventToDelete);
     return;
   }
 
-  // Filter out deleted events
   const updatedEvents = bookedEvents.filter(
-    (event) => event.id !== eventToDelete.id || event.start !== eventToDelete.start
+    (event) => event.id !== eventToDelete.id || event.start !== eventToDelete.start 
   );
 
-  // Update state + local storage
   setBookedEvents(updatedEvents);
-  localStorage.setItem('bookedEvents',JSON.stringify(updatedEvents));
+  localStorage.setItem('bookedEvents', JSON.stringify(updatedEvents));
 
-  // Update user back to window
   const updatedUser = userList.map((p) => {
     if (p.id === eventToDelete.patientId) {
       return {
         ...p,
         type: 'window',
-        visitNum: p.visitNum -1
+        visitNum: p.visitNum - 1 
       };
     }
     return p;
   });
+
   setUserList(updatedUser);
   localStorage.setItem('userInfoList', JSON.stringify(updatedUser));
-};
+  setPopupOpen(false);
+}
   
 const handleEventClick = (event) => {
-  const shouldDelete = window.confirm(`Delete ${event.title} for ${event.patientId}?`)
-  if (shouldDelete) {
-    deleteEvent(event);
-  }
-}
+  setEventToDelete(event);
+  setPopupOpen(true);
+};
 
   // Booked appointments state
 const [bookedEvents, setBookedEvents] = useState(() => {
@@ -371,6 +370,14 @@ const filteredAppointments = allEvents.filter(event =>
       <h1>Add Appointment</h1>
       <ToggleAppointment onAddAppointment={handleAddAppointment} />
     </div>
+        
+    <PopUp
+      isOpen={popupOpen}
+      onClose={() => setPopupOpen(false)}
+      onConfirm={confirmDeleteEvent}
+      message={`Delete ${eventToDelete?.title} for ${eventToDelete?.patientId}?`}
+    />
+
   </div>
 
 );
