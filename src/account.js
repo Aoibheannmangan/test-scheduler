@@ -28,7 +28,7 @@ const Account = () => {
         setUserList(updatedList);
         localStorage.setItem("userInfoList", JSON.stringify(updatedList));
         setAlert(null);
-      }, 2000);
+      }, 1000);
     }
   };
 
@@ -41,7 +41,7 @@ const Account = () => {
   if (userList.length === 0) {
     return (
       <div>
-        <p><b>No Patient Data</b></p>
+        <p className="small-text"><b>No Patient Data</b></p>
         <a href="info" className="edit">Add Patient Information</a>
       </div>
     );

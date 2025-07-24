@@ -5,7 +5,6 @@
     align-items: center;
     height: 100vh;
     background: linear-gradient(to right, #8D5A97, #ca8dd6 );
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .form-wrapper {
@@ -25,6 +24,7 @@
     color: #8D5A97;
     margin-bottom: 1.5rem;
     text-align: center;
+    letter-spacing: 1px;
 }
 
 .form-body label {
@@ -32,6 +32,7 @@
     margin-bottom: 0.5rem;
     font-weight: bold;
     color: black;
+    letter-spacing: 1px;
 }
 
 .form-body input {
@@ -41,6 +42,7 @@
     border: 1px solid #cecaca;
     border-radius: 8px;
     transition: border-color 0.3s;
+    letter-spacing: 1px;
 }
 
 .form-body input:focus {
@@ -58,8 +60,9 @@
     cursor: pointer;
     transition: background 0.3s;
     font-size: 22px;
-    font-family: 'Roboto-slab', serif;
+    font-family: 'Sansation', serif;
     font-weight: bold;
+    letter-spacing: 1px;
 }
 
 .signup-button:hover {
@@ -70,6 +73,7 @@
     text-align: center;
     margin-top: 1rem;
     color: rgb(0, 0, 0);
+    letter-spacing: 1px;
 }
 
 .signup-link a {

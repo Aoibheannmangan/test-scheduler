@@ -11,7 +11,7 @@ body {
     text-align: center;
     margin:auto;
     margin-top: 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Sansation';
 }
 .form-border {
     background-color: #fff;
@@ -28,7 +28,7 @@ body {
 h1 {
     font-size: x-large;
     text-align: center;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Sansation';
     color: #000000;
 }
 
@@ -54,6 +54,7 @@ input[type="password"]
     font-size: 16px;
     color: #333;
     box-sizing: border-box;
+    font-family: 'Sansation';
     transition: border-color 0.3s ease;
 }
 
@@ -64,7 +65,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 label {
-    font-size: 18px;
+    font-size: 20px;
     display: block;
     width: 100%;
     margin-top: 8px;
@@ -72,21 +73,26 @@ label {
     text-align: left;
     color: #000000;
     font-weight: bold;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Sansation';
 }
 
 .submit-button {
-    padding: 15px;
-    border-radius: 10px;
-    margin: 8px auto 20px auto;
+    background-color: #8D5A97;
+    color: white;
     border: none;
-    color:white;
+    border-radius: 8px;
     cursor: pointer;
-    background-color: #8d5a97;
+    transition: background 0.3s;
+    font-size: 22px;
+    font-family: 'Sansation', serif;
+    font-weight: bold;
+    letter-spacing: 1px;
+    padding: 15px;
+    margin: 8px auto 20px auto;
     width: 60%;
-    font-size: 16px;
     font-weight: 600;
     display: block;
+    font-family: 'Sansation'; 
 }
 
 .submit-button:hover {
@@ -117,6 +123,7 @@ select {
     color: #333;
     box-sizing: border-box;
     transition: border-color 0.3s ease;
+    font-family: 'Sansation';
 }
 
 .radio-group {
@@ -131,6 +138,7 @@ select {
     gap: 0.1rem !important;
     margin: 0;
     font-size: 1rem;
+    font-family: 'Sansation';
 }
 
 @media (max-width: 600px) {
@@ -142,6 +150,5 @@ select {
 .heading-text {
     font-size: 36px;
     color: #8d5a97;
-    text-decoration-line: underline;
-    text-shadow: 0.5px 0.5px #4e3253;
+    font-family: 'Sansation';
 }

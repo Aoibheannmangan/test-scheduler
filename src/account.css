@@ -7,7 +7,7 @@
     max-width: 600px;
     margin: 30px auto;
     font-size: 1.1rem;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Sansation', serif;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -22,10 +22,13 @@ ul {
     margin: 0;
     text-align: left;
     line-height: 1.8;
+    letter-spacing: 1px;
+    font-size: 18px;
 }
 
 ul li strong {
     color: #8D5A97;
+    font-size: 18px;
 }
 
 .display button {
@@ -46,19 +49,27 @@ ul li strong {
 
 .edit, .logout {
     background-color: #8D5A97;
-    border: none;
     color: white;
+    border: none;
     padding: 10px 20px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
     margin: 10px 5px;
     cursor: pointer;
     border-radius: 8px;
     transition: background 0.3s ease;
+    font-size: 22px;
+    font-family: 'Sansation', serif;
+    font-weight: bold;
+    letter-spacing: 1px;
 }
-
+.small-text {
+    font-size: 18px;
+    font-family: 'Sansation', serif;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
 .edit:hover, .logout:hover {
     background-color: #56365c;
 }
