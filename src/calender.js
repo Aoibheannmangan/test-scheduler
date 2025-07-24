@@ -399,8 +399,9 @@ const MyCalendar = () => {
       {selectedEvent && (
           <div className="popup-overlay">
             <div className="popup-content">
-              <h3>Edit Event for {selectedEvent.Name || selectedEvent.title}</h3>
-
+              <div className="popup-header">
+                <h3>Edit Event for {selectedEvent.Name || selectedEvent.title}</h3>
+              </div>
               <label>
                 Title:
                 <input
@@ -416,6 +417,7 @@ const MyCalendar = () => {
                   type="datetime-local"
                   value={moment(editedInfo.start).format('YYYY-MM-DDTHH:mm')}
                   onChange={e => setEditedInfo(prev => ({ ...prev, start: new Date(e.target.value) }))}
+                  className="date-edit"
                 />
               </label>
 
@@ -425,17 +427,16 @@ const MyCalendar = () => {
                   type="datetime-local"
                   value={moment(editedInfo.end).format('YYYY-MM-DDTHH:mm')}
                   onChange={e => setEditedInfo(prev => ({ ...prev, end: new Date(e.target.value) }))}
+                  className="date-edit"
                 />
               </label>
 
-              <div>
-                <button onClick={saveEditedInfo}>Save</button>
-                <button onClick={closePopup}>Cancel</button>
+              <div className="button-row">
+                <button onClick={saveEditedInfo} className="confirm-button">Save</button>
+                <button onClick={closePopup} className="cancel-button">Cancel</button>
+                <button onClick={() => handleEventClick(selectedEvent)} className="delete-button">Delete Appointment</button>
               </div>
 
-              <div>
-                <button onClick={() => handleEventClick(selectedEvent)}>Delete Appointment</button>
-              </div>
             </div>
           </div>
         )}

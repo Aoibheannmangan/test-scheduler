@@ -47,7 +47,7 @@
     justify-content: space-around;
 }
 
-.confirm-button, .cancel-button {
+.confirm-button, .cancel-button, .delete-button {
     padding: 0.6rem 1.2rem;
     font-size: 1rem;
     border: none;
@@ -72,6 +72,22 @@
 
 .cancel-button:hover {
     background-color: #5a6268;
+}
+
+.delete-button {
+    background-color: #fd3535;
+    color: white;
+}
+
+.delete-button:hover {
+    background-color: rgb(126, 26, 26);
+}
+
+.date-edit{   
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
 }
 
 
