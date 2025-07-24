@@ -277,8 +277,10 @@ const filteredAppointments = allEvents.filter(event =>
             value={searchPatientId}
             onChange={(e) => setSearchPatientId(e.target.value)}
           />
-          <button className="Search Button" onClick={handleSearchWindow}>Search Window</button>
-          <button className="clearButton" onClick={handleClearWindow}>Clear Window</button>
+          <div className="button-row">
+            <button className="search-button" onClick={handleSearchWindow}>Search Window</button>
+            <button className="clear-button" onClick={handleClearWindow}>Clear Window</button>
+          </div>
         </label>
 
         {currentPatient && (

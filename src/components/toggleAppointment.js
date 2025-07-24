@@ -47,7 +47,7 @@ const ToggleAppointment = ({ onAddAppointment }) => {
   return (
     <div>
       <button // Visibility button
-      className='hideButton'
+      className='hide-button'
       onClick={toggleVisibility}>
         {isVisible ? 'Hide' : 'Show'} Appointment Booking
       </button>
@@ -110,7 +110,7 @@ const ToggleAppointment = ({ onAddAppointment }) => {
                 <br />
 
                 <button // Submit button 
-                type="submit">
+                type="submit" className='submit-button'> 
                   Submit
                   </button>
               </form>

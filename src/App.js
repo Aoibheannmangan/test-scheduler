@@ -8,7 +8,7 @@ import Account from './account';
 import LogIn from './login';
 import SignUp from './signup';
 import ForgotPsw from './forgotpsw'
-import '@fontsource/roboto-slab';
+import '@fontsource/sansation';
 
 function App() {
   const location = useLocation();
