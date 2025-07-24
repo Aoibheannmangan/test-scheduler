@@ -107,7 +107,7 @@ const UserInfo = () => {
           onClose={() => setAlert(null)}
         />
       )}
-      <h1>Patient Info</h1>
+      <h1 className='heading-text'>Patient Info</h1>
       <fieldset>
         <div className="form-border">
           <form onSubmit={handleSubmit}>

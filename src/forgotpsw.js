@@ -39,8 +39,9 @@ const ForgotPsw = () => {
                         />
                     )}
                 <form onSubmit={handleReset}>
-                    <h2>Reset Password</h2>
-                    <div className="input-group">
+                    <h1 className="title">Reset Password</h1>
+                    <div className="form-body">
+                        <div className="input-group">
                         <label>Staff ID</label>
                         <input 
                             type="number"
@@ -58,11 +59,10 @@ const ForgotPsw = () => {
                             required
                         />
                     </div>
-                    <button type="submit" className="loginbtn">Reset Password</button>
-
+                    <button type="submit" className="login-button">Reset Password</button>
+                    </div> 
                 </form>
                 </div>
-
             </div>
         </div>
     );

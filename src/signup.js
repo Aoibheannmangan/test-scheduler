@@ -149,7 +149,7 @@ const SignUp = () => {
           )}
           <form onSubmit={handleSubmit}>
             <div className="form-header">
-              <h1>Sign Up</h1>
+              <h1 className="title">Sign Up</h1>
             </div>
             <div className="form-body">
               <div className="input-group">
@@ -225,7 +225,7 @@ const SignUp = () => {
                 <div className="button-row">
                   <button
                     type="submit"
-                    className="signupbtn"
+                    className="signup-button"
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? (

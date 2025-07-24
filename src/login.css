@@ -6,7 +6,7 @@
     height: 100vh;
     background: linear-gradient(to right, #804e8a, #c794d1 );
     background-size: cover;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Roboto Slab', serif;
 }
 
 .form-wrapper {
@@ -22,26 +22,33 @@
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
-.form-header h2 {
+.title {
     color: #8d5a97;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.75rem;
     text-align: center;
+    font-size: 36px;
+    font-family: 'Roboto-slab', serif;
+    font-weight: bold;
 }
 
 .form-body label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.2rem;
     font-weight: bold;
     color: black;
+    font-family: 'Roboto-slab', serif;
+    font-size: 20px;
+    font-weight: bold;
 }
 
 .form-body input {
     width: 100%;
-    padding: 0.75rem;
+    padding: 0.5rem;
     margin-bottom: 1rem;
-    border: 1px solid #000000;
+    border: 1px solid #c4c4c4 !important; 
     border-radius: 8px;
     transition: border-color 0.3s;
+    font-family: 'Roboto-slab', serif;
 }
 
 .form-body input:focus {
@@ -58,11 +65,17 @@
     width: 100%;
     cursor: pointer;
     transition: background 0.3s;
+    font-size: 22px;
+    font-family: 'Roboto-slab', serif;
+    font-weight: bold;
 }
 
 .login-button:hover {
     background: #56365c;
+    font-family: 'Roboto-slab', serif;
+    font-weight: bold;
 }
+
 
 .signup-link {
     text-align: center;

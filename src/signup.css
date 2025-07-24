@@ -48,7 +48,7 @@
     outline: none;
 }
 
-.login-button {
+.signup-button {
     background-color: #8D5A97;
     color: white;
     padding: 0.75rem;
@@ -57,9 +57,12 @@
     width: 100%;
     cursor: pointer;
     transition: background 0.3s;
+    font-size: 22px;
+    font-family: 'Roboto-slab', serif;
+    font-weight: bold;
 }
 
-.login-button:hover {
+.signup-button:hover {
     background: #56365c;
 }
 

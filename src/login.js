@@ -79,7 +79,7 @@ const LogIn = () => {
 
           <form onSubmit={handleLogin}>
             <div className="form-headers">
-              <h1>Log In</h1>
+              <h1 className="title">Log In</h1>
             </div>
             <div className="form-body">
               <div className="input-group">
@@ -120,7 +120,7 @@ const LogIn = () => {
               </div>
               <button 
                 type="submit"
-                className="loginbtn"
+                className="login-button"
                 disabled={isSubmitting}>
                     {isSubmitting ? (
                       <div className="spinner"></div>
