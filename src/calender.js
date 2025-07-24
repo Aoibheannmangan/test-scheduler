@@ -8,458 +8,415 @@ import ClickableDateCell from './components/clickableCell';
 import { eventPropGetter } from './data/eventPropGetter';
 import ToggleAppointment from './components/toggleAppointment';
 import './components/useAppointmentFilters.css';
-import CustomToolbar from './components/customToolbar'
+import CustomToolbar from './components/customToolbar';
+import Alert from './components/Alert';
+import PopUp from './components/PopUp';
 
-// Sets current date and time for calender
 const localizer = momentLocalizer(moment);
 
-
 const MyCalendar = () => {
-  const [view, setView] = useState('month'); // View 
-  const [date, setDate] = useState(new Date()); // Set date decleration
-  const [isBookingCollapsed, setIsBookingCollapsed] = useState(true); // Hides booking form by default
-  const [searchPatientId, setSearchPatientId] = useState(''); // Search for ID -  Window view
-  const [windowEvents, setWindowEvents] = useState([]); // Sets window view
-  const [currentPatient, setCurrentPatient] = useState(null); // Stores current patient in look up
+  const [view, setView] = useState('month');
+  const [date, setDate] = useState(new Date());
+  const [isBookingCollapsed, setIsBookingCollapsed] = useState(true);
+  const [searchPatientId, setSearchPatientId] = useState('');
+  const [windowEvents, setWindowEvents] = useState([]);
+  const [currentPatient, setCurrentPatient] = useState(null);
+  const [alert, setAlert] = useState(null);
+  const [popupOpen, setPopupOpen] = useState(false);
+  const [eventToDelete, setEventToDelete] = useState(null);
+  const [userList, setUserList] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [editedInfo, setEditedInfo] = useState("");
 
-  //Local storage grab
-  const [userList, setUserList] = useState([]);
-
   useEffect(() => {
-      const storedList = localStorage.getItem("userInfoList");
-      if (storedList) {
+    const storedList = localStorage.getItem("userInfoList");
+    if (storedList) {
       setUserList(JSON.parse(storedList));
-      }
+    }
   }, []);
 
- const handleSearchWindow = () => {
-  const patient = userList.find(patient => patient.id === searchPatientId.trim());
-
-  if (!patient) {
-    alert("Patient ID not found.");
-    setCurrentPatient(null);
-    setWindowEvents([]);
-    return;
-  }
-
-  if (["booked"].includes(patient.type)) {
-    alert("This patient's visit is already booked or scheduled.");
-    setCurrentPatient(null);
-    setWindowEvents([]);
-    return;
-  }
-
-  // ave current patient info to display
-  setCurrentPatient(patient); 
-
-  const birthDate = new Date(patient.DOB);
-  const babyDaysEarly = patient.DaysEarly;
-
-  let studyWindows = [];
-
-  if (patient.Study === "AIMHIGH") {
-    studyWindows = generateAimHighAppointments(birthDate, babyDaysEarly);
-  } else if (patient.Study === "COOLPRIME") {
-    studyWindows = generateCoolPrimeAppointments(birthDate, babyDaysEarly);
-  } else if (patient.Study === "EDI") {
-    studyWindows = generateEDIAppointment(birthDate, babyDaysEarly);
-  }
-
-  // Filter only window type (just in case)
-  const windowEvents = studyWindows
-    .filter(event => event.type === "window")
-    .map(event => ({
-      ...event,
-      title: 'Visit Window',
-      Name: patient.Name,
-      id: patient.id,
-      start: new Date(event.start),
-      end: new Date(event.end),
-    }));
-
-  setWindowEvents(windowEvents);
-};
-
-
-// Clear displaying window and reset search
-const handleClearWindow = () => {
-  setWindowEvents([]);
-  setSearchPatientId('');
-  setCurrentPatient(null);
-};
-
-const deleteEvent = (eventToDelete) => {
-
-  // Clause to protect if ID is missing 
-  if (!eventToDelete.patientId) {
-    console.error('Missing patientId on event', eventToDelete)
-    return;
-  }
-
-  // Filter out deleted events
-  const updatedEvents = bookedEvents.filter(
-    (event) => event.id !== eventToDelete.id || event.start !== eventToDelete.start
-  );
-
-  // Update state + local storage
-  setBookedEvents(updatedEvents);
-  localStorage.setItem('bookedEvents',JSON.stringify(updatedEvents));
-
-  // Update user back to window
-  const updatedUser = userList.map((p) => {
-    if (p.id === eventToDelete.patientId) {
-      return {
-        ...p,
-        type: 'window',
-        visitNum: p.visitNum -1
-      };
-    }
-    return p;
-  });
-  setUserList(updatedUser);
-  localStorage.setItem('userInfoList', JSON.stringify(updatedUser));
-};
-
-// Open popup when clicking an event
-const handleSelectEvent = (event) => {
-  setSelectedEvent(event);
-  // Copy all editable properties into editedInfo state
-  setEditedInfo({
-    title: event.title || '',
-    start: event.start,
-    end: event.end,
-  });
-};
-
-const saveEditedInfo = () => {
-  if (!selectedEvent) return;
-
-  // Prepare updated event object
-  const updatedEvent = {
-    ...selectedEvent,
-    title: editedInfo.title,
-    start: new Date(editedInfo.start),
-    end: new Date(editedInfo.end),
+  // Open popup when clicking an event
+  const handleSelectEvent = (event) => {
+    setSelectedEvent(event);
+    // Copy all editable properties into editedInfo state
+    setEditedInfo({
+      title: event.title || '',
+      start: event.start,
+      end: event.end,
+    });
   };
 
-  // Update bookedEvents or windowEvents depending on type
-  if (selectedEvent.type === 'booked') {
-    const updatedBooked = bookedEvents.map(event =>
-      event.id === selectedEvent.id && event.start.getTime() === selectedEvent.start.getTime()
-        ? updatedEvent
-        : event
-    );
-    setBookedEvents(updatedBooked);
-    localStorage.setItem('bookedEvents', JSON.stringify(updatedBooked));
-  } else if (selectedEvent.type === 'window') {
-    const updatedWindows = windowEvents.map(event =>
-      event.id === selectedEvent.id && event.start.getTime() === selectedEvent.start.getTime()
-        ? updatedEvent
-        : event
-    );
-    setWindowEvents(updatedWindows);
-    // Optionally update localStorage if you store windowEvents persistently
-  }
+  const saveEditedInfo = () => {
+    if (!selectedEvent) return;
 
-  closePopup();
-};
+    // Prepare updated event object
+    const updatedEvent = {
+      ...selectedEvent,
+      title: editedInfo.title,
+      start: new Date(editedInfo.start),
+      end: new Date(editedInfo.end),
+    };
 
-// Close popup
-const closePopup = () => {
-  setSelectedEvent(null);
-  setEditedInfo("");
-};
+    // Update bookedEvents or windowEvents depending on type
+    if (selectedEvent.type === 'booked') {
+      const updatedBooked = bookedEvents.map(event =>
+        event.id === selectedEvent.id && event.start.getTime() === selectedEvent.start.getTime()
+          ? updatedEvent
+          : event
+      );
+      setBookedEvents(updatedBooked);
+      localStorage.setItem('bookedEvents', JSON.stringify(updatedBooked));
+    } else if (selectedEvent.type === 'window') {
+      const updatedWindows = windowEvents.map(event =>
+        event.id === selectedEvent.id && event.start.getTime() === selectedEvent.start.getTime()
+          ? updatedEvent
+          : event
+      );
+      setWindowEvents(updatedWindows);
+      // Optionally update localStorage if you store windowEvents persistently
+    }
 
-const handleEventDelete = (event) => {
-  const shouldDelete = window.confirm(`Delete ${event.title} for ${event.patientId}?`)
-  if (shouldDelete) {
-    deleteEvent(event);
-  }
-}
+    closePopup();
+  };
 
-  // Booked appointments state
-const [bookedEvents, setBookedEvents] = useState(() => {
-  const stored = localStorage.getItem("bookedEvents");
-  if (stored) {
-    try {
-      const parsed = JSON.parse(stored);
-      // convert start and end back to Date objects
-      return parsed.map(event => ({
+  // Close popup
+  const closePopup = () => {
+    setSelectedEvent(null);
+    setEditedInfo("");
+  };
+
+  const handleSearchWindow = () => {
+    const patient = userList.find(p => p.id === searchPatientId.trim());
+
+    if (!patient) {
+      setAlert({ message: "Patient with that ID not found", type: "error" });
+      setCurrentPatient(null);
+      setWindowEvents([]);
+      return;
+    }
+
+    if (["booked"].includes(patient.type)) {
+      setAlert({ message: "This patient's visit is already booked or scheduled.", type: "error" });
+      setCurrentPatient(null);
+      setWindowEvents([]);
+      return;
+    }
+
+    setCurrentPatient(patient);
+    const birthDate = new Date(patient.DOB);
+    const babyDaysEarly = patient.DaysEarly;
+    let studyWindows = [];
+
+    if (patient.Study === "AIMHIGH") {
+      studyWindows = generateAimHighAppointments(birthDate, babyDaysEarly);
+    } else if (patient.Study === "COOLPRIME") {
+      studyWindows = generateCoolPrimeAppointments(birthDate, babyDaysEarly);
+    } else if (patient.Study === "EDI") {
+      studyWindows = generateEDIAppointment(birthDate, babyDaysEarly);
+    }
+
+    const windowEvents = studyWindows
+      .filter(event => event.type === "window")
+      .map(event => ({
         ...event,
+        title: 'Visit Window',
+        Name: patient.Name,
+        id: patient.id,
         start: new Date(event.start),
         end: new Date(event.end),
       }));
-    } catch (error) {
-      console.error('Failed to parse bookedEvents from storage:', error);
-      return [];
-    }
-  }
-  return [];
-});
 
-
-  // Add new appointment from form
-  const handleAddAppointment = (appointment) => {
-  const patientId = appointment.patientId;
-  const match = userList.find(p => p.id === patientId);
-
-  if (!match) {
-    alert(`Patient ID ${patientId} not found in user list.`);
-    return;
-  }
-
-  const fullAppointment = {
-    ...appointment,
-    Study: (appointment.Study || match.Study || "UNKNOWN").toUpperCase(),
-    patientId,
-    Name: match.Name,
-    DOB: match.DOB,
-    site: match.site,
-    OutOfArea: match.OutOfArea,
-    Info: match.Info,
-    start: appointment.start.toISOString(),
-    end: appointment.end.toISOString(),
-    type: 'booked',
-    visitNum: match.visitNum ?? 1,
-    id: patientId, 
+    setWindowEvents(windowEvents);
   };
 
-  // 1. Save to localStorage (bookedEvents)
-  const existingBooked = JSON.parse(localStorage.getItem("bookedEvents")) || [];
-  const updatedBooked = [...existingBooked, fullAppointment];
-  localStorage.setItem("bookedEvents", JSON.stringify(updatedBooked));
-  setBookedEvents(updatedBooked); // update state so calendar rerenders
+  const handleClearWindow = () => {
+    setWindowEvents([]);
+    setSearchPatientId('');
+    setCurrentPatient(null);
+  };
 
-  // Check if patient is already booked
-  if (bookedEvents.some(e => e.patientId === patientId)) {
-  alert("This patient already has a booked appointment.");
-  return;
-}
-
-  // 2. Update patient type in userInfoList
-  const updatedUsers = userList.map(p => {
-    if (p.id === patientId) {
-      return {
-        ...p,
-        type: 'booked',
-        visitNum: p.visitNum + 1,
-        start: appointment.start.toISOString(),
-        end: appointment.end.toISOString(),  
-      };
+  const confirmDeleteEvent = () => {
+    if (!eventToDelete?.patientId) {
+      console.error("Missing patientId on event", eventToDelete);
+      return;
     }
-    return p;
+
+    const updatedEvents = bookedEvents.filter(
+      (event) => event.id !== eventToDelete.id || event.start !== eventToDelete.start
+    );
+
+    setBookedEvents(updatedEvents);
+    localStorage.setItem('bookedEvents', JSON.stringify(updatedEvents));
+
+    const updatedUser = userList.map((p) => {
+      if (p.id === eventToDelete.patientId) {
+        return {
+          ...p,
+          type: 'window',
+          visitNum: p.visitNum - 1
+        };
+      }
+      return p;
+    });
+
+    setUserList(updatedUser);
+    localStorage.setItem('userInfoList', JSON.stringify(updatedUser));
+    setPopupOpen(false);
+  };
+
+  const handleEventClick = (event) => {
+    setEventToDelete(event);
+    setPopupOpen(true);
+  };
+
+  const [bookedEvents, setBookedEvents] = useState(() => {
+    const stored = localStorage.getItem("bookedEvents");
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        return parsed.map(event => ({
+          ...event,
+          start: new Date(event.start),
+          end: new Date(event.end),
+        }));
+      } catch (error) {
+        console.error('Failed to parse bookedEvents from storage:', error);
+        return [];
+      }
+    }
+    return [];
   });
-  localStorage.setItem("userInfoList", JSON.stringify(updatedUsers));
-  setUserList(updatedUsers); // update in-memory state
 
-  alert("Appointment booked successfully.");
-};
+  const handleAddAppointment = (appointment) => {
+    const patientId = appointment.patientId;
+    const match = userList.find(p => p.id === patientId);
 
+    if (!match) {
+      setAlert({ message: `Patient ID ${patientId} not found in user list.`, type: "error" });
+      return;
+    }
 
-const allEvents = [...bookedEvents, ...windowEvents];
+    const fullAppointment = {
+      ...appointment,
+      Study: (appointment.Study || match.Study || "UNKNOWN").toUpperCase(),
+      patientId,
+      Name: match.Name,
+      DOB: match.DOB,
+      site: match.site,
+      OutOfArea: match.OutOfArea,
+      Info: match.Info,
+      start: appointment.start.toISOString(),
+      end: appointment.end.toISOString(),
+      type: 'booked',
+      visitNum: match.visitNum ?? 1,
+      id: patientId,
+    };
 
-// Define selectedStudies and handleStudyChange here or via your hook (see Error 4)
-const [selectedStudies, setSelectedStudies] = useState(['AIMHIGH', 'COOLPRIME', 'EDI']);
+    const existingBooked = JSON.parse(localStorage.getItem("bookedEvents")) || [];
+    const updatedBooked = [...existingBooked, fullAppointment];
+    localStorage.setItem("bookedEvents", JSON.stringify(updatedBooked));
+    setBookedEvents(updatedBooked);
 
-const handleStudyChange = (study) => {
-  setSelectedStudies(prev =>
-    prev.includes(study)
-      ? prev.filter(s => s !== study)
-      : [...prev, study]
+    if (bookedEvents.some(e => e.patientId === patientId)) {
+      setAlert({ message: "This patient already has a booked appointment.", type: "error" });
+      return;
+    }
+
+    const updatedUsers = userList.map(p => {
+      if (p.id === patientId) {
+        return {
+          ...p,
+          type: 'booked',
+          visitNum: p.visitNum + 1,
+          start: appointment.start.toISOString(),
+          end: appointment.end.toISOString(),
+        };
+      }
+      return p;
+    });
+    localStorage.setItem("userInfoList", JSON.stringify(updatedUsers));
+    setUserList(updatedUsers);
+    setAlert({ message: "Appointment booked successfully.", type: "success" });
+  };
+
+  const allEvents = [...bookedEvents, ...windowEvents];
+
+  const [selectedStudies, setSelectedStudies] = useState(['AIMHIGH', 'COOLPRIME', 'EDI']);
+  const handleStudyChange = (study) => {
+    setSelectedStudies(prev =>
+      prev.includes(study)
+        ? prev.filter(s => s !== study)
+        : [...prev, study]
+    );
+  };
+
+  const filteredAppointments = allEvents.filter(event =>
+    selectedStudies.includes(event.Study?.toUpperCase())
   );
-};
 
-const filteredAppointments = allEvents.filter(event =>
-  selectedStudies.includes(event.Study?.toUpperCase())
-);
-
-// ----------------------------------------HTML--------------------------------------
   return (
-   <div>
-    {/* Calendar Container */}
-    <div className="calendar-wrapper">
-      <Calendar
-        localizer={localizer}
-        events={filteredAppointments}
-        startAccessor="start"
-        endAccessor="end"
-        eventPropGetter={eventPropGetter}
-        view={view}
-        onView={setView}
-        date={date}
-        onNavigate={setDate}
-        onSelectSlot={(slotInfo) => {
-          setDate(slotInfo.start);
-          setView('day');
-        }}
-        onSelectEvent={handleSelectEvent}
-        selectable
-        views={['month', 'week', 'day', 'agenda']}
-        components={{
-          toolbar: CustomToolbar,
-          dateCellWrapper: (props) => (
-            <ClickableDateCell {...props} onSelectSlot={(slot) => {
-              setDate(slot.start);
-              setView('day');
-            }} 
-            />
-          ),
-        }}
-        
-      />
-    </div>
+    <div>
+      {alert && (
+        <Alert
+          message={alert.message}
+          type={alert.type}
+          onClose={() => setAlert(null)}
+        />
+      )}
 
-    {/* Filter Container BELOW calendar */}
-    <div className="filter-container">
-      <h4>Show Event Types</h4>
+      <div className="calendar-wrapper">
+        <Calendar
+          localizer={localizer}
+          events={filteredAppointments}
+          startAccessor="start"
+          endAccessor="end"
+          eventPropGetter={eventPropGetter}
+          view={view}
+          onView={setView}
+          date={date}
+          onNavigate={setDate}
+          onSelectSlot={(slotInfo) => {
+            setDate(slotInfo.start);
+            setView('day');
+          }}
+          onSelectEvent={handleSelectEvent}
+          selectable
+          views={['month', 'week', 'day', 'agenda']}
+          components={{
+            toolbar: CustomToolbar,
+            dateCellWrapper: (props) => (
+              <ClickableDateCell {...props} onSelectSlot={(slot) => {
+                setDate(slot.start);
+                setView('day');
+              }} />
+            ),
+          }}
+        />
+      </div>
 
-      {/* Flex Container to look pretty*/}
-      <div className="filter-row">
-
-        {/* Visit Window Box*/ }
-        <div className="windowView">
-          <label>
-            View Patient Window:
-            <input
-              type="text"
-              placeholder="Enter Patient ID"
-              value={searchPatientId}
-              onChange={(e) => setSearchPatientId(e.target.value)}
-            />
-            <div className="button-row">
-              <button className="search-button" onClick={handleSearchWindow}>Search Window</button>
-              <button className="clear-button" onClick={handleClearWindow}>Clear Window</button>
-            </div>
-          </label>
-
-          {currentPatient && (
-            <div className="patientInfo">
-              <h4>Patient Info</h4>
-              <p><b>Name:</b> {currentPatient.Name}</p>
-              <p><b>ID:</b> {currentPatient.id}</p>
-              <p><b>DOB:</b> {new Date(currentPatient.DOB).toLocaleDateString(undefined, {
-                              year: 'numeric',
-                              month: 'long',
-                              day: 'numeric',
-                            })}</p>
-            </div>
-          )}
-        </div>
-
-        {/* Booked Appointment Box*/ }
-        <div className="filter-Main">
-          <ul className="collapsable">
-            <li>
-              <div
-                style={{ cursor: 'pointer' }}
-                onClick={() => setIsBookingCollapsed(prev => !prev)}
-                >
-                <b>Study Filter</b>
+      <div className="filter-container">
+        <h4>Show Event Types</h4>
+        <div className="filter-row">
+          <div className="windowView">
+            <label>
+              View Patient Window:
+              <input
+                type="text"
+                placeholder="Enter Patient ID"
+                value={searchPatientId}
+                onChange={(e) => setSearchPatientId(e.target.value)}
+              />
+              <div className="button-row">
+                <button className="search-button" onClick={handleSearchWindow}>Search Window</button>
+                <button className="clear-button" onClick={handleClearWindow}>Clear Window</button>
               </div>
-              {/* Study Filter Box in collapsable*/ }
-              <ul style={{ display: isBookingCollapsed ? 'none' : 'block' }}>
-                <li>
-                  <div>
-                    <div className="filter-checkbox">
+            </label>
+
+            {currentPatient && (
+              <div className="patientInfo">
+                <h4>Patient Info</h4>
+                <p><b>Name:</b> {currentPatient.Name}</p>
+                <p><b>ID:</b> {currentPatient.id}</p>
+                <p><b>DOB:</b> {new Date(currentPatient.DOB).toLocaleDateString(undefined, {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}</p>
+              </div>
+            )}
+          </div>
+
+          <div className="filter-Main">
+            <ul className="collapsable">
+              <li>
+                <div onClick={() => setIsBookingCollapsed(prev => !prev)} style={{ cursor: 'pointer' }}>
+                  <b>Study Filter</b>
+                </div>
+                <ul style={{ display: isBookingCollapsed ? 'none' : 'block' }}>
+                  {['AIMHIGH', 'COOLPRIME', 'EDI'].map(study => (
+                    <li key={study}>
+                      <div className="filter-checkbox">
                         <label>
-                          <input type="checkbox" className="AHCheck"
-                          checked={selectedStudies.includes('AIMHIGH')}
-                          onChange={() => handleStudyChange('AIMHIGH')}
+                          <input
+                            type="checkbox"
+                            checked={selectedStudies.includes(study)}
+                            onChange={() => handleStudyChange(study)}
                           />
-                          <label>
-                            AIMHIGH
-                          </label>
+                          {study}
                         </label>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="filter-checkbox">
-                      <label>
-                        <input
-                          type="checkbox" className="CPCheck"
-                          checked={selectedStudies.includes('COOLPRIME')}
-                          onChange={() => handleStudyChange('COOLPRIME')}
-                        />
-                        COOLPRIME
-                      </label>
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="filter-checkbox">
-                      <label>
-                        <input
-                          type="checkbox" className="EDICheck"
-                          checked={selectedStudies.includes('EDI')}
-                          onChange={() => handleStudyChange('EDI')}
-                        />
-                        EDI
-                      </label>
-                    </div>
-                  </div>
-                </li>
-              </ul>
-            </li>
-          </ul>  
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
-    </div>
 
     {selectedEvent && (
-      <div className="popup-overlay">
-        <div className="popup-content">
-          <h3>Edit Event for {selectedEvent.Name || selectedEvent.title}</h3>
+          <div className="popup-overlay">
+            <div className="popup-content">
+              <h3>Edit Event for {selectedEvent.Name || selectedEvent.title}</h3>
 
-          <label>
-            Title:
-            <input
-              type="text"
-              value={editedInfo.title}
-              onChange={e => setEditedInfo(prev => ({ ...prev, title: e.target.value }))}
-            />
-          </label>
+              <label>
+                Title:
+                <input
+                  type="text"
+                  value={editedInfo.title}
+                  onChange={e => setEditedInfo(prev => ({ ...prev, title: e.target.value }))}
+                />
+              </label>
 
-          <label>
-            Start:
-            <input
-              type="datetime-local"
-              value={moment(editedInfo.start).format('YYYY-MM-DDTHH:mm')}
-              onChange={e => setEditedInfo(prev => ({ ...prev, start: new Date(e.target.value) }))}
-            />
-          </label>
+              <label>
+                Start:
+                <input
+                  type="datetime-local"
+                  value={moment(editedInfo.start).format('YYYY-MM-DDTHH:mm')}
+                  onChange={e => setEditedInfo(prev => ({ ...prev, start: new Date(e.target.value) }))}
+                />
+              </label>
 
-          <label>
-            End:
-            <input
-              type="datetime-local"
-              value={moment(editedInfo.end).format('YYYY-MM-DDTHH:mm')}
-              onChange={e => setEditedInfo(prev => ({ ...prev, end: new Date(e.target.value) }))}
-            />
-          </label>
+              <label>
+                End:
+                <input
+                  type="datetime-local"
+                  value={moment(editedInfo.end).format('YYYY-MM-DDTHH:mm')}
+                  onChange={e => setEditedInfo(prev => ({ ...prev, end: new Date(e.target.value) }))}
+                />
+              </label>
 
-          <div>
-            <button onClick={saveEditedInfo}>Save</button>
-            <button onClick={closePopup}>Cancel</button>
+              <div>
+                <button onClick={saveEditedInfo}>Save</button>
+                <button onClick={closePopup}>Cancel</button>
+              </div>
+
+              <div>
+                <button onClick={() => handleEventClick(selectedEvent)}>Delete Appointment</button>
+              </div>
+            </div>
           </div>
+        )}
 
-          <div>
-            <button onClick={() => handleEventDelete(selectedEvent)}>Delete Appointment</button>
-          </div>
-        </div>
-      </div>
-    )}
-
- 
       <div className='AppointmentToggle'>
         <h1>Add Appointment</h1>
         <ToggleAppointment onAddAppointment={handleAddAppointment} />
       </div>
 
-  </div>
-);
-  };
+      
+                    {/*() => setPopupOpen(false)*/}
+      <PopUp
+        isOpen={popupOpen}
+        onClose={() => setPopupOpen(false)}
+        onConfirm={confirmDeleteEvent}
+        message={`Delete ${eventToDelete?.title || 'this event'} for ${eventToDelete?.patientId || 'Unknown ID'}?`}
+        option1="Confirm"
+        option2="Cancel"
+      />
+
+
+    </div>
+  );
+};
 
 export default MyCalendar;
