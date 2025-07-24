@@ -21,7 +21,7 @@ const ToggleAppointment = ({ onAddAppointment }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    
+
     const start = new Date(`${appDate}T${appTimeStart}`);
     const end = new Date(`${appDate}T${appTimeEnd}`);
 

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import './appoint.css';
-import dummyEvents from './data/dummyEvents'; // Dummy data needs to be replaced with actual data in proper DB
 import { useAppointmentFilters } from './components/useAppointmentFilters';
 import './components/useAppointmentFilters.css'
 import { generateAimHighAppointments, generateCoolPrimeAppointments, generateEDIAppointment } from './data/windowEventCalc';
@@ -13,19 +12,27 @@ const Appointments = () => {
     useEffect(() => {
         const storedList = localStorage.getItem("userInfoList");
         if (storedList) {
+        const parsedList = JSON.parse(storedList)
+        
         setUserList(JSON.parse(storedList));
+
+        // Rehydrate start/end if present
+        const hydrated = parsedList.map(event => {
+            if (event.type === 'booked') {
+                return {
+                    ...event,
+                    start: new Date(event.start),
+                    end: new Date(event.end),
+                };
+            }
+            return event;
+        });
+        setUserList(hydrated)
         }
     }, []);
 
 
     //--------------------------------------------------------------------------------------
-
-    // Convert start and end strings to Date objects for proper parsing
-{/*    const processedAppointments = dummyEvents.map((event) => ({
-        ...event,
-        start: new Date(event.start),
-        end: new Date(event.end)
-    })); */}
 
     // Track collapsed state for IDs
     const [expandedIds, setExpandedIds] = useState({});
@@ -211,28 +218,18 @@ const Appointments = () => {
                     Displays date of app and time from and to*/}
                     {event.type === "booked" && (() => {
 
-                    const startDateTime = new Date(event.start);
-                    const endDateTime = new Date(event.end)
+                    console.log("Rendering event:", event);
+
 
                     return (
                         <div>
                         <strong>Appointment Date:</strong>{' '}
-                        {startDateTime.toLocaleDateString(undefined, {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                        })}
+                        {event.start ? new Date(event.start).toLocaleDateString() : 'N/A'}
                         <br />
-                        <strong>Time of Appointment: </strong>{' '}
-                        {startDateTime.toLocaleTimeString(undefined, {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                        })
-                        }{' - '}
-                        {endDateTime.toLocaleTimeString(undefined, {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                        })}
+                        <strong>Time of Appointment:</strong>{' '}
+                        {event.start && event.end
+                            ? `${new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${new Date(event.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+                            : 'N/A'}
                         <br />
                         </div>
                     );

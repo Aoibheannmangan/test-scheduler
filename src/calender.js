@@ -7,7 +7,6 @@ import { generateAimHighAppointments, generateCoolPrimeAppointments, generateEDI
 import ClickableDateCell from './components/clickableCell';
 import { eventPropGetter } from './data/eventPropGetter';
 import ToggleAppointment from './components/toggleAppointment';
-import { useAppointmentFilters } from './components/useAppointmentFilters';
 import './components/useAppointmentFilters.css';
 import CustomToolbar from './components/customToolbar'
 
@@ -72,7 +71,7 @@ const MyCalendar = () => {
     .filter(event => event.type === "window")
     .map(event => ({
       ...event,
-      title: 'Window',
+      title: 'Visit Window',
       Name: patient.Name,
       id: patient.id,
       start: new Date(event.start),
@@ -123,7 +122,7 @@ const deleteEvent = (eventToDelete) => {
 };
   
 const handleEventClick = (event) => {
-  const shouldDelete = window.confirm('Delete ${event.title} for ${patientId}?')
+  const shouldDelete = window.confirm(`Delete ${event.title} for ${event.patientId}?`)
   if (shouldDelete) {
     deleteEvent(event);
   }
@@ -169,8 +168,8 @@ const [bookedEvents, setBookedEvents] = useState(() => {
     site: match.site,
     OutOfArea: match.OutOfArea,
     Info: match.Info,
-    start: new Date(appointment.start),
-    end: new Date(appointment.end),
+    start: appointment.start.toISOString(),
+    end: appointment.end.toISOString(),
     type: 'booked',
     visitNum: match.visitNum ?? 1,
     id: patientId, 
@@ -195,6 +194,8 @@ const [bookedEvents, setBookedEvents] = useState(() => {
         ...p,
         type: 'booked',
         visitNum: p.visitNum + 1,
+        start: appointment.start.toISOString(),
+        end: appointment.end.toISOString(),  
       };
     }
     return p;
