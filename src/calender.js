@@ -51,7 +51,8 @@ const MyCalendar = () => {
     return;
   }
 
-  setCurrentPatient(patient); // <-- save patient info to display
+  // ave current patient info to display
+  setCurrentPatient(patient); 
 
   const birthDate = new Date(patient.DOB);
   const babyDaysEarly = patient.DaysEarly;
@@ -73,7 +74,7 @@ const MyCalendar = () => {
       ...event,
       title: 'Window',
       Name: patient.Name,
-      id: `${patient.id}-${event.Study}-${event.Info}`,
+      id: patient.id,
       start: new Date(event.start),
       end: new Date(event.end),
     }));
@@ -91,48 +92,98 @@ const handleClearWindow = () => {
 
   
   // Booked appointments state
-  const [bookedEvents, setBookedEvents] = useState(() => {
-    const stored = localStorage.getItem("bookedEvents");
-    return stored ? JSON.parse(stored) : [];
-  });
+const [bookedEvents, setBookedEvents] = useState(() => {
+  const stored = localStorage.getItem("bookedEvents");
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      // convert start and end back to Date objects
+      return parsed.map(event => ({
+        ...event,
+        start: new Date(event.start),
+        end: new Date(event.end),
+      }));
+    } catch (error) {
+      console.error('Failed to parse bookedEvents from storage:', error);
+      return [];
+    }
+  }
+  return [];
+});
 
 
   // Add new appointment from form
-const handleAddAppointment = (appointment) => {
-  // Add the new appointment to bookedEvents
-  const updatedEvents = [...bookedEvents, appointment];
-  setBookedEvents(updatedEvents);
-  localStorage.setItem("bookedEvents", JSON.stringify(updatedEvents));
+  const handleAddAppointment = (appointment) => {
+  const patientId = appointment.patientId;
+  const match = userList.find(p => p.id === patientId);
 
-  // Update the patient's type from "window" to "booked"
-  // Find patient by id (assuming appointment.patientId or appointment.id matches patient.id)
-  setUserList(prevUsers => {
-    const updatedUsers = prevUsers.map(patient => {
-      if (patient.id === appointment.patientId) { // or appointment.id depending on your appointment object
-        return {
-          ...patient,
-          type: 'booked'
-        };
-      }
-      return patient;
-    });
+  if (!match) {
+    alert(`Patient ID ${patientId} not found in user list.`);
+    return;
+  }
 
-    // Save updated patients to localStorage
-    localStorage.setItem("userInfoList", JSON.stringify(updatedUsers));
+  const fullAppointment = {
+    ...appointment,
+    Study: (appointment.Study || match.Study || "UNKNOWN").toUpperCase(),
+    patientId,
+    Name: match.Name,
+    DOB: match.DOB,
+    site: match.site,
+    OutOfArea: match.OutOfArea,
+    Info: match.Info,
+    start: new Date(appointment.start),
+    end: new Date(appointment.end),
+    type: 'booked',
+    visitNum: match.visitNum ?? 1,
+    id: patientId, 
+  };
 
-    return updatedUsers;
+  // 1. Save to localStorage (bookedEvents)
+  const existingBooked = JSON.parse(localStorage.getItem("bookedEvents")) || [];
+  const updatedBooked = [...existingBooked, fullAppointment];
+  localStorage.setItem("bookedEvents", JSON.stringify(updatedBooked));
+  setBookedEvents(updatedBooked); // update state so calendar rerenders
+
+  // Check if patient is already booked
+  if (bookedEvents.some(e => e.patientId === patientId)) {
+  alert("This patient already has a booked appointment.");
+  return;
+}
+
+  // 2. Update patient type in userInfoList
+  const updatedUsers = userList.map(p => {
+    if (p.id === patientId) {
+      return {
+        ...p,
+        type: 'booked',
+        visitNum: p.visitNum + 1,
+      };
+    }
+    return p;
   });
+  localStorage.setItem("userInfoList", JSON.stringify(updatedUsers));
+  setUserList(updatedUsers); // update in-memory state
+
+  alert("Appointment booked successfully.");
 };
 
-  // States all events 
-const allEvents = [...windowEvents, ...bookedEvents];
 
-const {
-  selectedStudies,
-  handleStudyChange,
-  filteredAppointments,
-} = useAppointmentFilters(allEvents);
+const allEvents = [...bookedEvents, ...windowEvents];
 
+// Define selectedStudies and handleStudyChange here or via your hook (see Error 4)
+const [selectedStudies, setSelectedStudies] = useState(['AIMHIGH', 'COOLPRIME', 'EDI']);
+
+const handleStudyChange = (study) => {
+  setSelectedStudies(prev =>
+    prev.includes(study)
+      ? prev.filter(s => s !== study)
+      : [...prev, study]
+  );
+};
+
+const filteredAppointments = allEvents.filter(event =>
+  selectedStudies.includes(event.Study?.toUpperCase())
+);
 
 // ----------------------------------------HTML--------------------------------------
   return (

@@ -21,22 +21,27 @@ const ToggleAppointment = ({ onAddAppointment }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Combine date and time so event can process them properly
-    const startDateTime = new Date(`${appDate}T${appTimeStart}`);
-    const endDateTime = new Date(`${appDate}T${appTimeEnd}`);
+    
+    const start = new Date(`${appDate}T${appTimeStart}`);
+    const end = new Date(`${appDate}T${appTimeEnd}`);
 
-    // The new appointment info
     const newAppointment = {
       title: appTitle,
-      patID: appPatID,
-      start: startDateTime,
-      end: endDateTime,
+      patientId: appPatID,
+      start,
+      end,
       type: 'booked',
-      study: patientStudy.toUpperCase(),
+      Study: patientStudy.toUpperCase() || '',
     };
 
-    //console.log("Submitted appointment:", newAppointment); *testing*
     onAddAppointment(newAppointment);
+    setAppTitle('');
+    setAppPatID('');
+    setAppDate('');
+    setAppTimeStart('');
+    setAppTimeEnd('');
+    setPatientStudy('');
+    setIsVisible(false);
   };
 
   return (
@@ -102,17 +107,7 @@ const ToggleAppointment = ({ onAddAppointment }) => {
                   onChange={(e) => setAppTimeEnd(e.target.value)}
                   required
                 />
-
-                <label htmlFor="study">Study Patient is in</label>
-                <select // Dropdown for which study app is for
-                  id="study"
-                  value={patientStudy}
-                  onChange={(e) => setPatientStudy(e.target.value)}
-                  required>
-                  <option value="AIMHIGH">AIMHIGH</option>
-                  <option value="COOLPRIME">COOLPRIME</option>
-                  <option value="EDI">EDI</option>
-                </select>
+                <br />
 
                 <button // Submit button 
                 type="submit">
