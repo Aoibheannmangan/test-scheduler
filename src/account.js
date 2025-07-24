@@ -90,7 +90,6 @@ const Account = () => {
             <li><strong>Condition:</strong> {user.Condition}</li>
             <li><strong>Study:</strong> {user.Study}</li>
             <li><strong>Site:</strong> {user.site}</li>
-            <li><strong>Out of Area: </strong>{user.OutOfArea}</li>
             <li><strong>Additional Notes:</strong> {user.Info}</li>
           </ul>
         </div>

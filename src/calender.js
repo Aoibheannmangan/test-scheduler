@@ -28,6 +28,14 @@ const MyCalendar = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [editedInfo, setEditedInfo] = useState("");
 
+  // Map used for styling later
+  const studyClassMap = {
+  AIMHIGH: 'AHCheck',
+  COOLPRIME: 'CPCheck',
+  EDI: 'EDICheck',
+  };
+
+  // Grab from local storage and in storedList
   useEffect(() => {
     const storedList = localStorage.getItem("userInfoList");
     if (storedList) {
@@ -46,6 +54,7 @@ const MyCalendar = () => {
     });
   };
 
+  // Save when editing event info
   const saveEditedInfo = () => {
     if (!selectedEvent) return;
 
@@ -64,7 +73,9 @@ const MyCalendar = () => {
           ? updatedEvent
           : event
       );
+      // Set booked events when updated
       setBookedEvents(updatedBooked);
+      // Store in local storage
       localStorage.setItem('bookedEvents', JSON.stringify(updatedBooked));
     } else if (selectedEvent.type === 'window') {
       const updatedWindows = windowEvents.map(event =>
@@ -73,7 +84,6 @@ const MyCalendar = () => {
           : event
       );
       setWindowEvents(updatedWindows);
-      // Optionally update localStorage if you store windowEvents persistently
     }
 
     closePopup();
@@ -85,9 +95,11 @@ const MyCalendar = () => {
     setEditedInfo("");
   };
 
+  // Search patient by ID
   const handleSearchWindow = () => {
     const patient = userList.find(p => p.id === searchPatientId.trim());
 
+    // If can't find Id
     if (!patient) {
       setAlert({ message: "Patient with that ID not found", type: "error" });
       setCurrentPatient(null);
@@ -95,6 +107,7 @@ const MyCalendar = () => {
       return;
     }
 
+    // If window searching for booked patient this displays
     if (["booked"].includes(patient.type)) {
       setAlert({ message: "This patient's visit is already booked or scheduled.", type: "error" });
       setCurrentPatient(null);
@@ -102,11 +115,13 @@ const MyCalendar = () => {
       return;
     }
 
+    // Set current patient that was searched
     setCurrentPatient(patient);
     const birthDate = new Date(patient.DOB);
     const babyDaysEarly = patient.DaysEarly;
     let studyWindows = [];
 
+    // Calc window based on study
     if (patient.Study === "AIMHIGH") {
       studyWindows = generateAimHighAppointments(birthDate, babyDaysEarly);
     } else if (patient.Study === "COOLPRIME") {
@@ -115,8 +130,10 @@ const MyCalendar = () => {
       studyWindows = generateEDIAppointment(birthDate, babyDaysEarly);
     }
 
+    // Filter by window
     const windowEvents = studyWindows
       .filter(event => event.type === "window")
+      // mane visit window and initialise start and end dates
       .map(event => ({
         ...event,
         title: 'Visit Window',
@@ -125,16 +142,18 @@ const MyCalendar = () => {
         start: new Date(event.start),
         end: new Date(event.end),
       }));
-
+    // Set window dates
     setWindowEvents(windowEvents);
   };
 
+  // Clear search and window on calender
   const handleClearWindow = () => {
     setWindowEvents([]);
     setSearchPatientId('');
     setCurrentPatient(null);
   };
 
+  // Confirm delete on pop up, append to local storage
   const confirmDeleteEvent = () => {
     if (!eventToDelete?.patientId) {
       console.error("Missing patientId on event", eventToDelete);
@@ -148,6 +167,7 @@ const MyCalendar = () => {
     setBookedEvents(updatedEvents);
     localStorage.setItem('bookedEvents', JSON.stringify(updatedEvents));
 
+    // If booking deleted reset visit and type as its now a window again
     const updatedUser = userList.map((p) => {
       if (p.id === eventToDelete.patientId) {
         return {
@@ -159,17 +179,21 @@ const MyCalendar = () => {
       return p;
     });
 
+    // Set and store after booking delete
     setUserList(updatedUser);
     localStorage.setItem('userInfoList', JSON.stringify(updatedUser));
     setPopupOpen(false);
   };
 
+  // Store event clicked on and open pop up for delete
   const handleEventClick = (event) => {
     setEventToDelete(event);
     setPopupOpen(true);
   };
 
+  // Create array to store booked appointments
   const [bookedEvents, setBookedEvents] = useState(() => {
+    // Place in local storage + make date object to store
     const stored = localStorage.getItem("bookedEvents");
     if (stored) {
       try {
@@ -179,7 +203,8 @@ const MyCalendar = () => {
           start: new Date(event.start),
           end: new Date(event.end),
         }));
-      } catch (error) {
+      }// Return error message
+       catch (error) {
         console.error('Failed to parse bookedEvents from storage:', error);
         return [];
       }
@@ -187,15 +212,19 @@ const MyCalendar = () => {
     return [];
   });
 
+  // Function to add appointment
   const handleAddAppointment = (appointment) => {
     const patientId = appointment.patientId;
+    // Find patient Id
     const match = userList.find(p => p.id === patientId);
 
+    // If cant find patient id
     if (!match) {
       setAlert({ message: `Patient ID ${patientId} not found in user list.`, type: "error" });
       return;
     }
 
+    // Add new appointment object structure
     const fullAppointment = {
       ...appointment,
       Study: (appointment.Study || match.Study || "UNKNOWN").toUpperCase(),
@@ -205,10 +234,10 @@ const MyCalendar = () => {
       site: match.site,
       OutOfArea: match.OutOfArea,
       Info: match.Info,
-      start: appointment.start.toISOString(),
-      end: appointment.end.toISOString(),
-      type: 'booked',
-      visitNum: match.visitNum ?? 1,
+      start: appointment.start.toISOString(), // Make an ISO object for correct parsing
+      end: appointment.end.toISOString(), // Make an ISO object for correct parsing
+      type: 'booked', // As no longer window
+      visitNum: match.visitNum ?? 1, 
       id: patientId,
     };
 
@@ -217,6 +246,7 @@ const MyCalendar = () => {
     localStorage.setItem("bookedEvents", JSON.stringify(updatedBooked));
     setBookedEvents(updatedBooked);
 
+    // If trying to book another appointment for patient
     if (bookedEvents.some(e => e.patientId === patientId)) {
       setAlert({ message: "This patient already has a booked appointment.", type: "error" });
       return;
@@ -228,19 +258,24 @@ const MyCalendar = () => {
           ...p,
           type: 'booked',
           visitNum: p.visitNum + 1,
-          start: appointment.start.toISOString(),
-          end: appointment.end.toISOString(),
+          start: appointment.start.toISOString(), // Make an ISO object for correct parsing
+          end: appointment.end.toISOString(), // Make an ISO object for correct parsing
         };
       }
       return p;
     });
+
+    // Set updated list to local storage
     localStorage.setItem("userInfoList", JSON.stringify(updatedUsers));
     setUserList(updatedUsers);
+    // Tell user appointment is booked
     setAlert({ message: "Appointment booked successfully.", type: "success" });
   };
 
+  // Array of all avents
   const allEvents = [...bookedEvents, ...windowEvents];
 
+  // Selected studies available
   const [selectedStudies, setSelectedStudies] = useState(['AIMHIGH', 'COOLPRIME', 'EDI']);
   const handleStudyChange = (study) => {
     setSelectedStudies(prev =>
@@ -250,12 +285,14 @@ const MyCalendar = () => {
     );
   };
 
+  // Filter for search/ filtering function
   const filteredAppointments = allEvents.filter(event =>
     selectedStudies.includes(event.Study?.toUpperCase())
   );
 
+//-------------------------------------------HTML------------------------------------------------------------------
   return (
-    <div>
+    <div> 
       {alert && (
         <Alert
           message={alert.message}
@@ -264,6 +301,7 @@ const MyCalendar = () => {
         />
       )}
 
+      {/**CALENDER*/}
       <div className="calendar-wrapper">
         <Calendar
           localizer={localizer}
@@ -294,6 +332,7 @@ const MyCalendar = () => {
         />
       </div>
 
+      {/**FILTER BOX + WINDOW SEARCH*/}
       <div className="filter-container">
         <h4>Show Event Types</h4>
         <div className="filter-row">
@@ -311,7 +350,7 @@ const MyCalendar = () => {
                 <button className="clear-button" onClick={handleClearWindow}>Clear Window</button>
               </div>
             </label>
-
+            {/**DISPLAYS PATIENT WHEN SEARCHED IN WINDOW*/}
             {currentPatient && (
               <div className="patientInfo">
                 <h4>Patient Info</h4>
@@ -325,13 +364,14 @@ const MyCalendar = () => {
               </div>
             )}
           </div>
-
+          {/**COLLAPSABLE FILTER BOX*/}
           <div className="filter-Main">
             <ul className="collapsable">
               <li>
                 <div onClick={() => setIsBookingCollapsed(prev => !prev)} style={{ cursor: 'pointer' }}>
                   <b>Study Filter</b>
                 </div>
+                {/**DISPLAYS FILTERS USING LOOP*/}
                 <ul style={{ display: isBookingCollapsed ? 'none' : 'block' }}>
                   {['AIMHIGH', 'COOLPRIME', 'EDI'].map(study => (
                     <li key={study}>
@@ -339,6 +379,7 @@ const MyCalendar = () => {
                         <label>
                           <input
                             type="checkbox"
+                            className={studyClassMap[study] || ''}
                             checked={selectedStudies.includes(study)}
                             onChange={() => handleStudyChange(study)}
                           />
@@ -354,7 +395,8 @@ const MyCalendar = () => {
         </div>
       </div>
 
-    {selectedEvent && (
+      {/**EDIT POPUP*/}
+      {selectedEvent && (
           <div className="popup-overlay">
             <div className="popup-content">
               <h3>Edit Event for {selectedEvent.Name || selectedEvent.title}</h3>
@@ -398,13 +440,8 @@ const MyCalendar = () => {
           </div>
         )}
 
-      <div className='AppointmentToggle'>
-        <h1>Add Appointment</h1>
-        <ToggleAppointment onAddAppointment={handleAddAppointment} />
-      </div>
-
       
-                    {/*() => setPopupOpen(false)*/}
+      {/**DELETE POPUP*/}
       <PopUp
         isOpen={popupOpen}
         onClose={() => setPopupOpen(false)}
@@ -414,6 +451,11 @@ const MyCalendar = () => {
         option2="Cancel"
       />
 
+      {/**APPOINTMENT BOOKING FORM*/}
+      <div className='AppointmentToggle'>
+        <h1>Add Appointment</h1>
+        <ToggleAppointment onAddAppointment={handleAddAppointment} />
+      </div>
 
     </div>
   );
