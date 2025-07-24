@@ -8,7 +8,8 @@ import ClickableDateCell from './components/clickableCell';
 import { eventPropGetter } from './data/eventPropGetter';
 import ToggleAppointment from './components/toggleAppointment';
 import './components/useAppointmentFilters.css';
-import CustomToolbar from './components/customToolbar'
+import CustomToolbar from './components/customToolbar';
+import Alert from './components/Alert';
 
 // Sets current date and time for calender
 const localizer = momentLocalizer(moment);
@@ -21,7 +22,7 @@ const MyCalendar = () => {
   const [searchPatientId, setSearchPatientId] = useState(''); // Search for ID -  Window view
   const [windowEvents, setWindowEvents] = useState([]); // Sets window view
   const [currentPatient, setCurrentPatient] = useState(null); // Stores current patient in look up
-
+  const [alert, setAlert] = useState(null);
 
   //Local storage grab
   const [userList, setUserList] = useState([]);
@@ -37,14 +38,14 @@ const MyCalendar = () => {
   const patient = userList.find(patient => patient.id === searchPatientId.trim());
 
   if (!patient) {
-    alert("Patient ID not found.");
+    setAlert({message: "Patient with that ID not found", type:"error"});
     setCurrentPatient(null);
     setWindowEvents([]);
     return;
   }
 
   if (["booked"].includes(patient.type)) {
-    alert("This patient's visit is already booked or scheduled.");
+    setAlert({message: "This patient's visit is already booked or scheduled.", type: "error"});
     setCurrentPatient(null);
     setWindowEvents([]);
     return;
@@ -155,7 +156,7 @@ const [bookedEvents, setBookedEvents] = useState(() => {
   const match = userList.find(p => p.id === patientId);
 
   if (!match) {
-    alert(`Patient ID ${patientId} not found in user list.`);
+    setAlert({message: `Patient ID ${patientId} not found in user list.`, type: "error"});
     return;
   }
 
@@ -183,7 +184,7 @@ const [bookedEvents, setBookedEvents] = useState(() => {
 
   // Check if patient is already booked
   if (bookedEvents.some(e => e.patientId === patientId)) {
-  alert("This patient already has a booked appointment.");
+  setAlert({messaege:"This patient already has a booked appointment.", type: "error"});
   return;
 }
 
@@ -203,7 +204,7 @@ const [bookedEvents, setBookedEvents] = useState(() => {
   localStorage.setItem("userInfoList", JSON.stringify(updatedUsers));
   setUserList(updatedUsers); // update in-memory state
 
-  alert("Appointment booked successfully.");
+  setAlert({message:"Appointment booked successfully.", type: "success"});
 };
 
 
@@ -227,6 +228,13 @@ const filteredAppointments = allEvents.filter(event =>
 // ----------------------------------------HTML--------------------------------------
   return (
    <div>
+    {alert && (
+        <Alert
+          message={alert.message}
+          type={alert.type}
+          onClose={() => setAlert(null)}
+        />
+      )}
     {/* Calendar Container */}
     <div className="calendar-wrapper">
       <Calendar
