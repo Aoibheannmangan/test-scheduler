@@ -230,7 +230,6 @@ const UserInfo = () => {
               onChange={(e) => setPatientInfo(e.target.value)}
               placeholder="Enter Additional Notes"
               autoComplete="off"
-              required
             />
             <div >
               <button type="submit" className="submit-button">{isEditing ? "Update" : "Submit"}</button>
