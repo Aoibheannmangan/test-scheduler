@@ -139,3 +139,9 @@ select {
         padding: 15px;
     }
 }
+.heading-text {
+    font-size: 36px;
+    color: #8d5a97;
+    text-decoration-line: underline;
+    text-shadow: 0.5px 0.5px #4e3253;
+}
