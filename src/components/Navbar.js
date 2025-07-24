@@ -13,7 +13,7 @@ const Navbar = () => {
                 <ul className="nav-links">
                     <li><Link to="/appoint">My Appointments</Link></li>
                     <li><Link to="/calender">Calendar</Link></li>
-                    <li><Link to="https://redcap.ucc.ie/index.php?action=myprojects">REDCap</Link></li>
+                    <li><Link to="/GoogleCalendar">Google Calendar</Link></li>
                 </ul>
             </div>
 
