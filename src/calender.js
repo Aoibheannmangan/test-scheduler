@@ -90,7 +90,45 @@ const handleClearWindow = () => {
   setCurrentPatient(null);
 };
 
+const deleteEvent = (eventToDelete) => {
+
+  // Clause to protect if ID is missing 
+  if (!eventToDelete.patientId) {
+    console.error('Missing patientId on event', eventToDelete)
+    return;
+  }
+
+  // Filter out deleted events
+  const updatedEvents = bookedEvents.filter(
+    (event) => event.id !== eventToDelete.id || event.start !== eventToDelete.start
+  );
+
+  // Update state + local storage
+  setBookedEvents(updatedEvents);
+  localStorage.setItem('bookedEvents',JSON.stringify(updatedEvents));
+
+  // Update user back to window
+  const updatedUser = userList.map((p) => {
+    if (p.id === eventToDelete.patientId) {
+      return {
+        ...p,
+        type: 'window',
+        visitNum: p.visitNum -1
+      };
+    }
+    return p;
+  });
+  setUserList(updatedUser);
+  localStorage.setItem('userInfoList', JSON.stringify(updatedUser));
+};
   
+const handleEventClick = (event) => {
+  const shouldDelete = window.confirm('Delete ${event.title} for ${patientId}?')
+  if (shouldDelete) {
+    deleteEvent(event);
+  }
+}
+
   // Booked appointments state
 const [bookedEvents, setBookedEvents] = useState(() => {
   const stored = localStorage.getItem("bookedEvents");
@@ -204,6 +242,7 @@ const filteredAppointments = allEvents.filter(event =>
           setDate(slotInfo.start);
           setView('day');
         }}
+        onSelectEvent={handleEventClick}
         selectable
         views={['month', 'week', 'day', 'agenda']}
         components={{
