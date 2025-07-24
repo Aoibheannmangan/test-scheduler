@@ -66,10 +66,11 @@ const MyCalendar = () => {
       end: new Date(editedInfo.end),
     };
 
+
     // Update bookedEvents or windowEvents depending on type
     if (selectedEvent.type === 'booked') {
       const updatedBooked = bookedEvents.map(event =>
-        event.id === selectedEvent.id && event.start.getTime() === selectedEvent.start.getTime()
+        event.id === selectedEvent.id && new Date(event.start).getTime() === new Date(selectedEvent.start).getTime()
           ? updatedEvent
           : event
       );
@@ -79,7 +80,7 @@ const MyCalendar = () => {
       localStorage.setItem('bookedEvents', JSON.stringify(updatedBooked));
     } else if (selectedEvent.type === 'window') {
       const updatedWindows = windowEvents.map(event =>
-        event.id === selectedEvent.id && event.start.getTime() === selectedEvent.start.getTime()
+        event.id === selectedEvent.id && new Date(event.start).getTime() === new Date(selectedEvent.start).getTime()
           ? updatedEvent
           : event
       );
