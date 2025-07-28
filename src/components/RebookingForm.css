@@ -21,9 +21,38 @@
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
+    align-items: center;
 }
 
-.modal-buttons .confirm-button,
-.modal-buttons .cancel-button {
-  padding: 8px 16px;
+.resubmit-button, .recancel-button {
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    box-sizing: border-box;
+    min-width: 100px;
+    text-align: center;
+    display: inline-block;
+    font-family: 'Sansation', serif;
+    font-size: 20px;
 }
+
+.resubmit-button {
+    background-color: #8D5A97;
+    color:white;
+}
+.resubmit-button:hover {
+    background-color: #5a3961;
+}
+
+.recancel-button {
+    background-color: #6c757d;
+    color:white;
+}
+
+.recancel-button:hover {
+    background-color: #5a6268;
+}
+

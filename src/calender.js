@@ -61,6 +61,20 @@ const MyCalendar = () => {
     });
   };
 
+  const handleNoShowChange = (e) => {
+    const newNoShowStatus = e.target.checked;
+    setEditedInfo((prev) => ({
+      ...prev,
+      noShow: newNoShowStatus,
+    }));
+
+    if (newNoShowStatus) {
+      setShowRebookingForm(true);
+    } else {
+      setShowRebookingForm(false);
+    }
+  };
+
   const handleUpdateEvent = (updatedEvent) => { 
     const updatedBooked = bookedEvents.map(event => event.id === updatedEvent.id ? updatedEvent : event ); 
     setBookedEvents(updatedBooked); 
@@ -125,6 +139,11 @@ const MyCalendar = () => {
       }
     }
 
+    setEditedInfo((prev) => ({
+      ...prev,
+      noShow: false,
+    }));
+    setShowRebookingForm(false);
     closePopup();
   };
 
@@ -520,8 +539,7 @@ const MyCalendar = () => {
                 <input  
                   type="checkbox" 
                   checked={editedInfo.noShow} 
-                  onChange={(e) => setEditedInfo({ 
-                    ...editedInfo, noShow: e.target.checked})} 
+                  onChange={handleNoShowChange} 
                 />             
                 <span className="noshow-check"></span> 
                 Mark as No-Show / Cancelled 

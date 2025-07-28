@@ -20,7 +20,7 @@ const RebookingForm = ({ event, onSave, onCancel }) => {
     return ( 
         <div className="modal-overlay">
             <div className = "modal-content">
-                <h3>Reschedule Event</h3>
+                <h3 className="title">Reschedule Event</h3>
                 <p><strong>Title: </strong>{event.title}</p>
 
                 <label>New Start Time:</label>
@@ -46,8 +46,8 @@ const RebookingForm = ({ event, onSave, onCancel }) => {
                 />
 
                 <div className="modal-buttons">
-                    <button onClick={handleSubmit}>Save Changes</button>
-                    <button onClick={onCancel}>Cancel</button>
+                    <button onClick={handleSubmit} className="resubmit-button">Save</button>
+                    <button onClick={onCancel} className="recancel-button">Cancel</button>
                 </div>
             </div>
         </div>
