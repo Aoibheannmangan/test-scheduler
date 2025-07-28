@@ -107,15 +107,16 @@ const LogIn = () => {
                     ref={passwordInputRef}
                     required
                   />
+
+
+                </div>
                 {capsLockOn && (
                     <div className="caps-warning" style={{ color: 'red', marginTop: '5px' }}>
                         Warning: Caps Lock is ON
                     </div>
                 )}
-
-                </div>
                 <div className="forgot-password-link">
-                    <a href="/forgotpsw">Forgot Password?</a>
+                    <a href="/forgotpsw"><br />Forgot Password?</a>
                 </div>
               </div>
               <button 

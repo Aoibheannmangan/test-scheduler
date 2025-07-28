@@ -17,6 +17,7 @@ const UserInfo = () => {
   const [editId, setEditId] = useState(null);
   const [windowType, setWindowType] = useState('');
   const [visitNum, setVisitNum] = useState(Number);
+  const [patientRoom, SetRoom] = useState('')
 
   const navigate = useNavigate();
 
@@ -41,6 +42,7 @@ const UserInfo = () => {
       setIsEditing(true);
       setVisitNum(patient.visitNum);
       setWindowType(patient.type)
+      SetRoom(patient.room)
     }
   }, []);
 
@@ -78,6 +80,7 @@ const UserInfo = () => {
       Info: patientInfo,
       type,
       visitNum: visit,
+      room: patientRoom,
     };
 
     let patients = JSON.parse(localStorage.getItem("userInfoList")) || [];

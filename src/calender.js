@@ -219,7 +219,7 @@ const MyCalendar = () => {
     // Find patient Id
     const match = userList.find(p => p.id === patientId);
 
-    // If cant find patient id
+    // If cant find patient id 
     if (!match) {
       setAlert({ message: `Patient ID ${patientId} not found in user list.`, type: "error" });
       return;
@@ -228,6 +228,7 @@ const MyCalendar = () => {
     // Add new appointment object structure
     const fullAppointment = {
       ...appointment,
+      title: `Study: ${match.Study}| ID: ${patientId}` ,
       Study: (appointment.Study || match.Study || "UNKNOWN").toUpperCase(),
       patientId,
       Name: match.Name,
@@ -235,17 +236,29 @@ const MyCalendar = () => {
       site: match.site,
       OutOfArea: match.OutOfArea,
       Info: match.Info,
-      start: appointment.start.toISOString(), // Make an ISO object for correct parsing
-      end: appointment.end.toISOString(), // Make an ISO object for correct parsing
+      start: appointment.start, // Make an ISO object for correct parsing
+      end: appointment.end,// Make an ISO object for correct parsing
       type: 'booked', // As no longer window
       visitNum: match.visitNum ?? 1, 
       id: patientId,
+      room: appointment.room,
     };
 
-    const existingBooked = JSON.parse(localStorage.getItem("bookedEvents")) || [];
-    const updatedBooked = [...existingBooked, fullAppointment];
-    localStorage.setItem("bookedEvents", JSON.stringify(updatedBooked));
-    setBookedEvents(updatedBooked);
+    console.log(fullAppointment);
+
+  // Update bookedEvents state including the new appointment
+  const existingBooked = bookedEvents;
+  const updatedBooked = [...existingBooked, fullAppointment];
+  setBookedEvents(updatedBooked);
+
+  // Save to localStorage with conversion to string for dates
+  const updatedBookedForStorage = updatedBooked.map(evt => ({
+    ...evt,
+    start: evt.start.toISOString(),
+    end: evt.end.toISOString(),
+  }));
+  localStorage.setItem("bookedEvents", JSON.stringify(updatedBookedForStorage));
+
 
     // If trying to book another appointment for patient
     if (bookedEvents.some(e => e.patientId === patientId)) {
@@ -257,6 +270,7 @@ const MyCalendar = () => {
       if (p.id === patientId) {
         return {
           ...p,
+          title: `Study: ${match.study}| ID: ${patientId}` ,
           type: 'booked',
           visitNum: p.visitNum + 1,
           start: appointment.start.toISOString(), // Make an ISO object for correct parsing
@@ -430,6 +444,24 @@ const MyCalendar = () => {
                   onChange={e => setEditedInfo(prev => ({ ...prev, end: new Date(e.target.value) }))}
                   className="date-edit"
                 />
+              </label>
+
+                <label>
+                  Room:
+                  <select
+                    id="room"
+                    name="room"
+                    value={editedInfo.room}
+                    onChange={(e) => setEditedInfo(prev => ({ ...prev, room:e.target.value}))}
+                  >
+                    <option value="">-- Select Room --</option>
+                    <option value="TeleRoom">Telemetry Room (Room 2.10)</option>
+                    <option value="room1">Assessment Room 1</option>
+                    <option value="room2">Assessment Room 2</option>
+                    <option value="room3">Assessment Room 3</option>
+                    <option value="room4">Assessment Room 4</option>
+                    <option value="devRoom">Developmental Assessment Room (Room 2.07)</option>
+                  </select>
               </label>
 
               <div className="button-row">

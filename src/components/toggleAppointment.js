@@ -10,12 +10,12 @@ const ToggleAppointment = ({ onAddAppointment }) => {
   };
 
   // States vars for appointment booking
-  const [appTitle, setAppTitle] = useState('');
   const [appPatID, setAppPatID] = useState('')
   const [appDate, setAppDate] = useState('');
   const [appTimeStart, setAppTimeStart] = useState('');
   const [appTimeEnd, setAppTimeEnd] = useState('');
   const [patientStudy, setPatientStudy] = useState('');
+  const [appRoom, setAppRoom] = useState('');
 
   // Handles putting in a booking
   const handleSubmit = (e) => {
@@ -24,6 +24,7 @@ const ToggleAppointment = ({ onAddAppointment }) => {
 
     const start = new Date(`${appDate}T${appTimeStart}`);
     const end = new Date(`${appDate}T${appTimeEnd}`);
+    const appTitle = `${patientStudy.toUpperCase()} | ID: ${appPatID}`
 
     const newAppointment = {
       title: appTitle,
@@ -32,16 +33,17 @@ const ToggleAppointment = ({ onAddAppointment }) => {
       end,
       type: 'booked',
       Study: patientStudy.toUpperCase() || '',
+      room: appRoom,
     };
 
     onAddAppointment(newAppointment);
-    setAppTitle('');
     setAppPatID('');
     setAppDate('');
     setAppTimeStart('');
     setAppTimeEnd('');
     setPatientStudy('');
     setIsVisible(false);
+    setAppRoom('');
   };
 
   return (
@@ -57,15 +59,6 @@ const ToggleAppointment = ({ onAddAppointment }) => {
           <fieldset>
             <div className="form-border">
               <form onSubmit={handleSubmit}>
-                <label htmlFor="title">Title of Appointment</label>
-                <input // Input for title
-                  type="text"
-                  id="title"
-                  value={appTitle}
-                  onChange={(e) => setAppTitle(e.target.value)}
-                  placeholder="Enter Title of Appointment"
-                  required
-                />
 
                 <label htmlFor="patientID">Patient ID</label>
                 <input // input for ID
@@ -108,6 +101,22 @@ const ToggleAppointment = ({ onAddAppointment }) => {
                   required
                 />
                 <br />
+
+                <label htmlFor="room">Assessment Room:</label>
+                  <select
+                    id="room"
+                    name="room"
+                    value={appRoom}
+                    onChange={(e) => setAppRoom(e.target.value)}
+                  >
+                    <option value="">-- Select Room --</option>
+                    <option value="TeleRoom">Telemetry Room (Room 2.10)</option>
+                    <option value="room1">Assessment Room 1</option>
+                    <option value="room2">Assessment Room 2</option>
+                    <option value="room3">Assessment Room 3</option>
+                    <option value="room4">Assessment Room 4</option>
+                    <option value="devRoom">Developmental Assessment Room (Room 2.07)</option>
+                  </select>
 
                 <button // Submit button 
                 type="submit" className='submit-button'> 

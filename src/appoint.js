@@ -9,27 +9,26 @@ const Appointments = () => {
     //Local storage grab
     const [userList, setUserList] = useState([]);
 
-    useEffect(() => {
-        const storedList = localStorage.getItem("userInfoList");
-        if (storedList) {
-        const parsedList = JSON.parse(storedList)
-        
-        setUserList(JSON.parse(storedList));
+     useEffect(() => {
+    const storedList = localStorage.getItem("userInfoList");
+    if (storedList) {
+        const parsedList = JSON.parse(storedList);
 
-        // Rehydrate start/end if present
+        // Hydrate dates only for booked events
         const hydrated = parsedList.map(event => {
-            if (event.type === 'booked') {
-                return {
-                    ...event,
-                    start: new Date(event.start),
-                    end: new Date(event.end),
-                };
-            }
-            return event;
-        });
-        setUserList(hydrated)
+        if (event.type === 'booked') {
+            return {
+            ...event,
+            start: new Date(event.start).toISOString(), //force to ISO/ UTC format
+            end: new Date(event.end).toISOString(), //force to ISO/ UTC format
+            };
         }
+        return event;
+        });
+        setUserList(hydrated);
+    }
     }, []);
+
 
 
     //--------------------------------------------------------------------------------------

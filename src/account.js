@@ -30,7 +30,7 @@ const Account = () => {
 
   const confirmDelete = () => {
     if (selectedUserId === null) return;
-    setAlert({message: "This patient will be delted", type: "warning"});
+    setAlert({message: "This patient will be deleted", type: "warning"});
     setPopupOpen(false);
 
     setTimeout(() => {
