@@ -109,6 +109,7 @@ const MyCalendar = () => {
       end: new Date(editedInfo.end),
       noShow: editedInfo.noShow || false, 
       noShowComment: editedInfo.noShowComment || "", 
+      room: editedInfo.room
     };
 
 

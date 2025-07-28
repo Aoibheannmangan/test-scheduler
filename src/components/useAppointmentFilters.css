@@ -76,13 +76,6 @@ input[type="checkbox"] {
   position: relative;
   margin: 10px;
 }
-/*
-{room1
-room2
-room3
-room4
-devRo}
-*/
 
 /*Styling for all checked checkboxes*/
 input[type="checkbox"]:checked {
@@ -92,37 +85,37 @@ input[type="checkbox"]:checked {
 }
 
 input[type="checkbox"].TeleRoom:checked {
-  background-color: #af4c4c; /* red */
+  background-color: #af4c4c;
   border: 2px solid #af4c4c;
   box-shadow: inset 0 0 0 4px white;
 }
 
 input[type="checkbox"].room1:checked {
-  background-color: #4caf50; /* green */
+  background-color: #4caf50; 
   border: 2px solid #4caf50;
   box-shadow: inset 0 0 0 4px white;
 }
 
 input[type="checkbox"].room2:checked {
-  background-color: #2196f3; /* blue */
-  border: 2px solid #2196f3;
+  background-color: #09ccc2a4;
+  border: 2px solid #09ccc2a4;
   box-shadow: inset 0 0 0 4px white;
 }
 
 input[type="checkbox"].room3:checked {
-  background-color: #ff9800; /* orange */
-  border: 2px solid #ff9800;
+  background-color: #cc8821c0; 
+  border: 2px solid #cc8821c0;
   box-shadow: inset 0 0 0 4px white;
 }
 
 input[type="checkbox"].room4:checked {
-  background-color: #9c27b0; /* purple */
-  border: 2px solid #9c27b0;
+  background-color: #8c14a1cb; 
+  border: 2px solid #8c14a1cb;
   box-shadow: inset 0 0 0 4px white;
 }
 
 input[type="checkbox"].devRoom:checked {
-  background-color: #00bcd4; /* cyan */
-  border: 2px solid #00bcd4;
+  background-color: #138392c9; 
+  border: 2px solid #138392c9;
   box-shadow: inset 0 0 0 4px white;
 }
