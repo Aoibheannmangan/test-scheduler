@@ -76,6 +76,13 @@ input[type="checkbox"] {
   position: relative;
   margin: 10px;
 }
+/*
+{room1
+room2
+room3
+room4
+devRo}
+*/
 
 /*Styling for all checked checkboxes*/
 input[type="checkbox"]:checked {
@@ -84,23 +91,38 @@ input[type="checkbox"]:checked {
   box-shadow: inset 0 0 0 4px white;
 }
 
-/*Styling for AH checked checkboxes*/
-input[type="checkbox"].AHCheck:checked {
-    background-color: #af4c4c;
-    border: 2px solid #af4c4c;
-    box-shadow: inset 0 0 0 4px white;
+input[type="checkbox"].TeleRoom:checked {
+  background-color: #af4c4c; /* red */
+  border: 2px solid #af4c4c;
+  box-shadow: inset 0 0 0 4px white;
 }
 
-/*Styling for CP checked checkboxes*/
-input[type="checkbox"].CPCheck:checked{
-    background-color: #614caf;
-    border: 2px solid #614caf;
-    box-shadow: inset 0 0 0 4px white;
+input[type="checkbox"].room1:checked {
+  background-color: #4caf50; /* green */
+  border: 2px solid #4caf50;
+  box-shadow: inset 0 0 0 4px white;
 }
 
-/*Styling for EDI checked checkboxes*/
-input[type="checkbox"].EDICheck:checked{
-    background-color: #afa04c;
-    border: 2px solid #afa04c;
-    box-shadow: inset 0 0 0 4px white;
+input[type="checkbox"].room2:checked {
+  background-color: #2196f3; /* blue */
+  border: 2px solid #2196f3;
+  box-shadow: inset 0 0 0 4px white;
+}
+
+input[type="checkbox"].room3:checked {
+  background-color: #ff9800; /* orange */
+  border: 2px solid #ff9800;
+  box-shadow: inset 0 0 0 4px white;
+}
+
+input[type="checkbox"].room4:checked {
+  background-color: #9c27b0; /* purple */
+  border: 2px solid #9c27b0;
+  box-shadow: inset 0 0 0 4px white;
+}
+
+input[type="checkbox"].devRoom:checked {
+  background-color: #00bcd4; /* cyan */
+  border: 2px solid #00bcd4;
+  box-shadow: inset 0 0 0 4px white;
 }

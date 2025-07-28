@@ -285,7 +285,7 @@ const MyCalendar = () => {
     // Add new appointment object structure
     const fullAppointment = {
       ...appointment,
-      title: `Study: ${match.Study}| ID: ${patientId}` ,
+      title: `${match.Study}| ID: ${patientId}` ,
       Study: (appointment.Study || match.Study || "UNKNOWN").toUpperCase(),
       patientId,
       Name: match.Name,
@@ -328,7 +328,7 @@ const MyCalendar = () => {
       if (p.id === patientId) {
         return {
           ...p,
-          title: `Study: ${match.study}| ID: ${patientId}` ,
+          title: `${match.study}| ID: ${patientId}` ,
           type: 'booked',
           visitNum: p.visitNum + 1,
           start: appointment.start.toISOString(), // Make an ISO object for correct parsing
@@ -475,6 +475,7 @@ const MyCalendar = () => {
                             type="checkbox"
                             checked={selectedRooms.includes(room.id)}
                             onChange={() => handleRoomChange(room.id)}
+                            className={room.id}
                           />
                           {room.label}
                         </label>
