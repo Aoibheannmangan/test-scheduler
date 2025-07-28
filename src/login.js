@@ -3,14 +3,12 @@ import './login.css';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaLock } from 'react-icons/fa';
 import Alert from './components/Alert';
-import backgroundImage from './assets/logo.jpg';
 
 
 const LogIn = () => {
   const [staffId, setStaffId] = useState('');
   const [password, setPassword] = useState('');
 
-  const [showAlert, setShowAlert] = useState(true);
   const [alert, setAlert] = useState(null);
   const [capsLockOn, setCapsLockOn] = useState(false);
 
@@ -21,6 +19,7 @@ const LogIn = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    //To check if the caps lock is on
     const handleKeyUp = (event) => {
         if (event.getModifierState("CapsLock")) {
             setCapsLockOn(true);
@@ -43,11 +42,12 @@ const LogIn = () => {
 
 
   const handleLogin = (e) => {
+    //Login Logic
     e.preventDefault();
 
     const storedUsers = JSON.parse(localStorage.getItem('users')) || [];
 
-    // Check if any user in the array matches the entered credentials
+    // Check if any user in the array matches the entered details
     const matchedUser = storedUsers.find(
       (user) => user.staffId === staffId && user.password === password
     );
@@ -77,12 +77,15 @@ const LogIn = () => {
             />
           )}
 
+          {/* Login Form */}
           <form onSubmit={handleLogin}>
             <div className="form-headers">
               <h1 className="title">Log In</h1>
             </div>
             <div className="form-body">
               <div className="input-group">
+                
+                {/* User enters staff ID */}
                 <label htmlFor="sid"><b>Staff ID</b></label>
                 <div className="input-icon-wrapper">
                   <FaUser className="icon" />
@@ -95,6 +98,8 @@ const LogIn = () => {
                   />
                 </div>
               </div>
+             
+             {/* User enters password */}
               <div className="input-group">
                 <label htmlFor="psw"><b>Password</b></label>
                 <div className="input-icon-wrapper">

@@ -27,6 +27,7 @@ const SignUp = () => {
   const passwordInputRef = useRef(null);
   const navigate = useNavigate();
 
+  //Checking if caps lock is on
   useEffect(() => {
     const handleKeyUp = (event) => {
       if (event.getModifierState("CapsLock")) {
@@ -62,11 +63,13 @@ const SignUp = () => {
     });
   };
 
+  //Checking if email is already registered
   const isEmailRegistered = (email) => {
     const users = JSON.parse(localStorage.getItem("users")) || [];
     return users.some((user) => user.email === email);
   };
 
+  //Checking if ID is already in use
   const isIdInUse = (staffId) => {
     const users = JSON.parse(localStorage.getItem("users")) || [];
     return users.some((user) => user.staffId === staffId);
@@ -93,7 +96,7 @@ const SignUp = () => {
       return;
     }
 
-    // Also Checks if the email has already been used
+    // Alerts the user if the email/ID are already in use
     if (isEmailRegistered(email)) {
       setAlert({ message: "Email is already registered", type: "info" });
       return;
@@ -147,11 +150,14 @@ const SignUp = () => {
               onClose={() => setAlert(null)}
             />
           )}
+          {/* Signup Form */}
           <form onSubmit={handleSubmit}>
             <div className="form-header">
               <h1 className="title">Sign Up</h1>
             </div>
             <div className="form-body">
+
+              {/* User inputs email */}
               <div className="input-group">
                 <label htmlFor="email"><b>Email</b></label>
                 <div className="input-icon-wrapper">
@@ -167,6 +173,7 @@ const SignUp = () => {
                 </div>
               </div>
 
+              {/* User inputs staff ID */}
               <div className="input-group">
                 <label htmlFor="sid"><b>Staff ID</b></label>
                 <div className="input-icon-wrapper">
@@ -182,6 +189,7 @@ const SignUp = () => {
                 </div>
               </div>
 
+              {/* User inputs password */}
               <div className="input-group">
                 <label htmlFor="psw"><b>Password</b></label>
                 <div className="input-icon-wrapper">
@@ -200,6 +208,7 @@ const SignUp = () => {
                 </div>
               </div>
 
+              {/* User re-enters password */}
               <div className="input-group">
                 <label htmlFor="psw-repeat"><b>Repeat Password</b></label>
                 <div className="input-icon-wrapper">
