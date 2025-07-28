@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import './calender.css';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
@@ -11,6 +11,7 @@ import './components/useAppointmentFilters.css';
 import CustomToolbar from './components/customToolbar';
 import Alert from './components/Alert';
 import PopUp from './components/PopUp';
+import RebookingForm from './components/RebookingForm';
 
 const localizer = momentLocalizer(moment);
 
@@ -26,7 +27,10 @@ const MyCalendar = () => {
   const [eventToDelete, setEventToDelete] = useState(null);
   const [userList, setUserList] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [editedInfo, setEditedInfo] = useState("");
+  const [editedInfo, setEditedInfo] = useState(null);
+  const [showRebookingForm, setShowRebookingForm] = useState(false);
+
+  const isFirstRender = useRef(true);
 
   // Map used for styling later
   const studyClassMap = {
@@ -51,12 +55,51 @@ const MyCalendar = () => {
       title: event.title || '',
       start: event.start,
       end: event.end,
+      room: event.room || '',
+      noShow: event.noShow || false,
+      noShowComment: event.noShowComment || '',
     });
+  };
+
+  const handleNoShowChange = (e) => {
+    const newNoShowStatus = e.target.checked;
+    setEditedInfo((prev) => ({
+      ...prev,
+      noShow: newNoShowStatus,
+    }));
+
+    if (newNoShowStatus) {
+      setShowRebookingForm(true);
+    } else {
+      setShowRebookingForm(false);
+    }
+  };
+
+  const handleUpdateEvent = (updatedEvent) => { 
+    const updatedBooked = bookedEvents.map(event => event.id === updatedEvent.id ? updatedEvent : event ); 
+    setBookedEvents(updatedBooked); 
+    localStorage.setItem('bookedEvents', JSON.stringify(updatedBooked));
+  };
+
+  useEffect(() => {
+    if (!editedInfo || isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    if (editedInfo.show) {
+      openBookingFormWithPrefill(selectedEvent);
+    }
+  }, [editedInfo?.noShow]);
+
+  const openBookingFormWithPrefill = (event) => {
+    setSelectedEvent(event);
+    setShowRebookingForm(true);
   };
 
   // Save when editing event info
   const saveEditedInfo = () => {
-    if (!selectedEvent) return;
+    if (!selectedEvent || !editedInfo) return;
 
     // Prepare updated event object
     const updatedEvent = {
@@ -89,6 +132,18 @@ const MyCalendar = () => {
       setWindowEvents(updatedWindows);
     }
 
+    if (editedInfo.noShow) {
+      const confirmRebook = window.confirm("This event was marked as a no-show. Would you like to create a new booking?");
+      if (confirmRebook) {
+        openBookingFormWithPrefill(updatedEvent);
+      }
+    }
+
+    setEditedInfo((prev) => ({
+      ...prev,
+      noShow: false,
+    }));
+    setShowRebookingForm(false);
     closePopup();
   };
 
@@ -493,26 +548,22 @@ const MyCalendar = () => {
                 <input  
                   type="checkbox" 
                   checked={editedInfo.noShow} 
-                  onChange={(e) => setEditedInfo({ 
-                    ...editedInfo, noShow: e.target.checked})} 
+                  onChange={handleNoShowChange} 
                 />             
                 <span className="noshow-check"></span> 
                 Mark as No-Show / Cancelled 
               </label> 
 
-              {editedInfo.noShow && ( 
-                <> 
-                <label>Reason for not showing:</label> 
-                <input 
-                  type="text" 
-                  placeholder="Reason for no-show" 
-                  value={editedInfo.noShowComment} 
-                  onChange={(e) => setEditedInfo({...editedInfo, noShowComment: e.target.value})} 
-                  className="noshow-comment" 
-                  required 
-                /> 
-                </> 
-              )} 
+              {showRebookingForm && selectedEvent && (
+                <RebookingForm 
+                  event={selectedEvent}
+                  onSave={(updatedEvent) => {
+                    handleUpdateEvent(updatedEvent);
+                    setShowRebookingForm(false);
+                  }}
+                  onCancel={() => setShowRebookingForm(false)}
+                />
+              )}
 
               <div className="button-row">
                 <button onClick={saveEditedInfo} className="confirm-button">Save</button>
