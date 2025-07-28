@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import './calender.css';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
@@ -29,6 +29,8 @@ const MyCalendar = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [editedInfo, setEditedInfo] = useState(null);
   const [showRebookingForm, setShowRebookingForm] = useState(false);
+
+  const isFirstRender = useRef(true);
 
   // Map used for styling later
   const studyClassMap = {
@@ -63,6 +65,22 @@ const MyCalendar = () => {
     const updatedBooked = bookedEvents.map(event => event.id === updatedEvent.id ? updatedEvent : event ); 
     setBookedEvents(updatedBooked); 
     localStorage.setItem('bookedEvents', JSON.stringify(updatedBooked));
+  };
+
+  useEffect(() => {
+    if (!editedInfo || isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    if (editedInfo.show) {
+      openBookingFormWithPrefill(selectedEvent);
+    }
+  }, [editedInfo?.noShow]);
+
+  const openBookingFormWithPrefill = (event) => {
+    setSelectedEvent(event);
+    setShowRebookingForm(true);
   };
 
   // Save when editing event info
@@ -210,10 +228,6 @@ const MyCalendar = () => {
   const handleEventClick = (event) => {
     setEventToDelete(event);
     setPopupOpen(true);
-  };
-
-  const openBookingFormWithPrefill = (event) => {
-    setShowRebookingForm(true);
   };
 
   // Create array to store booked appointments
@@ -512,20 +526,6 @@ const MyCalendar = () => {
                 <span className="noshow-check"></span> 
                 Mark as No-Show / Cancelled 
               </label> 
-
-              {editedInfo.noShow && ( 
-                <> 
-                <label>Reason for not showing:</label> 
-                <input 
-                  type="text" 
-                  placeholder="Reason for no-show" 
-                  value={editedInfo.noShowComment} 
-                  onChange={(e) => setEditedInfo({...editedInfo, noShowComment: e.target.value})} 
-                  className="noshow-comment" 
-                  required 
-                /> 
-                </> 
-              )} 
 
               {showRebookingForm && selectedEvent && (
                 <RebookingForm 
