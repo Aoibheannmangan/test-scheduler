@@ -11,6 +11,7 @@ import './components/useAppointmentFilters.css';
 import CustomToolbar from './components/customToolbar';
 import Alert from './components/Alert';
 import PopUp from './components/PopUp';
+import RebookingForm from './components/RebookingForm';
 
 const localizer = momentLocalizer(moment);
 
@@ -26,7 +27,8 @@ const MyCalendar = () => {
   const [eventToDelete, setEventToDelete] = useState(null);
   const [userList, setUserList] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
-  const [editedInfo, setEditedInfo] = useState("");
+  const [editedInfo, setEditedInfo] = useState(null);
+  const [showRebookingForm, setShowRebookingForm] = useState(false);
 
   // Map used for styling later
   const studyClassMap = {
@@ -51,12 +53,21 @@ const MyCalendar = () => {
       title: event.title || '',
       start: event.start,
       end: event.end,
+      room: event.room || '',
+      noShow: event.noShow || false,
+      noShowComment: event.noShowComment || '',
     });
+  };
+
+  const handleUpdateEvent = (updatedEvent) => { 
+    const updatedBooked = bookedEvents.map(event => event.id === updatedEvent.id ? updatedEvent : event ); 
+    setBookedEvents(updatedBooked); 
+    localStorage.setItem('bookedEvents', JSON.stringify(updatedBooked));
   };
 
   // Save when editing event info
   const saveEditedInfo = () => {
-    if (!selectedEvent) return;
+    if (!selectedEvent || !editedInfo) return;
 
     // Prepare updated event object
     const updatedEvent = {
@@ -87,6 +98,13 @@ const MyCalendar = () => {
           : event
       );
       setWindowEvents(updatedWindows);
+    }
+
+    if (editedInfo.noShow) {
+      const confirmRebook = window.confirm("This event was marked as a no-show. Would you like to create a new booking?");
+      if (confirmRebook) {
+        openBookingFormWithPrefill(updatedEvent);
+      }
     }
 
     closePopup();
@@ -192,6 +210,10 @@ const MyCalendar = () => {
   const handleEventClick = (event) => {
     setEventToDelete(event);
     setPopupOpen(true);
+  };
+
+  const openBookingFormWithPrefill = (event) => {
+    setShowRebookingForm(true);
   };
 
   // Create array to store booked appointments
@@ -504,6 +526,17 @@ const MyCalendar = () => {
                 /> 
                 </> 
               )} 
+
+              {showRebookingForm && selectedEvent && (
+                <RebookingForm 
+                  event={selectedEvent}
+                  onSave={(updatedEvent) => {
+                    handleUpdateEvent(updatedEvent);
+                    setShowRebookingForm(false);
+                  }}
+                  onCancel={() => setShowRebookingForm(false)}
+                />
+              )}
 
               <div className="button-row">
                 <button onClick={saveEditedInfo} className="confirm-button">Save</button>
