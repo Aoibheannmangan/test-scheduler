@@ -64,6 +64,8 @@ const MyCalendar = () => {
       title: editedInfo.title,
       start: new Date(editedInfo.start),
       end: new Date(editedInfo.end),
+      noShow: editedInfo.noShow || false, 
+      noShowComment: editedInfo.noShowComment || "", 
     };
 
 
@@ -475,6 +477,33 @@ const MyCalendar = () => {
                     <option value="devRoom">Developmental Assessment Room (Room 2.07)</option>
                   </select>
               </label>
+
+               
+
+              <label className="checkbox-container"> 
+                <input  
+                  type="checkbox" 
+                  checked={editedInfo.noShow} 
+                  onChange={(e) => setEditedInfo({ 
+                    ...editedInfo, noShow: e.target.checked})} 
+                />             
+                <span className="noshow-check"></span> 
+                Mark as No-Show / Cancelled 
+              </label> 
+
+              {editedInfo.noShow && ( 
+                <> 
+                <label>Reason for not showing:</label> 
+                <input 
+                  type="text" 
+                  placeholder="Reason for no-show" 
+                  value={editedInfo.noShowComment} 
+                  onChange={(e) => setEditedInfo({...editedInfo, noShowComment: e.target.value})} 
+                  className="noshow-comment" 
+                  required 
+                /> 
+                </> 
+              )} 
 
               <div className="button-row">
                 <button onClick={saveEditedInfo} className="confirm-button">Save</button>
