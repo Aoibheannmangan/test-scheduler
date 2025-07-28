@@ -290,20 +290,33 @@ const MyCalendar = () => {
   // Array of all avents
   const allEvents = [...bookedEvents, ...windowEvents];
 
-  // Selected studies available
-  const [selectedStudies, setSelectedStudies] = useState(['AIMHIGH', 'COOLPRIME', 'EDI']);
-  const handleStudyChange = (study) => {
-    setSelectedStudies(prev =>
-      prev.includes(study)
-        ? prev.filter(s => s !== study)
-        : [...prev, study]
+  // Selected rooms available
+  const roomList = [
+  { id: "TeleRoom", label: "Telemetry Room (Room 2.10)" },
+  { id: "room1", label: "Assessment Room 1" },
+  { id: "room2", label: "Assessment Room 2" },
+  { id: "room3", label: "Assessment Room 3" },
+  { id: "room4", label: "Assessment Room 4" },
+  { id: "devRoom", label: "Developmental Assessment Room (Room 2.07)" },
+];
+
+
+  // Replace study filter state with rooms filter
+  const [selectedRooms, setSelectedRooms] = useState(roomList.map(room => room.id));
+
+  // Handler for room checkbox change
+  const handleRoomChange = (roomId) => {
+    setSelectedRooms(prev =>
+      prev.includes(roomId)
+        ? prev.filter(r => r !== roomId)
+        : [...prev, roomId]
     );
   };
 
-  // Filter for search/ filtering function
   const filteredAppointments = allEvents.filter(event =>
-    selectedStudies.includes(event.Study?.toUpperCase())
+  selectedRooms.includes(event.room)
   );
+
 
 //-------------------------------------------HTML------------------------------------------------------------------
   return (
@@ -384,21 +397,20 @@ const MyCalendar = () => {
             <ul className="collapsable">
               <li>
                 <div onClick={() => setIsBookingCollapsed(prev => !prev)} style={{ cursor: 'pointer' }}>
-                  <b>Study Filter</b>
+                  <b>Room Filter</b>
                 </div>
                 {/**DISPLAYS FILTERS USING LOOP*/}
                 <ul style={{ display: isBookingCollapsed ? 'none' : 'block' }}>
-                  {['AIMHIGH', 'COOLPRIME', 'EDI'].map(study => (
-                    <li key={study}>
+                  {roomList.map(room => (
+                    <li key={room.id}>
                       <div className="filter-checkbox">
                         <label>
                           <input
                             type="checkbox"
-                            className={studyClassMap[study] || ''}
-                            checked={selectedStudies.includes(study)}
-                            onChange={() => handleStudyChange(study)}
+                            checked={selectedRooms.includes(room.id)}
+                            onChange={() => handleRoomChange(room.id)}
                           />
-                          {study}
+                          {room.label}
                         </label>
                       </div>
                     </li>
