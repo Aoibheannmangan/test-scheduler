@@ -236,19 +236,39 @@ const Appointments = () => {
 
 
                     {/*Additional Notes Dropdown*/}
-                    <label
-                        style={{ cursor: 'pointer', fontWeight: 'bold' }}
-                        onClick={() => toggleCollapseNotes(event.Info)}
-                        >
-                        Additional Notes: {expandedNotes[event.Info] ? '-' : '+'}
-                    </label>
+                    {(() => {
+                        const noteContent = event.type === 'booked' ? event.notes : event.Info; // If the event is booked switch between notes (appointment notes) and Info (Info made at regestration... will update between visits)
 
-                    {/*Shows notes when expanded*/}
-                    {expandedNotes[event.Info] && (
-                    <div className="info">
-                        <strong>{event.Info}</strong><br />
-                    </div>
-                )}
+                        // Only show the section if there is actual content
+                        if (!noteContent || noteContent.trim() === '') return null;
+
+                        // Tracks id of toggled notes
+                        const toggleKey = `${event.id}-notes`;
+
+                        return (
+                            <>
+                                <label
+                                    style={{ cursor: 'pointer', fontWeight: 'bold' }}
+                                    onClick={() =>
+                                        setExpandedNotes(prev => ({
+                                            ...prev,
+                                            [toggleKey]: !prev[toggleKey]
+                                        }))
+                                    }
+                                >
+                                    Additional Notes: {expandedNotes[toggleKey] ? '-' : '+'}
+                                </label>
+
+                                
+                                {expandedNotes[toggleKey] && (
+                                    <div className="info">
+                                        <strong>{noteContent}</strong><br />
+                                    </div>
+                                )}
+                            </>
+                        );
+                    })()}
+
                 
                 </div>
                 )}

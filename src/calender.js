@@ -136,7 +136,7 @@ const MyCalendar = () => {
     // Filter by window
     const windowEvents = studyWindows
       .filter(event => event.type === "window")
-      // mane visit window and initialise start and end dates
+      // make visit window and initialise start and end dates
       .map(event => ({
         ...event,
         title: 'Visit Window',
@@ -244,6 +244,7 @@ const MyCalendar = () => {
       visitNum: match.visitNum ?? 1, 
       id: patientId,
       room: appointment.room,
+      notes: appointment.notes
     };
 
     console.log(fullAppointment);
@@ -277,6 +278,7 @@ const MyCalendar = () => {
           visitNum: p.visitNum + 1,
           start: appointment.start.toISOString(), // Make an ISO object for correct parsing
           end: appointment.end.toISOString(), // Make an ISO object for correct parsing
+          notes: appointment.notes,
         };
       }
       return p;
@@ -315,9 +317,10 @@ const MyCalendar = () => {
     );
   };
 
-  const filteredAppointments = allEvents.filter(event =>
-  selectedRooms.includes(event.room)
-  );
+  const filteredAppointments = allEvents.filter(event => {
+    if (event.type === 'window') return true; // Always show windows
+    return selectedRooms.includes(event.room); // Filter booked by room
+  });
 
 
 //-------------------------------------------HTML------------------------------------------------------------------
@@ -351,6 +354,12 @@ const MyCalendar = () => {
           selectable
           views={['month', 'week', 'day', 'agenda']}
           components={{
+            event: ({ event }) => (
+              <div>
+                {event.title}
+                <div style={{ fontSize: 10 }}><strong>{event.notes}</strong></div> {/* Show description here */}
+              </div>
+            ),
             toolbar: CustomToolbar,
             dateCellWrapper: (props) => (
               <ClickableDateCell {...props} onSelectSlot={(slot) => {

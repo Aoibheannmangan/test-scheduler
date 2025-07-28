@@ -16,6 +16,7 @@ const ToggleAppointment = ({ onAddAppointment }) => {
   const [appTimeEnd, setAppTimeEnd] = useState('');
   const [patientStudy, setPatientStudy] = useState('');
   const [appRoom, setAppRoom] = useState('');
+  const [appNote, setAppNote] = useState('');
 
   // Handles putting in a booking
   const handleSubmit = (e) => {
@@ -34,6 +35,7 @@ const ToggleAppointment = ({ onAddAppointment }) => {
       type: 'booked',
       Study: patientStudy.toUpperCase() || '',
       room: appRoom,
+      notes: appNote,
     };
 
     onAddAppointment(newAppointment);
@@ -44,6 +46,7 @@ const ToggleAppointment = ({ onAddAppointment }) => {
     setPatientStudy('');
     setIsVisible(false);
     setAppRoom('');
+    setAppNote('');
   };
 
   return (
@@ -103,20 +106,30 @@ const ToggleAppointment = ({ onAddAppointment }) => {
                 <br />
 
                 <label htmlFor="room">Assessment Room:</label>
-                  <select
-                    id="room"
-                    name="room"
-                    value={appRoom}
-                    onChange={(e) => setAppRoom(e.target.value)}
-                  >
-                    <option value="">-- Select Room --</option>
-                    <option value="TeleRoom">Telemetry Room (Room 2.10)</option>
-                    <option value="room1">Assessment Room 1</option>
-                    <option value="room2">Assessment Room 2</option>
-                    <option value="room3">Assessment Room 3</option>
-                    <option value="room4">Assessment Room 4</option>
-                    <option value="devRoom">Developmental Assessment Room (Room 2.07)</option>
-                  </select>
+                <select
+                  id="room"
+                  name="room"
+                  value={appRoom}
+                  onChange={(e) => setAppRoom(e.target.value)}
+                >
+                  <option value=""disabled selected>-- Select Room --</option>
+                  <option value="TeleRoom">Telemetry Room (Room 2.10)</option>
+                  <option value="room1">Assessment Room 1</option>
+                  <option value="room2">Assessment Room 2</option>
+                  <option value="room3">Assessment Room 3</option>
+                  <option value="room4">Assessment Room 4</option>
+                  <option value="devRoom">Developmental Assessment Room (Room 2.07)</option>
+                </select>
+
+                <label htmlFor="Comments">Visit Note</label>
+                <textarea // input for comment
+                  type="text"
+                  id="comment"
+                  value={appNote}
+                  onChange={(e) => setAppNote(e.target.value)}
+                  placeholder="Enter notes on visit"
+                  required
+                />
 
                 <button // Submit button 
                 type="submit" className='submit-button'> 
