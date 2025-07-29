@@ -28,7 +28,10 @@ const MyCalendar = () => {
   const [userList, setUserList] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [editedInfo, setEditedInfo] = useState(null);
+
   const [showRebookingForm, setShowRebookingForm] = useState(false);
+  const [rebookPopupOpen, setRebookPopupOpen] = useState(false);
+  const [eventToRebook, setEventToRebook] = useState(null);
 
   const isFirstRender = useRef(true);
 
@@ -128,10 +131,8 @@ const MyCalendar = () => {
     }
 
     if (editedInfo.noShow) {
-      const confirmRebook = window.confirm("This event was marked as a no-show. Would you like to create a new booking?");
-      if (confirmRebook) {
-        openBookingFormWithPrefill(updatedEvent);
-      }
+      setEventToRebook(updatedEvent);
+      setRebookPopupOpen(true);
     }
 
     setEditedInfo((prev) => ({
@@ -597,6 +598,18 @@ const MyCalendar = () => {
         message={`Delete ${eventToDelete?.title || 'this event'} for ${eventToDelete?.patientId || 'Unknown ID'}?`}
         option1="Confirm"
         option2="Cancel"
+      />
+      {/*EDIT POPUP*/}
+      <PopUp
+        isOpen={rebookPopupOpen}
+        onClose={() => setRebookPopupOpen(false)}
+        onConfirm={() => {
+          openBookingFormWithPrefill(eventToRebook);
+          setRebookPopupOpen(false);
+        }}
+        message={`This event was marked as a no-show. Would you like to rebook for ${eventToRebook?.patientId || 'this patient'}?`}
+          option1="Yes"
+          option2="No"
       />
 
       {/**APPOINTMENT BOOKING FORM*/}
