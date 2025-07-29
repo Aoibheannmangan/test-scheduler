@@ -212,7 +212,6 @@ const Appointments = () => {
                 {/*Main Info Body when expanded*/}
                 {expandedIds[event.id] && (
                 <div className="info">
-                    <strong>{event.Study}{'| '}{event.id}</strong><br />
                     <strong>Name:</strong> {event.Name}<br />
                     <strong>Date of Birth: </strong>
 
@@ -225,41 +224,50 @@ const Appointments = () => {
                     <br />
 
                     <strong>Location:</strong> {event.site}<br />
-                    <strong>Study:</strong> {event.Study}<br />
+                    <strong>Study:</strong> {Array.isArray(event.Study) ? event.Study.join(', ') : [event.Study]}<br />
 
                     {/*Visit window in info if a window patient*/}
                     {event.type === "window" && (() => {
                     const birthDate = new Date(event.DOB);
                     const daysEarly = event.DaysEarly || 0;
-                    let windowData = [];
 
-                    if (event.Study === 'AIMHIGH') {
-                        windowData = generateAimHighAppointments(birthDate, daysEarly);
-                    } else if (event.Study === 'COOLPRIME') {
-                        windowData = generateCoolPrimeAppointments(birthDate, daysEarly);
-                    } else if (event.Study === 'EDI') {
-                        windowData = generateEDIAppointment(birthDate, daysEarly)
-                    }
-
-                    const { start, end } = windowData[0];
-
+                    const studyWindows = Array.isArray(event.Study) ? event.Study : [event.Study];
                     return (
-                        <div>
-                        <strong>Visit Window:</strong>{' '}
-                        {new Date(start).toLocaleDateString(undefined, {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
-                        })}{' '}
-                        –{' '}
-                        {new Date(end).toLocaleDateString(undefined, {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric',
+                    <div>
+                        {studyWindows.map((study) => {
+                        let windowData = [];
+                        if (study === 'AIMHIGH') {
+                            windowData = generateAimHighAppointments(birthDate, daysEarly);
+                        } else if (study === 'COOLPRIME') {
+                            windowData = generateCoolPrimeAppointments(birthDate, daysEarly);
+                        } else if (study === 'EDI') {
+                            windowData = generateEDIAppointment(birthDate, daysEarly);
+                        }
+
+                        if (!windowData[0]) return null;
+
+                        const { start, end } = windowData[0];
+                        return (
+                            <div key={study}>
+                            <strong>{study} Visit Window:</strong>{' '}
+                            {new Date(start).toLocaleDateString(undefined, {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                            })}{' '}
+                            –{' '}
+                            {new Date(end).toLocaleDateString(undefined, {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric',
+                            })}
+                            <br />
+                            </div>
+                        );
                         })}
-                        <br />
-                        </div>
+                    </div>
                     );
+
                     })()}
 
                     

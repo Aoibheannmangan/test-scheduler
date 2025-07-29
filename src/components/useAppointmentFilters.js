@@ -32,7 +32,9 @@ export const useAppointmentFilters = (appointments) => {
       (event.id?.toLowerCase() || '').includes(searchQuery.toLowerCase());
 
     // Study filter
-    const matchesStudy = selectedStudies.includes(event.Study);
+    const matchesStudy = Array.isArray(event.Study)
+  ? event.Study.some(study => selectedStudies.includes(study))
+  : selectedStudies.includes(event.Study);
 
     // Room filter
     // If no room is selected, don't filter by room (show all)

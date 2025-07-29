@@ -10,7 +10,7 @@ const UserInfo = () => {
   const [patientEarly, setPatientEarly] = useState('');
   const [patientSex, setPatientSex] = useState('');
   const [patientCondition, setPatientCondition] = useState('');
-  const [patientStudy, setPatientStudy] = useState('');
+  const [patientStudy, setPatientStudy] = useState([]);
   const [patientSite, setPatientSite] = useState('');
   const [patientOutOfArea, setPatientOutOfArea] = useState(false);
   const [patientInfo, setPatientInfo] = useState('');
@@ -182,19 +182,28 @@ const UserInfo = () => {
               <option value="Case">Case</option>
             </select>
 
-            <label htmlFor="study">Patient's Study:</label>
-            <select
-              id="study"
-              name="study"
-              value={patientStudy}
-              onChange={(e) => setPatientStudy(e.target.value)}
-            >
-              <option value=""disabled selected>-- Select Study --</option>
-              <option value="AIMHIGH">AIMHIGH</option>
-              <option value="COOLPRIME">COOLPRIME</option>
-              <option value="EDI">EDI</option>
-              <option value="Other">Other</option>
-            </select>
+            <label>Patient's Studies:</label>
+            <div>
+              {['AIMHIGH', 'COOLPRIME', 'EDI'].map((study) => (
+                <label key={study}>
+                  <input
+                    type="checkbox"
+                    value={study}
+                    checked={patientStudy.includes(study)}
+                    onChange={(e) => {
+                      const selected = e.target.value;
+                      setPatientStudy((prev) =>
+                        prev.includes(selected)
+                          ? prev.filter((s) => s !== selected)
+                          : [...prev, selected]
+                      );
+                    }}
+                  />
+                  {study}
+                </label>
+              ))}
+            </div>
+
 
             <label htmlFor="site">Patient's Site:</label>
             <select

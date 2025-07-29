@@ -344,37 +344,41 @@ const MyCalendar = () => {
       return;
     }
 
+    const studyList = Array.isArray(match.Study) ? match.Study : [match.Study];
+    const studyString = studyList.join(', ');
+
     // Add new appointment object structure
     const fullAppointment = {
       ...appointment,
-      title: `${match.Study}| ID: ${patientId}` ,
-      Study: (appointment.Study || match.Study || "UNKNOWN").toUpperCase(),
+      title: `${studyString} | ID: ${patientId}`,
+      Study: studyList,
       patientId,
       Name: match.Name,
       DOB: match.DOB,
       site: match.site,
       OutOfArea: match.OutOfArea,
       Info: match.Info,
-      start: appointment.start, // Make an ISO object for correct parsing
-      end: appointment.end,// Make an ISO object for correct parsing
-      type: 'booked', // As no longer window
-      visitNum: match.visitNum ?? 1, 
+      start: appointment.start,
+      end: appointment.end,
+      type: 'booked',
+      visitNum: match.visitNum ?? 1,
       id: patientId,
       room: appointment.room,
       notes: appointment.notes
     };
 
+
     console.log(fullAppointment);
 
-  // Update bookedEvents state including the new appointment
-  const existingBooked = bookedEvents;
-  const updatedBooked = [...existingBooked, fullAppointment];
-  setBookedEvents(updatedBooked);
+    // Update bookedEvents state including the new appointment
+    const existingBooked = bookedEvents;
+    const updatedBooked = [...existingBooked, fullAppointment];
+    setBookedEvents(updatedBooked);
 
-  // Save to localStorage with conversion to string for dates
-  const updatedBookedForStorage = updatedBooked.map(evt => {
-    const start = new Date(evt.start);
-    const end = new Date(evt.end);
+    // Save to localStorage with conversion to string for dates
+    const updatedBookedForStorage = updatedBooked.map(evt => {
+      const start = new Date(evt.start);
+      const end = new Date(evt.end);
 
      if (isNaN(start.getTime()) || isNaN(end.getTime())) {
         console.error("Invalid start or end date:", evt);
