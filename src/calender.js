@@ -314,7 +314,7 @@ const MyCalendar = () => {
     // Find patient Id
     const match = userList.find(p => p.id === patientId);
 
-    if (blockedDates.includes(appointment.start)) {
+    if (blockedDates.includes(moment(appointment.start).format("YYYY-MM-DD"))) {
       setAlert({message: "Cannot book appointment on a blocked date", type: "error"});
       return;
     }
@@ -431,7 +431,6 @@ const MyCalendar = () => {
     if (event.type === 'window') return true; // Always show windows
     return selectedRooms.includes(event.room); // Filter booked by room
   });
-
 
 //-------------------------------------------HTML------------------------------------------------------------------
   return (
