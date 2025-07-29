@@ -159,7 +159,7 @@ ul.collapsable li a {
 }   
 
 
-.search-button, .clear-button {
+.search-button, .clear-button, .block-button {
   background-color: #8D5A97;
   color: white;
   padding: 0.5rem;
@@ -247,6 +247,15 @@ input[type="datetime-local"] {
   box-sizing: border-box;
 }
 
-.block-button {
-  
+
+.rbc-event.rbc-event-blocked {
+  background-color: red !important;
+  color: white !important;
+  pointer-events: none;
+  opacity: 0.7;
+  border: none;
+}
+
+.rbc-blocked-cell {
+  background-color: #f19e9e;  
 }

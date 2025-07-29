@@ -36,3 +36,13 @@
     transform: rotate(360deg);
   }
 }
+
+
+.rbc-event.rbc-event-blocked {
+  background-color: red !important;
+  color: white !important;
+  pointer-events: none;
+  opacity: 0.7;
+  border: none;
+}
+

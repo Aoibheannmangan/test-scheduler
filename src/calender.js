@@ -94,25 +94,16 @@ const MyCalendar = () => {
     }
   };
 
-
   const handleDateChange = (event) => {
     setSelectedDate(event.target.value);
   };
 
   const eventPropGetter = (event) => {
-    const isBlocked = blockedDates.some(
-      blocked => moment(event.start).isSame(blocked.start, "day")
-    );
-
-    return isBlocked? {
-        style: {
-          backgroundColor: "red",
-          color: "white",
-          pointerEvents: "none",
-        }
-    } : {};
+    const isBlocked = blockedDates.some(blocked =>
+        moment(event.start).isSame(moment(blocked.start), "day")
+      );
+    return isBlocked? {className: "rbc-event-blocked"} : {};
   };
-
 
   const handleNoShowChange = (e) => {
     const newNoShowStatus = e.target.checked;
@@ -164,7 +155,6 @@ const MyCalendar = () => {
       noShowComment: editedInfo.noShowComment || "", 
       room: editedInfo.room
     };
-
 
     // Update bookedEvents or windowEvents depending on type
     if (selectedEvent.type === 'booked') {
@@ -328,6 +318,22 @@ const MyCalendar = () => {
     return [];
   });
 
+  const localizer = momentLocalizer(moment);
+
+  const dateCellWrapper = (props) => {
+    const isBlocked = blockedDates.some(blocked => moment(props.date).isSame(blocked.start, "day"));
+
+    if (isBlocked) {
+      return (
+        <div {...props} className="rbc-day-bg rbc-blocked-cell">
+          {props.children}
+        </div>
+      );
+    }
+
+    return <div {...props}>{props.children}</div>
+  };
+
   // Function to add appointment
   const handleAddAppointment = (appointment) => {
     const patientId = appointment.patientId;
@@ -342,7 +348,6 @@ const MyCalendar = () => {
       setAlert({ message: "Cannot book appointment on a blocked date", type: "error" });
       return;
     }
-
 
     // If cant find patient id 
     if (!match) {
@@ -395,8 +400,6 @@ const MyCalendar = () => {
   });
   localStorage.setItem("bookedEvents", JSON.stringify(updatedBookedForStorage));
 
-
-
     // If trying to book another appointment for patient
     if (bookedEvents.some(e => e.patientId === patientId)) {
       setAlert({ message: "This patient already has a booked appointment.", type: "error" });
@@ -436,7 +439,6 @@ const MyCalendar = () => {
   { id: "devRoom", label: "Developmental Assessment Room (Room 2.07)" },
 ];
 
-
   // Replace study filter state with rooms filter
   const [selectedRooms, setSelectedRooms] = useState(roomList.map(room => room.id));
 
@@ -461,7 +463,6 @@ const MyCalendar = () => {
       blocked: true,
     };
   });
-
 
     // Array of all avents
   const allEvents = [...bookedEvents, ...windowEvents, ...blockedEvents];
@@ -520,6 +521,7 @@ const MyCalendar = () => {
                 setView('day');
               }} />
             ),
+             dateCellWrapper: dateCellWrapper, 
           }}
         />
       </div>
@@ -551,7 +553,7 @@ const MyCalendar = () => {
                 </label>
                 <button 
                   onClick={handleBlockDate}
-                  
+                  className="block-button"
                 > Block Date</button>
               </div>
             </label>
@@ -721,3 +723,5 @@ const MyCalendar = () => {
 };
 
 export default MyCalendar;
+
+
