@@ -1,4 +1,6 @@
 export function eventPropGetter(event) {
+  
+  // General style of all events
   let style = {
     borderRadius: '4px',
     border: 'none',
@@ -6,7 +8,7 @@ export function eventPropGetter(event) {
     color: '#fff',
   };
 
-  // First: apply base color based on Study
+  // Apply base color based on room
   if (event.room === 'TeleRoom') {
     style.backgroundColor = '#af4c4c'; 
   } 
@@ -25,6 +27,19 @@ export function eventPropGetter(event) {
   else if (event.room === 'devRoom') {
     style.backgroundColor = '#138392c9'; 
   }
+
+
+  // Color by study for window events
+  if (event.type === 'window') {
+    if (event.title?.includes('AIMHIGH')) {
+      style.backgroundColor = '#9da715ff'; // blue
+    } else if (event.title?.includes('COOLPRIME')) {
+      style.backgroundColor = '#43a047'; // green
+    } else if (event.title?.includes('EDI')) {
+      style.backgroundColor = '#f4511e'; // orange
+    }
+  }
+
 
   return {style};
 }

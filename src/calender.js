@@ -186,11 +186,13 @@ const MyCalendar = () => {
       setWindowEvents(updatedWindows);
     }
 
+    // If edited info and noshow selected
     if (editedInfo.noShow) {
       setEventToRebook(updatedEvent);
       setRebookPopupOpen(true);
     }
 
+    // Save edited info and close popup
     setEditedInfo((prev) => ({
       ...prev,
       noShow: false,
@@ -207,54 +209,58 @@ const MyCalendar = () => {
 
   // Search patient by ID
   const handleSearchWindow = () => {
-    const patient = userList.find(p => p.id === searchPatientId.trim());
+  const patient = userList.find(p => p.id === searchPatientId.trim());
+  if (!patient) {
+    setAlert({ message: "Patient with that ID not found", type: "error" });
+    setCurrentPatient(null);
+    setWindowEvents([]);
+    return;
+  }
 
-    // If can't find Id
-    if (!patient) {
-      setAlert({ message: "Patient with that ID not found", type: "error" });
-      setCurrentPatient(null);
-      setWindowEvents([]);
-      return;
+  // If trying to book another appointment
+  if (["booked"].includes(patient.type)) {
+    setAlert({ message: "This patient's visit is already booked or scheduled.", type: "error" });
+    setCurrentPatient(null);
+    setWindowEvents([]);
+    return;
+  }
+
+  // Set  current patient info
+  setCurrentPatient(patient);
+  const birthDate = new Date(patient.DOB);
+  const babyDaysEarly = patient.DaysEarly;
+  const studies = Array.isArray(patient.Study) ? patient.Study : [patient.Study];
+  let studyWindows = [];
+
+  // Loops through studies -> Create visit window
+  studies.forEach(study => {
+    let generated = [];
+    if (study === "AIMHIGH") {
+      generated = generateAimHighAppointments(birthDate, babyDaysEarly);
+    } else if (study === "COOLPRIME") {
+      generated = generateCoolPrimeAppointments(birthDate, babyDaysEarly);
+    } else if (study === "EDI") {
+      generated = generateEDIAppointment(birthDate, babyDaysEarly);
     }
 
-    // If window searching for booked patient this displays
-    if (["booked"].includes(patient.type)) {
-      setAlert({ message: "This patient's visit is already booked or scheduled.", type: "error" });
-      setCurrentPatient(null);
-      setWindowEvents([]);
-      return;
-    }
-
-    // Set current patient that was searched
-    setCurrentPatient(patient);
-    const birthDate = new Date(patient.DOB);
-    const babyDaysEarly = patient.DaysEarly;
-    let studyWindows = [];
-
-    // Calc window based on study
-    if (patient.Study === "AIMHIGH") {
-      studyWindows = generateAimHighAppointments(birthDate, babyDaysEarly);
-    } else if (patient.Study === "COOLPRIME") {
-      studyWindows = generateCoolPrimeAppointments(birthDate, babyDaysEarly);
-    } else if (patient.Study === "EDI") {
-      studyWindows = generateEDIAppointment(birthDate, babyDaysEarly);
-    }
-
-    // Filter by window
-    const windowEvents = studyWindows
+    // Generate = study windows and display and set them
+    const studyEvents = generated
       .filter(event => event.type === "window")
-      // make visit window and initialise start and end dates
       .map(event => ({
         ...event,
-        title: 'Visit Window',
+        title: `${study} Visit Window`,
         Name: patient.Name,
         id: patient.id,
         start: new Date(event.start),
         end: new Date(event.end),
       }));
-    // Set window dates
-    setWindowEvents(windowEvents);
-  };
+
+    studyWindows = [...studyWindows, ...studyEvents];
+  });
+
+  setWindowEvents(studyWindows);
+};
+
 
   // Clear search and window on calender
   const handleClearWindow = () => {
@@ -344,41 +350,37 @@ const MyCalendar = () => {
       return;
     }
 
-    const studyList = Array.isArray(match.Study) ? match.Study : [match.Study];
-    const studyString = studyList.join(', ');
-
     // Add new appointment object structure
     const fullAppointment = {
       ...appointment,
-      title: `${studyString} | ID: ${patientId}`,
-      Study: studyList,
+      title: `${match.Study}| ID: ${patientId}` ,
+      Study: (appointment.Study || match.Study || "UNKNOWN").toUpperCase(),
       patientId,
       Name: match.Name,
       DOB: match.DOB,
       site: match.site,
       OutOfArea: match.OutOfArea,
       Info: match.Info,
-      start: appointment.start,
-      end: appointment.end,
-      type: 'booked',
-      visitNum: match.visitNum ?? 1,
+      start: appointment.start, // Make an ISO object for correct parsing
+      end: appointment.end,// Make an ISO object for correct parsing
+      type: 'booked', // As no longer window
+      visitNum: match.visitNum ?? 1, 
       id: patientId,
       room: appointment.room,
       notes: appointment.notes
     };
 
-
     console.log(fullAppointment);
 
-    // Update bookedEvents state including the new appointment
-    const existingBooked = bookedEvents;
-    const updatedBooked = [...existingBooked, fullAppointment];
-    setBookedEvents(updatedBooked);
+  // Update bookedEvents state including the new appointment
+  const existingBooked = bookedEvents;
+  const updatedBooked = [...existingBooked, fullAppointment];
+  setBookedEvents(updatedBooked);
 
-    // Save to localStorage with conversion to string for dates
-    const updatedBookedForStorage = updatedBooked.map(evt => {
-      const start = new Date(evt.start);
-      const end = new Date(evt.end);
+  // Save to localStorage with conversion to string for dates
+  const updatedBookedForStorage = updatedBooked.map(evt => {
+    const start = new Date(evt.start);
+    const end = new Date(evt.end);
 
      if (isNaN(start.getTime()) || isNaN(end.getTime())) {
         console.error("Invalid start or end date:", evt);
