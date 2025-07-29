@@ -12,20 +12,34 @@ const Appointments = () => {
      useEffect(() => {
         const storedList = localStorage.getItem("userInfoList");
         if (storedList) {
-            const parsedList = JSON.parse(storedList);
+            try {
+                const parsedList = JSON.parse(storedList);
 
-            // Hydrate dates only for booked events
-            const hydrated = parsedList.map(event => {
-            if (event.type === 'booked') {
-                return {
-                ...event,
-                start: new Date(event.start).toISOString(), //force to ISO/ UTC format
-                end: new Date(event.end).toISOString(), //force to ISO/ UTC format
-                };
+                // Hydrate dates only for booked events
+                const hydrated = parsedList.map(event => {
+                    if (event.type === 'booked') {
+                        const startDate = new Date(event.start);
+                        const endDate = new Date(event.end);
+
+                         if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+                            console.error("Invalid date in booked event:", event);
+                            return { ...event, start: null, end: null }; // Skip invalid dates
+                        }
+                        return {
+                        ...event,
+                        start: new Date(event.start).toISOString(), //force to ISO/ UTC format
+                        end: new Date(event.end).toISOString(), //force to ISO/ UTC format
+                        };
+                    }
+                    return event;
+                    });
+                    setUserList(hydrated);
+            } catch (error) {
+                console.error("Failed to parse userInfoList from storage: ", error);
+                setUserList([]);
             }
-            return event;
-            });
-            setUserList(hydrated);
+        } else {
+            setUserList([]);
         }
     }, []);
 

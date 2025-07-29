@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef, useMemo} from 'react';
 import './calender.css';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
@@ -70,35 +70,49 @@ const MyCalendar = () => {
 
   const handleBlockDate = () => {
     if (selectedDate) {
-      const formattedDate = moment(selectedDate).format("YYYY-MM-DD");
+      const startOfDay = moment(selectedDate).startOf("day").toISOString(); 
+      const endOfDay = moment(selectedDate).endOf("day").toISOString();     
+
+      const blockedEvent = {
+        title: "Blocked",
+        start: startOfDay,
+        end: endOfDay,
+        allDay: true,
+      };
+
       setBlockedDates(prev => {
-        if(!prev.includes(formattedDate)) {
-          return [...prev, formattedDate];
+        const alreadyBlocked = prev.some(evt => moment(evt.start).isSame(startOfDay, "day"));
+        if (!alreadyBlocked) {
+          return [...prev, blockedEvent];
         }
         return prev;
       });
-      setAlert({message: `Blocked ${formattedDate}`, type: "success"});
+
+      setAlert({ message: `Blocked ${moment(selectedDate).format("YYYY-MM-DD")}`, type: "success" });
     } else {
-      setAlert({message: "Please select a date to block", type: "error"});
+      setAlert({ message: "Please select a date to block", type: "error" });
     }
   };
+
 
   const handleDateChange = (event) => {
     setSelectedDate(event.target.value);
   };
 
   const eventPropGetter = (event) => {
-    if (blockedDates.includes(moment(event.start).format("YYYY-MM-DD"))) {
-      return {
+    const isBlocked = blockedDates.some(
+      blocked => moment(event.start).isSame(blocked.start, "day")
+    );
+
+    return isBlocked? {
         style: {
           backgroundColor: "red",
           color: "white",
           pointerEvents: "none",
-        },
-      };
-    }
-    return {};
+        }
+    } : {};
   };
+
 
   const handleNoShowChange = (e) => {
     const newNoShowStatus = e.target.checked;
@@ -314,10 +328,15 @@ const MyCalendar = () => {
     // Find patient Id
     const match = userList.find(p => p.id === patientId);
 
-    if (blockedDates.includes(moment(appointment.start).format("YYYY-MM-DD"))) {
-      setAlert({message: "Cannot book appointment on a blocked date", type: "error"});
+    const isBlocked = blockedDates.some(blocked =>
+      moment(appointment.start).isSame(blocked.start, "day")
+    );
+
+    if (isBlocked) {
+      setAlert({ message: "Cannot book appointment on a blocked date", type: "error" });
       return;
     }
+
 
     // If cant find patient id 
     if (!match) {
@@ -353,12 +372,23 @@ const MyCalendar = () => {
   setBookedEvents(updatedBooked);
 
   // Save to localStorage with conversion to string for dates
-  const updatedBookedForStorage = updatedBooked.map(evt => ({
-    ...evt,
-    start: evt.start.toISOString(),
-    end: evt.end.toISOString(),
-  }));
+  const updatedBookedForStorage = updatedBooked.map(evt => {
+    const start = new Date(evt.start);
+    const end = new Date(evt.end);
+
+     if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+        console.error("Invalid start or end date:", evt);
+        return evt; // Skip this event or handle it accordingly
+      }
+
+    return {
+      ...evt,
+      start: isNaN(start.getTime()) ? evt.start : start.toISOString(),
+      end: isNaN(end.getTime()) ? evt.end : end.toISOString(),
+    };
+  });
   localStorage.setItem("bookedEvents", JSON.stringify(updatedBookedForStorage));
+
 
 
     // If trying to book another appointment for patient
@@ -413,25 +443,33 @@ const MyCalendar = () => {
     );
   };
 
-  const blockedEvents = blockedDates.map(date => ({
-    title: "Blocked",
-    start: new Date(date),
-    end: new Date(date),
-    allDay: true,
-    blocked: true,
-  }));
+  const blockedEvents = blockedDates.map(date => {
+    const start = new Date(`${date}T00:00:00`);
+    const end = new Date(`${date}T23:59:59`);
+
+    return {
+      title: "Blocked",
+      start,
+      end,
+      allDay: true,
+      blocked: true,
+    };
+  });
+
 
     // Array of all avents
   const allEvents = [...bookedEvents, ...windowEvents, ...blockedEvents];
 
 
 
-  const filteredAppointments = allEvents.filter(event => {
+  const filteredAppointments = useMemo(() => {
+    return allEvents.filter(event => {
     if (event.blocked) return true;
     if (event.type === 'window') return true; // Always show windows
     return selectedRooms.includes(event.room); // Filter booked by room
   });
-
+  }, [allEvents, selectedRooms]);
+  
 //-------------------------------------------HTML------------------------------------------------------------------
   return (
     <div> 
