@@ -92,7 +92,7 @@ const UserInfo = () => {
 
     let updatedPatients;
 
-    if (isEditing) {
+     if (isEditing) {
       updatedPatients = patients.map(p => p.id === newPatient.id ? newPatient : p);
       localStorage.removeItem('editPatient');
       setAlert({message: "Patient successfully updated", type: "success"});
