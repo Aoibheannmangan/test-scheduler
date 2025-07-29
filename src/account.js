@@ -98,7 +98,7 @@ const Account = () => {
         isOpen={popupOpen}
         onClose={() => setPopupOpen(false)}
         onConfirm={confirmDelete}
-        message="Are you sure you want to delete this patient"
+        message="Are you sure you want to delete this patient?"
       />
     </div>
   );

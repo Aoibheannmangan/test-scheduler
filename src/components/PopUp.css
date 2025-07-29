@@ -33,6 +33,7 @@
     padding: 1rem;
     font-weight: bold;
     font-size: 1.1rem;
+    font-family: 'Sansation', serif;
     width: 100%;
     text-align: center;
     border-bottom: 1px solid #ddd;
@@ -41,6 +42,7 @@
 .popup-content p {
     font-size: 1.1rem;
     margin-bottom: 1.5rem;
+    font-family: 'Sansation', serif;
 }
 .button-row {
     display: flex;
@@ -58,6 +60,7 @@
     min-width: 100px;
     text-align: center;
     display: inline-block;
+    font-family: 'Sansation', serif;
 }
 
 .confirm-button {

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './info.css';
 import { useNavigate } from 'react-router-dom';
 import Alert from './components/Alert';
+import PopUp from './components/PopUp';
 
 const UserInfo = () => {
   const [patientName, setPatientName] = useState('');
@@ -20,11 +21,12 @@ const UserInfo = () => {
   const [patientRoom, setRoom] = useState('')
   const [patientNotes, setNotes] = useState('');
 
+  const [popupOpen, setPopupOpen] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+
   const navigate = useNavigate();
 
   const [alert, setAlert] = useState(null);
-  const [showAlert, setShowAlert] = useState(true);
-
 
   useEffect(() => {
     const editData = localStorage.getItem("editPatient");
@@ -88,21 +90,30 @@ const UserInfo = () => {
 
     let patients = JSON.parse(localStorage.getItem("userInfoList")) || [];
 
-    if (isEditing) {
-      patients = patients.map(p => p.id === newPatient.id ? newPatient : p);
-      localStorage.removeItem("editPatient");
-      setAlert({message: "Are you sure you want to edit?", type: "warning"});
-    } else {
-      patients.push(newPatient);
-      setAlert({message: "Patient Successfully Created", type:"success"});
-    }
+    let updatedPatients;
 
-    localStorage.setItem("userInfoList", JSON.stringify(patients));
+     if (isEditing) {
+      updatedPatients = patients.map(p => p.id === newPatient.id ? newPatient : p);
+      localStorage.removeItem('editPatient');
+      setAlert({message: "Patient successfully updated", type: "success"});
+    } else {
+      updatedPatients = [...patients, newPatient];
+      setAlert({message: "Patient successfully created", type: "success"})
+    }
+    localStorage.setItem("userInfoList", JSON.stringify(updatedPatients));
 
     setTimeout(() => {
-      navigate('/account');
+      navigate("/account");
     }, 2000);
+
   };
+
+  const confirmEdit = () => {
+    setPopupOpen(false);
+    handleSubmit();
+  }
+
+    
 
   return (
     <div className="App">
@@ -244,6 +255,12 @@ const UserInfo = () => {
           </form>
         </div>
       </fieldset>
+       <PopUp
+        isOpen={popupOpen}
+        onClose={() => setPopupOpen(false)}
+        onConfirm={confirmEdit}
+        message="Are you sure you want to edit this patient"
+      />
     </div>
   );
 };
