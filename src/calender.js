@@ -33,8 +33,18 @@ const MyCalendar = () => {
   const [rebookPopupOpen, setRebookPopupOpen] = useState(false);
   const [eventToRebook, setEventToRebook] = useState(null);
 
+  const [blockedDates, setBlockedDates] = useState([]);
+  const [isBlocking, setIsBlocking] = useState(false);
+  const [selectedDate, setSelectedDate] = useState('');
+
   const isFirstRender = useRef(true);
 
+  // Map used for styling later
+  const studyClassMap = {
+  AIMHIGH: 'AHCheck',
+  COOLPRIME: 'CPCheck',
+  EDI: 'EDICheck',
+  };
 
   // Grab from local storage and in storedList
   useEffect(() => {
@@ -56,6 +66,38 @@ const MyCalendar = () => {
       noShow: event.noShow || false,
       noShowComment: event.noShowComment || '',
     });
+  };
+
+  const handleBlockDate = () => {
+    if (selectedDate) {
+      const formattedDate = moment(selectedDate).format("YYYY-MM-DD");
+      setBlockedDates(prev => {
+        if(!prev.includes(formattedDate)) {
+          return [...prev, formattedDate];
+        }
+        return prev;
+      });
+      setAlert({message: `Blocked ${formattedDate}`, type: "success"});
+    } else {
+      setAlert({message: "Please select a date to block", type: "error"});
+    }
+  };
+
+  const handleDateChange = (event) => {
+    setSelectedDate(event.target.value);
+  };
+
+  const eventPropGetter = (event) => {
+    if (blockedDates.includes(moment(event.start).format("YYYY-MM-DD"))) {
+      return {
+        style: {
+          backgroundColor: "red",
+          color: "white",
+          pointerEvents: "none",
+        },
+      };
+    }
+    return {};
   };
 
   const handleNoShowChange = (e) => {
@@ -227,8 +269,7 @@ const MyCalendar = () => {
         return {
           ...p,
           type: 'window',
-          visitNum: Math.max(p.visitNum - 1, 1)
-
+          visitNum: p.visitNum - 1
         };
       }
       return p;
@@ -273,34 +314,16 @@ const MyCalendar = () => {
     // Find patient Id
     const match = userList.find(p => p.id === patientId);
 
+    if (blockedDates.includes(appointment.start)) {
+      setAlert({message: "Cannot book appointment on a blocked date", type: "error"});
+      return;
+    }
+
     // If cant find patient id 
     if (!match) {
       setAlert({ message: `Patient ID ${patientId} not found in user list.`, type: "error" });
       return;
     }
-
-     // If trying to book another appointment for patient
-    if (bookedEvents.some(e => e.patientId === patientId)) {
-      setAlert({ message: "This patient already has a booked appointment.", type: "error" });
-      return;
-    }
-
-    // Check for room conflicts
-    const hasRoomConflict = bookedEvents.some(event => {
-      const sameRoom = event.room === appointment.room;
-      const overlaps =
-        (appointment.start >= event.start && appointment.start < event.end) ||
-        (appointment.end > event.start && appointment.end <= event.end) ||
-        (appointment.start <= event.start && appointment.end >= event.end);
-
-      return sameRoom && overlaps;
-    });
-
-    if (hasRoomConflict) {
-      setAlert({ message: `This room is already booked during this time.`, type: "error" });
-      return;
-    }
-
 
     // Add new appointment object structure
     const fullAppointment = {
@@ -337,6 +360,13 @@ const MyCalendar = () => {
   }));
   localStorage.setItem("bookedEvents", JSON.stringify(updatedBookedForStorage));
 
+
+    // If trying to book another appointment for patient
+    if (bookedEvents.some(e => e.patientId === patientId)) {
+      setAlert({ message: "This patient already has a booked appointment.", type: "error" });
+      return;
+    }
+
     const updatedUsers = userList.map(p => {
       if (p.id === patientId) {
         return {
@@ -359,8 +389,6 @@ const MyCalendar = () => {
     setAlert({ message: "Appointment booked successfully.", type: "success" });
   };
 
-  // Array of all avents
-  const allEvents = [...bookedEvents, ...windowEvents];
 
   // Selected rooms available
   const roomList = [
@@ -385,7 +413,21 @@ const MyCalendar = () => {
     );
   };
 
+  const blockedEvents = blockedDates.map(date => ({
+    title: "Blocked",
+    start: new Date(date),
+    end: new Date(date),
+    allDay: true,
+    blocked: true,
+  }));
+
+    // Array of all avents
+  const allEvents = [...bookedEvents, ...windowEvents, ...blockedEvents];
+
+
+
   const filteredAppointments = allEvents.filter(event => {
+    if (event.blocked) return true;
     if (event.type === 'window') return true; // Always show windows
     return selectedRooms.includes(event.room); // Filter booked by room
   });
@@ -455,6 +497,19 @@ const MyCalendar = () => {
               <div className="button-row">
                 <button className="search-button" onClick={handleSearchWindow}>Search Window</button>
                 <button className="clear-button" onClick={handleClearWindow}>Clear Window</button>
+              </div>
+              <div>
+                <label>Select Date to Block:
+                  <input
+                    type="date"
+                    value={selectedDate}
+                    onChange={handleDateChange}
+                  />
+                </label>
+                <button 
+                  onClick={handleBlockDate}
+                  
+                > Block Date</button>
               </div>
             </label>
             {/**DISPLAYS PATIENT WHEN SEARCHED IN WINDOW*/}
@@ -610,7 +665,7 @@ const MyCalendar = () => {
         message={`This event was marked as a no-show. Would you like to rebook for ${eventToRebook?.patientId || 'this patient'}?`}
           option1="Yes"
           option2="No"
-      />
+          />
 
       {/**APPOINTMENT BOOKING FORM*/}
       <div className='AppointmentToggle'>
