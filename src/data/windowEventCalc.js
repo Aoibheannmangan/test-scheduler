@@ -14,7 +14,7 @@ export function generateAimHighAppointments(birthDate, babyEarly) {
 
     const events = [
         {
-            title: 'AIMHIGH Visit 2',
+            title: 'AIMHIGH Visit',
             visitNum: 2,
             id: '000-000',
             DOB: birthDate,
@@ -48,7 +48,7 @@ export function generateCoolPrimeAppointments(birthDate, babyEarly) {
 
   const events = [
         {
-      title: 'COOLPRIME Visit 2',
+      title: 'COOLPRIME Visit',
       visitNum: 2,
       id: '000',
       dob: birthDate,
@@ -81,7 +81,7 @@ export function generateEDIAppointment(birthDate, babyEarly) {
 
     const events = [
         {
-            title: 'EDI Visit 2', 
+            title: 'EDI Visit', 
             visitNum: 2,
             id: '000',
             dob: birthDate,

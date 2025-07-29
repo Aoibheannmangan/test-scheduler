@@ -32,12 +32,6 @@ const MyCalendar = () => {
 
   const isFirstRender = useRef(true);
 
-  // Map used for styling later
-  const studyClassMap = {
-  AIMHIGH: 'AHCheck',
-  COOLPRIME: 'CPCheck',
-  EDI: 'EDICheck',
-  };
 
   // Grab from local storage and in storedList
   useEffect(() => {
@@ -232,7 +226,8 @@ const MyCalendar = () => {
         return {
           ...p,
           type: 'window',
-          visitNum: p.visitNum - 1
+          visitNum: Math.max(p.visitNum - 1, 1)
+
         };
       }
       return p;
@@ -283,6 +278,29 @@ const MyCalendar = () => {
       return;
     }
 
+     // If trying to book another appointment for patient
+    if (bookedEvents.some(e => e.patientId === patientId)) {
+      setAlert({ message: "This patient already has a booked appointment.", type: "error" });
+      return;
+    }
+
+    // Check for room conflicts
+    const hasRoomConflict = bookedEvents.some(event => {
+      const sameRoom = event.room === appointment.room;
+      const overlaps =
+        (appointment.start >= event.start && appointment.start < event.end) ||
+        (appointment.end > event.start && appointment.end <= event.end) ||
+        (appointment.start <= event.start && appointment.end >= event.end);
+
+      return sameRoom && overlaps;
+    });
+
+    if (hasRoomConflict) {
+      setAlert({ message: `This room is already booked during this time.`, type: "error" });
+      return;
+    }
+
+
     // Add new appointment object structure
     const fullAppointment = {
       ...appointment,
@@ -317,13 +335,6 @@ const MyCalendar = () => {
     end: evt.end.toISOString(),
   }));
   localStorage.setItem("bookedEvents", JSON.stringify(updatedBookedForStorage));
-
-
-    // If trying to book another appointment for patient
-    if (bookedEvents.some(e => e.patientId === patientId)) {
-      setAlert({ message: "This patient already has a booked appointment.", type: "error" });
-      return;
-    }
 
     const updatedUsers = userList.map(p => {
       if (p.id === patientId) {
