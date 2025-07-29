@@ -72,14 +72,26 @@ label:hover {
 }
 
 /*Red Dot that indicates whether it's a window*/
-.notifier {
+.closeNotifier,
+.midNotifier,
+.farNotifier{
   display: inline-block;
   width: 10px;
   height: 10px;
   border-Radius: 50%;
-  background-Color: #a02020c0;
   vertical-Align: middle;
-  align-items: right
+}
+.closeNotifier{
+  background-Color: #a02020c0;
+}
+.midNotifier{
+  background-Color: #c48b10c0;
+}
+.farNotifier{
+  background-Color: #53a020c0;
+}
+.windowTitle{
+  color: #e24444c0
 }
 
 .visitNumContainer {

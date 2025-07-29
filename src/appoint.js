@@ -10,25 +10,47 @@ const Appointments = () => {
     const [userList, setUserList] = useState([]);
 
      useEffect(() => {
-    const storedList = localStorage.getItem("userInfoList");
-    if (storedList) {
-        const parsedList = JSON.parse(storedList);
+        const storedList = localStorage.getItem("userInfoList");
+        if (storedList) {
+            const parsedList = JSON.parse(storedList);
 
-        // Hydrate dates only for booked events
-        const hydrated = parsedList.map(event => {
-        if (event.type === 'booked') {
-            return {
-            ...event,
-            start: new Date(event.start).toISOString(), //force to ISO/ UTC format
-            end: new Date(event.end).toISOString(), //force to ISO/ UTC format
-            };
+            // Hydrate dates only for booked events
+            const hydrated = parsedList.map(event => {
+            if (event.type === 'booked') {
+                return {
+                ...event,
+                start: new Date(event.start).toISOString(), //force to ISO/ UTC format
+                end: new Date(event.end).toISOString(), //force to ISO/ UTC format
+                };
+            }
+            return event;
+            });
+            setUserList(hydrated);
         }
-        return event;
-        });
-        setUserList(hydrated);
-    }
     }, []);
 
+    // make a today and month away var for distance indicators
+    const today = new Date();
+    const oneMonthFromNow = new Date(today);
+    oneMonthFromNow.setMonth(today.getMonth() + 1);
+
+    const oneWeekFromNow = new Date(today);
+    oneWeekFromNow.setDate(today.getDate() + 7);
+
+    const isFarAway = (date) => {
+        const appointmentDate = new Date(date);
+        return appointmentDate > oneMonthFromNow;
+    };
+
+    const isMid = (date) => {
+        const appointmentDate = new Date(date);
+        return appointmentDate <= oneMonthFromNow && appointmentDate > oneWeekFromNow;
+    };
+
+    const isClose = (date) => {
+        const appointmentDate = new Date(date);
+        return appointmentDate <= oneWeekFromNow;
+    };
 
 
     //--------------------------------------------------------------------------------------
@@ -124,7 +146,6 @@ const Appointments = () => {
             <div className='heading-right'><strong>Kildare</strong></div>
             </li>
 
-            
             {filteredAppointments.map((event) => (
             <li key={event.id} className="ID_element">
                 <div 
@@ -134,13 +155,26 @@ const Appointments = () => {
                     className='patientRow'
                     onClick={() => toggleCollapseIds(event.id)}
                     >
-                        {event.id} {expandedIds[event.id] ? '-' : '+'} {' '}
-                        {event.type === "window" && (
-                        <span 
-                        // Red circle that appears showing patient is yet to be booked in their window
-                        className='notifier'
-                        title='Visit Window Active'
-                        />
+                        {event.type === 'booked' && (
+                            <>
+                                {event.id} {expandedIds[event.id] ? '-' : '+'} {' '}
+                                {/* Functions used to get distance from appointment and display indicator */}
+                                {event.start && isFarAway(event.start) && (
+                                    <span className='farNotifier' title='More than a month away' />
+                                )}
+                                {event.start && isMid(event.start) && (
+                                    <span className='midNotifier' title='Between a week and a month away' />
+                                )}
+                                {event.start && isClose(event.start) && (
+                                    <span className='closeNotifier' title='Within a week' />
+                                )}
+                            </>   
+                        )}
+                        {event.type === 'window' && (
+                            <>
+                                {/* Make id red to indicate no booking has been made */}
+                                <span className='windowTitle'>{event.id} {expandedIds[event.id] ? '-' : '+'} {' '}</span>
+                            </>   
                         )}
                     </label>
                             
@@ -164,9 +198,10 @@ const Appointments = () => {
                 {/*Main Info Body when expanded*/}
                 {expandedIds[event.id] && (
                 <div className="info">
-                    <strong>{event.title}</strong><br />
+                    <strong>{event.Study}{'| '}{event.id}</strong><br />
                     <strong>Name:</strong> {event.Name}<br />
                     <strong>Date of Birth: </strong>
+
                     {/*Format date of birth*/}
                     {new Date(event.DOB).toLocaleDateString(undefined, {
                             year: 'numeric',
@@ -174,6 +209,7 @@ const Appointments = () => {
                             day: 'numeric',
                         })}
                     <br />
+
                     <strong>Location:</strong> {event.site}<br />
                     <strong>Study:</strong> {event.Study}<br />
 
