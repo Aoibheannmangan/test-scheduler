@@ -78,6 +78,7 @@ const MyCalendar = () => {
         start: startOfDay,
         end: endOfDay,
         allDay: true,
+        blocked: true,
       };
 
       setBlockedDates(prev => {
@@ -98,11 +99,23 @@ const MyCalendar = () => {
     setSelectedDate(event.target.value);
   };
 
-  const eventPropGetter = (event) => {
-    const isBlocked = blockedDates.some(blocked =>
-        moment(event.start).isSame(moment(blocked.start), "day")
-      );
-    return isBlocked? {className: "rbc-event-blocked"} : {};
+  const blockedEventGetter = (event) => {
+    if (event.blocked) {
+      return {
+        className: "rbc-event-blocked"
+      };
+    }
+    return {};
+  };
+
+  const combinedEventGetter = (event) => {
+    const blockedProps = blockedEventGetter(event);
+    const styleProps = eventPropGetter(event);
+
+    return{
+      ...styleProps,
+      ...blockedProps
+    };
   };
 
   const handleNoShowChange = (e) => {
@@ -495,7 +508,7 @@ const MyCalendar = () => {
           events={filteredAppointments}
           startAccessor="start"
           endAccessor="end"
-          eventPropGetter={eventPropGetter}
+          eventPropGetter={combinedEventGetter}
           view={view}
           onView={setView}
           date={date}

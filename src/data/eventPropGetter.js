@@ -31,11 +31,11 @@ export function eventPropGetter(event) {
 
   // Color by study for window events
   if (event.type === 'window') {
-    if (event.title?.includes('AIMHIGH')) {
+    if (event.Study?.includes('AIMHIGH')) {
       style.backgroundColor = '#9da715ff'; // blue
-    } else if (event.title?.includes('COOLPRIME')) {
+    } else if (event.Study?.includes('COOLPRIME')) {
       style.backgroundColor = '#43a047'; // green
-    } else if (event.title?.includes('EDI')) {
+    } else if (event.Study?.includes('EDI')) {
       style.backgroundColor = '#f4511e'; // orange
     }
   }
