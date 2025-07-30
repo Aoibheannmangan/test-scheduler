@@ -78,12 +78,14 @@ const SignUp = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    //Makes sure the password is valid
     const isValid = 
       passwordValidations.lowercase &&
       passwordValidations.uppercase &&
       passwordValidations.number &&
       passwordValidations.length;
 
+    //Alert if it's not valid and make them try again
     if (!isValid) {
       setAlert({ message: "Invalid Password. Must contain at least 8 characters, including uppercase and lowercase letters and a number", type: "warning" });
       return;
@@ -130,7 +132,7 @@ const SignUp = () => {
     users.push(userData);
     localStorage.setItem("users", JSON.stringify(users));
 
-    // Loading
+    // Loading only if login is successful
     setIsSubmitting(true);
     setTimeout(() => {
       setShowAlert({ message: "Login Successful!", type: "success" });
@@ -200,7 +202,7 @@ const SignUp = () => {
                     value={password}
                     onChange={handlePasswordChange}
                     onFocus={() => setShowPasswordMessage(true)}
-                    onBlur={() => setShowPasswordMessage(false)}
+                    onBlur={() => setShowPasswordMessage(false)} 
                     ref={passwordInputRef}
                     autoComplete="off"
                     required
@@ -222,6 +224,7 @@ const SignUp = () => {
                     required
                   />
 
+                  {/* Caplocks Warning */}
                   {capsLockOn && (
                     <div className="caps-warning" style={{ color: 'red', marginTop: '5px'}}>
                       Warning: Caps Lock is ON
@@ -246,25 +249,27 @@ const SignUp = () => {
                 </div>
               </div>
             </div>
+            {/* Password Validation Box */}
+            {showPasswordMessage && (
+              <div id="message">
+                <h3>Password must contain the following:</h3>
+                <p className={passwordValidations.lowercase ? 'valid' : 'invalid'}>
+                  A <b>lowercase</b> letter
+                </p>
+                <p className={passwordValidations.uppercase ? 'valid' : 'invalid'}>
+                  A <b>capital (uppercase)</b> letter
+                </p>
+                <p className={passwordValidations.number ? 'valid' : 'invalid'}>
+                  A <b>number</b>
+                </p>
+                <p className={passwordValidations.length ? 'valid' : 'invalid'}>
+                  Minimum <b>8 characters</b>
+                </p>
+              </div>
+            )}
           </form>
 
-          {showPasswordMessage && (
-            <div id="message">
-              <h3>Password must contain the following:</h3>
-              <p className={passwordValidations.lowercase ? 'valid' : 'invalid'}>
-                A <b>lowercase</b> letter
-              </p>
-              <p className={passwordValidations.uppercase ? 'valid' : 'invalid'}>
-                A <b>capital (uppercase)</b> letter
-              </p>
-              <p className={passwordValidations.number ? 'valid' : 'invalid'}>
-                A <b>number</b>
-              </p>
-              <p className={passwordValidations.length ? 'valid' : 'invalid'}>
-                Minimum <b>8 characters</b>
-              </p>
-            </div>
-          )}
+          
         </div>
       </div>
     </div>
