@@ -41,7 +41,7 @@ const ForgotPsw = () => {
             passwordValidations.length; 
 
             if (!isValid) { 
-                setAlert({ message: "Invalid Password. Must contain at least 8 character, including an uppercase letter, a lowercase letter and a number"}); 
+                setAlert({ message: "Invalid Password. Must contain at least 8 character, including an uppercase letter, a lowercase letter and a number", type:"error"}); 
                 return; 
             } 
 
@@ -94,7 +94,7 @@ const ForgotPsw = () => {
                              <input  
                                 type="password" 
                                 value={newPassword} 
-                                onChange={(e) => setNewPassword(e.target.value)} 
+                                onChange={handlePasswordChange} 
                                 onFocus={() => setShowPasswordMessage(true)} 
                                 onBlur ={() => setShowPasswordMessage(false)} 
                                 required 
