@@ -33,7 +33,7 @@ const ToggleAppointment = ({ onAddAppointment }) => {
       start,
       end,
       type: 'booked',
-      Study: [patientStudy.toUpperCase()] || '',
+      Study: [patientStudy] || '',
       room: appRoom,
       notes: appNote,
     };

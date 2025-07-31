@@ -88,7 +88,7 @@ const Account = () => {
             <li><strong>Days Early:</strong> {user.DaysEarly}</li>
             <li><strong>Sex:</strong> {user.Sex}</li>
             <li><strong>Condition:</strong> {user.Condition}</li>
-            <li><strong>Study:</strong> {user.Study}</li>
+            <li><strong>Study:</strong> {Array.isArray(user.Study) ? user.Study.join(', ') : [user.Study]}</li>
             <li><strong>Site:</strong> {user.site}</li>
             <li><strong>Additional Notes:</strong> {user.Info}</li>
           </ul>

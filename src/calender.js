@@ -372,7 +372,7 @@ const MyCalendar = () => {
     const fullAppointment = {
       ...appointment,
       title: `${match.Study}| ID: ${patientId}` ,
-      Study: (appointment.Study || match.Study || "UNKNOWN").toUpperCase(),
+      Study: (appointment.Study || match.Study || "UNKNOWN"),
       patientId,
       Name: match.Name,
       DOB: match.DOB,
@@ -480,8 +480,6 @@ const MyCalendar = () => {
     // Array of all avents
   const allEvents = [...bookedEvents, ...windowEvents, ...blockedEvents];
 
-
-
   const filteredAppointments = useMemo(() => {
     return allEvents.filter(event => {
     if (event.blocked) return true;
@@ -492,7 +490,7 @@ const MyCalendar = () => {
   
 //-------------------------------------------HTML------------------------------------------------------------------
   return (
-    <div> 
+    <div className = 'CalBody'> 
       {alert && (
         <Alert
           message={alert.message}

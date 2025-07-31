@@ -5,6 +5,10 @@
     background-color: #8D5A97;
     padding: 1rem 2rem;
     flex-wrap: wrap;
+    position: fixed;
+    width: 100%;
+    top: 0px;
+    z-index: 1000; /*Always over other elements so can interact */
 }
 
 .navbar-left .logo {
@@ -40,6 +44,7 @@
     display: flex;
     align-items: center;
     gap: 1rem;
+    padding-right: 90px;
 }
 
 .navbar-right .nav-link,

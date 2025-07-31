@@ -1,5 +1,12 @@
 /* Page Background */
-body {
+.CalBody {
+  background: #f3f3f3;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  margin-top: 60px
+}
+
+.body{
   background: #f3f3f3;
   text-align: center;
   font-family: Arial, sans-serif;
@@ -16,6 +23,7 @@ body {
   max-width: 1500px;
   margin: 18px auto;
   overflow: hidden;
+  
 }
 
 .AppointmentToggle {
