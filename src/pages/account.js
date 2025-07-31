@@ -2,15 +2,14 @@ import React, { useEffect, useState } from 'react';
 import './account.css';
 import { useNavigate } from 'react-router-dom';
 import { FaEdit, FaTrash } from 'react-icons/fa';
-import Alert from './components/Alert';
-import PopUp from './components/PopUp';
+import Alert from '../components/Alert';
+import PopUp from '../components/PopUp';
 
 const Account = () => {
   const [userList, setUserList] = useState([]);
   const navigate = useNavigate();
 
   const [alert, setAlert] = useState(null);
-  const [showAlert, setShowAlert] = useState(true);
 
   const [popupOpen, setPopupOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);

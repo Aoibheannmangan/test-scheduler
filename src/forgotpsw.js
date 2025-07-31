@@ -53,7 +53,7 @@ const ForgotPsw = () => {
             } 
 
             users[userIndex].password = newPassword; 
-            localStorage.setItem('users', JSON. stringify(users)); 
+            localStorage.setItem('users', JSON.stringify(users)); 
             setAlert({message: 'Password reset successful!', type: 'success'}); 
             navigate('/calender'); 
         } 

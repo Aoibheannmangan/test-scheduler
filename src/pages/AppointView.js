@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import './appoint.css';
-import { useAppointmentFilters } from './components/useAppointmentFilters';
-import './components/useAppointmentFilters.css'
-import { generateAimHighAppointments, generateCoolPrimeAppointments, generateEDIAppointment } from './data/windowEventCalc';
+import './AppointView.css';
+import { useAppointmentFilters } from '../hooks/useAppointmentFilters';
+import '../components/useAppointmentFilters.css'
+import { generateAimHighAppointments, generateCoolPrimeAppointments, generateEDIAppointment } from '../hooks/windowEventCalc';
 
 const Appointments = () => {
 

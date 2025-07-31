@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useRef, useMemo} from 'react';
-import './calender.css';
+import './Calendar.css';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { generateAimHighAppointments, generateCoolPrimeAppointments, generateEDIAppointment } from './data/windowEventCalc';
-import ClickableDateCell from './components/clickableCell';
-import { eventPropGetter } from './data/eventPropGetter';
-import ToggleAppointment from './components/toggleAppointment';
-import './components/useAppointmentFilters.css';
-import CustomToolbar from './components/customToolbar';
-import Alert from './components/Alert';
-import PopUp from './components/PopUp';
-import RebookingForm from './components/RebookingForm';
+import { generateAimHighAppointments, generateCoolPrimeAppointments, generateEDIAppointment } from '../hooks/windowEventCalc';
+import ClickableDateCell from '../components/ClickableCell';
+import { eventPropGetter } from '../hooks/eventPropGetter';
+import ToggleAppointment from './Appointment';
+import '../components/useAppointmentFilters.css';
+import CustomToolbar from '../components/CustomToolbar';
+import Alert from '../components/Alert';
+import PopUp from '../components/PopUp';
+import RebookingForm from '../components/RebookingForm';
 
 const MyCalendar = () => {
   const [view, setView] = useState('month');
@@ -139,7 +139,7 @@ const MyCalendar = () => {
     if (editedInfo.show) {
       openBookingFormWithPrefill(selectedEvent);
     }
-  }, [editedInfo?.noShow]);
+  }, [editedInfo?.noShow, selectedEvent, editedInfo]);
 
   const openBookingFormWithPrefill = (event) => {
     setSelectedEvent(event);
@@ -329,20 +329,6 @@ const MyCalendar = () => {
   });
 
   const localizer = momentLocalizer(moment);
-
-  const dateCellWrapper = (props) => {
-    const isBlocked = blockedDates.some(blocked => moment(props.date).isSame(blocked.start, "day"));
-
-    if (isBlocked) {
-      return (
-        <div {...props} className="rbc-day-bg rbc-blocked-cell">
-          {props.children}
-        </div>
-      );
-    }
-
-    return <div {...props}>{props.children}</div>
-  };
 
   // Function to add appointment
   const handleAddAppointment = (appointment) => {

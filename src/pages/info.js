@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './info.css';
 import { useNavigate } from 'react-router-dom';
-import Alert from './components/Alert';
-import PopUp from './components/PopUp';
+import Alert from '../components/Alert';
+import PopUp from '../components/PopUp';
 
 const UserInfo = () => {
   const [patientName, setPatientName] = useState('');
@@ -22,7 +22,6 @@ const UserInfo = () => {
   const [patientNotes, setNotes] = useState('');
 
   const [popupOpen, setPopupOpen] = useState(false);
-  const [selectedUserId, setSelectedUserId] = useState(null);
 
   const navigate = useNavigate();
 

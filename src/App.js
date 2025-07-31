@@ -1,14 +1,14 @@
 import React from 'react';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
-import Appointments from './appoint';
-import UserInfo from './info';
+import Appointments from './pages/AppointView';
+import UserInfo from './pages/info';
 import Navbar from './components/Navbar';
-import MyCalendar from './calender';
-import Account from './account'; 
-import LogIn from './login';
-import SignUp from './signup';
+import MyCalendar from './pages/Calendar';
+import Account from './pages/account'; 
+import LogIn from './pages/login';
+import SignUp from './pages/signup';
 import ForgotPsw from './forgotpsw'
-import ToggleAppointment from './components/toggleAppointment';
+import ToggleAppointment from './pages/Appointment';
 import '@fontsource/sansation';
 
 function App() {

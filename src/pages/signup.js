@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import './signup.css';
 import { useNavigate } from 'react-router-dom';
 import { FaUser, FaLock, FaEnvelope } from 'react-icons/fa';
-import Alert from './components/Alert';
+import Alert from '../components/Alert';
 
 const SignUp = () => {
   const [email, setEmail] = useState('');

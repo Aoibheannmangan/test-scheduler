@@ -1,0 +1,81 @@
+/* Appointment toggle */
+.AppointmentToggle{
+container{
+  background-color: #f0f0f0;
+  border: '1px solid #ccc';
+}
+
+.hide-button, .submit-button {
+  background-color: #8D5A97;
+  color: white;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 8px;
+  width: 40%;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-size: 18px;
+  font-family: 'Sansation', serif;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+input[type="time"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  color: #333;
+  background-color: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px 10px;
+  width: 90%;
+  box-sizing: border-box;
+}
+
+.Appointment-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  overflow: auto; /* allows scrolling if content is tall */
+}
+
+.Appointment-content {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  border: 2px solid #8D5A97;
+  width: 90%; /* Start flexible */
+  max-width: 500px; /* Cap it for big screens */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  animation: fadeIn 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto; /* Centers in scrollable container */
+}
+
+/* Optional: make it feel nicer on tablets */
+@media (min-width: 768px) {
+  .Appointment-content {
+    width: 60%;
+  }
+}
+
+@media (min-width: 1200px) {
+  .Appointment-content {
+    width: 40%;
+  }
+}
+
+};

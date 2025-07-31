@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './toggleAppointment.css';
+import './Appointment.css';
 
 // Toggle is not visible by default
 const ToggleAppointment = ({ onAddAppointment, isOpen, onClose, }) => {
