@@ -8,7 +8,7 @@ import Account from './account';
 import LogIn from './login';
 import SignUp from './signup';
 import ForgotPsw from './forgotpsw'
-import GoogleCalendar from './components/GoogleCalendar';
+import ToggleAppointment from './components/toggleAppointment';
 import '@fontsource/sansation';
 
 function App() {
@@ -28,7 +28,7 @@ function App() {
           <Route path="/login" element={<LogIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgotpsw" element={<ForgotPsw />} />
-          <Route path="/Googlecalendar" element={<GoogleCalendar />} />
+          <Route path="/toggleAppointment" element={<ToggleAppointment />} />
         </Routes>
       </div>
     </>

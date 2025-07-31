@@ -3,11 +3,7 @@ import './toggleAppointment.css';
 
 // Toggle is not visible by default
 const ToggleAppointment = ({ onAddAppointment }) => {
-  const [isVisible, setIsVisible] = useState(false);
 
-  const toggleVisibility = () => {
-    setIsVisible(prev => !prev);
-  };
 
   // States vars for appointment booking
   const [appPatID, setAppPatID] = useState('')
@@ -44,20 +40,12 @@ const ToggleAppointment = ({ onAddAppointment }) => {
     setAppTimeStart('');
     setAppTimeEnd('');
     setPatientStudy('');
-    setIsVisible(false);
+
     setAppRoom('');
     setAppNote('');
   };
 
   return (
-    <div>
-      <button // Visibility button
-      className='hide-button'
-      onClick={toggleVisibility}>
-        {isVisible ? 'Hide' : 'Show'} Appointment Booking
-      </button>
-
-      {isVisible && ( // Shows the form when visible
         <div className='AppointmentToggle'>
           <fieldset>
             <div className="form-border">
@@ -139,8 +127,6 @@ const ToggleAppointment = ({ onAddAppointment }) => {
             </div>
           </fieldset>
         </div>
-      )}
-    </div>
   );
 };
 

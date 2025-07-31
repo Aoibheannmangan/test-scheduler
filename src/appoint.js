@@ -82,12 +82,6 @@ const Appointments = () => {
     // Track collapsed state for notes (same logic from IDs) **TODO: Make modular**
     const [expandedNotes, setExpandedNotes] = useState({});
 
-        const toggleCollapseNotes = (notes) => {
-        setExpandedNotes((prev) => ({
-        ...prev,
-        [notes]: !prev[notes],
-        }));
-    };
 
     // Extracts search and filter-related data and functions from useAppointmentFilters to manage appointment filtering.
     const {

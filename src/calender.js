@@ -13,8 +13,6 @@ import Alert from './components/Alert';
 import PopUp from './components/PopUp';
 import RebookingForm from './components/RebookingForm';
 
-const localizer = momentLocalizer(moment);
-
 const MyCalendar = () => {
   const [view, setView] = useState('month');
   const [date, setDate] = useState(new Date());
@@ -34,17 +32,9 @@ const MyCalendar = () => {
   const [eventToRebook, setEventToRebook] = useState(null);
 
   const [blockedDates, setBlockedDates] = useState([]);
-  const [isBlocking, setIsBlocking] = useState(false);
   const [selectedDate, setSelectedDate] = useState('');
 
   const isFirstRender = useRef(true);
-
-  // Map used for styling later
-  const studyClassMap = {
-  AIMHIGH: 'AHCheck',
-  COOLPRIME: 'CPCheck',
-  EDI: 'EDICheck',
-  };
 
   // Grab from local storage and in storedList
   useEffect(() => {
@@ -532,7 +522,6 @@ const MyCalendar = () => {
                 setView('day');
               }} />
             ),
-             dateCellWrapper: dateCellWrapper, 
           }}
         />
       </div>
@@ -722,13 +711,6 @@ const MyCalendar = () => {
           option1="Yes"
           option2="No"
           />
-
-      {/**APPOINTMENT BOOKING FORM*/}
-      <div className='AppointmentToggle'>
-        <h1>Add Appointment</h1>
-        <ToggleAppointment onAddAppointment={handleAddAppointment} />
-      </div>
-
     </div>
   );
 };
