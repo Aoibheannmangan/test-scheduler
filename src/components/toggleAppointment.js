@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import './toggleAppointment.css';
 
 // Toggle is not visible by default
-const ToggleAppointment = ({ onAddAppointment }) => {
-
+const ToggleAppointment = ({ onAddAppointment, isOpen, onClose, }) => {
 
   // States vars for appointment booking
   const [appPatID, setAppPatID] = useState('')
@@ -40,12 +39,15 @@ const ToggleAppointment = ({ onAddAppointment }) => {
     setAppTimeStart('');
     setAppTimeEnd('');
     setPatientStudy('');
-
     setAppRoom('');
     setAppNote('');
   };
 
-  return (
+    if (!isOpen) return null;
+
+    return (
+    <div className='Appointment-overlay'>
+      <div className='Appointment-content'>
         <div className='AppointmentToggle'>
           <fieldset>
             <div className="form-border">
@@ -119,14 +121,15 @@ const ToggleAppointment = ({ onAddAppointment }) => {
                   required
                 />
 
-                <button // Submit button 
-                type="submit" className='submit-button'> 
-                  Submit
-                  </button>
+                <button className="submit-button" type='submit'>Submit</button>
+                <button className="cancel-button" onClick={onClose}>Close</button>
+
               </form>
             </div>
           </fieldset>
         </div>
+      </ div>
+    </div>
   );
 };
 

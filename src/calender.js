@@ -27,6 +27,8 @@ const MyCalendar = () => {
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [editedInfo, setEditedInfo] = useState(null);
 
+  const [appOpen, setAppOpen] = useState(false);
+
   const [showRebookingForm, setShowRebookingForm] = useState(false);
   const [rebookPopupOpen, setRebookPopupOpen] = useState(false);
   const [eventToRebook, setEventToRebook] = useState(null);
@@ -300,6 +302,11 @@ const MyCalendar = () => {
     setPopupOpen(true);
   };
 
+    // Store event clicked on and open pop up for delete
+  const handleEventAdd = () => {  
+      setAppOpen(true);
+  };
+
   // Create array to store booked appointments
   const [bookedEvents, setBookedEvents] = useState(() => {
     // Place in local storage + make date object to store
@@ -429,6 +436,8 @@ const MyCalendar = () => {
     setUserList(updatedUsers);
     // Tell user appointment is booked
     setAlert({ message: "Appointment booked successfully.", type: "success" });
+
+    setAppOpen(false);
   };
 
 
@@ -711,6 +720,23 @@ const MyCalendar = () => {
           option1="Yes"
           option2="No"
           />
+
+      {/**APPOINTMENT BOOKING FORM*/}
+      <div className='AppointmentToggle'>
+        <ToggleAppointment onAddAppointment={handleAddAppointment}
+        isOpen={appOpen}
+        onClose={() => setAppOpen(false)}
+        />
+      </div>
+
+      {appOpen === false && (
+      <button
+      onClick={handleEventAdd}
+      >
+        Add Appointment
+      </button>  
+      )}
+
     </div>
   );
 };

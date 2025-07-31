@@ -27,10 +27,6 @@
   
 }
 
-.AppointmentToggle {
-  padding-top:10px;
-}
-
 .formButton {
   cursor: 'pointer';
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
