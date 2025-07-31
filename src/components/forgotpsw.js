@@ -1,6 +1,6 @@
 import React, { useState} from 'react'; 
 import { useNavigate} from 'react-router-dom'; 
-import Alert from './components/Alert'; 
+import Alert from './Alert'; 
 import {FaUser, FaLock} from 'react-icons/fa'; 
 
 const ForgotPsw = () => { 

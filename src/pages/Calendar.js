@@ -12,11 +12,13 @@ import CustomToolbar from '../components/CustomToolbar';
 import Alert from '../components/Alert';
 import PopUp from '../components/PopUp';
 import RebookingForm from '../components/RebookingForm';
+import { CiCalendar } from "react-icons/ci";
+
+
 
 const MyCalendar = () => {
   const [view, setView] = useState('month');
   const [date, setDate] = useState(new Date());
-  const [isBookingCollapsed, setIsBookingCollapsed] = useState(true);
   const [searchPatientId, setSearchPatientId] = useState('');
   const [windowEvents, setWindowEvents] = useState([]);
   const [currentPatient, setCurrentPatient] = useState(null);
@@ -521,9 +523,10 @@ const MyCalendar = () => {
         />
       </div>
 
-      {/**FILTER BOX + WINDOW SEARCH*/}
-      <div className="filter-container">
-        <h4>Show Event Types</h4>
+    <div className='floatContainer'>
+      {/**WINDOW SEARCH*/}
+      <div className="floatChild">
+      <h4>Show Event Types</h4>
         <div className="filter-row">
           <div className="windowView">
             <label>
@@ -538,7 +541,8 @@ const MyCalendar = () => {
                 <button className="search-button" onClick={handleSearchWindow}>Search Window</button>
                 <button className="clear-button" onClick={handleClearWindow}>Clear Window</button>
               </div>
-              <div>
+              <div
+              className='blockContainer'>
                 <label>Select Date to Block:
                   <input
                     type="date"
@@ -566,15 +570,21 @@ const MyCalendar = () => {
               </div>
             )}
           </div>
-          {/**COLLAPSABLE FILTER BOX*/}
-          <div className="filter-Main">
-            <ul className="collapsable">
+        </div>
+      </div>
+            
+          <div>
+            {/**COLLAPSABLE FILTER BOX*/}
+            <div
+            className='floatChild'>
+            
+            <ul>
               <li>
-                <div onClick={() => setIsBookingCollapsed(prev => !prev)} style={{ cursor: 'pointer' }}>
+                <div>
                   <b>Room Filter</b>
                 </div>
                 {/**DISPLAYS FILTERS USING LOOP*/}
-                <ul style={{ display: isBookingCollapsed ? 'none' : 'block' }}>
+                <ul>
                   {roomList.map(room => (
                     <li key={room.id}>
                       <div className="filter-checkbox">
@@ -593,9 +603,24 @@ const MyCalendar = () => {
                 </ul>
               </li>
             </ul>
+            </div>
           </div>
-        </div>
-      </div>
+          <div className="floatButton">
+            <h4>Book an Appointment</h4>
+            
+            <button
+              className="appButton"
+              onClick={handleEventAdd}
+            >
+              <CiCalendar className="bookIcon" />
+            </button>
+            <div className="patientInfo">
+              <p><strong>Tip:</strong> Click the calendar icon to add a new appointment.</p>
+              <p>Use the filter to the left to specify room viewings.</p>
+              <p>And try out the search window or block features to view patient visit windows and block dates for your schedule.</p>
+            </div>
+          </div>
+          </div>
 
       {/**EDIT POPUP*/}
       {selectedEvent && (
@@ -714,14 +739,6 @@ const MyCalendar = () => {
         onClose={() => setAppOpen(false)}
         />
       </div>
-
-      {appOpen === false && (
-      <button
-      onClick={handleEventAdd}
-      >
-        Add Appointment
-      </button>  
-      )}
 
     </div>
   );

@@ -7,7 +7,7 @@ import MyCalendar from './pages/Calendar';
 import Account from './pages/account'; 
 import LogIn from './pages/login';
 import SignUp from './pages/signup';
-import ForgotPsw from './forgotpsw'
+import ForgotPsw from './components/forgotpsw'
 import ToggleAppointment from './pages/Appointment';
 import '@fontsource/sansation';
 

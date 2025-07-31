@@ -39,6 +39,58 @@
   padding-right: 50px;
 }
 
+.floatButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;       
+  justify-content: center;
+  min-width: 220px;
+  max-width: 320px;
+  max-height: 400px;   
+  margin: 24px auto 0 auto; 
+  background: #f9f9f9;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  padding: 18px 16px;
+  cursor: pointer;          
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.floatButton:hover {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.floatButton:active {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Icon inside the button */
+.bookIcon {
+  width: 80px;   /* vmin is a bit unpredictable */
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 12px; /* spacing between icon and text */
+}
+
+/* Round book button */
+.bookButton {
+  border-radius: 50%;
+  border: none;
+  background: #8D5A97;
+  color: white;
+  padding: 16px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: background 0.2s ease;
+}
+
+.bookButton:hover {
+  transform: translateY(-4px); 
+  background: #A46CAF;
+}
+
+
 /*----------------------------------------Base Calendar Styling----------------------------------------*/
 .rbc-calendar {
   background-color: #ffffff;
@@ -138,6 +190,21 @@
 
 /*----------------------------------------Collapsable Booking Filter----------------------------------------*/
 
+.collapsable {
+  min-width: 220px;
+  max-width: 1000px;
+  margin: 24px auto 0 auto; 
+  background: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  padding: 18px 16px;
+  flex-direction: column;
+  align-items: flex-start;
+  margin:20px
+}
+
+
+
 /* Styling for collapsable, sets red line on left*/
 ul.collapsable {
   border-left: solid 5px #b62a1d;
@@ -164,19 +231,55 @@ ul.collapsable li a {
 }   
 
 
-.search-button, .clear-button, .block-button {
-  background-color: #8D5A97;
-  color: white;
-  padding: 0.5rem;
+.search-button,
+.clear-button,
+.block-button {
+  padding: 8px 16px;
+  margin: 4px;
   border: none;
-  border-radius: 8px;
-  width: 60%;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background 0.3s;
-  font-size: 22px;
-  font-family: 'Sansation', serif;
   font-weight: bold;
-  letter-spacing: 1px;
+  transition: background 0.2s ease;
+}
+
+.search-button {
+  background: #8D5A97;
+  color: white;
+}
+
+.search-button:hover {
+  background: #A46CAF;
+}
+
+.clear-button {
+  background: #ccc;
+  color: #333;
+}
+
+.clear-button:hover {
+  background: #bbb;
+}
+
+.block-button {
+  background: #E4572E;
+  color: white;
+}
+
+.block-button:hover {
+  background: #FF6B3D;
+}
+
+.patientInfo {
+  margin-top: 16px;
+  padding: 12px;
+  background: #eef6f4;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.blockContainer {
+  margin-top:20px;
 }
 
 .button-row {

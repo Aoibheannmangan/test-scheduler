@@ -1,25 +1,54 @@
-/* Wrapper container for filter */
-.filter-container {
-  min-width: 220px;
-  max-width: 1000px;
-  margin: 24px auto 0 auto; 
-  background: #f9f9f9;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-  padding: 18px 16px;
+/* Wrapper container for filter and app button */
+.floatContainer {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+  margin: 24px auto;
+  width: 95%;
 }
 
-/* Heading for filter container*/
-.filter-container h4 {
+.floatChild {
+  flex: 0 1 300px;
+  max-width: 750px;
+    margin: 0 auto;           /* Extra safeguard for centering */
+  background: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.floatChild:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.floatChild h4 {
   margin-top: 0;
   margin-bottom: 16px;
   color: #00473E;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
+  font-weight: bold;
 }
 
+.floatChild input[type="text"],
+.floatChild input[type="date"] {
+  width: 100%;
+  padding: 8px 12px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  box-sizing: border-box;
+}
+
+.button-row, .floatChild button {
+  margin-top: 8px;
+}
 /* Checkbox styling */
 .filter-checkbox {
   margin-bottom: 12px;
