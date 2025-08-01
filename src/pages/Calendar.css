@@ -47,7 +47,8 @@
   min-width: 220px;
   max-width: 320px;
   max-height: 400px;   
-  margin: 24px auto 0 auto; 
+  margin-left: 0px auto; 
+  margin-right: auto;
   background: #f9f9f9;
   border-radius: 16px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
