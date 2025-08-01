@@ -550,10 +550,12 @@ const MyCalendar = () => {
                     onChange={handleDateChange}
                   />
                 </label>
-                <button 
-                  onClick={handleBlockDate}
-                  className="block-button"
-                > Block Date</button>
+                <div className='button-row'>
+                  <button 
+                    onClick={handleBlockDate}
+                    className="block-button"
+                  > Block Date</button>
+                </div>
               </div>
             </label>
             {/**DISPLAYS PATIENT WHEN SEARCHED IN WINDOW*/}

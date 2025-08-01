@@ -60,9 +60,17 @@
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
 }
 
-.floatButton:active {
-  transform: translateY(-1px);
+.floatButton:hover {
+  transform: translateY(-4px);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.appButton {
+  border-radius: 15px;
+}
+
+.appButton:active {
+  transform: translateY(4px);
 }
 
 /* Icon inside the button */

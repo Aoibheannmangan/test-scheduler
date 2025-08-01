@@ -84,12 +84,12 @@
 }
 
 .delete-button {
-    background-color: #fd3535;
+    background-color: #c01616;
     color: white;
 }
 
 .delete-button:hover {
-    background-color: rgb(126, 26, 26);
+    background-color: rgb(143, 33, 33);
 }
 
 .date-edit{   
