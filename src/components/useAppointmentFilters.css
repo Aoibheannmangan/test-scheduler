@@ -11,7 +11,7 @@
 .floatChild {
   flex: 0 1 300px;
   max-width: 750px;
-    margin: 0 auto;           /* Extra safeguard for centering */
+  margin: 0 auto;           /* Extra safeguard for centering */
   background: #f9f9f9;
   border-radius: 12px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
