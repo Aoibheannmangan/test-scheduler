@@ -48,7 +48,7 @@ const ToggleAppointment = ({ onAddAppointment, isOpen, onClose, }) => {
     return (
     <div className='Appointment-overlay'>
       <div className='Appointment-content'>
-        <div className='AppointmentToggle'>
+
           <fieldset>
             <div className="form-border">
               <form onSubmit={handleSubmit}>
@@ -129,7 +129,7 @@ const ToggleAppointment = ({ onAddAppointment, isOpen, onClose, }) => {
           </fieldset>
         </div>
       </ div>
-    </div>
+
   );
 };
 

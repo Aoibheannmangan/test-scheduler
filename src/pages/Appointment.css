@@ -50,19 +50,14 @@ input[type="time"] {
 }
 
 .Appointment-content {
-  background-color: #fff;
-  padding: 2rem;
-  border-radius: 8px;
-  border: 2px solid #8D5A97;
   width: 90%; /* Start flexible */
   max-width: 500px; /* Cap it for big screens */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   text-align: center;
   animation: fadeIn 0.3s ease-in-out;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: auto; /* Centers in scrollable container */
+  margin: auto;
 }
 
 /* Optional: make it feel nicer on tablets */
