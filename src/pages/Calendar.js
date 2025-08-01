@@ -21,6 +21,7 @@ const MyCalendar = () => {
   const [date, setDate] = useState(new Date());
   const [searchPatientId, setSearchPatientId] = useState('');
   const [windowEvents, setWindowEvents] = useState([]);
+  const [isVisitComplete, setVisitComplete] = useState(false);
   const [currentPatient, setCurrentPatient] = useState(null);
   const [alert, setAlert] = useState(null);
   const [popupOpen, setPopupOpen] = useState(false);
@@ -286,7 +287,7 @@ const MyCalendar = () => {
         return {
           ...p,
           type: 'window',
-          visitNum: p.visitNum - 1
+          visitNum: Math.max(1, p.visitNum - 1),
         };
       }
       return p;

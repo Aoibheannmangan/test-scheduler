@@ -65,46 +65,45 @@ export function generateCoolPrimeAppointments(birthDate, babyEarly) {
 }
 // ---------------------------------------EDI---------------------------------------
 
-export function generateEDIAppointment(birthDate, babyEarly) {
-    // EDI Visit 2: in clinic 3 - 4 months
+export function generateEDIAppointment(birthDate, babyEarly, visitNum = null, isVisitCompleted = false) {
+  const MS_PER_DAY = 24 * 60 * 60 * 1000;
+  const dueDate = new Date(birthDate.getTime() + babyEarly * MS_PER_DAY);
+  const events = [];
 
-  // Corrected age starts from due date, not birth date
-    const dueDate = new Date(birthDate.getTime() + babyEarly * 24 * 60 * 60 * 1000);
+  const visitWindows = {
+    2: { start: 91, end: 122 },
+    3: { start: 152, end: 212 },
+    4: { start: 274, end: 365 },
+    5: { start: 730, end: 791 },
+  };
 
-    // Calculates start of window from due date
-    const startWindow = new Date(dueDate.getTime());
-    startWindow.setMonth(startWindow.getMonth() + 3);
+  const addVisit = (num) => {
+    const window = visitWindows[num];
+    if (!window) return;
 
-    // Calculates start of window from due date
-    const endWindow = new Date(dueDate.getTime());
-    endWindow.setMonth(endWindow.getMonth() + 4);
+    events.push({
+      title: `EDI Visit ${num}`,
+      visitNum: num,
+      id: `00${num}`,
+      dob: birthDate,
+      daysEarly: babyEarly,
+      ooa: false,
+      start: new Date(dueDate.getTime() + window.start * MS_PER_DAY),
+      end: new Date(dueDate.getTime() + window.end * MS_PER_DAY),
+      type: 'window',
+      Study: 'EDI',
+    });
+  };
 
-    const events = [
-        {
-            title: 'EDI Visit', 
-            visitNum: 2,
-            id: '000',
-            dob: birthDate,
-            daysEarly: babyEarly,
-            ooa: false,
-            start: startWindow,
-            end: endWindow,
-            type: 'window',
-            Study: 'EDI'
-        }
-    ]
+  if (visitNum === 1) {
+    addVisit(2);
+  } else if (visitNum === 2 && isVisitCompleted) {
+    addVisit(3);
+  } else if (visitNum === 3 && isVisitCompleted) {
+    addVisit(4);
+  } else if (visitNum === 4 && isVisitCompleted) {
+    addVisit(5);
+  }
 
-    return events
+  return events;
 }
-
-
-
-
-
-
-
-
-
-
-
-

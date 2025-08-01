@@ -43,6 +43,8 @@ const Appointments = () => {
         }
     }, []);
 
+    const isVisitComplete = true;
+
     // make a today and month away var for distance indicators
     const today = new Date();
     const oneMonthFromNow = new Date(today);
@@ -222,8 +224,10 @@ const Appointments = () => {
 
                     {/*Visit window in info if a window patient*/}
                     {event.type === "window" && (() => {
-                    const birthDate = new Date(event.DOB);
-                    const daysEarly = event.DaysEarly || 0;
+                        const birthDate = new Date(event.DOB || event.dob);
+                        const daysEarly = event.DaysEarly ?? event.daysEarly ?? 0;
+                        if (!(birthDate instanceof Date) || isNaN(birthDate.getTime())) return [];
+
 
                     const studyWindows = Array.isArray(event.Study) ? event.Study : [event.Study];
                     return (
@@ -235,7 +239,11 @@ const Appointments = () => {
                         } else if (study === 'COOLPRIME') {
                             windowData = generateCoolPrimeAppointments(birthDate, daysEarly);
                         } else if (study === 'EDI') {
-                            windowData = generateEDIAppointment(birthDate, daysEarly);
+                            windowData = [];
+                            for (let i = event.visitNum + 1; i <= 5; i++) {
+                            const visits = generateEDIAppointment(birthDate, daysEarly, i, isVisitComplete);
+                            if (visits.length) windowData.push(...visits);
+                            }
                         }
 
                         if (!windowData[0]) return null;
