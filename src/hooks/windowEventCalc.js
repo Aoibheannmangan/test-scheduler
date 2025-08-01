@@ -32,37 +32,46 @@ export function generateAimHighAppointments(birthDate, babyEarly) {
 
 // ---------------------------------------COOLPRIME---------------------------------------
 
-export function generateCoolPrimeAppointments(birthDate, babyEarly) {
-    // COOLPRIME Visit 2: in clinic 3 - 4 mnths
-
-  // Corrected age starts from due date, not birth date
+export function generateCoolPrimeAppointments(birthDate, babyEarly, visitNum = null) {
   const dueDate = new Date(birthDate.getTime() + babyEarly * 24 * 60 * 60 * 1000);
 
-  // Calculates start of window from due date
-  const startWindow = new Date(dueDate.getTime());
-  startWindow.setMonth(startWindow.getMonth() + 3);
+  const visitSchedule = {
+    2: { startMonth: 3, endMonth: 4 },
+    3: { startMonth: 9, endMonth: 12 },
+    4: { startMonth: 22, endMonth: 26 },
+  };
 
-  // Calculates end of window from due date
-  const endWindow = new Date(dueDate.getTime());
-  endWindow.setMonth(endWindow.getMonth() + 4);
+  const generateVisit = (num) => {
+    const visit = visitSchedule[num];
+    if (!visit) return null;
 
-  const events = [
-        {
-      title: 'COOLPRIME Visit',
-      visitNum: 2,
-      id: '000',
+    const startWindow = new Date(dueDate);
+    startWindow.setMonth(startWindow.getMonth() + visit.startMonth);
+
+    const endWindow = new Date(dueDate);
+    endWindow.setMonth(endWindow.getMonth() + visit.endMonth);
+
+    return {
+      title: `COOLPRIME Visit ${num}`,
+      visitNum: num,
+      id: '000-000', 
       dob: birthDate,
       daysEarly: babyEarly,
-      ooa: true,
       start: startWindow,
       end: endWindow,
       type: 'window',
       Study: 'COOLPRIME',
-    },
-  ];
+    };
+  };
 
-  return events;
+  if (visitNum !== null) {
+    const singleVisit = generateVisit(visitNum);
+    return singleVisit ? [singleVisit] : [];
+  }
+
+  return Object.keys(visitSchedule).map(num => generateVisit(parseInt(num))).filter(Boolean);
 }
+
 // ---------------------------------------EDI---------------------------------------
 
 export function generateEDIAppointment(birthDate, babyEarly) {

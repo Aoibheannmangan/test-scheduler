@@ -151,7 +151,6 @@ const MyCalendar = () => {
   // Save when editing event info
   const saveEditedInfo = () => {
     if (!selectedEvent || !editedInfo) return;
-
     // Prepare updated event object
     const updatedEvent = {
       ...selectedEvent,
