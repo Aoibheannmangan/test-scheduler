@@ -244,9 +244,11 @@ const Appointments = () => {
                             windowData = generateEDIAppointment(birthDate, daysEarly, event.visitNum);
                         }
 
-                        if (!windowData[0]) return null;
+                        const today = new Date();
+                        const upcomingWindow = windowData.find(({ end }) => new Date(end) >= today);
 
-                        const { start, end } = windowData[0];
+                        if (upcomingWindow) {
+                        const { start, end } = upcomingWindow;
                         return (
                             <div key={study}>
                             <strong>Next {study} Visit Window:</strong>{' '}
@@ -264,6 +266,14 @@ const Appointments = () => {
                             <br />
                             </div>
                         );
+                        } else {
+                        return (
+                            <div key={study}>
+                            <strong>{study} Status:</strong> Study Complete
+                            <br />
+                            </div>
+                        );
+                        }
                         })}
                     </div>
                     );
