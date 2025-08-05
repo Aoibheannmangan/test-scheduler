@@ -1,18 +1,16 @@
-
 .login-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background: linear-gradient(to right, #804e8a, #c794d1 );
-    background-size: cover;
+    background: linear-gradient(to right, #804e8a, #c794d1);
     font-family: 'Sansation', serif;
+    padding: 1rem;
 }
 
 .form-wrapper {
     width: 100%;
     max-width: 400px;
-    padding: 1rem;
 }
 
 .login-card {
@@ -24,39 +22,66 @@
 
 .title {
     color: #8d5a97;
-    margin-bottom: 0.75rem;
     text-align: center;
-    font-size: 36px;
-    font-family: 'Sansation', serif;
+    font-size: 2rem;
     font-weight: bold;
-    letter-spacing: 1px;
+    margin-bottom: 1rem;
 }
 
 .form-body label {
     display: block;
-    margin-bottom: 0.2rem;
+    margin-bottom: 0.5rem;
     font-weight: bold;
     color: black;
-    font-family: 'Sansation', serif;
-    font-size: 20px;
-    font-weight: bold;
-    letter-spacing: 1px;
+    font-size: 1rem;
 }
 
-.form-body input {
-    width: 100%;
-    padding: 0.5rem;
-    margin-bottom: 1rem;
-    border: 1px solid #c4c4c4 !important; 
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+.input-icon-wrapper {
+    display: flex;
+    align-items: center;
+    border: 1px solid #c4c4c4;
     border-radius: 8px;
-    transition: border-color 0.3s;
-    font-family: 'Sansation', serif;
-    letter-spacing: 1px;
+    padding: 0.5rem;
+    background-color: #fff;
 }
 
-.form-body input:focus {
-    border-color: #8D5A97;
+.input-icon-wrapper .icon {
+    margin-right: 0.5rem;
+    color: #888;
+    font-size: 1.2rem;
+}
+
+.input-icon-wrapper input {
+    border: none;
     outline: none;
+    flex: 1;
+    font-size: 1rem;
+    background: transparent;
+}
+
+.caps-warning {
+    color: red;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+.forgot-password-link {
+    text-align: right;
+    margin-top: 0.5rem;
+}
+
+.forgot-password-link a {
+    color: #8d5a97;
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.forgot-password-link a:hover {
+    text-decoration: underline;
 }
 
 .login-button {
@@ -68,62 +93,30 @@
     width: 100%;
     cursor: pointer;
     transition: background 0.3s;
-    font-size: 22px;
-    font-family: 'Sansation', serif;
+    font-size: 1.1rem;
     font-weight: bold;
     letter-spacing: 1px;
 }
 
 .login-button:hover {
     background: #56365c;
-    font-family: 'Sansation', serif;
-    font-weight: bold;
-    letter-spacing: 1px;
 }
-
 
 .signup-link {
     text-align: center;
     margin-top: 1rem;
-    color: rgb(0, 0, 0);
+    color: black;
     letter-spacing: 1px;
 }
 
 .signup-link a {
-    color: blue;
+    color: #8d5a97;
     text-decoration: none;
     font-weight: bold;
 }
 
 .signup-link a:hover {
     text-decoration: underline;
-}
-
-.input-group {
-  margin-bottom: 20px;
-}
-
-.input-icon-wrapper {
-  display: flex;
-  align-items: center;
-  border: 1px solid #000000;
-  border-radius: 4px;
-  padding: 8px 10px;
-  background-color: #fff;
-}
-
-.input-icon-wrapper .icon {
-  margin-right: 10px;
-  color: #888;
-  font-size: 1.2rem;
-}
-
-.input-icon-wrapper input {
-  border: none;
-  outline: none;
-  flex: 1;
-  font-size: 1rem;
-  background: transparent;
 }
 
 .spinner {
@@ -137,6 +130,6 @@
 }
 
 @keyframes spin {
-    0% {transform: rotate(0deg); }
-    100% {transform: rotate(360deg); }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
