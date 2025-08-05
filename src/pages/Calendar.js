@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo} from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback} from 'react';
 import './Calendar.css';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
@@ -21,7 +21,6 @@ const MyCalendar = () => {
   const [date, setDate] = useState(new Date());
   const [searchPatientId, setSearchPatientId] = useState('');
   const [windowEvents, setWindowEvents] = useState([]);
-  const [isVisitComplete, setVisitComplete] = useState(false);
   const [currentPatient, setCurrentPatient] = useState(null);
   const [alert, setAlert] = useState(null);
   const [popupOpen, setPopupOpen] = useState(false);
@@ -330,6 +329,7 @@ const MyCalendar = () => {
     return [];
   });
 
+  // Sets current date and time 
   const localizer = momentLocalizer(moment);
 
   // Function to add appointment
@@ -463,6 +463,53 @@ const MyCalendar = () => {
       blocked: true,
     };
   });
+
+  const cleanupPastAppointments = useCallback(() => {
+    const now = new Date();
+    let updatedBookedEvents = [...bookedEvents];
+    let updatedUserList = [...userList];
+    let userListChanged = false;
+
+    updatedUserList = updatedUserList.map(user => {
+      const userAppointments = bookedEvents.filter(e => e.patientId === user.id);
+      const latestAppointment = userAppointments.sort((a, b) => new Date(b.end) - new Date(a.end))[0];
+
+      if (latestAppointment && new Date(latestAppointment.end) < now) {
+        updatedBookedEvents = updatedBookedEvents.filter(e => e.id !== latestAppointment.id);
+        userListChanged = true;
+        
+        return {
+          ...user,
+          type: 'window',
+          visitNum: (user.visitNum ?? 1) + 1,
+        };
+      }
+      return user;
+    })
+    // Only update state and localStorage if changes occurred
+    if (userListChanged || updatedBookedEvents.length !== bookedEvents.length) {
+    setBookedEvents(updatedBookedEvents);
+    setUserList(updatedUserList);
+
+    localStorage.setItem('bookedEvents', JSON.stringify(updatedBookedEvents));
+    localStorage.setItem('userInfoList', JSON.stringify(updatedUserList));
+    }
+  }, [bookedEvents, userList]);
+
+
+  // Run on state changes
+  useEffect(() => {
+    cleanupPastAppointments();
+  }, [cleanupPastAppointments]);
+
+  // Run automatically every 15 minutes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      cleanupPastAppointments();
+    }, 15 * 60 * 1000); // 15 mins in ms
+
+    return () => clearInterval(interval); // cleanup on unmount
+  }, [cleanupPastAppointments]);
 
     // Array of all avents
   const allEvents = [...bookedEvents, ...windowEvents, ...blockedEvents];
