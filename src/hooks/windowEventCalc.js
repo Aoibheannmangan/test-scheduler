@@ -1,62 +1,85 @@
 
 //-------------------------------AIMHIGH-----------------------------------------------------
-// AIMHIGH Visit 2: 15 - 18 weeks after corrected due date
-export function generateAimHighAppointments(birthDate, babyEarly) {
- const addDays = (date, days) =>
-    new Date(date.getTime() + days * 24 * 60 * 60 * 1000);
+// AIMHIGH Visits 
+// **After corrected age
+// 2: 15 - 18 weeks 
+// 3: 9-12 months
+// 4: 18 +-1 months
+// 5: 24 +-1 months
+// 6: 30 +-1 months
+export function generateAimHighAppointments(birthDate, babyEarly, visitNum = null) {
+  const MS_PER_DAY = 24 * 60 * 60 * 1000;
+  const correctedDueDate = new Date(birthDate.getTime() + babyEarly * MS_PER_DAY);
 
-    // Corrected due date = birthDate + (babyEarly * 7 days)
-    const correctedDueDate = addDays(birthDate, babyEarly * 7);
+  const visitWindows = {
+    2: { startDay: 105, endDay: 126 },
+    3: { startDay: 274, endDay: 365 },
+    4: { startDay: 487, endDay: 548 },
+    5: { startDay: 700, endDay: 761 },
+    6: { startDay: 914, endDay: 975 }
+  };
 
-    // 15–18 weeks = 105 to 126 days
-    const start = addDays(correctedDueDate, 105);
-    const end = addDays(correctedDueDate, 126);
+  const addVisit = (num) => {
+    const visit = visitWindows[num];
+    if (!visit) return null;
+  
+    const startWindow = new Date(correctedDueDate.getTime() + visit.startDay * MS_PER_DAY);
+    const endWindow = new Date(correctedDueDate.getTime() + visit.endDay * MS_PER_DAY);
 
-    const events = [
-        {
-            title: 'AIMHIGH Visit',
-            visitNum: 2,
-            id: '000-000',
-            DOB: birthDate,
-            DaysEarly: babyEarly,
-            OutOfArea: false,
-            start,
-            end,
-            type: 'window',
-            Study: 'AIMHIGH',
-        },
-    ];
+    return {
+      title: `AIMHIGH Visit ${num}`,
+      visitNum: num,
+      id: '000-000',
+      DOB: birthDate,
+      DaysEarly: babyEarly,
+      OutOfArea: false,
+      start: startWindow,
+      end: endWindow,
+      type: 'window',
+      Study: 'AIMHIGH',
+    };
+  };
 
-  return events;
+  if (visitNum != null) {
+    const singleVisit = addVisit(visitNum);
+    return singleVisit ? [singleVisit] : [];
+  }
+
+  return Object.keys(visitWindows).map(num => addVisit(parseInt(num))).filter(Boolean);
 }
 
 // ---------------------------------------COOLPRIME---------------------------------------
+// COOLPRIME Visits 
+// **After corrected age
+// 2: 3-4 months
+// 3: 
+// 4: 
+// 5: 
 
 export function generateCoolPrimeAppointments(birthDate, babyEarly, visitNum = null) {
-  const dueDate = new Date(birthDate.getTime() + babyEarly * 24 * 60 * 60 * 1000);
+  const MS_PER_DAY = 24 * 60 * 60 * 1000;
+  const correctedDueDate = new Date(birthDate.getTime() + babyEarly * MS_PER_DAY);
 
-  const visitSchedule = {
-    2: { startMonth: 3, endMonth: 4 },
-    3: { startMonth: 9, endMonth: 12 },
-    4: { startMonth: 22, endMonth: 26 },
+  const visitWindows = {
+    2: { startDay: 91, endDay: 122 },
+    3: { startDay: 274, endDay: 365 },
+    4: { startDay: 669, endDay: 791 },
   };
 
-  const generateVisit = (num) => {
-    const visit = visitSchedule[num];
+  const addVisit = (num) => {
+    const visit = visitWindows[num];
     if (!visit) return null;
 
-    const startWindow = new Date(dueDate);
-    startWindow.setMonth(startWindow.getMonth() + visit.startMonth);
-
-    const endWindow = new Date(dueDate);
-    endWindow.setMonth(endWindow.getMonth() + visit.endMonth);
+    const startWindow = new Date(correctedDueDate.getTime() + visit.startDay * MS_PER_DAY);
+    const endWindow = new Date(correctedDueDate.getTime() + visit.endDay * MS_PER_DAY);
 
     return {
       title: `COOLPRIME Visit ${num}`,
       visitNum: num,
-      id: '000-000', 
-      dob: birthDate,
-      daysEarly: babyEarly,
+      id: '000-000',
+      DOB: birthDate,
+      DaysEarly: babyEarly,
+      OutOfArea: false,
       start: startWindow,
       end: endWindow,
       type: 'window',
@@ -65,16 +88,23 @@ export function generateCoolPrimeAppointments(birthDate, babyEarly, visitNum = n
   };
 
   if (visitNum !== null) {
-    const singleVisit = generateVisit(visitNum);
+    const singleVisit = addVisit(visitNum);
     return singleVisit ? [singleVisit] : [];
   }
 
-  return Object.keys(visitSchedule).map(num => generateVisit(parseInt(num))).filter(Boolean);
+  return Object.keys(visitWindows).map(num => addVisit(parseInt(num))).filter(Boolean);
 }
 
-// ---------------------------------------EDI---------------------------------------
 
-export function generateEDIAppointment(birthDate, babyEarly, visitNum = null, isVisitCompleted = false) {
+// ---------------------------------------EDI---------------------------------------
+// EDI Visits 
+// **After corrected age
+// 2: 3-4 months
+// 3: 6 months (+-4 weeks)
+// 4: 9-12 months (+-4 weeks)
+// 5: 24-26 months (+-4 weeks)
+
+export function generateEDIAppointment(birthDate, babyEarly, visitNum = null) {
   const MS_PER_DAY = 24 * 60 * 60 * 1000;
   const dueDate = new Date(birthDate.getTime() + babyEarly * MS_PER_DAY);
   const events = [];
@@ -93,8 +123,8 @@ export function generateEDIAppointment(birthDate, babyEarly, visitNum = null, is
     events.push({
       title: `EDI Visit ${num}`,
       visitNum: num,
-      id: `00${num}`,
-      dob: birthDate,
+      id: `000-000`,
+      DOB: birthDate,
       daysEarly: babyEarly,
       ooa: false,
       start: new Date(dueDate.getTime() + window.start * MS_PER_DAY),
@@ -106,12 +136,18 @@ export function generateEDIAppointment(birthDate, babyEarly, visitNum = null, is
 
   if (visitNum === 1) {
     addVisit(2);
-  } else if (visitNum === 2 && isVisitCompleted) {
+  } else if (visitNum === 2) {
     addVisit(3);
-  } else if (visitNum === 3 && isVisitCompleted) {
+  } else if (visitNum === 3) {
     addVisit(4);
-  } else if (visitNum === 4 && isVisitCompleted) {
+  } else if (visitNum === 4) {
     addVisit(5);
+  }
+
+  if (visitNum !== null) {
+    addVisit(visitNum);
+  } else {
+    Object.keys(visitWindows).forEach(num => addVisit(parseInt(num)));
   }
 
   return events;

@@ -239,11 +239,7 @@ const Appointments = () => {
                         } else if (study === 'COOLPRIME') {
                             windowData = generateCoolPrimeAppointments(birthDate, daysEarly);
                         } else if (study === 'EDI') {
-                            windowData = [];
-                            for (let i = event.visitNum + 1; i <= 5; i++) {
-                            const visits = generateEDIAppointment(birthDate, daysEarly, i, isVisitComplete);
-                            if (visits.length) windowData.push(...visits);
-                            }
+                            windowData = generateEDIAppointment(birthDate, daysEarly, event.visitNum);
                         }
 
                         if (!windowData[0]) return null;
