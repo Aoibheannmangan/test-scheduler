@@ -43,8 +43,6 @@ const Appointments = () => {
         }
     }, []);
 
-    const isVisitComplete = true;
-
     // make a today and month away var for distance indicators
     const today = new Date();
     const oneMonthFromNow = new Date(today);
@@ -99,13 +97,17 @@ const Appointments = () => {
             <h1>Visit Overview</h1>
         {/*Container for searchbar and filter*/}
         <div className='searchContainer'>
+            <label
+            className='searchBarTitle'>
+                Search Patient:
+            </label >
             <input
             className='searchBar'
             type='text'
-            placeholder='Search Title or ID'
+            placeholder='Search ID'
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            style={{ padding: '8px', width: '220px', marginBottom: '12px' }}
+            style={{ padding: '8px', width: '220px', marginBottom: '12px', marginLeft:'0px'}}
             />
             
             {/*Filter boxes*/}
@@ -247,7 +249,7 @@ const Appointments = () => {
                         const { start, end } = windowData[0];
                         return (
                             <div key={study}>
-                            <strong>{study} Visit Window:</strong>{' '}
+                            <strong>Next {study} Visit Window:</strong>{' '}
                             {new Date(start).toLocaleDateString(undefined, {
                                 year: 'numeric',
                                 month: 'long',

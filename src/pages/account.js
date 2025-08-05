@@ -89,7 +89,10 @@ const Account = () => {
             <li><strong>Condition:</strong> {user.Condition}</li>
             <li><strong>Study:</strong> {Array.isArray(user.Study) ? user.Study.join(', ') : [user.Study]}</li>
             <li><strong>Site:</strong> {user.site}</li>
-            <li><strong>Additional Notes:</strong> {user.Info}</li>
+            {/* Only show this li if Info is not empty */}
+            {user.Info && user.Info.trim() !== '' && (
+              <li><strong>Additional Notes:</strong> {user.Info}</li>
+            )}
           </ul>
         </div>
       ))}
