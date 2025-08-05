@@ -1,9 +1,9 @@
 .login-container {
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    background: linear-gradient(to right, #804e8a, #c794d1);
+    background: linear-gradient(to right, #663e6e, #b573c2, #c794d1);
     font-family: 'Sansation', serif;
     padding: 1rem;
 }
@@ -15,29 +15,47 @@
 
 .login-card {
     background: white;
+    border-radius: 10px;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.1), 0 10px 10px rgba(0, 0, 0, 0.05);
     padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
 .title {
     color: #8d5a97;
     text-align: center;
-    font-size: 2rem;
+    font-size: 2.5rem;
     font-weight: bold;
     margin-bottom: 1rem;
+}
+
+.input-group {
+    margin-bottom: 1.5rem;
 }
 
 .form-body label {
     display: block;
     margin-bottom: 0.5rem;
-    font-weight: bold;
     color: black;
     font-size: 1rem;
 }
 
-.input-group {
-    margin-bottom: 1.5rem;
+.form-body input[type="number"], 
+.form-body input[type="password"] {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-group input:focus {
+    border-color: #8d5a97;
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.25);
+    outline: none;
+}
+
+.form-group input.error {
+    border-color: #e74c3c;
 }
 
 .input-icon-wrapper {
@@ -85,16 +103,16 @@
 }
 
 .login-button {
-    background-color: #8D5A97;
-    color: white;
-    padding: 0.75rem;
-    border: none;
-    border-radius: 8px;
     width: 100%;
+    padding: 0.8rem;
+    background-color: #8D5A97;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 1rem;
+    font-weight: 500;
     cursor: pointer;
-    transition: background 0.3s;
-    font-size: 1.1rem;
-    font-weight: bold;
+    transition: background 0.3s, transform 0.1s;
     letter-spacing: 1px;
 }
 
@@ -102,9 +120,14 @@
     background: #56365c;
 }
 
+.login-button:active {
+    transform: scale(0.98);
+}
+
 .signup-link {
     text-align: center;
-    margin-top: 1rem;
+    margin-top: 1.5rem;
+    font-size: 0.9rem;
     color: black;
     letter-spacing: 1px;
 }
