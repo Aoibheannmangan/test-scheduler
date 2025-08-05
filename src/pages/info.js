@@ -182,7 +182,7 @@ const UserInfo = () => {
             </select>
 
             <label>Patient's Studies:</label>
-            <div>
+            <div className="radio-group">
               {['AIMHIGH', 'COOLPRIME', 'EDI'].map((study) => (
                 <label key={study}>
                   <input
