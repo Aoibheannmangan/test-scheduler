@@ -11,6 +11,7 @@ jest.mock('../hooks/useAppointmentFilters', () => ({
 }));
 
 describe('Appointments Component', () => {
+    //------------------------------------Mock patients for rendering---------------------------------
     const mockFilteredAppointments = [
         {
         id: '001',
@@ -35,7 +36,7 @@ describe('Appointments Component', () => {
         Study: ['COOLPRIME'],
         },
     ];
-
+    //------------------------------------Set storage and search/ filter changes---------------------------------
     beforeEach(() => {
         // Mock localStorage
         Storage.prototype.getItem = jest.fn(() =>
@@ -52,6 +53,8 @@ describe('Appointments Component', () => {
         });
     });
 
+    //------------------------------------Testing code---------------------------------
+
     test('renders main heading and search input', () => {
         render(<Appointments />);
 
@@ -62,7 +65,7 @@ describe('Appointments Component', () => {
     test('renders patient list with correct IDs', () => {
         render(<Appointments />);
 
-        // Check that our mock patients are rendered
+        // Check that mock patients are rendered
         expect(screen.getByText(/001/)).toBeInTheDocument();
         expect(screen.getByText(/002/)).toBeInTheDocument();
     });
