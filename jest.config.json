@@ -1,5 +1,18 @@
  {
-    "moduleNameMapper": {
-    "\\.(css|less|scss|sass)$": "identity-obj-proxy"
+  "moduleNameMapper": {
+  "\\.(css|less|scss|sass)$": "identity-obj-proxy"
+  },
+
+  "collectCoverage": true,
+  "coverageReporters": ["json", "html"],
+  "collectCoverageFrom" : ["src/**/!(*.test.js)"],  
+  "coverageThreshold": {
+    "global": {
+      "lines": 90
     }
+  },
+  "coveragePathIgnorePatterns": [
+  "node_modules",
+  "^.+\\.(test.(js|jsx))$"
+  ]
   }
