@@ -248,9 +248,9 @@ const Appointments = () => {
                         {studyWindows.map((study) => {
                         let windowData = [];
                         if (study === 'AIMHIGH') {
-                            windowData = generateAimHighAppointments(birthDate, daysEarly);
+                            windowData = generateAimHighAppointments(birthDate, daysEarly, event.visitNum);
                         } else if (study === 'COOLPRIME') {
-                            windowData = generateCoolPrimeAppointments(birthDate, daysEarly);
+                            windowData = generateCoolPrimeAppointments(birthDate, daysEarly, event.visitNum);
                         } else if (study === 'EDI') {
                             windowData = generateEDIAppointment(birthDate, daysEarly, event.visitNum);
                         }
