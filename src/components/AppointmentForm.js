@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './Appointment.css';
+import './AppointmentForm.css';
 
 // Toggle is not visible by default
 const ToggleAppointment = ({ onAddAppointment, isOpen, onClose, }) => {
@@ -10,7 +10,7 @@ const ToggleAppointment = ({ onAddAppointment, isOpen, onClose, }) => {
   const [appTimeStart, setAppTimeStart] = useState('');
   const [appTimeEnd, setAppTimeEnd] = useState('');
   const [patientStudy, setPatientStudy] = useState('');
-  const [appRoom, setAppRoom] = useState('');
+  const [appRoom, setAppRoom] = useState('select');
   const [appNote, setAppNote] = useState('');
 
   // Handles putting in a booking
@@ -51,12 +51,14 @@ const ToggleAppointment = ({ onAddAppointment, isOpen, onClose, }) => {
         <div className='AppointmentToggle'>
           <fieldset>
             <div className="form-border">
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} data-testid="appointment-form">
 
                 <label htmlFor="patientID">Patient ID</label>
                 <input // input for ID
                   type="text"
-                  id="patID"
+                  aria-label='Patient ID'
+                  name='patientID'
+                  id="patientID"
                   value={appPatID}
                   onChange={(e) => setAppPatID(e.target.value)}
                   placeholder="Enter Patient ID"
@@ -101,8 +103,8 @@ const ToggleAppointment = ({ onAddAppointment, isOpen, onClose, }) => {
                   name="room"
                   value={appRoom}
                   onChange={(e) => setAppRoom(e.target.value)}
-                >
-                  <option value=""disabled selected>-- Select Room --</option>
+                  >
+                  <option value="select" disabled>-- Select Room --</option>
                   <option value="TeleRoom">Telemetry Room (Room 2.10)</option>
                   <option value="room1">Assessment Room 1</option>
                   <option value="room2">Assessment Room 2</option>
@@ -114,15 +116,20 @@ const ToggleAppointment = ({ onAddAppointment, isOpen, onClose, }) => {
                 <label htmlFor="Comments">Visit Note</label>
                 <textarea // input for comment
                   type="text"
-                  id="comment"
+                  id="Comments"
+                  name='Comments'
                   value={appNote}
                   onChange={(e) => setAppNote(e.target.value)}
                   placeholder="Enter notes on visit"
                   required
                 />
 
-                <button className="submit-button" type='submit'>Submit</button>
-                <button className="cancel-button" onClick={onClose}>Close</button>
+                <button className="submit-button" type='submit'>
+                  Submit
+                </button>
+                <button type='button' className="cancel-button" onClick={onClose} aria-label="Close" name='close'>
+                  Close
+                </button>
 
               </form>
             </div>

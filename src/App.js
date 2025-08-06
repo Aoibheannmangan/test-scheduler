@@ -1,4 +1,3 @@
-import React from 'react';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import Appointments from './pages/AppointView';
 import UserInfo from './pages/info';
