@@ -84,13 +84,12 @@ const LogIn = () => {
             </div>
             <div className="form-body">
               <div className="input-group">
-                
-                {/* User enters staff ID */}
-                <label htmlFor="sid"><b>Staff ID</b></label>
+                <label htmlFor="staffId"><b>Staff ID</b></label>
                 <div className="input-icon-wrapper">
                   <FaUser className="icon" />
                   <input
                     type="number"
+                    id="staffId"
                     value={staffId}
                     onChange={(e) => setStaffId(e.target.value)}
                     autoComplete="off"
@@ -98,14 +97,15 @@ const LogIn = () => {
                   />
                 </div>
               </div>
-             
+
              {/* User enters password */}
               <div className="input-group">
-                <label htmlFor="psw"><b>Password</b></label>
+                <label htmlFor="password"><b>Password</b></label>
                 <div className="input-icon-wrapper">
                   <FaLock className="icon" />
                   <input
                     type="password"
+                    id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     autoComplete="off"
