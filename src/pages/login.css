@@ -36,7 +36,7 @@
     display: block;
     margin-bottom: 0.5rem;
     color: black;
-    font-size: 1rem;
+    font-size: 1.5rem;
 }
 
 .form-body input[type="number"], 
@@ -95,7 +95,7 @@
 .forgot-password-link a {
     color: #8d5a97;
     text-decoration: none;
-    font-size: 0.9rem;
+    font-size: 1.2rem;
 }
 
 .forgot-password-link a:hover {
@@ -109,11 +109,12 @@
     border: none;
     border-radius: 4px;
     color: white;
-    font-size: 1rem;
+    font-size: 1.5rem;
     font-weight: 500;
     cursor: pointer;
     transition: background 0.3s, transform 0.1s;
     letter-spacing: 1px;
+    font-family: 'Sansation', serif;
 }
 
 .login-button:hover {
@@ -127,7 +128,7 @@
 .signup-link {
     text-align: center;
     margin-top: 1.5rem;
-    font-size: 0.9rem;
+    font-size: 1.2rem;
     color: black;
     letter-spacing: 1px;
 }

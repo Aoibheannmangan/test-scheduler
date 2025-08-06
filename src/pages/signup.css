@@ -1,10 +1,12 @@
 
 .signup-container {
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    background: linear-gradient(to right, #8D5A97, #ca8dd6 );
+    background: linear-gradient(to right, #663e6e, #b573c2, #c794d1);
+    font-family: 'Sansation', serif;
+    padding: 1rem;
 }
 
 .form-wrapper {
@@ -43,6 +45,16 @@
     border-radius: 8px;
     transition: border-color 0.3s;
     letter-spacing: 1px;
+}
+
+.form-body input[type="number"], 
+.form-body input[type="password"],
+.form-body input[type="email"] {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 .form-body input:focus {
