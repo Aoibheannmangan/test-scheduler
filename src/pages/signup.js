@@ -147,6 +147,7 @@ const SignUp = () => {
         <div className="signup-card">
           {alert && (
             <Alert
+              role="alert"
               message={alert.message}
               type={alert.type}
               onClose={() => setAlert(null)}
@@ -166,6 +167,7 @@ const SignUp = () => {
                   <FaEnvelope className="icon" />
                   <input
                     type="email"
+                    id="email"
                     placeholder="Enter Email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -177,11 +179,12 @@ const SignUp = () => {
 
               {/* User inputs staff ID */}
               <div className="input-group">
-                <label htmlFor="sid"><b>Staff ID</b></label>
+                <label htmlFor="staffId"><b>Staff ID</b></label>
                 <div className="input-icon-wrapper">
                   <FaUser className="icon" />
                   <input
                     type="number"
+                    id="staffId"
                     placeholder="Enter Staff ID"
                     value={staffId}
                     onChange={(e) => setStaffId(e.target.value)}
@@ -193,11 +196,12 @@ const SignUp = () => {
 
               {/* User inputs password */}
               <div className="input-group">
-                <label htmlFor="psw"><b>Password</b></label>
+                <label htmlFor="password"><b>Password</b></label>
                 <div className="input-icon-wrapper">
                   <FaLock className="icon" />
                   <input
                     type="password"
+                    id="password"
                     placeholder="Enter Password"
                     value={password}
                     onChange={handlePasswordChange}
@@ -212,11 +216,12 @@ const SignUp = () => {
 
               {/* User re-enters password */}
               <div className="input-group">
-                <label htmlFor="psw-repeat"><b>Repeat Password</b></label>
+                <label htmlFor="passwordRepeat"><b>Repeat Password</b></label>
                 <div className="input-icon-wrapper">
                   <FaLock className="icon" />
                   <input
                     type="password"
+                    id="passwordRepeat"
                     placeholder="Please re-enter your password"
                     value={repeatPassword}
                     onChange={(e) => setRepeatPassword(e.target.value)}
