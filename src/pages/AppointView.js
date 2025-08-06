@@ -96,15 +96,20 @@ const Appointments = () => {
         <div className="App">
             <h1>Visit Overview</h1>
         {/*Container for searchbar and filter*/}
-        <div className='searchContainer'>
+        <div 
+        className='searchContainer'
+        role='region'>
             <label
+            htmlFor='searchInput'
             className='searchBarTitle'>
                 Search Patient:
             </label >
             <input
-            className='searchBar'
+            id='searchInput'
+            aria-label="searchBar"
             type='text'
             placeholder='Search ID'
+            role='searchbox'
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             style={{ padding: '8px', width: '220px', marginBottom: '12px', marginLeft:'0px'}}
@@ -115,6 +120,7 @@ const Appointments = () => {
                 <div className="filter-checkbox">
                     <label>
                     <input 
+                        aria-label="AimhighCheck"
                         className='AHCheck'
                         type="checkbox"
                         checked={selectedStudies.includes('AIMHIGH')}
@@ -127,6 +133,7 @@ const Appointments = () => {
                 <div className="filter-checkbox">
                     <label>
                     <input 
+                        aria-label="CoolprimeCheck"
                         className='CPCheck'
                         type="checkbox"
                         checked={selectedStudies.includes('COOLPRIME')}
@@ -139,6 +146,7 @@ const Appointments = () => {
                 <div className="filter-checkbox">
                     <label>
                     <input 
+                        aria-label="EDICheck"
                         className='EDICheck'
                         type="checkbox"
                         checked={selectedStudies.includes('EDI')}
@@ -151,7 +159,10 @@ const Appointments = () => {
             
         </div>
 
-        <ul className="appointmentList">
+        <ul 
+        className="appointmentList"
+        aria-label='mainTable'
+        >
             <li className='headings-row'>
             <div className='heading-left'><strong>Patient ID</strong></div>
             <div className='heading-center'><strong>Visit No.</strong></div>
