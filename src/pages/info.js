@@ -130,7 +130,7 @@ const UserInfo = () => {
             <label htmlFor="name">Patient Name:</label>
             <input
               type="text"
-              id="firstname"
+              id="name"
               value={patientName}
               onChange={(e) => setPatientName(e.target.value)}
               placeholder="Enter Patient Name"
@@ -184,10 +184,11 @@ const UserInfo = () => {
             <label>Patient's Studies:</label>
             <div className="radio-group">
               {['AIMHIGH', 'COOLPRIME', 'EDI'].map((study) => (
-                <label key={study}>
+                <label key={study} htmlFor='study'>
                   <input
                     type="checkbox"
                     value={study}
+                    id='study'
                     checked={patientStudy.includes(study)}
                     onChange={(e) => {
                       const selected = e.target.value;
@@ -222,7 +223,7 @@ const UserInfo = () => {
 
             <label>Out of Area?</label>
             <div className="radio-group">
-              <label>
+              <label htmlFor='Out'>
                 <input
                   id='Out'
                   type="radio"
@@ -248,7 +249,7 @@ const UserInfo = () => {
 
             </div>
 
-            <label htmlFor="notes">Additional Info On Patient:</label>
+            <label htmlFor="info">Additional Info On Patient:</label>
             <input
               type="text"
               id="info"

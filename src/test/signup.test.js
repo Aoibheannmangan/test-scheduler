@@ -61,6 +61,30 @@ test('shows warning for invalid email format', async () => {
     expect(await screen.findByRole('alert')).toHaveTextContent(/Please use your UCC Email/i);
 });
 
+test('shows warning for invalid id format', async () =>{
+    render(
+        <MemoryRouter>
+            <SignUp />
+        </MemoryRouter>
+    );
+    fireEvent.change(screen.getByLabelText(/email/i), {
+        target: {value:'test@ucc.ie'}
+    });
+    fireEvent.change(screen.getByRole('spinbutton', { name: /staff id/i }), {
+        target: { value: '123456' },
+    });
+    fireEvent.change(screen.getByPlaceholderText(/Enter Password/i), {
+        target: { value: 'ValidPass1' }
+    });
+    const confirmPasswordField = await screen.findByPlaceholderText(/Please re-enter your password/i);
+    fireEvent.change(confirmPasswordField, {
+        target: { value: 'ValidPass2' }
+    });
+    fireEvent.click(screen.getByRole('button', { name: /sign up/i }));
+    const alert = await screen.findByRole('alert');
+    expect(alert).toHaveTextContent(/Invalid Staff ID Format/i);
+});
+
 test('shows error when passwords dont match', async () => {
     render(
         <MemoryRouter>
@@ -73,21 +97,76 @@ test('shows error when passwords dont match', async () => {
     fireEvent.change(screen.getByRole('spinbutton', { name: /staff id/i }), {
         target: { value: '12345' },
     });
-
     fireEvent.change(screen.getByPlaceholderText(/Enter Password/i), {
         target: { value: 'ValidPass1' }
     });
-
     const confirmPasswordField = await screen.findByPlaceholderText(/Please re-enter your password/i);
     fireEvent.change(confirmPasswordField, {
         target: { value: 'ValidPass2' }
     });
-
     fireEvent.click(screen.getByRole('button', { name: /sign up/i }));
 
     const alert = await screen.findByRole('alert');
     expect(alert).toHaveTextContent(/Passwords do not match/i);
 });
+
+test('shows warning when email is already registered', async () => {
+    const existingUsers = [
+        {email: 'test@ucc.ie', staffId: '12345'}
+    ];
+    localStorage.setItem('users', JSON.stringify(existingUsers));
+    render(
+        <MemoryRouter>
+            <SignUp />
+        </MemoryRouter>
+    );
+    fireEvent.change(screen.getByLabelText(/email/i), {
+        target: { value: 'test@ucc.ie'}
+    });
+    fireEvent.change(screen.getByRole('spinbutton', { name: /staff id/i }), {
+        target: { value: '12345' },
+    });
+    fireEvent.change(screen.getByPlaceholderText(/Enter Password/i), {
+        target: { value: 'ValidPass1' }
+    });
+    const confirmPasswordField = await screen.findByPlaceholderText(/Please re-enter your password/i);
+    fireEvent.change(confirmPasswordField, {
+        target: { value: 'ValidPass2' }
+    });
+    fireEvent.click(screen.getByRole('button', { name: /sign up/i }));
+    const alert = await screen.findByRole('alert');
+    expect(alert).toHaveTextContent(/Email is already registered/i);
+
+});
+test('shows warning when email is already registered', async () => {
+    const existingUsers = [
+        {email: 'testing@ucc.ie', staffId: '12345'}
+    ];
+    localStorage.setItem('users', JSON.stringify(existingUsers));
+    render(
+        <MemoryRouter>
+            <SignUp />
+        </MemoryRouter>
+    );
+    fireEvent.change(screen.getByLabelText(/email/i), {
+        target: { value: 'test@ucc.ie'}
+    });
+    fireEvent.change(screen.getByRole('spinbutton', { name: /staff id/i }), {
+        target: { value: '12345' },
+    });
+    fireEvent.change(screen.getByPlaceholderText(/Enter Password/i), {
+        target: { value: 'ValidPass1' }
+    });
+    const confirmPasswordField = await screen.findByPlaceholderText(/Please re-enter your password/i);
+    fireEvent.change(confirmPasswordField, {
+        target: { value: 'ValidPass2' }
+    });
+    fireEvent.click(screen.getByRole('button', { name: /sign up/i }));
+    const alert = await screen.findByRole('alert');
+    expect(alert).toHaveTextContent(/ID is already registered/i);
+
+});
+
 
 
 
