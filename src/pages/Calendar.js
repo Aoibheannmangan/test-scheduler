@@ -24,6 +24,8 @@ const MyCalendar = () => {
   const [currentPatient, setCurrentPatient] = useState(null);
   const [alert, setAlert] = useState(null);
   const [popupOpen, setPopupOpen] = useState(false);
+  const [outsideWindowPopupOpen, setOutsideWindowPopupOpen] = useState(false);
+  const [pendingAppointment, setPendingAppointment] = useState(null);
   const [eventToDelete, setEventToDelete] = useState(null);
   const [userList, setUserList] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
@@ -257,6 +259,46 @@ const MyCalendar = () => {
   setWindowEvents(studyWindows);
 };
 
+// If booking within study window
+  const isAppointmentWithinVisitWindow = (appointment, patient) => {
+    const birthDate = new Date(patient.DOB);
+    const daysEarly = patient.DaysEarly ?? 0;
+    const visitNum = patient.visitNum;
+    const studies = Array.isArray(patient.Study) ? patient.Study : [patient.Study];
+
+    for (const study of studies) {
+      let windows = [];
+      if (study === 'AIMHIGH') {
+        windows = generateAimHighAppointments(birthDate, daysEarly, visitNum);
+      } else if (study === 'COOLPRIME') {
+        windows = generateCoolPrimeAppointments(birthDate, daysEarly, visitNum);
+      } else if (study === 'EDI') {
+        windows = generateEDIAppointment(birthDate, daysEarly, visitNum);
+      }
+
+      for (const window of windows) {
+        const start = new Date(window.start);
+        const end = new Date(window.end);
+        if (
+          appointment.start >= start &&
+          appointment.end <= end
+        ) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  };
+
+// If confirm on outside study window pop up
+  const proceedWithOutOfWindowBooking = () => {
+    if (!pendingAppointment) return;
+    handleAddAppointment(pendingAppointment, true); // override
+    setOutsideWindowPopupOpen(false);
+    setPopupOpen(false);
+    setPendingAppointment(null);
+  };
 
   // Clear search and window on calender
   const handleClearWindow = () => {
@@ -333,7 +375,7 @@ const MyCalendar = () => {
   const localizer = momentLocalizer(moment);
 
   // Function to add appointment
-  const handleAddAppointment = (appointment) => {
+  const handleAddAppointment = (appointment, override = false ) => {
     const patientId = appointment.patientId;
     // Find patient Id
     const match = userList.find(p => p.id === patientId);
@@ -350,6 +392,12 @@ const MyCalendar = () => {
     // If cant find patient id 
     if (!match) {
       setAlert({ message: `Patient ID ${patientId} not found in user list.`, type: "error" });
+      return;
+    }
+
+    if (!override && !isAppointmentWithinVisitWindow(appointment, match)) {
+      setPendingAppointment(appointment);
+      setOutsideWindowPopupOpen(true);
       return;
     }
 
@@ -788,6 +836,17 @@ const MyCalendar = () => {
         onClose={() => setAppOpen(false)}
         />
       </div>
+
+      {/**Pop up for window booking warning*/}
+      <PopUp
+      isOpen={outsideWindowPopupOpen}
+      onClose={() => setOutsideWindowPopupOpen(false)}
+      onConfirm={proceedWithOutOfWindowBooking}
+      message={`This event for patient ${pendingAppointment?.patientId} is outside of the visit window. Do you wish to proceed?`}
+      option1="Confirm"
+      option2="Cancel"
+    />
+
 
     </div>
   );
