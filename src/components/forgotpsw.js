@@ -75,11 +75,12 @@ const ForgotPsw = () => {
                     <h1 className="title">Reset Password</h1> 
                     <div className="form-body"> 
                         <div className="input-group"> 
-                        <label>Staff ID</label> 
+                        <label htmlFor='staff id'>Staff ID</label> 
                         <div className="input-icon-wrapper"> 
                             <FaUser className="icon" /> 
                             <input  
                                 type="number" 
+                                id='staff id'
                                 value={staffId} 
                                 onChange={(e) => setStaffId(e.target.value)} 
                                 required 
@@ -88,12 +89,14 @@ const ForgotPsw = () => {
                     </div> 
 
                     <div className="input-group"> 
-                        <label>New Password</label> 
+                        <label htmlFor='password'>New Password</label> 
                         <div className="input-icon-wrapper"> 
                              <FaLock className="icon" /> 
                              <input  
                                 type="password" 
+                                id='password'
                                 value={newPassword} 
+                                placeholder="Enter Password"
                                 onChange={handlePasswordChange} 
                                 onFocus={() => setShowPasswordMessage(true)} 
                                 onBlur ={() => setShowPasswordMessage(false)} 
