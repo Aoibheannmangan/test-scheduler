@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import MyCalendar from '../pages/Calendar';
 import { useAppointmentFilters } from '../hooks/useAppointmentFilters';
@@ -8,6 +8,7 @@ import moment from 'moment';
 
 // Setup localizer
 const localizer = momentLocalizer(moment);
+const now = new Date();
 
 // Mock the hook before importing the component
 jest.mock('../hooks/useAppointmentFilters');
@@ -64,7 +65,6 @@ describe('Calendar Component', () => {
             localizer={localizer}
             />
         );
-
         expect(screen.getByRole('button', {name: 'Today'})).toBeInTheDocument();
         expect(screen.getByRole('button', {name: 'Back'})).toBeInTheDocument();
         expect(screen.getByRole('button', {name: 'Next'})).toBeInTheDocument();
@@ -72,17 +72,37 @@ describe('Calendar Component', () => {
         expect(screen.getByRole('button', {name: 'Week'})).toBeInTheDocument();
         expect(screen.getByRole('button', {name: 'Day'})).toBeInTheDocument();
         expect(screen.getByRole('button', {name: 'Agenda'})).toBeInTheDocument();
-        
+
         // Test to see if current month and year render
-        const now = new Date();
         expect(screen.getByText(localizer.format(now, 'MMMM YYYY'))).toBeInTheDocument();
 
         expect(screen.getByRole('table', {name: 'Month View'})).toBeInTheDocument();
-
     });
 
-    test('Render Visit and Study Window titles', async () => {
+    test('Page Buttons Functions', async () => {
+        render(<MyCalendar localizer={localizer} />);
+
+        // Click the Week view button
+        fireEvent.click(screen.getByText(/week/i));
+
+        // Generate expected label without the year
+        const weekStart = moment(now).startOf('week');
+        const weekEnd = moment(now).endOf('week');
+
+        const weekExpectedLabel = `${weekStart.format('MMMM DD')} – ${weekEnd.format('DD')}`; 
+        // Use a custom matcher function in case the text is split across elements
+        expect(
+            await screen.findByText((content, node) =>
+            node?.textContent === weekExpectedLabel
+            )
+        ).toBeInTheDocument();
+    });
+
+
+    test('Render Visit', async () => {
         render(<MyCalendar />);
+
+        screen.logTestingPlaygroundURL()
 
         expect(screen.getByText(/Study Window Test/i)).toBeInTheDocument();
         // TODO:
