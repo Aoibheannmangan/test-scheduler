@@ -15,4 +15,5 @@
   "node_modules",
   "^.+\\.(test.(js|jsx))$"
   ]
+  
   }
