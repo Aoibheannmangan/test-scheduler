@@ -141,7 +141,10 @@ beforeEach(() => {
 
         fireEvent.click(screen.getByRole('button', {name: /block date/i}));
 
-        expect(await screen.findByText(/Blocked/i)).toBeInTheDocument();
+        expect(await screen.findByText((content, node) => {
+            return node?.textContent?.toLowerCase().includes('Blocked');
+        })).toBeInTheDocument();    
+        
     });
 
     test('filters events by room', async () => {
@@ -155,16 +158,16 @@ beforeEach(() => {
     });
 
     test('searches for patient window', async () => {
-        render(<MyCalendar localizer={localizer} />);
+    render(<MyCalendar localizer={localizer} />);
 
-        const input = screen.getByPlaceholderText(/Enter Patient ID/i);
-        fireEvent.change(input, { target: { value: '002' } });
+    const input = screen.getByPlaceholderText(/Enter Patient ID/i);
+    fireEvent.change(input, { target: { value: '002' } });
 
-        fireEvent.click(screen.getByRole('button', { name: /search window/i }));
+    fireEvent.click(screen.getByRole('button', { name: /search window/i }));
 
-        // wait and assert the patient info shows up
-        const patientInfo = await screen.findByText(/Patient Info/i, {}, { timeout: 3000 });
-        expect(patientInfo).toBeInTheDocument();
+    // wait and assert the patient info shows up
+    const patientInfo = await screen.findByText(/Patient Info/i, {}, { timeout: 3000 });
+    expect(patientInfo).toBeInTheDocument();
     });
 
 
