@@ -58,7 +58,6 @@ beforeEach(() => {
   });
 });
 
-describe('MyCalendar Full Test Suite', () => {
     test('renders calendar with buttons and views', () => {
         render(<MyCalendar localizer={localizer} />);
         ['Today', 'Back', 'Next', 'Month', 'Week', 'Day', 'Agenda'].forEach(label =>
@@ -156,18 +155,18 @@ describe('MyCalendar Full Test Suite', () => {
     });
 
     test('searches for patient window', async () => {
-        render(<MyCalendar localizer={localizer} />)
-        const input = screen.getByPlaceholderText(/Enter Patient ID/i);
-        fireEvent.change(input, {target: {value: '002'}});
+        render(<MyCalendar localizer={localizer} />);
 
-        fireEvent.click(screen.getByRole('button',{name: /search window/i}));
-        await waitFor(() => {
-            const patientInfo = screen.queryByText((context, node) =>
-            node?.textContent?.includes('Patient Info')
-        );
+        const input = screen.getByPlaceholderText(/Enter Patient ID/i);
+        fireEvent.change(input, { target: { value: '002' } });
+
+        fireEvent.click(screen.getByRole('button', { name: /search window/i }));
+
+        // wait and assert the patient info shows up
+        const patientInfo = await screen.findByText(/Patient Info/i, {}, { timeout: 3000 });
         expect(patientInfo).toBeInTheDocument();
-        })
     });
+
 
     test('opens appointment booking form', () => {
         render(<MyCalendar localizer={localizer} />);
@@ -179,4 +178,3 @@ describe('MyCalendar Full Test Suite', () => {
         expect(screen.getByText(/Tip:/i)).toBeInTheDocument();
     });
 
-});
