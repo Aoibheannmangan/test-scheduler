@@ -834,6 +834,7 @@ const MyCalendar = () => {
         <ToggleAppointment onAddAppointment={handleAddAppointment}
         isOpen={appOpen}
         onClose={() => setAppOpen(false)}
+        bookedEvents={bookedEvents}
         />
       </div>
 
