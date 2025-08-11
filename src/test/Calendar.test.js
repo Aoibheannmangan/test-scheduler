@@ -1,112 +1,182 @@
 import React from 'react';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import MyCalendar from '../pages/Calendar';
 import { useAppointmentFilters } from '../hooks/useAppointmentFilters';
 import { momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 
-// Setup localizer
+jest.mock('../hooks/useAppointmentFilters');
+
 const localizer = momentLocalizer(moment);
 const now = new Date();
 
-// Mock the hook before importing the component
-jest.mock('../hooks/useAppointmentFilters');
+const mockAppointmentEvents = [
+  {
+    title: 'Visit Test',
+    id: '001',
+    type: 'booked',
+    start: new Date(now.setHours(12, 0, 0, 0)).toISOString(),
+    end: new Date(now.setHours(13, 0, 0, 0)).toISOString(),
+    visitNum: 1,
+    OutOfArea: false,
+    Name: 'John Doe',
+    DOB: '2025-01-01',
+    site: 'Kildare',
+    Study: ['AIMHIGH'],
+    room: 'room1',
+    notes: 'Initial visit',
+  },
+  {
+    title: 'Study Window Test',
+    id: '002',
+    type: 'window',
+    start: new Date(now.setHours(14, 0, 0, 0)).toISOString(),
+    end: new Date(now.setHours(15, 0, 0, 0)).toISOString(),
+    visitNum: 2,
+    OutOfArea: true,
+    Name: 'Jane Smith',
+    DOB: '2025-05-20',
+    site: 'Kildare',
+    Study: ['COOLPRIME'],
+    room: 'room2',
+    notes: 'Window period',
+  },
+];
 
-describe('Calendar Component', () => {
-    const mockAppointmentEvents = [
-        {
-        title: 'Visit Test',
-        id: '001',
-        type: 'booked',
-        start: new Date(new Date().setHours(12, 0, 0, 0)).toISOString(),
-        end: new Date(new Date().setHours(13, 0, 0, 0)).toISOString(),
-        visitNum: 1,
-        OutOfArea: false,
-        Name: 'John Doe',
-        DOB: '2025-01-01',
-        site: 'Kildare',
-        Study: ['AIMHIGH'],
-        },
-        {
-        title: 'Study Window Test',
-        id: '002',
-        type: 'window',
-        start: new Date(new Date().setHours(12, 0, 0, 0)).toISOString(),
-        end: new Date(new Date().setHours(13, 0, 0, 0)).toISOString(),
-        visitNum: 2,
-        OutOfArea: true,
-        Name: 'Jane Smith',
-        DOB: '2025-05-20',
-        site: 'Kildare',
-        Study: ['COOLPRIME'],
-        }
-    ];
-    //--------------------------Set storage and search filter changes-------------------
+beforeEach(() => {
+  Storage.prototype.getItem = jest.fn(() =>
+    JSON.stringify(mockAppointmentEvents)
+  );
 
-    beforeEach(() => {
-        // Mock localStorage to return our test data
-        Storage.prototype.getItem = jest.fn(() =>
-        JSON.stringify(mockAppointmentEvents)
+  useAppointmentFilters.mockReturnValue({
+    searchQuery: '',
+    setSearchQuery: jest.fn(),
+    selectedStudies: [],
+    handleStudyChange: jest.fn(),
+    filteredAppointments: mockAppointmentEvents,
+  });
+});
+
+describe('MyCalendar Full Test Suite', () => {
+    test('renders calendar with buttons and views', () => {
+        render(<MyCalendar localizer={localizer} />);
+        ['Today', 'Back', 'Next', 'Month', 'Week', 'Day', 'Agenda'].forEach(label =>
+        expect(screen.getByRole('button', { name: label })).toBeInTheDocument()
         );
-        // Mock the useAppointmentFilters hook
-        useAppointmentFilters.mockReturnValue({
-        searchQuery: '',
-        setSearchQuery: jest.fn(),
-        selectedStudies: [],
-        handleStudyChange: jest.fn(),
-        filteredAppointments: mockAppointmentEvents,
+  });
+
+  test('renders booked and window events', () => {
+        render(<MyCalendar localizer={localizer} />);
+        expect(screen.getByText(/Visit Test/i)).toBeInTheDocument();
+        expect(screen.getByText(/Study Window Test/i)).toBeInTheDocument();
+  });
+
+  test('Week Button functions', async () => {        
+    render(<MyCalendar localizer={localizer} />);
+    fireEvent.click(screen.getByText(/week/i));
+
+    const weekStart = moment(now).startOf('week');
+    const weekEnd = moment(now).endOf('week');
+    const expectedLabel = `${weekStart.format('MMMM DD')} – ${weekEnd.format('DD')}`;
+
+    expect(
+        await screen.findByText((content, node) => node?.textContent === expectedLabel)
+    ).toBeInTheDocument();
+  });
+
+  test('opens edit popup on event click', async () => {
+        render(<MyCalendar localizer={localizer} />);
+        fireEvent.click(screen.getByText(/Visit Test/i));
+        expect(await screen.findByText(/Edit Event/i)).toBeInTheDocument();
+  });
+
+    test('edits event title and saves', async () => {
+        render(<MyCalendar localizer={localizer} />);
+        fireEvent.click(screen.getByText(/Visit Test/i));
+
+        const titleInput = await screen.findByLabelText(/Title:/i);
+        fireEvent.change(titleInput, { target: { value: 'Updated Title' } });
+
+        fireEvent.click(screen.getByText(/Save/i));
+        await waitFor(() => {
+        expect(screen.queryByText(/Edit Event/i)).not.toBeInTheDocument();
         });
     });
 
-    test('Render calendar and buttons', () => {
-        render(
-            <MyCalendar 
-            localizer={localizer}
-            />
-        );
-        expect(screen.getByRole('button', {name: 'Today'})).toBeInTheDocument();
-        expect(screen.getByRole('button', {name: 'Back'})).toBeInTheDocument();
-        expect(screen.getByRole('button', {name: 'Next'})).toBeInTheDocument();
-        expect(screen.getByRole('button', {name: 'Month'})).toBeInTheDocument();
-        expect(screen.getByRole('button', {name: 'Week'})).toBeInTheDocument();
-        expect(screen.getByRole('button', {name: 'Day'})).toBeInTheDocument();
-        expect(screen.getByRole('button', {name: 'Agenda'})).toBeInTheDocument();
+    test('deletes an event', async () => {
+    render(<MyCalendar localizer={localizer} />);
+    fireEvent.click(
+        screen.getByText((content, node) =>
+        node?.textContent?.includes('Visit Test')
+        )
+    );
+    fireEvent.click(screen.getByText(/Delete Appointment/i));
 
-        // Test to see if current month and year render
-        expect(screen.getByText(localizer.format(now, 'MMMM YYYY'))).toBeInTheDocument();
+    expect(
+        await screen.findByText((content, node) =>
+        node?.textContent?.includes('Delete')
+        )
+    ).toBeInTheDocument();
 
-        expect(screen.getByRole('table', {name: 'Month View'})).toBeInTheDocument();
-    });
+    const confirmButtons = screen.getAllByText(/Confirm/i);
+    fireEvent.click(confirmButtons[0]);
 
-    test('Page Buttons Functions', async () => {
-        render(<MyCalendar localizer={localizer} />);
-
-        // Click the Week view button
-        fireEvent.click(screen.getByText(/week/i));
-
-        // Generate expected label without the year
-        const weekStart = moment(now).startOf('week');
-        const weekEnd = moment(now).endOf('week');
-
-        const weekExpectedLabel = `${weekStart.format('MMMM DD')} – ${weekEnd.format('DD')}`; 
-        // Use a custom matcher function in case the text is split across elements
+    await waitFor(() => {
         expect(
-            await screen.findByText((content, node) =>
-            node?.textContent === weekExpectedLabel
-            )
-        ).toBeInTheDocument();
+        screen.queryByText((content, node) =>
+            node?.textContent?.includes('Visit Test')
+        )
+        ).not.toBeInTheDocument();
+    });
     });
 
 
-    test('Render Visit', async () => {
-        render(<MyCalendar />);
+    test('blocks a date and shows blocked event', async () => {
+        render(<MyCalendar localizer={localizer} />);
+        const dateInputs = screen.getAllByLabelText(/select date to block:/i);
+        const dateInput = dateInputs[0]; // pick the first one
 
-        screen.logTestingPlaygroundURL()
+        const today = moment().format('DD-MM-YYYY');
+        fireEvent.change(dateInput, { target: { value: today } });
 
-        expect(screen.getByText(/Study Window Test/i)).toBeInTheDocument();
-        // TODO:
-        // FIND VISIT EVENT, BLOCKED, FIRE EVENT CLICKS, SEARCH PATIENT, BLOCK DAY, USE FILTERS
+        fireEvent.click(screen.getByRole('button', {name: /block date/i}));
+
+        expect(await screen.findByText(/Blocked/i)).toBeInTheDocument();
+    });
+
+    test('filters events by room', async () => {
+        render(<MyCalendar localizer={localizer} />);
+        const roomCheckbox = screen.getByLabelText(/Assessment Room 1/i);
+        fireEvent.click(roomCheckbox); // uncheck room1
+
+        await waitFor(() => {
+        expect(screen.queryByText(/Visit Test/i)).not.toBeInTheDocument();
+        });
+    });
+
+    test('searches for patient window', async () => {
+        render(<MyCalendar localizer={localizer} />)
+        const input = screen.getByPlaceholderText(/Enter Patient ID/i);
+        fireEvent.change(input, {target: {value: '002'}});
+
+        fireEvent.click(screen.getByRole('button',{name: /search window/i}));
+        await waitFor(() => {
+            const patientInfo = screen.queryByText((context, node) =>
+            node?.textContent?.includes('Patient Info')
+        );
+        expect(patientInfo).toBeInTheDocument();
+        })
+    });
+
+    test('opens appointment booking form', () => {
+        render(<MyCalendar localizer={localizer} />);
+        const buttons = screen.getAllByRole('button');
+        const calendarButton = buttons.find(btn =>
+            btn.innerHTML.includes('bookIcon')
+        );
+        fireEvent.click(calendarButton);
+        expect(screen.getByText(/Tip:/i)).toBeInTheDocument();
+    });
 
 });
-})
