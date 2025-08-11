@@ -46,3 +46,21 @@ test('submits the form with valid data', () => {
   fireEvent.change(passwordInput, { target: { value: 'Password123' } });
   fireEvent.click(submitButton);
 });
+
+test('shows error alert with invalid credentials', async () => {
+  const mockUser = { staffId: '12345', password: 'Password123'};
+  localStorage.setItem('users', JSON.stringify([mockUser]));
+  render(
+    <MemoryRouter>
+      <LogIn />
+    </MemoryRouter>
+  );
+  const staffIdInput = screen.getByRole('spinbutton', {name: /staff id/i});
+  const passwordInput = screen.getByLabelText(/password/i);
+  const submitButton = screen.getByRole('button', {name: /log in/i});
+  fireEvent.change(staffIdInput, { target: { value: '12347' }});
+  fireEvent.change(passwordInput, { target: { value: 'WrongPassword1'}});
+  fireEvent.click(submitButton);
+  expect(screen.getByText(/staff id or password is incorrect/i)).toBeInTheDocument;
+
+});
