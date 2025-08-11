@@ -6,7 +6,7 @@ import Alert from '../components/Alert';
 
 
 const LogIn = () => {
-  const [staffId, setStaffId] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const [alert, setAlert] = useState(null);
@@ -49,7 +49,7 @@ const LogIn = () => {
 
     // Check if any user in the array matches the entered details
     const matchedUser = storedUsers.find(
-      (user) => user.staffId === staffId && user.password === password
+      (user) => user.email === email && user.password === password
     );
 
     if (matchedUser) {
@@ -60,7 +60,7 @@ const LogIn = () => {
       navigate('/calender');
     }, 2000);
     } else {
-      setAlert({ message: "Staff ID or Password is incorrect!", type: "error" });
+      setAlert({ message: "Email or Password is incorrect!", type: "error" });
     }
   };
 
@@ -84,14 +84,14 @@ const LogIn = () => {
             </div>
             <div className="form-body">
               <div className="input-group">
-                <label htmlFor="staffId"><b>Staff ID</b></label>
+                <label htmlFor="email"><b>Email</b></label>
                 <div className="input-icon-wrapper">
                   <FaUser className="icon" />
                   <input
-                    type="number"
-                    id="staffId"
-                    value={staffId}
-                    onChange={(e) => setStaffId(e.target.value)}
+                    type="text"
+                    id="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     autoComplete="off"
                     required
                   />

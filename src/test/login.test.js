@@ -11,10 +11,10 @@ test('renders the login form', () => {
     </MemoryRouter>
   );
 
-  const staffIdInput = screen.getByRole('spinbutton', { name: /staff id/i });
+  const emailInput = screen.getByLabelText(/email/i);
   const passwordInput = screen.getByLabelText(/password/i);
   const submitButton = screen.getByRole('button', { name: /log in/i });
-  expect(staffIdInput).toBeInTheDocument();
+  expect(emailInput).toBeInTheDocument();
   expect(passwordInput).toBeInTheDocument();
   expect(submitButton).toBeInTheDocument();
 });
@@ -27,40 +27,40 @@ test('shows error when ID is not entered', () => {
   );
   const submitButton = screen.getByRole('button', { name: /log in/i });
   fireEvent.click(submitButton);
-  const errorMessage = screen.getByText(/staff id or password is incorrect/i);
+  const errorMessage = screen.getByText(/email or password is incorrect/i);
   expect(errorMessage).toBeInTheDocument();
 });
 
 test('submits the form with valid data', () => {
-  const mockUser = { staffId: '12345', password: 'Password123' };
+  const mockUser = { email: 'test@ucc.ie', password: 'Password123' };
   localStorage.setItem('users', JSON.stringify([mockUser]));
   render(
     <MemoryRouter>
       <LogIn />
     </MemoryRouter>
   );
-  const staffIdInput = screen.getByRole('spinbutton', { name: /staff id/i });
+  const emailInput = screen.getByLabelText(/email/i);
   const passwordInput = screen.getByLabelText(/password/i);
   const submitButton = screen.getByRole('button', { name: /log in/i });
-  fireEvent.change(staffIdInput, { target: { value: '12345' } });
+  fireEvent.change(emailInput, { target: { value: 'test@ucc.ie' } });
   fireEvent.change(passwordInput, { target: { value: 'Password123' } });
   fireEvent.click(submitButton);
 });
 
 test('shows error alert with invalid credentials', async () => {
-  const mockUser = { staffId: '12345', password: 'Password123'};
+  const mockUser = { email: 'test@ucc.ie', password: 'Password123'};
   localStorage.setItem('users', JSON.stringify([mockUser]));
   render(
     <MemoryRouter>
       <LogIn />
     </MemoryRouter>
   );
-  const staffIdInput = screen.getByRole('spinbutton', {name: /staff id/i});
+  const emailInput = screen.getByLabelText(/email/i);
   const passwordInput = screen.getByLabelText(/password/i);
   const submitButton = screen.getByRole('button', {name: /log in/i});
-  fireEvent.change(staffIdInput, { target: { value: '12347' }});
+  fireEvent.change(emailInput, { target: { value: 'yeosang@ucc.ie' }});
   fireEvent.change(passwordInput, { target: { value: 'WrongPassword1'}});
   fireEvent.click(submitButton);
-  expect(screen.getByText(/staff id or password is incorrect/i)).toBeInTheDocument;
+  expect(screen.getByText(/email or password is incorrect/i)).toBeInTheDocument;
 
 });
