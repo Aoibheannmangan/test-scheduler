@@ -206,7 +206,7 @@ const MyCalendar = () => {
   };
 
   // Search patient by ID
-  const handleSearchWindow = () => {
+const handleSearchWindow = () => {
   const patient = userList.find(p => p.id === searchPatientId.trim());
   if (!patient) {
     setAlert({ message: "Patient with that ID not found", type: "error" });
@@ -223,7 +223,7 @@ const MyCalendar = () => {
     return;
   }
 
-  // Set  current patient info
+  // Set current patient info
   setCurrentPatient(patient);
   const birthDate = new Date(patient.DOB);
   const babyDaysEarly = patient.DaysEarly;
@@ -257,6 +257,42 @@ const MyCalendar = () => {
   });
 
   setWindowEvents(studyWindows);
+
+  // Check if patient has existing booked appointments and navigate to them
+  const patientBookedAppointments = bookedEvents.filter(appointment => 
+    appointment.patientId === patient.id
+  );
+  
+  if (patientBookedAppointments.length > 0) {
+    // Sort appointments by date and find the next upcoming appointment or the earliest one
+    const now = new Date();
+    const sortedAppointments = patientBookedAppointments.sort((a, b) => new Date(a.start) - new Date(b.start));
+    
+    // Try to find next upcoming appointment, otherwise use the first one
+    const nextAppointment = sortedAppointments.find(apt => new Date(apt.start) >= now) || sortedAppointments[0];
+    
+    // Navigate calendar to the appointment date
+    setDate(new Date(nextAppointment.start));
+    setView('month'); 
+    
+    setAlert({ 
+      message: `Found patient: ${patient.Name} - Navigated to booked appointment`, 
+      type: "success" 
+    });
+  } else if (studyWindows.length > 0) {
+    // If no booked appointments, navigate to the first visit window
+    const sortedWindows = studyWindows.sort((a, b) => new Date(a.start) - new Date(b.start));
+    const firstWindow = sortedWindows[0];
+    
+    // Navigate calendar to the window start date
+    setDate(new Date(firstWindow.start));
+    setView('day'); // Switch to day view to show the window clearly
+    
+    setAlert({ 
+      message: `Found patient: - Showing visit window`, 
+      type: "success" 
+    });
+  }
 };
 
 // If booking within study window
