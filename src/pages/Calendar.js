@@ -406,7 +406,7 @@ const MyCalendar = () => {
     setBookedEvents(updatedEvents);
     localStorage.setItem("bookedEvents", JSON.stringify(updatedEvents));
 
-    // If booking deleted reset visit and type as its now a window again
+    // If booking deleted then reset visit and type as its now a window again
     const updatedUser = userList.map((p) => {
       if (p.id === eventToDelete.patientId) {
         return {
@@ -422,6 +422,12 @@ const MyCalendar = () => {
     setUserList(updatedUser);
     localStorage.setItem("userInfoList", JSON.stringify(updatedUser));
     setPopupOpen(false);
+
+    // Will close edit popup if event is deleted
+    closePopup();
+    setEventToDelete(null);
+    setShowRebookingForm(false);
+    setAppOpen(false);
   };
 
   // Store event clicked on and open pop up for delete
@@ -961,7 +967,9 @@ const MyCalendar = () => {
       <PopUp
         isOpen={popupOpen}
         onClose={() => setPopupOpen(false)}
-        onConfirm={confirmDeleteEvent}
+        onConfirm={() => {
+          confirmDeleteEvent();
+        }}
         message={`Delete ${eventToDelete?.title || "this event"} for ${
           eventToDelete?.patientId || "Unknown ID"
         }?`}
