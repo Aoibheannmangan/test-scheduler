@@ -274,7 +274,7 @@ const MyCalendar = () => {
           Name: patient.Name,
           id: patient.id,
           start: new Date(event.start),
-          end: new Date(event.end),
+          end: new Date(event.end + 1), // Add by one as the calendar is exclusive to the last date
         }));
 
       studyWindows = [...studyWindows, ...studyEvents];
