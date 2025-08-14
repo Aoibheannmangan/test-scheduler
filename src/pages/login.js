@@ -1,19 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react';
-import './login.css';
-import { useNavigate } from 'react-router-dom';
-import { FaUser, FaLock } from 'react-icons/fa';
-import Alert from '../components/Alert';
-
+import React, { useState, useEffect, useRef } from "react";
+import "./login.css";
+import { useNavigate } from "react-router-dom";
+import { FaUser, FaLock } from "react-icons/fa";
+import Alert from "../components/Alert";
 
 const LogIn = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const [alert, setAlert] = useState(null);
   const [capsLockOn, setCapsLockOn] = useState(false);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const passwordInputRef = useRef(null);
 
   const navigate = useNavigate();
@@ -21,31 +20,30 @@ const LogIn = () => {
   useEffect(() => {
     //To check if the caps lock is on
     const handleKeyUp = (event) => {
-        if (event.getModifierState("CapsLock")) {
-            setCapsLockOn(true);
-        } else {
-            setCapsLockOn(false);
-        }
+      if (event.getModifierState("CapsLock")) {
+        setCapsLockOn(true);
+      } else {
+        setCapsLockOn(false);
+      }
     };
 
     const input = passwordInputRef.current;
     if (input) {
-        input.addEventListener("keyup", handleKeyUp);
+      input.addEventListener("keyup", handleKeyUp);
     }
 
     return () => {
-        if (input) {
-            input.removeEventListener("keyup", handleKeyUp);
-        }
+      if (input) {
+        input.removeEventListener("keyup", handleKeyUp);
+      }
     };
   }, []);
-
 
   const handleLogin = (e) => {
     //Login Logic
     e.preventDefault();
 
-    const storedUsers = JSON.parse(localStorage.getItem('users')) || [];
+    const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
 
     // Check if any user in the array matches the entered details
     const matchedUser = storedUsers.find(
@@ -55,10 +53,10 @@ const LogIn = () => {
     if (matchedUser) {
       setIsSubmitting(true);
       setTimeout(() => {
-      setAlert({ message: "Login Successful!", type: "success" });
-      setIsSubmitting(false);
-      navigate('/calender');
-    }, 2000);
+        setAlert({ message: "Login Successful!", type: "success" });
+        setIsSubmitting(false);
+        navigate("/calender");
+      }, 2000);
     } else {
       setAlert({ message: "Email or Password is incorrect!", type: "error" });
     }
@@ -68,7 +66,6 @@ const LogIn = () => {
     <div className="login-container">
       <div className="form-wrapper">
         <div className="login-card">
-
           {alert && (
             <Alert
               message={alert.message}
@@ -84,7 +81,9 @@ const LogIn = () => {
             </div>
             <div className="form-body">
               <div className="input-group">
-                <label htmlFor="email"><b>Email</b></label>
+                <label htmlFor="email">
+                  <b>Email</b>
+                </label>
                 <div className="input-icon-wrapper">
                   <FaUser className="icon" />
                   <input
@@ -98,9 +97,11 @@ const LogIn = () => {
                 </div>
               </div>
 
-             {/* User enters password */}
+              {/* User enters password */}
               <div className="input-group">
-                <label htmlFor="password"><b>Password</b></label>
+                <label htmlFor="password">
+                  <b>Password</b>
+                </label>
                 <div className="input-icon-wrapper">
                   <FaLock className="icon" />
                   <input
@@ -112,28 +113,29 @@ const LogIn = () => {
                     ref={passwordInputRef}
                     required
                   />
-
-
                 </div>
                 {capsLockOn && (
-                    <div className="caps-warning" style={{ color: 'red', marginTop: '5px' }}>
-                        Warning: Caps Lock is ON
-                    </div>
+                  <div
+                    className="caps-warning"
+                    style={{ color: "red", marginTop: "5px" }}
+                  >
+                    Warning: Caps Lock is ON
+                  </div>
                 )}
                 <div className="forgot-password-link">
-                    <a href="/forgotpsw"><br />Forgot Password?</a>
+                  <a href="/forgotpsw">
+                    <br />
+                    Forgot Password?
+                  </a>
                 </div>
               </div>
-              <button 
+              <button
                 type="submit"
                 className="login-button"
-                disabled={isSubmitting}>
-                    {isSubmitting ? (
-                      <div className="spinner"></div>
-                    ) : (
-                      'Log In'
-                    )}
-                </button>
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? <div className="spinner"></div> : "Log In"}
+              </button>
               <div className="signup-link">
                 <span className="change">
                   Don't have an account? <a href="/signup">Sign Up</a>

@@ -1,161 +1,161 @@
 body {
-    text-align: center;
+  text-align: center;
 }
 .UserInfo {
-    background: linear-gradient(to right, #ffffff, #fae3ff );
-    border-radius: 15px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-    padding: 10px 20px;
-    transition: transform 0.2s;
-    width: 500px;
-    text-align: center;
-    margin:auto;
-    margin-top: 20px;
-    font-family: 'Sansation';
+  background: linear-gradient(to right, #ffffff, #fae3ff);
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  padding: 10px 20px;
+  transition: transform 0.2s;
+  width: 500px;
+  text-align: center;
+  margin: auto;
+  margin-top: 20px;
+  font-family: "Sansation";
 }
 .form-border {
-    background-color: #fff;
-    border-radius: 15px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-    padding: 10px 20px;
-    transition: transform 0.2s;
-    width: 500px;
-    text-align: center;
-    margin:auto;
-    margin-top: 20px;
+  background-color: #fff;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  padding: 10px 20px;
+  transition: transform 0.2s;
+  width: 500px;
+  text-align: center;
+  margin: auto;
+  margin-top: 20px;
 }
 
 h1 {
-    font-size: x-large;
-    text-align: center;
-    font-family: 'Sansation';
-    color: #000000;
+  font-size: x-large;
+  text-align: center;
+  font-family: "Sansation";
+  color: #000000;
 }
 
 fieldset {
-    border: none;
+  border: none;
 }
-
 
 input[type="text"],
 input[type="date"],
 input[type="number"],
 input[type="email"],
-input[type="password"] 
-{
-    display: block;
-    box-sizing: border-box;
-    width: 100%;
-    padding: 10px;
-    margin: 8px 0 20px 0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #fff;
-    font-size: 16px;
-    color: #333;
-    box-sizing: border-box;
-    font-family: 'Sansation';
-    transition: border-color 0.3s ease;
+input[type="password"] {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0 20px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  font-size: 16px;
+  color: #333;
+  box-sizing: border-box;
+  font-family: "Sansation";
+  transition: border-color 0.3s ease;
 }
 
-input:focus, select:focus, textarea:focus {
-    border-color: #8d5a97;
-    outline:none;
-    box-shadow: 0 0 5px rgb(78, 50, 83);
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #8d5a97;
+  outline: none;
+  box-shadow: 0 0 5px rgb(78, 50, 83);
 }
 
 label {
-    font-size: 20px;
-    display: block;
-    margin-top: 8px;
-    margin-bottom: 5px;
-    text-align: left;
-    color: #000000;
-    font-weight: bold;
-    font-family: 'Sansation';
+  font-size: 20px;
+  display: block;
+  margin-top: 8px;
+  margin-bottom: 5px;
+  text-align: left;
+  color: #000000;
+  font-weight: bold;
+  font-family: "Sansation";
 }
 
 .submit-button {
-    background-color: #8D5A97;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background 0.3s;
-    font-size: 22px;
-    font-family: 'Sansation', serif;
-    font-weight: bold;
-    letter-spacing: 1px;
-    padding: 15px;
-    margin: 8px auto 20px auto;
-    width: 60%;
-    font-weight: 600;
-    display: block;
-    font-family: 'Sansation'; 
+  background-color: #8d5a97;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-size: 22px;
+  font-family: "Sansation", serif;
+  font-weight: bold;
+  letter-spacing: 1px;
+  padding: 15px;
+  margin: 8px auto 20px auto;
+  width: 60%;
+  font-weight: 600;
+  display: block;
+  font-family: "Sansation";
 }
 
 .submit-button:hover {
-    background-color: #4e3253;
-    transform: scale(1.02);
+  background-color: #4e3253;
+  transform: scale(1.02);
 }
 
 .submit-button:focus {
-    outline: 2px solid  #4e3253;
-    outline-offset: 2px;
+  outline: 2px solid #4e3253;
+  outline-offset: 2px;
 }
 
 textarea {
-    resize: none;
-    width: 98%;
-    min-height: 100px;
-    max-height: 150px;
+  resize: none;
+  width: 98%;
+  min-height: 100px;
+  max-height: 150px;
 }
 
 select {
-    width: 100%;
-    padding: 10px;
-    margin: 8px 0 20px 0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #fff;
-    font-size: 16px;
-    color: #333;
-    box-sizing: border-box;
-    transition: border-color 0.3s ease;
-    font-family: 'Sansation';
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0 20px 0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  font-size: 16px;
+  color: #333;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+  font-family: "Sansation";
 }
 
 .radio-group {
-    display: flex;
-    gap: 0.75rem;
-    align-items: center;
-    flex-wrap: wrap;
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .radio-group label {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    margin: 0;
-    font-size: 1rem;
-    font-family: 'Sansation';
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0;
+  font-size: 1rem;
+  font-family: "Sansation";
+  cursor: pointer;
 }
 
 .radio-group input[type="radio"],
 input[type="checkbox"] {
-    accent-color: #8d5a97; 
+  accent-color: #8d5a97;
 }
-
 
 @media (max-width: 600px) {
-    .UserInfo, .form-border {
-        width: 90%;
-        padding: 15px;
-    }
+  .UserInfo,
+  .form-border {
+    width: 90%;
+    padding: 15px;
+  }
 }
 .heading-text {
-    font-size: 36px;
-    color: #8d5a97;
-    font-family: 'Sansation';
+  font-size: 36px;
+  color: #8d5a97;
+  font-family: "Sansation";
 }

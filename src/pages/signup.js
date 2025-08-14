@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
-import './signup.css';
-import { useNavigate } from 'react-router-dom';
-import { FaUser, FaLock, FaEnvelope } from 'react-icons/fa';
-import Alert from '../components/Alert';
+import React, { useState, useEffect, useRef } from "react";
+import "./signup.css";
+import { useNavigate } from "react-router-dom";
+import { FaUser, FaLock, FaEnvelope } from "react-icons/fa";
+import Alert from "../components/Alert";
 
 const SignUp = () => {
-  const [email, setEmail] = useState('');
-  const [staffId, setStaffId] = useState('');
-  const [password, setPassword] = useState('');
-  const [repeatPassword, setRepeatPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [staffId, setStaffId] = useState("");
+  const [password, setPassword] = useState("");
+  const [repeatPassword, setRepeatPassword] = useState("");
 
   const [showPasswordMessage, setShowPasswordMessage] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -73,13 +73,13 @@ const SignUp = () => {
   const isIdInUse = (staffId) => {
     const users = JSON.parse(localStorage.getItem("users")) || [];
     return users.some((user) => user.staffId === staffId);
-  }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     //Makes sure the password is valid
-    const isValid = 
+    const isValid =
       passwordValidations.lowercase &&
       passwordValidations.uppercase &&
       passwordValidations.number &&
@@ -87,14 +87,21 @@ const SignUp = () => {
 
     //Alert if it's not valid and make them try again
     if (!isValid) {
-      setAlert({ message: "Invalid Password. Must contain at least 8 characters, including uppercase and lowercase letters and a number", type: "warning" });
+      setAlert({
+        message:
+          "Invalid Password. Must contain at least 8 characters, including uppercase and lowercase letters and a number",
+        type: "warning",
+      });
       return;
     }
 
-    // For email validation, makes sure it ends in @ucc.ie 
+    // For email validation, makes sure it ends in @ucc.ie
     const emailPattern = /^[a-zA-Z0-9._+-]+@ucc\.ie$/;
     if (!emailPattern.test(email)) {
-      setAlert({ message: "Invalid format. Please use your UCC Email", type: "warning" });
+      setAlert({
+        message: "Invalid format. Please use your UCC Email",
+        type: "warning",
+      });
       return;
     }
 
@@ -105,7 +112,7 @@ const SignUp = () => {
     }
 
     if (isIdInUse(staffId)) {
-      setAlert({message: "ID is already registered", type: "info"});
+      setAlert({ message: "ID is already registered", type: "info" });
       return;
     }
 
@@ -118,7 +125,10 @@ const SignUp = () => {
 
     // Makes sure password and initial password works
     if (password !== repeatPassword) {
-      setAlert({ message: "Passwords do not match. Please try again", type: "error" });
+      setAlert({
+        message: "Passwords do not match. Please try again",
+        type: "error",
+      });
       return;
     }
 
@@ -137,7 +147,7 @@ const SignUp = () => {
     setTimeout(() => {
       setShowAlert({ message: "Login Successful!", type: "success" });
       setIsSubmitting(false);
-      navigate('/calender');
+      navigate("/calender");
     }, 2000);
   };
 
@@ -159,10 +169,11 @@ const SignUp = () => {
               <h1 className="title">Sign Up</h1>
             </div>
             <div className="form-body">
-
               {/* User inputs email */}
               <div className="input-group">
-                <label htmlFor="email"><b>Email</b></label>
+                <label htmlFor="email">
+                  <b>Email</b>
+                </label>
                 <div className="input-icon-wrapper">
                   <FaEnvelope className="icon" />
                   <input
@@ -179,7 +190,9 @@ const SignUp = () => {
 
               {/* User inputs staff ID */}
               <div className="input-group">
-                <label htmlFor="staffId"><b>Staff ID</b></label>
+                <label htmlFor="staffId">
+                  <b>Staff ID</b>
+                </label>
                 <div className="input-icon-wrapper">
                   <FaUser className="icon" />
                   <input
@@ -196,7 +209,9 @@ const SignUp = () => {
 
               {/* User inputs password */}
               <div className="input-group">
-                <label htmlFor="password"><b>Password</b></label>
+                <label htmlFor="password">
+                  <b>Password</b>
+                </label>
                 <div className="input-icon-wrapper">
                   <FaLock className="icon" />
                   <input
@@ -206,7 +221,7 @@ const SignUp = () => {
                     value={password}
                     onChange={handlePasswordChange}
                     onFocus={() => setShowPasswordMessage(true)}
-                    onBlur={() => setShowPasswordMessage(false)} 
+                    onBlur={() => setShowPasswordMessage(false)}
                     ref={passwordInputRef}
                     autoComplete="off"
                     required
@@ -216,7 +231,9 @@ const SignUp = () => {
 
               {/* User re-enters password */}
               <div className="input-group">
-                <label htmlFor="passwordRepeat"><b>Repeat Password</b></label>
+                <label htmlFor="passwordRepeat">
+                  <b>Repeat Password</b>
+                </label>
                 <div className="input-icon-wrapper">
                   <FaLock className="icon" />
                   <input
@@ -231,7 +248,10 @@ const SignUp = () => {
 
                   {/* Caplocks Warning */}
                   {capsLockOn && (
-                    <div className="caps-warning" style={{ color: 'red', marginTop: '5px'}}>
+                    <div
+                      className="caps-warning"
+                      style={{ color: "red", marginTop: "5px" }}
+                    >
                       Warning: Caps Lock is ON
                     </div>
                   )}
@@ -245,11 +265,7 @@ const SignUp = () => {
                     className="signup-button"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? (
-                      <div className="spinner"></div>
-                    ) : (
-                      'Sign Up'
-                    )}
+                    {isSubmitting ? <div className="spinner"></div> : "Sign Up"}
                   </button>
                 </div>
               </div>
@@ -258,23 +274,29 @@ const SignUp = () => {
             {showPasswordMessage && (
               <div id="message">
                 <h3>Password must contain the following:</h3>
-                <p className={passwordValidations.lowercase ? 'valid' : 'invalid'}>
+                <p
+                  className={
+                    passwordValidations.lowercase ? "valid" : "invalid"
+                  }
+                >
                   A <b>lowercase</b> letter
                 </p>
-                <p className={passwordValidations.uppercase ? 'valid' : 'invalid'}>
+                <p
+                  className={
+                    passwordValidations.uppercase ? "valid" : "invalid"
+                  }
+                >
                   A <b>capital (uppercase)</b> letter
                 </p>
-                <p className={passwordValidations.number ? 'valid' : 'invalid'}>
+                <p className={passwordValidations.number ? "valid" : "invalid"}>
                   A <b>number</b>
                 </p>
-                <p className={passwordValidations.length ? 'valid' : 'invalid'}>
+                <p className={passwordValidations.length ? "valid" : "invalid"}>
                   Minimum <b>8 characters</b>
                 </p>
               </div>
             )}
           </form>
-
-          
         </div>
       </div>
     </div>

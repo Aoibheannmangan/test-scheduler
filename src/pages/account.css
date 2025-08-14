@@ -1,104 +1,106 @@
 .display {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    padding: 2rem;
-    width: 90%;
-    max-width: 600px;
-    margin: 30px auto;
-    font-size: 1.1rem;
-    font-family: 'Sansation', serif;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  width: 90%;
+  max-width: 600px;
+  margin: 30px auto;
+  font-size: 1.1rem;
+  font-family: "Sansation", serif;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .display:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
 }
 
 ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    text-align: left;
-    line-height: 1.8;
-    letter-spacing: 1px;
-    font-size: 18px;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  line-height: 1.8;
+  letter-spacing: 1px;
+  font-size: 18px;
 }
 
 ul li strong {
-    color: #8D5A97;
-    font-size: 18px;
+  color: #8d5a97;
+  font-size: 18px;
 }
 
 .display button {
-    background-color: #8D5A97;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    margin: 10px 5px;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background 0.3s ease;
+  background-color: #8d5a97;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin: 10px 5px;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
 }
 
 .display button:hover {
-    background-color: #56365c;
+  background-color: #56365c;
 }
 
-.edit, .logout {
-    background-color: #8D5A97;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    margin: 10px 5px;
-    cursor: pointer;
-    border-radius: 8px;
-    transition: background 0.3s ease;
-    font-size: 22px;
-    font-family: 'Sansation', serif;
-    font-weight: bold;
-    letter-spacing: 1px;
+.edit,
+.logout {
+  background-color: #8d5a97;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  margin: 10px 5px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+  font-size: 22px;
+  font-family: "Sansation", serif;
+  font-weight: bold;
+  letter-spacing: 1px;
 }
 .small-text {
-    font-size: 18px;
-    font-family: 'Sansation', serif;
-    font-weight: bold;
-    letter-spacing: 1px;
+  font-size: 18px;
+  font-family: "Sansation", serif;
+  font-weight: bold;
+  letter-spacing: 1px;
 }
-.edit:hover, .logout:hover {
-    background-color: #56365c;
+.edit:hover,
+.logout:hover {
+  background-color: #56365c;
 }
 
 .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .icon-actions {
-    display: flex;
-    gap: 10px;
+  display: flex;
+  gap: 10px;
 }
 
 .icon-actions button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #6a1b9a;
-    font-size: 18px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6a1b9a;
+  font-size: 18px;
 }
 
 .icon-actions button:hover {
-    color: #c1aeda;
+  color: #c1aeda;
 }
 
 .divider {
-    border: none;
-    border-top: 2px solid rgb(0, 0, 0);
-    margin: 10px 0;
+  border: none;
+  border-top: 2px solid rgb(0, 0, 0);
+  margin: 10px 0;
 }

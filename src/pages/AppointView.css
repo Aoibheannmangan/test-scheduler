@@ -1,24 +1,24 @@
 h1 {
-    text-align: center;
-    margin-top: 80px;
+  text-align: center;
+  margin-top: 80px;
 }
 
 /* Collapsed state: hidden */
 .collapsed .ID_element {
-    display:none;
+  display: none;
 }
 
 .appointmentList {
-    min-width: 220px;
-    max-width: 1000px;
-    margin: 24px auto 0 auto; 
-    background: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-    padding: 18px 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+  min-width: 220px;
+  max-width: 1000px;
+  margin: 24px auto 0 auto;
+  background: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 /* Wrapper list item */
@@ -43,7 +43,6 @@ label {
   font-size: 1rem;
   display: block;
   padding: 0.5em 0;
-
 }
 label:hover {
   color: #0077cc;
@@ -53,14 +52,14 @@ label:hover {
   font-size: 1rem;
   display: block;
   padding: 0.5em 0;
-  margin-right: 10px
+  margin-right: 10px;
 }
 
 /* Search Bar Container*/
 .searchContainer {
   min-width: 220px;
   max-width: 1000px;
-  margin: 2px auto 0 auto; 
+  margin: 2px auto 0 auto;
   background: #f9f9f9;
   border-radius: 10px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
@@ -68,7 +67,7 @@ label:hover {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  height:75px;
+  height: 75px;
 }
 
 /*Search Bar styling*/
@@ -82,24 +81,24 @@ label:hover {
 /*Red Dot that indicates whether it's a window*/
 .closeNotifier,
 .midNotifier,
-.farNotifier{
+.farNotifier {
   display: inline-block;
   width: 10px;
   height: 10px;
-  border-Radius: 50%;
-  vertical-Align: middle;
+  border-radius: 50%;
+  vertical-align: middle;
 }
-.closeNotifier{
-  background-Color: #a02020c0;
+.closeNotifier {
+  background-color: #a02020c0;
 }
-.midNotifier{
-  background-Color: #c48b10c0;
+.midNotifier {
+  background-color: #c48b10c0;
 }
-.farNotifier{
-  background-Color: #53a020c0;
+.farNotifier {
+  background-color: #53a020c0;
 }
-.windowTitle{
-  color: #e24444c0
+.windowTitle {
+  color: #e24444c0;
 }
 
 .visitNumContainer {
@@ -119,10 +118,10 @@ label:hover {
   display: inline-block;
   width: 10px;
   height: 10px;
-  border-Radius: 50%;
-  background-Color: #20a084c0;
-  vertical-Align: middle;
-  align-items: right
+  border-radius: 50%;
+  background-color: #20a084c0;
+  vertical-align: middle;
+  align-items: right;
 }
 
 .filterRowBox {
@@ -135,7 +134,7 @@ label:hover {
 
 .patientRow {
   cursor: pointer;
-  font-weight: bold; 
+  font-weight: bold;
   flex: 1;
 }
 
@@ -150,10 +149,10 @@ label:hover {
 
 /*Make all a flex*/
 .heading-left,
-.heading-right{
+.heading-right {
   flex: 1;
   padding-left: 50px;
-  padding-right: 50px
+  padding-right: 50px;
 }
 
 .heading-right {

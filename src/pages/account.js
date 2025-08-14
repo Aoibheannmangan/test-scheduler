@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import './account.css';
-import { useNavigate } from 'react-router-dom';
-import { FaEdit, FaTrash } from 'react-icons/fa';
-import Alert from '../components/Alert';
-import PopUp from '../components/PopUp';
+import React, { useEffect, useState } from "react";
+import "./account.css";
+import { useNavigate } from "react-router-dom";
+import { FaEdit, FaTrash } from "react-icons/fa";
+import Alert from "../components/Alert";
+import PopUp from "../components/PopUp";
 
 const Account = () => {
   const [userList, setUserList] = useState([]);
@@ -21,7 +21,6 @@ const Account = () => {
     }
   }, []);
 
-  
   const handleDelete = (id) => {
     setSelectedUserId(id);
     setPopupOpen(true);
@@ -29,11 +28,11 @@ const Account = () => {
 
   const confirmDelete = () => {
     if (selectedUserId === null) return;
-    setAlert({message: "This patient will be deleted", type: "warning"});
+    setAlert({ message: "This patient will be deleted", type: "warning" });
     setPopupOpen(false);
 
     setTimeout(() => {
-      const updatedList = userList.filter(user => user.id !== selectedUserId);
+      const updatedList = userList.filter((user) => user.id !== selectedUserId);
       setUserList(updatedList);
       localStorage.setItem("userInfoList", JSON.stringify(updatedList));
       setAlert(null);
@@ -41,17 +40,20 @@ const Account = () => {
     }, 1000);
   };
 
-
   const handleEdit = (user) => {
     localStorage.setItem("editPatient", JSON.stringify(user));
-    navigate('/info');
+    navigate("/info");
   };
 
   if (userList.length === 0) {
     return (
       <div>
-        <p className="small-text"><b>No Patient Data</b></p>
-        <a href="info" className="edit">Add Patient Information</a>
+        <p className="small-text">
+          <b>No Patient Data</b>
+        </p>
+        <a href="info" className="edit">
+          Add Patient Information
+        </a>
       </div>
     );
   }
@@ -66,12 +68,20 @@ const Account = () => {
         />
       )}
       <h1>My Patient Information</h1>
-      <a href="info" className="edit">Add Patients</a>
+      <a href="info" className="edit">
+        Add Patients
+      </a>
       {userList.map((user) => (
         <div className="display" key={user.id}>
           <div className="card-header">
-            <h3><strong>Id: </strong>{user.id}</h3>
-            <h3><strong>Name: </strong>{user.Name}</h3>
+            <h3>
+              <strong>Id: </strong>
+              {user.id}
+            </h3>
+            <h3>
+              <strong>Name: </strong>
+              {user.Name}
+            </h3>
             <div className="icon-actions">
               <button onClick={() => handleEdit(user)} title="Edit">
                 <FaEdit />
@@ -81,17 +91,32 @@ const Account = () => {
               </button>
             </div>
           </div>
-          <hr className="divider" /> 
+          <hr className="divider" />
           <ul>
-            <li><strong>Date of Birth:</strong> {user.DOB}</li>
-            <li><strong>Days Early:</strong> {user.DaysEarly}</li>
-            <li><strong>Sex:</strong> {user.Sex}</li>
-            <li><strong>Condition:</strong> {user.Condition}</li>
-            <li><strong>Study:</strong> {Array.isArray(user.Study) ? user.Study.join(', ') : [user.Study]}</li>
-            <li><strong>Site:</strong> {user.site}</li>
+            <li>
+              <strong>Date of Birth:</strong> {user.DOB}
+            </li>
+            <li>
+              <strong>Days Early:</strong> {user.DaysEarly}
+            </li>
+            <li>
+              <strong>Sex:</strong> {user.Sex}
+            </li>
+            <li>
+              <strong>Condition:</strong> {user.Condition}
+            </li>
+            <li>
+              <strong>Study:</strong>{" "}
+              {Array.isArray(user.Study) ? user.Study.join(", ") : [user.Study]}
+            </li>
+            <li>
+              <strong>Site:</strong> {user.site}
+            </li>
             {/* Only show this li if Info is not empty */}
-            {user.Info && user.Info.trim() !== '' && (
-              <li><strong>Additional Notes:</strong> {user.Info}</li>
+            {user.Info && user.Info.trim() !== "" && (
+              <li>
+                <strong>Additional Notes:</strong> {user.Info}
+              </li>
             )}
           </ul>
         </div>
