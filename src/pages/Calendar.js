@@ -60,16 +60,19 @@ const MyCalendar = () => {
 
   // Open popup when clicking an event
   const handleSelectEvent = (event) => {
-    setSelectedEvent(event);
-    // Copy all editable properties into editedInfo state
-    setEditedInfo({
-      title: event.title || "",
-      start: event.start,
-      end: event.end,
-      room: event.room || "",
-      noShow: event.noShow || false,
-      noShowComment: event.noShowComment || "",
-    });
+    // So only booked events can be altered
+    if (event.type === "booked") {
+      setSelectedEvent(event);
+      // Copy all editable properties into editedInfo state
+      setEditedInfo({
+        title: event.title || "",
+        start: event.start,
+        end: event.end,
+        room: event.room || "",
+        noShow: event.noShow || false,
+        noShowComment: event.noShowComment || "",
+      });
+    }
   };
 
   const handleBlockDate = () => {
