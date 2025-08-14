@@ -50,7 +50,7 @@ describe('ToggleAppointment Component', () => {
     expect(appointment.patientId).toBe('12345');
     expect(appointment.room).toBe('room1');
     expect(appointment.notes).toBe('Routine checkup');
-  });
+  });//
 
   test('calls onClose when close button is clicked', () => {
         render(
