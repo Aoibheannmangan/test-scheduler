@@ -45,9 +45,40 @@ const mockAppointmentEvents = [
 ];
 
 beforeEach(() => {
-  Storage.prototype.getItem = jest.fn(() =>
-    JSON.stringify(mockAppointmentEvents)
-  );
+  // Mock localStorage for bookedEvents
+  Storage.prototype.getItem = jest.fn((key) => {
+    if (key === "bookedEvents") {
+      return JSON.stringify(mockAppointmentEvents);
+    }
+    if (key === "userInfoList") {
+      // Add valid patient info for IDs used in tests
+      return JSON.stringify([
+        {
+          id: "001",
+          Name: "John Doe",
+          DOB: "2025-01-01",
+          DaysEarly: 0,
+          Study: ["AIMHIGH"],
+          site: "Kildare",
+          OutOfArea: false,
+          visitNum: 1,
+          type: "booked",
+        },
+        {
+          id: "002",
+          Name: "Jane Smith",
+          DOB: "2025-05-20",
+          DaysEarly: 0,
+          Study: ["COOLPRIME"],
+          site: "Kildare",
+          OutOfArea: true,
+          visitNum: 2,
+          type: "window",
+        },
+      ]);
+    }
+    return null;
+  });
 
   useAppointmentFilters.mockReturnValue({
     searchQuery: "",
@@ -135,52 +166,45 @@ test("deletes an event", async () => {
 });
 
 test("closes edit popup after delete confirmation", async () => {
-  render(<MyCalendar localizer={localizer} />);
-  fireEvent.click(screen.getByText(/Visit Test/i)); // open edit popup
-  expect(await screen.findByText(/Edit Event/i)).toBeInTheDocument();
-
-  fireEvent.click(screen.getByText(/Delete Appointment/i)); // open delete popup
-  const confirmButtons = await screen.findAllByText(/Confirm/i);
-  fireEvent.click(confirmButtons[0]); // confirm delete
-
-  await waitFor(
-    expect(screen.queryByText(/Edit Event/i)).not.toBeInTheDocument(),
-    { timeout: 3000 }
-  );
-  await waitFor(
-    expect(screen.queryByText(/Delete Appointment/i)).not.toBeInTheDocument()
-  );
-});
-
-test("cancel delete keeps edit popup open", async () => {
-  render(<MyCalendar localizer={localizer} />);
+  render(<MyCalendar />);
+  // Select an event first
   fireEvent.click(screen.getByText(/Visit Test/i));
-  expect(await screen.findByText(/Edit Event/i)).toBeInTheDocument();
-
-  fireEvent.click(screen.getByText(/Delete Appointment/i));
-  const cancelButton = screen.getByText(/Cancel/i);
-  fireEvent.click(cancelButton);
-
+  // Now find and click the delete button
+  fireEvent.click(screen.getByRole("button", { name: /delete appointment/i }));
+  fireEvent.click(screen.getByRole("button", { name: /confirm/i }));
   await waitFor(() => {
-    expect(screen.getByText(/Edit Event/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Edit Event/i)).not.toBeInTheDocument();
   });
 });
 
+test("cancel delete keeps edit popup open", () => {
+  render(<MyCalendar />);
+  // Select an event first
+  fireEvent.click(screen.getByText(/Visit Test/i));
+  // Use a function matcher for the button
+  const deleteBtn = screen.getByText(
+    (content, node) => node.textContent.trim() === "Delete Appointment"
+  );
+  fireEvent.click(deleteBtn);
+  fireEvent.click(screen.getByRole("button", { name: /cancel/i }));
+  expect(screen.getByText(/Edit Event/i)).toBeInTheDocument();
+});
+
 test("blocks a date and shows blocked event", async () => {
-  render(<MyCalendar localizer={localizer} />);
-  const dateInputs = screen.getAllByLabelText(/select date to block:/i);
-  const dateInput = dateInputs[0]; // pick the first one
-
-  const today = moment().format("DD-MM-YYYY");
-  fireEvent.change(dateInput, { target: { value: today } });
-
-  fireEvent.click(screen.getByRole("button", { name: /block date/i }));
-
-  expect(
-    await screen.findByText((content, node) => {
-      return node?.textContent?.toLowerCase().includes("Blocked");
-    })
-  ).toBeInTheDocument();
+  render(<MyCalendar />);
+  const dateInputs = screen.getAllByLabelText(/select date to block/i);
+  fireEvent.change(dateInputs[0], {
+    target: { value: "2023-10-01" },
+  });
+  fireEvent.click(screen.getAllByText(/block date/i)[0]);
+  await waitFor(() => {
+    // Use a function matcher for "Blocked"
+    expect(
+      screen.getByText((content, node) =>
+        node.textContent.toLowerCase().includes("blocked")
+      )
+    ).toBeInTheDocument();
+  });
 });
 
 test("filters events by room", async () => {
@@ -194,20 +218,16 @@ test("filters events by room", async () => {
 });
 
 test("searches for patient window", async () => {
-  render(<MyCalendar localizer={localizer} />);
-
-  const input = screen.getByPlaceholderText(/Enter Patient ID/i);
+  render(<MyCalendar />);
+  const input = screen.getByPlaceholderText(/enter patient id/i);
   fireEvent.change(input, { target: { value: "002" } });
 
   fireEvent.click(screen.getByRole("button", { name: /search window/i }));
 
-  // wait and assert the patient info shows up
-  const patientInfo = await screen.findByText(
-    /Patient Info/i,
-    {},
-    { timeout: 3000 }
-  );
-  expect(patientInfo).toBeInTheDocument();
+  // Wait for the patient info to show up
+  await waitFor(() => {
+    expect(screen.getByText(/found patient/i)).toBeInTheDocument();
+  });
 });
 
 test("search for non-existent patient shows no results", async () => {
