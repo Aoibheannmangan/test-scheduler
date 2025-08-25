@@ -9,6 +9,7 @@ import SignUp from './pages/signup';
 import ForgotPsw from './components/forgotpsw'
 import ToggleAppointment from './pages/Appointment';
 import '@fontsource/sansation';
+import { Analytics } from "@vercel/analytics/react"
 
 function App() {
   const location = useLocation();
