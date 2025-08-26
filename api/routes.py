@@ -15,7 +15,7 @@ def get_data():
         'fields[3]': 'nicu_dob',
         'fields[4]': 'nicu_dag', # Site
         'fields[5]': 'nicu_email',# Contact
-        #'fields[6]': '',# Days early
+        'fields[6]': 'nicu_days_early',# Days early
     }
     
     # Make the POST request to the REDCap API
@@ -26,6 +26,5 @@ def get_data():
         data = response.json()  # Parse the JSON response
         return jsonify(data)  # Return the data as a JSON response
 
-        
     else:
         return jsonify({'error': 'Failed to fetch data', 'status_code': response.status_code}), response.status_code
