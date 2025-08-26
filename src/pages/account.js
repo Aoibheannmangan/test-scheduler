@@ -103,7 +103,7 @@ const Account = () => {
               <strong>Sex:</strong> {user.Sex}
             </li>
             <li>
-              <strong>Condition:</strong> {user.Condition}
+              <strong>Group:</strong> {user.Group}
             </li>
             <li>
               <strong>Study:</strong>{" "}

@@ -9,7 +9,7 @@ const UserInfo = () => {
   const [patientDOB, setPatientDOB] = useState("");
   const [patientEarly, setPatientEarly] = useState("");
   const [patientSex, setPatientSex] = useState("");
-  const [patientCondition, setPatientCondition] = useState("");
+  const [patientGroup, setPatientGroup] = useState("");
   const [patientStudy, setPatientStudy] = useState([]);
   const [patientSite, setPatientSite] = useState("");
   const [patientOutOfArea, setPatientOutOfArea] = useState(false);
@@ -35,7 +35,7 @@ const UserInfo = () => {
       setPatientDOB(patient.DOB);
       setPatientEarly(patient.DaysEarly);
       setPatientSex(patient.Sex);
-      setPatientCondition(patient.Condition);
+      setPatientGroup(patient.Group);
       setPatientStudy(patient.Study);
       setPatientSite(patient.site);
       setPatientOutOfArea(Boolean(patient.OutOfArea));
@@ -76,7 +76,7 @@ const UserInfo = () => {
       DOB: patientDOB,
       DaysEarly: patientEarly,
       Sex: patientSex,
-      Condition: patientCondition,
+      Group: patientGroup,
       Study: patientStudy,
       site: patientSite,
       OutOfArea: patientOutOfArea,
@@ -170,18 +170,18 @@ const UserInfo = () => {
               <option value="Female">Female</option>
             </select>
 
-            <label htmlFor="condition">Case Condition:</label>
+            <label htmlFor="condition">Participant Group:</label>
             <select
               id="condition"
               name="condition"
-              value={patientCondition}
-              onChange={(e) => setPatientCondition(e.target.value)}
+              value={patientGroup}
+              onChange={(e) => setPatientGroup(e.target.value)}
             >
               <option value="" disabled selected>
-                -- Select Case --
+                -- Select Participant Group --
               </option>
               <option value="Control">Control</option>
-              <option value="Case">Case</option>
+              <option value="High Risk Infant">High Risk Infant</option>
             </select>
 
             <label>Patient's Studies:</label>
