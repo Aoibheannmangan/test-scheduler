@@ -1,14 +1,24 @@
 from flask import jsonify
 import requests
-from config import REDCAP_API_URL, API_TOKEN
+from config import REDCAP_API_URL, API_TOKEN  
 
 def get_data():
+    # Define the payload with the required parameters
     payload = {
-        'token': API_TOKEN,
-        'content': 'record',
-        'format': 'json',
-        'type': 'flat',
+    'token': API_TOKEN,
+    'content': 'record',
+    'format': 'json',
+    'type': 'flat'
     }
+    
+    # Make the POST request to the REDCap API
     response = requests.post(REDCAP_API_URL, data=payload)
-    data = response.json()
-    return jsonify(data)
+    
+    # Check if the request was successful
+    if response.status_code == 200:
+        data = response.json()  # Parse the JSON response
+        return jsonify(data)  # Return the data as a JSON response
+
+        
+    else:
+        return jsonify({'error': 'Failed to fetch data', 'status_code': response.status_code}), response.status_code
