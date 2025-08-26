@@ -4,7 +4,7 @@ import Test from "./test";
 function TestPage() {
   return (
     <div>
-      <h1>REDCap Records</h1>
+      <h1>REDCap API:</h1>
       <Test />
     </div>
   );

@@ -9,7 +9,13 @@ def get_data():
         'content': 'record',
         'format': 'json',
         'type': 'flat',
-        'fields[0]': 'record_id'
+        'fields[0]': 'record_id',
+        'fields[1]': 'nicu_ooa',
+        'fields[2]': 'nicu_participant_group',
+        'fields[3]': 'nicu_dob',
+        'fields[4]': 'nicu_dag', # Site
+        'fields[5]': 'nicu_email',# Contact
+        #'fields[6]': '',# Days early
     }
     
     # Make the POST request to the REDCap API
