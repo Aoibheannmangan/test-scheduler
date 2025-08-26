@@ -1,19 +1,19 @@
-import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
-import Appointments from './pages/AppointView';
-import UserInfo from './pages/info';
-import Navbar from './components/Navbar';
-import MyCalendar from './pages/Calendar';
-import Account from './pages/account'; 
-import LogIn from './pages/login';
-import SignUp from './pages/signup';
-import ForgotPsw from './components/forgotpsw'
-import ToggleAppointment from './pages/Appointment';
-import '@fontsource/sansation';
-
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import Appointments from "./pages/AppointView";
+import UserInfo from "./pages/info";
+import Navbar from "./components/Navbar";
+import MyCalendar from "./pages/Calendar";
+import Account from "./pages/account";
+import LogIn from "./pages/login";
+import SignUp from "./pages/signup";
+import ForgotPsw from "./components/forgotpsw";
+import ToggleAppointment from "./pages/Appointment";
+import "@fontsource/sansation";
+import TestPage from "./API-Test/testPage";
 
 function App() {
   const location = useLocation();
-  const hideNavbarPaths = ['/signup', '/login', '/forgotpsw'];
+  const hideNavbarPaths = ["/signup", "/login", "/forgotpsw"];
 
   return (
     <>
@@ -29,6 +29,7 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgotpsw" element={<ForgotPsw />} />
           <Route path="/toggleAppointment" element={<ToggleAppointment />} />
+          <Route path="/testpage" element={<TestPage />} />
         </Routes>
       </div>
     </>

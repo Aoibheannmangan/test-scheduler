@@ -5,10 +5,11 @@ from config import REDCAP_API_URL, API_TOKEN
 def get_data():
     # Define the payload with the required parameters
     payload = {
-    'token': API_TOKEN,
-    'content': 'record',
-    'format': 'json',
-    'type': 'flat'
+        'token': API_TOKEN,
+        'content': 'record',
+        'format': 'json',
+        'type': 'flat',
+        'fields[0]': 'record_id'
     }
     
     # Make the POST request to the REDCap API
