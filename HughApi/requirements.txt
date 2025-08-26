@@ -2,6 +2,8 @@
 
 Flask
 flask-core
-requests
+requests 
+flask_cors
+python-dotenv
 
 # Can be installed with -> C: pip install -r requirements.txt
