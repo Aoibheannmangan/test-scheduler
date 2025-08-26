@@ -18,15 +18,23 @@ REDCAP_API_TOKEN = os.getenv("REDCAP_API_TOKEN")
 def home():
     return "Hello World"
 
-@app.route('/api/redcap-demographics', methods=['Get'])
+@app.route('/api/redcap-demographics', methods=['GET'])
 def get_demographics():
     try:
         payload = {
             'token': REDCAP_API_TOKEN,
             'content': 'record',
-            'format': 'json',
             'action': 'export',
-            'forms': 'registration',
+            'format': 'json',
+            'type': 'flat',
+            'csvDelimiter': '',
+            'forms': 'Registration',
+            'rawOrLabel': 'raw',
+            'rawOrLabelHeaders': 'raw',
+            'exportCheckboxLabel': 'false',
+            'exportSurveyFields': 'false',
+            'exportDataAccessGroups': 'false',
+            'returnFormat': 'json'
         }
 
         response = requests.post(REDCAP_API_URL, data=payload)
@@ -42,3 +50,4 @@ def get_demographics():
     
 if __name__ == "__main__":
     app.run(debug=True)
+    
