@@ -25,7 +25,8 @@ def get_demographics():
             'token': REDCAP_API_TOKEN,
             'content': 'record',
             'format': 'json',
-            'fields': 'record_id'
+            'action': 'export',
+            'forms': 'registration',
         }
 
         response = requests.post(REDCAP_API_URL, data=payload)
