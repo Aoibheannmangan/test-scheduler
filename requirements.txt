@@ -1,0 +1,7 @@
+# Python packages needed to be installed for functionality with API
+
+Flask
+flask-core
+requests
+
+# Can be installed with -> C: pip install -r requirements.txt
