@@ -10,10 +10,10 @@ test('renders the forgot password form', () => {
             <ForgotPsw />
         </MemoryRouter>
     );
-    const staffIdInput = screen.getByRole('spinbutton', {name: /staff id/i});
+    const emailInput = screen.getByLabelText(/email/i);
     const passwordInput = screen.getByLabelText(/password/i);
     const submitButton = screen.getByRole('button', {name: /reset password/i});
-    expect(staffIdInput).toBeInTheDocument();
+    expect(emailInput).toBeInTheDocument();
     expect(passwordInput).toBeInTheDocument();
     expect(submitButton).toBeInTheDocument();
 });

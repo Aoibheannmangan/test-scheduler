@@ -4,7 +4,7 @@ import Alert from './Alert';
 import {FaUser, FaLock} from 'react-icons/fa'; 
 
 const ForgotPsw = () => { 
-    const [staffId, setStaffId] = useState(''); 
+    const [email, setEmail] = useState(''); 
     const [newPassword, setNewPassword] = useState(''); 
     const [alert, setAlert] = useState(null); 
     const [showPasswordMessage, setShowPasswordMessage] = useState(false); 
@@ -32,7 +32,7 @@ const ForgotPsw = () => {
     const handleReset = (e) => { 
         e.preventDefault(); 
         const users = JSON.parse(localStorage.getItem('users')) || []; 
-        const userIndex = users.findIndex(user => user.staffId === staffId); 
+        const userIndex = users.findIndex(user => user.email === email) 
 
         const isValid =  
             passwordValidations.lowercase && 
@@ -75,14 +75,14 @@ const ForgotPsw = () => {
                     <h1 className="title">Reset Password</h1> 
                     <div className="form-body"> 
                         <div className="input-group"> 
-                        <label htmlFor='staff id'>Staff ID</label> 
+                        <label htmlFor='email'>Email</label> 
                         <div className="input-icon-wrapper"> 
                             <FaUser className="icon" /> 
                             <input  
-                                type="number" 
-                                id='staff id'
-                                value={staffId} 
-                                onChange={(e) => setStaffId(e.target.value)} 
+                                type="email" 
+                                id='email'
+                                value={email} 
+                                onChange={(e) => setEmail(e.target.value)} 
                                 required 
                             /> 
                         </div> 

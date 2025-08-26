@@ -10,6 +10,7 @@ import ForgotPsw from './components/forgotpsw'
 import ToggleAppointment from './pages/Appointment';
 import '@fontsource/sansation';
 
+
 function App() {
   const location = useLocation();
   const hideNavbarPaths = ['/signup', '/login', '/forgotpsw'];
