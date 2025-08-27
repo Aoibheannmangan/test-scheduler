@@ -4,7 +4,7 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./test/reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
-import { DataProvider } from "./data/DataContext";
+import { DataProvider } from "./hooks/DataContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(

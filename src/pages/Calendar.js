@@ -23,6 +23,7 @@ import Alert from "../components/Alert";
 import PopUp from "../components/PopUp";
 import RebookingForm from "../components/RebookingForm";
 import { CiCalendar } from "react-icons/ci";
+import { useData } from "../hooks/DataContext";
 
 const MyCalendar = () => {
   const [view, setView] = useState("month");
@@ -35,7 +36,6 @@ const MyCalendar = () => {
   const [outsideWindowPopupOpen, setOutsideWindowPopupOpen] = useState(false);
   const [pendingAppointment, setPendingAppointment] = useState(null);
   const [eventToDelete, setEventToDelete] = useState(null);
-  const [userList, setUserList] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [editedInfo, setEditedInfo] = useState(null);
 
@@ -50,13 +50,36 @@ const MyCalendar = () => {
 
   const isFirstRender = useRef(true);
 
+  const { data: apiUserList, loading, error } = useData();
+  const [userList, setUserList] = useState([]);
+
   // Grab from local storage and in storedList
   useEffect(() => {
-    const storedList = localStorage.getItem("userInfoList");
-    if (storedList) {
-      setUserList(JSON.parse(storedList));
+    if (apiUserList && Array.isArray(apiUserList)) {
+      const mapped = apiUserList.map((rec) => ({
+        id: rec.record_id || "",
+        type: "window", // All are windows unless you have appointment info
+        visitNum: 1, // If you have visitNum, use it; otherwise default to 1
+        OutOfArea: rec.nicu_ooa === "1",
+        DOB: rec.nicu_dob || "",
+        site:
+          {
+            1: "CUMH",
+            2: "Coombe",
+            3: "Rotunda",
+          }[rec.nicu_dag] || "Unknown",
+        Study: ["AIMHIGH"],
+        DaysEarly: rec.nicu_days_early ? Number(rec.nicu_days_early) : 0,
+        Info: "", // Any aditional info field to import??**
+        notes: rec.nicu_email || "", // Use email as contact OR GET NUMBER?
+        email: rec.nicu_email || "",
+        participantGroup: rec.nicu_participant_group || "",
+      }));
+      setUserList(mapped);
+    } else {
+      setUserList([]);
     }
-  }, []);
+  }, [apiUserList]);
 
   // Open popup when clicking an event
   const handleSelectEvent = (event) => {
@@ -680,6 +703,11 @@ const MyCalendar = () => {
   }, [allEvents, selectedRooms]);
 
   //-------------------------------------------HTML------------------------------------------------------------------
+
+  // API loading or error message if encountered
+  if (loading) return <div>Loading appointments...</div>;
+  if (error) return <div>Error loading appointments: {error.message}</div>;
+
   return (
     <div className="CalBody">
       {alert && (

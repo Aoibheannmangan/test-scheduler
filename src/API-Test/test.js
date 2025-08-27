@@ -1,5 +1,5 @@
 import React from "react";
-import { useData } from "../data/DataContext";
+import { useData } from "../hooks/DataContext";
 
 const Test = () => {
   const { data, loading, error } = useData();

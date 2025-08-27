@@ -7,7 +7,7 @@ import {
   generateCoolPrimeAppointments,
   generateEDIAppointment,
 } from "../hooks/windowEventCalc";
-import { useData } from "../data/DataContext"; // <-- Import the API hook
+import { useData } from "../hooks/DataContext"; // <-- Import the API hook
 
 const Appointments = () => {
   const { data: apiUserList, loading, error } = useData();
@@ -29,7 +29,6 @@ const Appointments = () => {
             2: "Coombe",
             3: "Rotunda",
           }[rec.nicu_dag] || "Unknown",
-
         Study: ["AIMHIGH"],
         DaysEarly: rec.nicu_days_early ? Number(rec.nicu_days_early) : 0,
         Info: "", // Any aditional info field to import??**
