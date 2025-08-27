@@ -50,7 +50,7 @@ const MyCalendar = () => {
 
   const isFirstRender = useRef(true);
 
-  const { data: apiUserList, loading, error } = useData();
+  const { data: apiUserList, loading, error, updatePatient } = useData();
   const [userList, setUserList] = useState([]);
 
   // Grab from local storage and in storedList
@@ -578,24 +578,16 @@ const MyCalendar = () => {
       return;
     }
 
-    const updatedUsers = userList.map((p) => {
-      if (p.id === patientId) {
-        return {
-          ...p,
-          title: `${match.study}| ID: ${patientId}`,
-          type: "booked",
-          visitNum: p.visitNum + 1,
-          start: appointment.start.toISOString(), // Make an ISO object for correct parsing
-          end: appointment.end.toISOString(), // Make an ISO object for correct parsing
-          notes: appointment.notes,
-        };
-      }
-      return p;
+    // Context updater
+    updatePatient(patientId, {
+      title: `${match.Study}| ID: ${patientId}`,
+      type: "booked",
+      visitNum: (match.visitNum ?? 1) + 1,
+      start: appointment.start.toISOString(),
+      end: appointment.end.toISOString(),
+      notes: appointment.notes,
     });
 
-    // Set updated list to local storage
-    localStorage.setItem("userInfoList", JSON.stringify(updatedUsers));
-    setUserList(updatedUsers);
     // Tell user appointment is booked
     setAlert({ message: "Appointment booked successfully.", type: "success" });
 

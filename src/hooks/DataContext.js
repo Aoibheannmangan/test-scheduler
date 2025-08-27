@@ -34,9 +34,18 @@ export const DataProvider = ({ children }) => {
     fetchData();
   }, []);
 
+  // Function to update a patient (e.g., mark as booked)
+  const updatedPatient = (record_id, updates) => {
+    setData((prev) =>
+      prev.map((patient) =>
+        patient.record_id === record_id ? { ...patient, ...updates } : patient
+      )
+    );
+  };
+
   return (
     // Special component that can pass data down to any component wrapped inside
-    <DataContext.Provider value={{ data, loading, error }}>
+    <DataContext.Provider value={{ data, loading, error, updatedPatient }}>
       {children}
     </DataContext.Provider>
   );
