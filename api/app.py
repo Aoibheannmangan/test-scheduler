@@ -19,7 +19,7 @@ def home():
     return "Hello World"
 
 @app.route('/api/redcap-demographics', methods=['GET'])
-def get_demographics():
+def get_patdata():
     try:
         payload = {
             'token': REDCAP_API_TOKEN,
@@ -28,7 +28,8 @@ def get_demographics():
             'format': 'json',
             'type': 'flat',
             'csvDelimiter': '',
-            'forms': 'Registration',
+            'fields': 'record_id, nicu_dob, nicu_ooa, nicu_participant_group',
+            'forms': 'contact_info',
             'rawOrLabel': 'raw',
             'rawOrLabelHeaders': 'raw',
             'exportCheckboxLabel': 'false',

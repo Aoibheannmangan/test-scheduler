@@ -10,6 +10,7 @@ import ForgotPsw from "./components/forgotpsw";
 import ToggleAppointment from "./pages/Appointment";
 import "@fontsource/sansation";
 import TestPage from "./API-Test/testPage";
+import PatientInfo from "./pages/redcappatinfo";
 
 function App() {
   const location = useLocation();
@@ -30,6 +31,7 @@ function App() {
           <Route path="/forgotpsw" element={<ForgotPsw />} />
           <Route path="/toggleAppointment" element={<ToggleAppointment />} />
           <Route path="/testpage" element={<TestPage />} />
+          <Route path="/patientinfo" element={<PatientInfo />} />
         </Routes>
       </div>
     </>
