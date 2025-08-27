@@ -7,44 +7,41 @@ import {
   generateCoolPrimeAppointments,
   generateEDIAppointment,
 } from "../hooks/windowEventCalc";
+import { useData } from "../data/DataContext"; // <-- Import the API hook
 
 const Appointments = () => {
-  //Local storage grab
+  const { data: apiUserList, loading, error } = useData();
   const [userList, setUserList] = useState([]);
 
   useEffect(() => {
-    const storedList = localStorage.getItem("userInfoList");
-    if (storedList) {
-      try {
-        const parsedList = JSON.parse(storedList);
+    // Debug line -> console.log("API user list received:", apiUserList);
+    if (apiUserList && Array.isArray(apiUserList)) {
+      // Map API fields to appointment fields
+      const mapped = apiUserList.map((rec) => ({
+        id: rec.record_id || "",
+        type: "window", // All are windows unless you have appointment info
+        visitNum: 1, // If you have visitNum, use it; otherwise default to 1
+        OutOfArea: rec.nicu_ooa === "1",
+        DOB: rec.nicu_dob || "",
+        site:
+          {
+            1: "CUMH",
+            2: "Coombe",
+            3: "Rotunda",
+          }[rec.nicu_dag] || "Unknown",
 
-        // Hydrate dates only for booked events
-        const hydrated = parsedList.map((event) => {
-          if (event.type === "booked") {
-            const startDate = new Date(event.start);
-            const endDate = new Date(event.end);
-
-            if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-              console.error("Invalid date in booked event:", event);
-              return { ...event, start: null, end: null }; // Skip invalid dates
-            }
-            return {
-              ...event,
-              start: new Date(event.start).toISOString(), //force to ISO/ UTC format
-              end: new Date(event.end).toISOString(), //force to ISO/ UTC format
-            };
-          }
-          return event;
-        });
-        setUserList(hydrated);
-      } catch (error) {
-        console.error("Failed to parse userInfoList from storage: ", error);
-        setUserList([]);
-      }
+        Study: ["AIMHIGH"],
+        DaysEarly: rec.nicu_days_early ? Number(rec.nicu_days_early) : 0,
+        Info: "", // Any aditional info field to import??**
+        notes: rec.nicu_email || "", // Use email as contact OR GET NUMBER?
+        email: rec.nicu_email || "",
+        participantGroup: rec.nicu_participant_group || "",
+      }));
+      setUserList(mapped);
     } else {
       setUserList([]);
     }
-  }, []);
+  }, [apiUserList]);
 
   // make a today and month away var for distance indicators
   const today = new Date();
@@ -95,6 +92,9 @@ const Appointments = () => {
     filteredAppointments,
   } = useAppointmentFilters(userList);
   // ---------------------------------HTML--------------------------------------
+  if (loading) return <div>Loading appointments...</div>;
+  if (error) return <div>Error loading appointments: {error.message}</div>;
+
   return (
     <div className="App">
       <h1>Visit Overview</h1>
@@ -233,8 +233,9 @@ const Appointments = () => {
             {/*Main Info Body when expanded*/}
             {expandedIds[event.id] && (
               <div className="info">
+                {/* NO NAME FIELD
                 <strong>Name:</strong> {event.Name}
-                <br />
+                <br />*/}
                 <strong>Date of Birth: </strong>
                 {/*Format date of birth*/}
                 {new Date(event.DOB).toLocaleDateString(undefined, {
@@ -396,8 +397,7 @@ const Appointments = () => {
                   })()}
                 {/*Additional Notes Dropdown*/}
                 {(() => {
-                  const noteContent =
-                    event.type === "booked" ? event.notes : event.Info; // If the event is booked switch between notes (appointment notes) and Info (Info made at regestration... will update between visits)
+                  const noteContent = event.email; // Always show email as contact
 
                   // Only show the section if there is actual content
                   if (!noteContent || noteContent.trim() === "") return null;
@@ -416,7 +416,7 @@ const Appointments = () => {
                           }))
                         }
                       >
-                        Additional Notes: {expandedNotes[toggleKey] ? "-" : "+"}
+                        Contact: {expandedNotes[toggleKey] ? "-" : "+"}
                       </label>
 
                       {expandedNotes[toggleKey] && (

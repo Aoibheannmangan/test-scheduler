@@ -9,12 +9,12 @@ def get_data():
         'content': 'record',
         'format': 'json',
         'type': 'flat',
-        'fields[0]': 'record_id',
-        'fields[1]': 'nicu_ooa',
-        'fields[2]': 'nicu_participant_group',
-        'fields[3]': 'nicu_dob',
+        'fields[0]': 'record_id', # Record id
+        'fields[1]': 'nicu_ooa', # Kildare?
+        'fields[2]': 'nicu_participant_group', # Part group
+        'fields[3]': 'nicu_dob', # Dat of birth
         'fields[4]': 'nicu_dag', # Site
-        'fields[5]': 'nicu_email',# Contact
+        'fields[5]': 'nicu_email',# Contact email
         'fields[6]': 'nicu_days_early',# Days early
     }
     
