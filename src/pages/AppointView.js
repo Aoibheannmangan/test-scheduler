@@ -10,16 +10,16 @@ import {
 import { useData } from "../hooks/DataContext"; // <-- Import the API hook
 
 const Appointments = () => {
-  const { data: apiUserList, loading, error } = useData();
+  const { data: contextUserList, loading, error } = useData();
   const [userList, setUserList] = useState([]);
 
   useEffect(() => {
     // Debug line -> console.log("API user list received:", apiUserList);
-    if (apiUserList && Array.isArray(apiUserList)) {
+    if (userList && Array.isArray(contextUserList)) {
       // Map API fields to appointment fields
-      const mapped = apiUserList.map((rec) => ({
+      const mapped = contextUserList.map((rec) => ({
         id: rec.record_id || "",
-        type: "window", // All are windows unless you have appointment info
+        type: rec.type || "window", // All are windows unless you have appointment info
         visitNum: 1, // If you have visitNum, use it; otherwise default to 1
         OutOfArea: rec.nicu_ooa === "1",
         DOB: rec.nicu_dob || "",
@@ -40,7 +40,7 @@ const Appointments = () => {
     } else {
       setUserList([]);
     }
-  }, [apiUserList]);
+  }, [contextUserList]);
 
   // make a today and month away var for distance indicators
   const today = new Date();

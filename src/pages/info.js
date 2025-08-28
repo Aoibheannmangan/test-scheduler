@@ -5,7 +5,6 @@ import Alert from "../components/Alert";
 import PopUp from "../components/PopUp";
 
 const UserInfo = () => {
-  const [patientName, setPatientName] = useState("");
   const [patientDOB, setPatientDOB] = useState("");
   const [patientEarly, setPatientEarly] = useState("");
   const [patientSex, setPatientSex] = useState("");
@@ -18,7 +17,6 @@ const UserInfo = () => {
   const [editId, setEditId] = useState(null);
   const [windowType, setWindowType] = useState("");
   const [visitNum, setVisitNum] = useState(Number);
-  const [patientRoom, setRoom] = useState("");
   const [patientNotes, setNotes] = useState("");
 
   const [popupOpen, setPopupOpen] = useState(false);
@@ -31,7 +29,6 @@ const UserInfo = () => {
     const editData = localStorage.getItem("editPatient");
     if (editData) {
       const patient = JSON.parse(editData);
-      setPatientName(patient.Name);
       setPatientDOB(patient.DOB);
       setPatientEarly(patient.DaysEarly);
       setPatientSex(patient.Sex);
@@ -44,35 +41,31 @@ const UserInfo = () => {
       setIsEditing(true);
       setVisitNum(patient.visitNum);
       setWindowType(patient.type);
-      setRoom(patient.room);
       setNotes(patientNotes);
     }
   }, []);
 
-  const generatePatientID = () => {
-    const prefix = "230"; //Will be done in the future to change depending on the site
-    const patients = JSON.parse(localStorage.getItem("userInfoList")) || [];
-    const numbers = patients
-      .map((p) => p.id)
-      .filter((id) => id && id.startsWith(prefix + "-"))
-      .map((id) => parseInt(id.split("-")[1], 10))
-      .filter((num) => !isNaN(num));
-    const maxNumber = numbers.length > 0 ? Math.max(...numbers) : 0;
-    const newNumber = maxNumber + 1;
-
-    return `${prefix}-${String(newNumber).padStart(3, "0")}`;
-  };
+  //  const generatePatientID = () => {
+  //    const prefix = "230"; //Will be done in the future to change depending on the site
+  //    const patients = JSON.parse(localStorage.getItem("userInfoList")) || [];
+  //    const numbers = patients
+  //      .map((p) => p.id)
+  //      .filter((id) => id && id.startsWith(prefix + "-"))
+  //      .map((id) => parseInt(id.split("-")[1], 10))
+  //      .filter((num) => !isNaN(num));
+  //    const maxNumber = numbers.length > 0 ? Math.max(...numbers) : 0;
+  //    const newNumber = maxNumber + 1;
+  //
+  //    return `${prefix}-${String(newNumber).padStart(3, "0")}`;
+  //  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const id = isEditing ? editId : generatePatientID();
     const type = isEditing ? windowType : "window";
     const visit = isEditing ? visitNum : 1;
 
     const newPatient = {
-      id,
-      Name: patientName,
       DOB: patientDOB,
       DaysEarly: patientEarly,
       Sex: patientSex,
@@ -83,7 +76,6 @@ const UserInfo = () => {
       Info: patientInfo,
       type,
       visitNum: visit,
-      room: patientRoom,
       notes: patientNotes,
     };
 
@@ -126,17 +118,6 @@ const UserInfo = () => {
       <fieldset>
         <div className="form-border">
           <form onSubmit={handleSubmit}>
-            <label htmlFor="name">Patient Name:</label>
-            <input
-              type="text"
-              id="name"
-              value={patientName}
-              onChange={(e) => setPatientName(e.target.value)}
-              placeholder="Enter Patient Name"
-              autoComplete="off"
-              required
-            />
-
             <label htmlFor="patientDOB">Patient Date of Birth:</label>
             <input
               type="date"

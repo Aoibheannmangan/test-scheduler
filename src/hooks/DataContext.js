@@ -54,7 +54,13 @@ export const DataProvider = ({ children }) => {
   return (
     // Special component that can pass data down to any component wrapped inside
     <DataContext.Provider
-      value={{ data, loading, error, updatedPatient: updatedPatient }}
+      value={{
+        data,
+        loading,
+        error,
+        updatePatient: updatedPatient,
+        editPatient,
+      }}
     >
       {children}
     </DataContext.Provider>

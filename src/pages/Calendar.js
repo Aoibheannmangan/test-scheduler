@@ -541,8 +541,6 @@ const MyCalendar = () => {
       notes: appointment.notes,
     };
 
-    console.log(fullAppointment);
-
     // Update bookedEvents state including the new appointment
     const existingBooked = bookedEvents;
     const updatedBooked = [...existingBooked, fullAppointment];
@@ -700,8 +698,6 @@ const MyCalendar = () => {
   if (loading) return <div>Loading appointments...</div>;
   if (error) return <div>Error loading appointments: {error.message}</div>;
 
-  console.log("userList from context:", userList);
-
   return (
     <div className="CalBody">
       {alert && (
@@ -794,9 +790,7 @@ const MyCalendar = () => {
                       {" "}
                       Block Date
                     </button>
-                    <button  className="block-button">
-                      Show blocked dates
-                    </button>
+                    <button className="block-button">Show blocked dates</button>
                   </div>
                 </div>
               </label>
@@ -805,10 +799,10 @@ const MyCalendar = () => {
                 <div className="patientInfo">
                   <h4>Patient Info</h4>
                   <p>
-                    <b>Name:</b> {currentPatient.Name}
+                    <b>ID:</b> {currentPatient.id}
                   </p>
                   <p>
-                    <b>ID:</b> {currentPatient.id}
+                    <b>Visit Number:</b> {currentPatient.visitNum}
                   </p>
                   <p>
                     <b>DOB:</b>{" "}
