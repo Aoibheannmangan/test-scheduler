@@ -52,7 +52,7 @@
   width: 100%;
   padding: 0.8rem;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 8px;
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
@@ -117,7 +117,6 @@
 }
 
 .input-icon-wrapper input {
-  border: none;
   outline: none;
   flex: 1;
   font-size: 1rem;
