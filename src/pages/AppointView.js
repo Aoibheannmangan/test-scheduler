@@ -20,7 +20,7 @@ const Appointments = () => {
       const mapped = contextUserList.map((rec) => ({
         id: rec.record_id || "",
         type: rec.type || "window", // All are windows unless you have appointment info
-        visitNum: 1, // If you have visitNum, use it; otherwise default to 1
+        visitNum: 1, // Defaults as 1
         OutOfArea: rec.nicu_ooa === "1",
         DOB: rec.nicu_dob || "",
         site:

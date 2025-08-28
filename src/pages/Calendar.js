@@ -45,8 +45,12 @@ const MyCalendar = () => {
   const [rebookPopupOpen, setRebookPopupOpen] = useState(false);
   const [eventToRebook, setEventToRebook] = useState(null);
 
-  const [blockedDates, setBlockedDates] = useState([]);
+  const [blockedDates, setBlockedDates] = useState(() => {
+    const stored = localStorage.getItem("blockedDates");
+    return stored ? JSON.parse(stored) : [];
+  });
   const [selectedDate, setSelectedDate] = useState("");
+  const [showBlockedDates, setShowBlockedDates] = useState(false);
 
   const isFirstRender = useRef(true);
 
@@ -80,6 +84,17 @@ const MyCalendar = () => {
       setUserList([]);
     }
   }, [apiUserList]);
+
+  useEffect(() => {
+    const storedDates = localStorage.getItem("blockedDates");
+    if (storedDates) {
+      setBlockedDates(JSON.parse(storedDates));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("blockedDates", JSON.stringify(blockedDates));
+  }, [blockedDates]);
 
   // Open popup when clicking an event
   const handleSelectEvent = (event) => {
@@ -116,7 +131,9 @@ const MyCalendar = () => {
           moment(evt.start).isSame(startOfDay, "day")
         );
         if (!alreadyBlocked) {
-          return [...prev, blockedEvent];
+          const updated = [...prev, blockedEvent];
+          localStorage.setItem("blockedDates", JSON.stringify(updated));
+          return updated;
         }
         return prev;
       });
@@ -128,6 +145,10 @@ const MyCalendar = () => {
     } else {
       setAlert({ message: "Please select a date to block", type: "error" });
     }
+  };
+
+  const handleShowBlockedDates = () => {
+    setShowBlockedDates((prev) => !prev);
   };
 
   const handleDateChange = (event) => {
@@ -790,8 +811,22 @@ const MyCalendar = () => {
                       {" "}
                       Block Date
                     </button>
-                    <button className="block-button">Show blocked dates</button>
+                    <button
+                      onClick={handleShowBlockedDates}
+                      className="block-button"
+                    >
+                      {showBlockedDates ? "Hide" : "Show"} blocked dates
+                    </button>
                   </div>
+                  {showBlockedDates && (
+                    <ul>
+                      {blockedDates.map((date, index) => (
+                        <li key={index}>
+                          {moment(date.start).format("YYYY-MM-DD")}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               </label>
               {/**DISPLAYS PATIENT WHEN SEARCHED IN WINDOW*/}
