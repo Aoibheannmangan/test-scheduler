@@ -44,7 +44,7 @@ const Account = () => {
             1: "High Risk Infant",
             2: "Control",
           }[rec.nicu_participant_group] || "Unknown",
-        Study: [rec.Study] || ["AIMHIGH"], // No info on this (Depends on API eg: this is from an AIMHIGH REDCap)
+        Study: rec.Study || ["AIMHIGH"], // No info on this (Depends on API eg: this is from an AIMHIGH REDCap)
         notes: rec.notes || rec.nicu_email || "", // No info on this
         Info: rec.Info || "", // No info on this
         room: rec.room || "", // No info on this (room requirements??)
