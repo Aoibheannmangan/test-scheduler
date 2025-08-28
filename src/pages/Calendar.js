@@ -794,6 +794,9 @@ const MyCalendar = () => {
                       {" "}
                       Block Date
                     </button>
+                    <button  className="block-button">
+                      Show blocked dates
+                    </button>
                   </div>
                 </div>
               </label>
