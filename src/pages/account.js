@@ -10,7 +10,6 @@ const Account = () => {
   const navigate = useNavigate();
 
   const [alert, setAlert] = useState(null);
-  const { editPatient } = useData();
   const [popupOpen, setPopupOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
 
