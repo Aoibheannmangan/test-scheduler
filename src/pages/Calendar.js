@@ -700,6 +700,8 @@ const MyCalendar = () => {
   if (loading) return <div>Loading appointments...</div>;
   if (error) return <div>Error loading appointments: {error.message}</div>;
 
+  console.log("userList from context:", userList);
+
   return (
     <div className="CalBody">
       {alert && (

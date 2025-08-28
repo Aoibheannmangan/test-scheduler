@@ -43,9 +43,19 @@ export const DataProvider = ({ children }) => {
     );
   };
 
+  const editPatient = (record_id, updates) => {
+    setData((prev) =>
+      prev.map((patient) =>
+        patient.record_id === record_id ? { ...patient, ...updates } : patient
+      )
+    );
+  };
+
   return (
     // Special component that can pass data down to any component wrapped inside
-    <DataContext.Provider value={{ data, loading, error, updatedPatient }}>
+    <DataContext.Provider
+      value={{ data, loading, error, updatedPatient: updatedPatient }}
+    >
       {children}
     </DataContext.Provider>
   );

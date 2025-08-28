@@ -1,26 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "./account.css";
 import { useNavigate } from "react-router-dom";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import Alert from "../components/Alert";
 import PopUp from "../components/PopUp";
+import { useData } from "../hooks/DataContext"; // <-- Import context
 
 const Account = () => {
-  const [userList, setUserList] = useState([]);
   const navigate = useNavigate();
 
   const [alert, setAlert] = useState(null);
-
+  const { editPatient } = useData();
   const [popupOpen, setPopupOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
 
-  useEffect(() => {
-    const storedList = localStorage.getItem("userInfoList");
-    if (storedList) {
-      setUserList(JSON.parse(storedList));
-    }
-  }, []);
+  // Use context for patient list
+  const { data: userList, loading, error, updatedPatient } = useData();
 
+  // Handle delete (soft delete: mark as deleted, or remove from context if you want)
   const handleDelete = (id) => {
     setSelectedUserId(id);
     setPopupOpen(true);
@@ -32,9 +29,8 @@ const Account = () => {
     setPopupOpen(false);
 
     setTimeout(() => {
-      const updatedList = userList.filter((user) => user.id !== selectedUserId);
-      setUserList(updatedList);
-      localStorage.setItem("userInfoList", JSON.stringify(updatedList));
+      // Remove patient from context (or mark as deleted)
+      updatedPatient(selectedUserId, { deleted: true }); // You can filter out deleted patients below
       setAlert(null);
       setSelectedUserId(null);
     }, 1000);
@@ -45,7 +41,18 @@ const Account = () => {
     navigate("/info");
   };
 
-  if (userList.length === 0) {
+  //------------------------------------------------ HTML ------------------------------------------------------------
+
+  // API loading or error message if encountered
+  if (loading) return <div>Loading appointments...</div>;
+  if (error) return <div>Error loading appointments: {error.message}</div>;
+
+  // Filter out deleted patients if using soft delete
+  const visibleUsers = Array.isArray(userList)
+    ? userList.filter((user) => !user.deleted)
+    : [];
+
+  if (visibleUsers.length === 0) {
     return (
       <div>
         <p className="small-text">
@@ -71,12 +78,12 @@ const Account = () => {
       <a href="info" className="edit">
         Add Patients
       </a>
-      {userList.map((user) => (
-        <div className="display" key={user.id}>
+      {visibleUsers.map((user) => (
+        <div className="display" key={user.id || user.record_id}>
           <div className="card-header">
             <h3>
               <strong>Id: </strong>
-              {user.id}
+              {user.id || user.record_id}
             </h3>
             <h3>
               <strong>Name: </strong>
@@ -86,7 +93,10 @@ const Account = () => {
               <button onClick={() => handleEdit(user)} title="Edit">
                 <FaEdit />
               </button>
-              <button onClick={() => handleDelete(user.id)} title="Delete">
+              <button
+                onClick={() => handleDelete(user.id || user.record_id)}
+                title="Delete"
+              >
                 <FaTrash />
               </button>
             </div>

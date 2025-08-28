@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "./info.css";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Alert from "../components/Alert";
 import PopUp from "../components/PopUp";
+import { useData } from "../hooks/DataContext";
 
 const UserInfo = () => {
   const [patientName, setPatientName] = useState("");
@@ -27,27 +28,34 @@ const UserInfo = () => {
 
   const [alert, setAlert] = useState(null);
 
+  const { data: userList, editPatient } = useData();
+  const location = useLocation();
+
   useEffect(() => {
-    const editData = localStorage.getItem("editPatient");
-    if (editData) {
-      const patient = JSON.parse(editData);
-      setPatientName(patient.Name);
-      setPatientDOB(patient.DOB);
-      setPatientEarly(patient.DaysEarly);
-      setPatientSex(patient.Sex);
-      setPatientGroup(patient.Group);
-      setPatientStudy(patient.Study);
-      setPatientSite(patient.site);
-      setPatientOutOfArea(Boolean(patient.OutOfArea));
-      setPatientInfo(patient.Info);
-      setEditId(patient.id);
-      setIsEditing(true);
-      setVisitNum(patient.visitNum);
-      setWindowType(patient.type);
-      setRoom(patient.room);
-      setNotes(patientNotes);
+    const record_id = location.state?.record_id;
+    if (record_id) {
+      const patient = userList.find(
+        (p) => p.id === record_id || p.record_id === record_id
+      );
+      if (patient) {
+        setPatientName(patient.Name);
+        setPatientDOB(patient.DOB);
+        setPatientEarly(patient.DaysEarly);
+        setPatientSex(patient.Sex);
+        setPatientGroup(patient.Group);
+        setPatientStudy(patient.Study);
+        setPatientSite(patient.site);
+        setPatientOutOfArea(Boolean(patient.OutOfArea));
+        setPatientInfo(patient.Info);
+        setEditId(patient.id);
+        setIsEditing(true);
+        setVisitNum(patient.visitNum);
+        setWindowType(patient.type);
+        setRoom(patient.room);
+        setNotes(patientNotes);
+      }
     }
-  }, []);
+  }, [userList, location.state]);
 
   const generatePatientID = () => {
     const prefix = "230"; //Will be done in the future to change depending on the site
