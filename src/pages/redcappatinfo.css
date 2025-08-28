@@ -1,0 +1,14 @@
+body {
+    align-items: center;
+}
+
+table {
+    align-self: center;
+    border: 1px solid;
+    width: 75%;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd
+}
