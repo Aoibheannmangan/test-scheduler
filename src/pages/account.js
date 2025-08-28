@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./account.css";
 import { useNavigate } from "react-router-dom";
 import { FaEdit, FaTrash } from "react-icons/fa";
@@ -15,9 +15,49 @@ const Account = () => {
   const [selectedUserId, setSelectedUserId] = useState(null);
 
   // Use context for patient list
-  const { data: userList, loading, error, updatedPatient } = useData();
+  const { data: apiUserList, loading, error, updatedPatient } = useData();
+  const [userList, setUserList] = useState([]);
 
-  // Handle delete (soft delete: mark as deleted, or remove from context if you want)
+  // Map API fields to appointment fields (same as AppointView)
+  useEffect(() => {
+    if (apiUserList && Array.isArray(apiUserList)) {
+      const mapped = apiUserList.map((rec) => ({
+        id: rec.record_id || "",
+        visitNum: rec.visitNum || 1,
+        OutOfArea:
+          rec.OutOfArea !== undefined ? rec.OutOfArea : rec.nicu_ooa === "1",
+        DOB: rec.DOB || rec.nicu_dob || "",
+        Sex:
+          {
+            1: "Male",
+            2: "Female",
+          }[rec.nicu_sex] || "Unknown",
+        site:
+          {
+            1: "CUMH",
+            2: "Coombe",
+            3: "Rotunda",
+          }[rec.nicu_dag] || "Unknown",
+        DaysEarly: rec.nicu_days_early ? Number(rec.nicu_days_early) : 0,
+        participantGroup:
+          {
+            1: "High Risk Infant",
+            2: "Control",
+          }[rec.nicu_participant_group] || "Unknown",
+        Study: rec.Study || ["AIMHIGH"], // No info on this (Depends on API eg: this is from an AIMHIGH REDCap)
+        notes: rec.notes || rec.nicu_email || "", // No info on this
+        Info: rec.Info || "", // No info on this
+        room: rec.room || "", // No info on this (room requirements??)
+      }));
+      setUserList(mapped);
+    } else {
+      setUserList([]);
+    }
+  }, [apiUserList]);
+
+  console.log(apiUserList);
+
+  // Handle delete (soft delete: mark as deleted)
   const handleDelete = (id) => {
     setSelectedUserId(id);
     setPopupOpen(true);
@@ -85,10 +125,6 @@ const Account = () => {
               <strong>Id: </strong>
               {user.id || user.record_id}
             </h3>
-            <h3>
-              <strong>Name: </strong>
-              {user.Name}
-            </h3>
             <div className="icon-actions">
               <button onClick={() => handleEdit(user)} title="Edit">
                 <FaEdit />
@@ -113,7 +149,7 @@ const Account = () => {
               <strong>Sex:</strong> {user.Sex}
             </li>
             <li>
-              <strong>Group:</strong> {user.Group}
+              <strong>Group:</strong> {user.participantGroup}
             </li>
             <li>
               <strong>Study:</strong>{" "}

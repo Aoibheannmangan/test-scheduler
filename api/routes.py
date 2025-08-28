@@ -16,6 +16,7 @@ def get_data():
         'fields[4]': 'nicu_dag', # Site
         'fields[5]': 'nicu_email',# Contact email
         'fields[6]': 'nicu_days_early',# Days early
+        'fields[7]': 'nicu_sex',# Sex of patient
     }
     
     # Make the POST request to the REDCap API
