@@ -752,11 +752,11 @@ const MyCalendar = () => {
             event: ({ event }) => (
               <div>
                 {event.title}
-                <div style={{ fontSize: 12 }}>
+                <div style={{ fontSize: 14 }}>
                   <strong>{new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</strong> -
                   <strong>{new Date(event.end).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}</strong>
                 </div>
-                <div style={{ fontSize: 10 }}>
+                <div style={{ fontSize: 12 }}>
                   <strong>{event.notes}</strong>
                 </div>{" "}
                 {/* Show description here */}
