@@ -217,7 +217,7 @@ const UserInfo = () => {
               <option value="" disabled selected>
                 -- Select Site --
               </option>
-              <option value="Cork">Cork</option>
+              <option value="CUMH">Cork</option>
               <option value="Coombe">Coombe</option>
               <option value="NMH">NMH</option>
               <option value="Rotunda">Rotunda</option>
