@@ -44,6 +44,8 @@ const Account = () => {
             1: "High Risk Infant",
             2: "Control",
           }[rec.nicu_participant_group] || "Unknown",
+        gestWeeks: rec.nicu_gest_age_w,
+        gestDays: rec.nicu_gest_age_d,
         Study: rec.Study || ["AIMHIGH"], // No info on this (Depends on API eg: this is from an AIMHIGH REDCap)
         notes: rec.notes || rec.nicu_email || "", // No info on this
         Info: rec.Info || "", // No info on this
@@ -157,6 +159,11 @@ const Account = () => {
             </li>
             <li>
               <strong>Site:</strong> {user.site}
+            </li>
+            <li>
+              <strong>Gestational Age:</strong> {user.gestWeeks} {"Weeks "}
+              {user.gestDays}
+              {" Days"}
             </li>
             {/* Only show this li if Info is not empty */}
             {user.Info && user.Info.trim() !== "" && (
