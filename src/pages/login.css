@@ -1,11 +1,12 @@
 .login-container {
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
-  padding: 1rem;
+  align-items: flex-start; 
+  min-height: 100vh; 
+  padding: 2rem 1rem;
   background: linear-gradient(to right, #663e6e, #b573c2, #c794d1);
 }
+
 
 
 .form-wrapper {
@@ -86,7 +87,6 @@
   font-size: 1.2rem;
 }
 
-
 .input-icon-wrapper input {
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -98,6 +98,10 @@
   transition: border-color 0.3s, box-shadow 0.3s;
 }
 
+.input-icon-wrapper input:focus {
+  border-color: #8d5a97;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.25);
+}
 
 
 
