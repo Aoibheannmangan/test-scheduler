@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
-import "./signup.css";
+import "./login.css";
 import { useNavigate } from "react-router-dom";
 import { FaUser, FaLock, FaEnvelope } from "react-icons/fa";
 import Alert from "../components/Alert";
+
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
   const [staffId, setStaffId] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
+
 
   const [showPasswordMessage, setShowPasswordMessage] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -19,13 +21,17 @@ const SignUp = () => {
     length: false,
   });
 
+
   const [showAlert, setShowAlert] = useState(true);
   const [alert, setAlert] = useState(null);
 
+
   const [capsLockOn, setCapsLockOn] = useState(false);
+
 
   const passwordInputRef = useRef(null);
   const navigate = useNavigate();
+
 
   //Checking if caps lock is on
   useEffect(() => {
@@ -37,10 +43,12 @@ const SignUp = () => {
       }
     };
 
+
     const input = passwordInputRef.current;
     if (input) {
       input.addEventListener("keyup", handleKeyUp);
     }
+
 
     return () => {
       if (input) {
@@ -49,10 +57,12 @@ const SignUp = () => {
     };
   }, []);
 
+
   // Password Validation for making sure the password has the different requirements
   const handlePasswordChange = (e) => {
     const value = e.target.value;
     setPassword(value);
+
 
     setPasswordValidations({
       // Password needs a lowercase letter, an uppercase letter, a number and needs to be longer than eight characters
@@ -63,11 +73,13 @@ const SignUp = () => {
     });
   };
 
+
   //Checking if email is already registered
   const isEmailRegistered = (email) => {
     const users = JSON.parse(localStorage.getItem("users")) || [];
     return users.some((user) => user.email === email);
   };
+
 
   //Checking if ID is already in use
   const isIdInUse = (staffId) => {
@@ -75,8 +87,10 @@ const SignUp = () => {
     return users.some((user) => user.staffId === staffId);
   };
 
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
 
     //Makes sure the password is valid
     const isValid =
@@ -84,6 +98,7 @@ const SignUp = () => {
       passwordValidations.uppercase &&
       passwordValidations.number &&
       passwordValidations.length;
+
 
     //Alert if it's not valid and make them try again
     if (!isValid) {
@@ -95,6 +110,7 @@ const SignUp = () => {
       return;
     }
 
+
     // For email validation, makes sure it ends in @ucc.ie
     const emailPattern = /^[a-zA-Z0-9._+-]+@ucc\.ie$/;
     if (!emailPattern.test(email)) {
@@ -105,16 +121,19 @@ const SignUp = () => {
       return;
     }
 
+
     // Alerts the user if the email/ID are already in use
     if (isEmailRegistered(email)) {
       setAlert({ message: "Email is already registered", type: "info" });
       return;
     }
 
+
     if (isIdInUse(staffId)) {
       setAlert({ message: "ID is already registered", type: "info" });
       return;
     }
+
 
     // For ID validation, makes sure it is exactly 5 numbers long
     const staffIdPattern = /^\d{5}$/;
@@ -122,6 +141,7 @@ const SignUp = () => {
       setAlert({ message: "Invalid Staff ID Format", type: "warning" });
       return;
     }
+
 
     // Makes sure password and initial password works
     if (password !== repeatPassword) {
@@ -132,15 +152,18 @@ const SignUp = () => {
       return;
     }
 
+
     const userData = {
       email,
       staffId,
       password,
     };
 
+
     const users = JSON.parse(localStorage.getItem("users")) || [];
     users.push(userData);
     localStorage.setItem("users", JSON.stringify(users));
+
 
     // Loading only if login is successful
     setIsSubmitting(true);
@@ -151,10 +174,11 @@ const SignUp = () => {
     }, 2000);
   };
 
+
   return (
-    <div className="signup-container">
+    <div className="login-container">
       <div className="form-wrapper">
-        <div className="signup-card">
+        <div className="login-card">
           {alert && (
             <Alert
               role="alert"
@@ -188,6 +212,7 @@ const SignUp = () => {
                 </div>
               </div>
 
+
               {/* User inputs staff ID */}
               <div className="input-group">
                 <label htmlFor="staffId">
@@ -206,6 +231,7 @@ const SignUp = () => {
                   />
                 </div>
               </div>
+
 
               {/* User inputs password */}
               <div className="input-group">
@@ -229,6 +255,7 @@ const SignUp = () => {
                 </div>
               </div>
 
+
               {/* User re-enters password */}
               <div className="input-group">
                 <label htmlFor="passwordRepeat">
@@ -246,6 +273,7 @@ const SignUp = () => {
                     required
                   />
 
+
                   {/* Caplocks Warning */}
                   {capsLockOn && (
                     <div
@@ -258,11 +286,12 @@ const SignUp = () => {
                 </div>
               </div>
 
+
               <div className="clearfix">
                 <div className="button-row">
                   <button
                     type="submit"
-                    className="signup-button"
+                    className="login-button"
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? <div className="spinner"></div> : "Sign Up"}
@@ -302,5 +331,6 @@ const SignUp = () => {
     </div>
   );
 };
+
 
 export default SignUp;
