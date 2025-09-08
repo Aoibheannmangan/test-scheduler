@@ -1,6 +1,6 @@
 import React from "react";
 import "@testing-library/jest-dom";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import UserInfo from "../pages/info";
 
@@ -54,4 +54,47 @@ test("allows user to fill and submit the form", () => {
   fireEvent.click(yesRadio);
   fireEvent.change(infoInput, { target: { value: "Additional notes" } });
   fireEvent.click(submitButton);
+});
+
+test('edits an existing patient and updates localStorage', async () => {
+  const existingPatient = {
+    id: '230-001',
+    Name: 'Felix',
+    DOB: '2025-08-29',
+    DaysEarly: '3',
+    Sex: 'Male',
+    Condition: 'Control',
+    Study: ['EDI'],
+    site: 'CUMH',
+    OutOfArea: false,
+    Info: 'Some info',
+    type: 'window',
+    visitNum: 1,
+    room: '101',
+    notes: 'Initial Notes',
+  };
+
+  localStorage.setItem('editPatient', JSON.stringify(existingPatient));
+  localStorage.setItem('userInfoList', JSON.stringify([existingPatient]));
+
+  render(
+    <MemoryRouter>
+      <UserInfo />
+    </MemoryRouter>
+  );
+
+  await waitFor(() => {
+    expect(screen.getByDisplayValue('Felix')).toBeInTheDocument();
+  });
+
+  const nameInput = screen.getByDisplayValue('Felix');
+  fireEvent.change(nameInput, { target: { value: 'Chris' } });
+
+  const saveButton = screen.getByRole('button', { name: /save|submit/i });
+  fireEvent.click(saveButton);
+
+  await waitFor(() => {
+    const updatedList = JSON.parse(localStorage.getItem('userInfoList'));
+    expect(screen.getByText(/successfully updated/i)).toBeInTheDocument();
+  });
 });

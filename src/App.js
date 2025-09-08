@@ -9,15 +9,15 @@ import SignUp from "./pages/signup";
 import ForgotPsw from "./components/forgotpsw";
 import ToggleAppointment from "./pages/Appointment";
 import "@fontsource/sansation";
-import TestPage from "./API-Test/testPage";
-
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 function App() {
   const location = useLocation();
   const hideNavbarPaths = ["/signup", "/login", "/forgotpsw"];
 
   return (
-    <>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
       {!hideNavbarPaths.includes(location.pathname) && <Navbar />}
       <div className="App">
         <Routes>
@@ -30,10 +30,9 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgotpsw" element={<ForgotPsw />} />
           <Route path="/toggleAppointment" element={<ToggleAppointment />} />
-          <Route path="/testpage" element={<TestPage />} />
         </Routes>
       </div>
-    </>
+    </LocalizationProvider>
   );
 }
 
