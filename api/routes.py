@@ -1,7 +1,15 @@
-from flask import jsonify
+from flask import Flask, jsonify
+from flask_cors import CORS
 import requests
 from config import REDCAP_API_URL, API_TOKEN  
 
+REDCAP_API_URL = os.getenv('REDCAP_API_URL')
+API_TOKEN = os.getenv('API_TOKEN')
+
+app = Flask(__name__)
+CORS(app)
+
+@app.route('/api/data', methods=['GET'])
 def get_data():
     # Define the payload with the required parameters
     payload = {
@@ -25,13 +33,12 @@ def get_data():
         'fields[14]': 'v5_next_visit_range', # visit 5 window
     }
     
-    # Make the POST request to the REDCap API
-    response = requests.post(REDCAP_API_URL, data=payload)
-    
-    # Check if the request was successful
-    if response.status_code == 200:
-        data = response.json()  # Parse the JSON response
+    try:
+        # Make the POST request to the REDCap API
+        response = requests.post(REDCAP_API_URL, data=payload)
+        response.raise_for_status()  # Raise an error for bad status codes
+        data = response.json()
         return jsonify(data)  # Return the data as a JSON response
-
-    else:
-        return jsonify({'error': 'Failed to fetch data', 'status_code': response.status_code}), response.status_code
+    except requests.exceptions.RequestException as e:
+        return jsonify({'error': str(e)}), 500
+   
