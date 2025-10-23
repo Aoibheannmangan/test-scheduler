@@ -1,9 +1,8 @@
 # Python packages needed to be installed for functionality with API
 
-Flask
-flask-core
-requests 
-flask_cors
-python-dotenv
+Flask==3.0.3
+Flask-Cors==4.0.1
+requests==2.32.3
+python-dotenv==1.0.1
 
-# Can be installed with -> C: pip install -r requirements.txt
+
