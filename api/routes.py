@@ -3,14 +3,14 @@ from flask_cors import CORS
 import requests
 from config import REDCAP_API_URL, API_TOKEN  
 
-REDCAP_API_URL = os.getenv('REDCAP_API_URL')
-API_TOKEN = os.getenv('API_TOKEN')
-
 app = Flask(__name__)
 CORS(app)
 
 @app.route('/api/data', methods=['GET'])
 def get_data():
+    if not REDCAP_API_URL or not API_TOKEN:
+        return jsonify({"error": "Missing REDCAP_API_URL or API_TOKEN"}), 500
+     
     # Define the payload with the required parameters
     payload = {
         'token': API_TOKEN,
