@@ -1,11 +1,11 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
-from api.routes import get_data  # Import the get_data function from routes
+from routes import get_data  # Import the get_data function from routes
 from config import REDCAP_API_URL, API_TOKEN 
-
+import os
 
 # Creates a flask instance assigned to app
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../src/build')
 CORS(app)  # Enables CORS for entire flask app (CORS allows accept requests from different regions)
 
 # A route decorator that defines a new route for the flask application 
@@ -13,5 +13,10 @@ CORS(app)  # Enables CORS for entire flask app (CORS allows accept requests from
 def get_data_route():
     return get_data()  # Call the get_data function from routes
 
-if __name__ == '__main__':
-    app.run(debug=True)
+#react route
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve(path):
+    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
+    return send_from_directory(app.static_folder, 'index.html')
