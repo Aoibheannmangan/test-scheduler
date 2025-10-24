@@ -7,6 +7,7 @@ app = Flask(__name__)
 CORS(app)
 
 @app.route('/api/data', methods=['GET'])
+#If REDCAP credentials are missing, return an error
 def get_data():
     if not REDCAP_API_URL or not API_TOKEN:
         return jsonify({"error": "Missing REDCAP_API_URL or API_TOKEN"}), 500
