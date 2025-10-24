@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, send_from_directory
 from flask_cors import CORS
 from routes import get_data  # Import the get_data function from routes
 from config import REDCAP_API_URL, API_TOKEN 
@@ -20,3 +20,6 @@ def serve(path):
     if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
         return send_from_directory(app.static_folder, path)
     return send_from_directory(app.static_folder, 'index.html')
+
+if __name__ == '__main__':
+    app.run(debug=True)  
