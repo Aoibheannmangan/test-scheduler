@@ -13,4 +13,5 @@ CORS(app)  # Enables CORS for entire flask app (CORS allows accept requests from
 def get_data_route():
     return get_data()  # Call the get_data function from routes
 
-
+if __name__ == '__main__':
+    app.run(debug=True)
