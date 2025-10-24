@@ -19,7 +19,7 @@ export const DataProvider = ({ children }) => {
       // Tries to load data from flask where the API stored data
       try {
         // Flask url
-        const response = await axios.get("http://127.0.0.1:5000/api/data");
+        const response = await axios.get("/api/data");
         setData(response.data);
       } catch (err) {
         // Set error if encountered
