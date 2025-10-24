@@ -5,7 +5,7 @@ from config import REDCAP_API_URL, API_TOKEN
 import os
 
 # Creates a flask instance assigned to app
-app = Flask(__name__, static_folder='../src/build')
+app = Flask(__name__, static_folder='../build')
 CORS(app)  # Enables CORS for entire flask app (CORS allows accept requests from different regions)
 
 # A route decorator that defines a new route for the flask application 
