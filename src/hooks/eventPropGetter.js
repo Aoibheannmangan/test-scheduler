@@ -16,7 +16,7 @@ export function eventPropGetter(event) {
     style.backgroundColor = '#3C8C42'; 
   } 
   else if (event.room === 'room2') {
-    style.backgroundColor = '#0BA7A0'; 
+    style.backgroundColor = '#077C78'; 
   } 
   else if (event.room === 'room3') {
     style.backgroundColor = '#B6711A'; 
