@@ -8,10 +8,10 @@ import os
 logger = logging.getLogger(__name__)
 
 def get_data():
-    """
-    Fetch records from REDCap API. Uses API_TOKEN and REDCAP_API_URL from config.py.
-    Returns JSON or an error response suitable for the frontend.
-    """
+    
+    # Fetch records from REDCap API. Uses API_TOKEN and REDCAP_API_URL from config.py.
+    # Returns JSON or an error response suitable for the frontend.
+    
     # Basic validation
     token = API_TOKEN
     url = REDCAP_API_URL

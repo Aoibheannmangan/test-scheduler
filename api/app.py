@@ -1,7 +1,7 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
-from routes import get_data  # Import the get_data function from routes
-from config import REDCAP_API_URL, API_TOKEN
+from extensions import db, migrate
+from routes import get_data
 import os
 import logging
 
@@ -10,6 +10,18 @@ logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO").upper())
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+
+# Database Configuration
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///instance/scheduler.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Initialize extensions
+db.init_app(app)
+migrate.init_app(app, db)
+
+# Import models
+from models import User, Booking, Event
+
 CORS(app)
 
 @app.route("/api/data", methods=["GET"])
