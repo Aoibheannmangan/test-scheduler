@@ -1,6 +1,6 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
-from api.routes import get_data  # Import the get_data function from routes
+from routes import get_data  # Import the get_data function from routes
 from config import REDCAP_API_URL, API_TOKEN
 import os
 import logging
