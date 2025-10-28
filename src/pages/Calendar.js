@@ -753,6 +753,7 @@ const MyCalendar = () => {
           onView={setView}
           date={date}
           onNavigate={setDate}
+          dayPropGetter={dayPropGetter}
           onSelectSlot={(slotInfo) => {
             setDate(slotInfo.start);
             setView("day");
