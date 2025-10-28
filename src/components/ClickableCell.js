@@ -5,7 +5,7 @@
 // onSelectedSlot = Callback function when cell is clicked
 import moment from 'moment';
 
-const ClickableDateCell = ({ children, value, onSelectSlot }) => {
+const ClickableDateCell = ({ children, value, onSelectSlot, blockedDates }) => {
   const isBlocked = blockedDates.some((evt) => moment(value).isSame(evt.start, "day"));
 
   const handleClick = () => {
