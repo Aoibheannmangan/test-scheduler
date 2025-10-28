@@ -28,8 +28,14 @@ const Forecast = () => {
 
     useEffect(() => {
         const storedEvents = JSON.parse(localStorage.getItem("bookedEvents")) || [];
-        setBookedEvents(storedEvents);
+        const parsedEvents = storedEvents.map(event => ({
+            ...event,
+            start: event.start ? new Date(event.start) : null,
+            end: event.end ? new Date(event.end) : null,
+        }));
+        setBookedEvents(parsedEvents);
     }, []);
+
 
     useEffect(() => {
         const counts = getAppointmentsPerMonth(bookedEvents);
