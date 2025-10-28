@@ -1,0 +1,32 @@
+version: "3.8"
+services:
+  backend:
+    build:
+      context: ./backend
+    env_file:
+      - .env
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend/instance:/app/instance:rw
+    restart: unless-stopped
+
+  drizzle:
+    build:
+      context: ./server/drizzle
+    env_file:
+      - .env
+    ports:
+      - "4000:4000"
+    depends_on:
+      - backend
+    volumes:
+      - ./backend/instance:/app/data:rw
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
