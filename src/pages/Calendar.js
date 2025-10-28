@@ -713,6 +713,18 @@ const MyCalendar = () => {
     });
   }, [allEvents, selectedRooms]);
 
+  const dayPropGetter = (date) => {
+    const isBlocked = blockedDates.some((evt) => moment(date).isSame(evt.start, "day"));
+    if (isBlocked) {
+      return {
+        style: { backgroundColor: "#ff0015ff" }, 
+        className: "blocked-date-cell",
+      };
+    };
+
+    return{};
+  }
+
   //-------------------------------------------HTML------------------------------------------------------------------
 
   // API loading or error message if encountered
