@@ -1,11 +1,27 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, current_app
 from flask_cors import CORS
 import requests
-from config import REDCAP_API_URL, API_TOKEN  
+from config import REDCAP_API_URL, API_TOKEN
+import logging
 import os
 
+logger = logging.getLogger(__name__)
+
 def get_data():
-    # Define the payload with the required parameters
+    """
+    Fetch records from REDCap API. Uses API_TOKEN and REDCAP_API_URL from config.py.
+    Returns JSON or an error response suitable for the frontend.
+    """
+    # Basic validation
+    token = API_TOKEN
+    url = REDCAP_API_URL
+    if not token or token.strip() == "":
+        logger.error("API_TOKEN is missing")
+        return jsonify({"error": "Server configuration error: API token missing"}), 500
+    if not url:
+        logger.error("REDCAP_API_URL is missing")
+        return jsonify({"error": "Server configuration error: API url missing"}), 500
+
     payload = {
         'token': API_TOKEN,
         'content': 'record',
