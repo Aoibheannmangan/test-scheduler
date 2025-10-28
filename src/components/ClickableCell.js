@@ -3,15 +3,27 @@
 // children = content displayed
 // value = date cell represents
 // onSelectedSlot = Callback function when cell is clicked
+import moment from 'moment';
 
 const ClickableDateCell = ({ children, value, onSelectSlot }) => {
-  
+  const isBlocked = blockedDates.some((evt) => moment(value).isSame(evt.start, "day"));
+
   const handleClick = () => {
+    if (isBlocked) return;
+
     if (onSelectSlot) {
       // If slot is selected on click
       onSelectSlot({ start: value, end: value, action: 'click' });
     }
   };
+
+  const cellStyle = {
+    cursor: isBlocked ? 'not-allowed' : 'pointer',
+    height: '100%',
+    backgroundColor: isBlocked ? '#ff0000ff' : 'transparent',
+    borderRadius: "6px",
+    opacity: isBlocked ? 0.6 : 1,
+  }
 
   return (
     <div
