@@ -25,8 +25,8 @@ const Forecast = () => {
                 <ul>
                     {Object.entries(monthlyCounts)
                         .sort(([a], [b]) => {
-                            const [monthA, yearA] = a.split('');
-                            const [monthB, yearB] = b.split('');
+                            const [monthA, yearA] = a.split(' ');
+                            const [monthB, yearB] = b.split(' ');
                             const dateA = new Date(`${monthA} 1, ${yearA}`);
                             const dateB = new Date(`${monthB} 1, ${yearB}`);
                             return dateA - dateB;
