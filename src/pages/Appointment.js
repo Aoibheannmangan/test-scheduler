@@ -211,6 +211,7 @@ const ToggleAppointment = ({
                 name="room"
                 value={appRoom}
                 onChange={(e) => setAppRoom(e.target.value)}
+                required
               >
                 <option value="" disabled>
                   -- Select Room --
@@ -237,7 +238,6 @@ const ToggleAppointment = ({
                 value={appNote}
                 onChange={(e) => setAppNote(e.target.value)}
                 placeholder="Enter notes on visit"
-                required
               />
 
               <button className="submit-button" type="submit">
