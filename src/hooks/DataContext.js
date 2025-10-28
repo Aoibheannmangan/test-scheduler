@@ -14,12 +14,14 @@ export const DataProvider = ({ children }) => {
   // To store any errors recieved
   const [error, setError] = useState(null);
 
+  // Use a configurable API base url so the same build can work in Docker/K8s/locally
+  const apiUrl = process.env.REACT_APP_API_URL?.replace(/\/$/, "") || "/api";
+
   useEffect(() => {
     const fetchData = async () => {
       // Tries to load data from flask where the API stored data
       try {
-        // Flask url
-        const response = await axios.get("http://127.0.0.1:5000/api/data");
+        const response = await axios.get(`${apiUrl}/data`, { timeout: 20000 });
         setData(response.data);
       } catch (err) {
         // Set error if encountered
