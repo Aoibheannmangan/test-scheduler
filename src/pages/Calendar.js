@@ -148,35 +148,52 @@ const MyCalendar = () => {
   };
 
   const handleUnBlockDate = () => {
-    if (selectedDate) {
-      const startOfDay = moment(selectedDate).startOf("day").toISOString();
-      //Filter out the blocked date if its the same as the one being unblocked
-      setBlockedDates((prev) => {
-        const updated = prev.filer(
-          (evt) => !moment(evt.start).isSame(startOfDay, "day")
-        );
-
-        //Update the local storage
-        localStorage.setItem("blockedDates", JSON.stringify(updated));
-
-        if (updated.length !== prev.length) {
-          setAlert({
-            message: `Unblocked ${moment(selectedDate).format("YYYY-MM-DD")}`,
-            type: "success",
-          });
-        } else {
-          setAlert({
-            message: `This date was not blocked`,
-            type: "error",
-          });
-        }
-
-        return updated;
-      });
-    } else {
+  try {
+    if (!selectedDate) {
       setAlert({ message: "Please select a date to unblock", type: "error" });
+      return;
     }
-  };
+
+    const startOfDay = moment(selectedDate).startOf("day");
+
+    setBlockedDates((prev) => {
+      // Make sure prev is always an array
+      const safePrev = Array.isArray(prev) ? prev : [];
+
+      // Filter out the blocked event that matches the selected date
+      const updated = safePrev.filter((evt) => {
+        const evtStart = evt?.start ? moment(evt.start) : null;
+        return !evtStart?.isSame(startOfDay, "day");
+      });
+
+      // Save updated blocked dates to localStorage safely
+      try {
+        localStorage.setItem("blockedDates", JSON.stringify(updated));
+      } catch (e) {
+        console.error("Error updating localStorage:", e);
+      }
+
+      // Alert user
+      if (updated.length !== safePrev.length) {
+        setAlert({
+          message: `Unblocked ${startOfDay.format("YYYY-MM-DD")}`,
+          type: "success",
+        });
+      } else {
+        setAlert({
+          message: "Selected date was not blocked",
+          type: "warning",
+        });
+      }
+
+      return updated;
+    });
+  } catch (error) {
+    console.error("Error in handleUnblockDate:", error);
+    setAlert({ message: "An error occurred while unblocking", type: "error" });
+  }
+};
+
 
   const handleShowBlockedDates = () => {
     setShowBlockedDates((prev) => !prev);
