@@ -623,6 +623,15 @@ const MyCalendar = () => {
       return;
     }
 
+     // If trying to book another appointment for patient
+    if (bookedEvents.some((e) => e.patientId === patientId)) {
+      setAlert({
+        message: "This patient already has a booked appointment.",
+        type: "error",
+      });
+      return;
+    }
+
     // Add new appointment object structure
     const fullAppointment = {
       ...appointment,
@@ -681,16 +690,6 @@ const MyCalendar = () => {
 
       return updatedBooked; // this updates the state
     });
-
-
-    // If trying to book another appointment for patient
-    if (bookedEvents.some((e) => e.patientId === patientId)) {
-      setAlert({
-        message: "This patient already has a booked appointment.",
-        type: "error",
-      });
-      return;
-    }
 
     // Context updater
     updatePatient(patientId, {
