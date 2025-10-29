@@ -372,6 +372,9 @@ const Appointments = () => {
                 {event.type === "booked" &&
                   (() => {
                     console.log("Rendering event:", event);
+                    console.log("Start:", event.start, "End:", event.end);
+                    console.log("Parsed Start:", new Date(event.start));
+
 
                     return (
                       <div>
