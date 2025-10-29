@@ -597,10 +597,36 @@ const MyCalendar = () => {
 
   // Function to add appointment
   const handleAddAppointment = (appointment, override = false) => {
+    //validate required fields
+    if( !appointment.start || !appointment.end || !appointment.patientId){
+      console.error("Missing required appointment fields:", appointment);
+      setAlert({
+        message: "Missing required appointment fields.",
+        type: "error",
+      });
+      return;
+    }
+
+    if (!appointment.room){
+      setAlert({
+        message: "Please select a room for the appointment.",
+        type: "error",
+      })
+    }
+
     const patientId = appointment.patientId;
     // Find patient Id
-    const match = userList.find((p) => p.id === patientId);
+    const patient = userList.find((p) => p.id === patientId);
 
+    if (!patient){
+      setAlert({
+        message: `Patient ID ${patientId} not found in user list.`,
+        type: "error",
+      });
+      return;
+    }
+
+    //Check if the date is blocked
     const isBlocked = blockedDates.some((blocked) =>
       moment(appointment.start).isSame(blocked.start, "day")
     );
@@ -613,16 +639,8 @@ const MyCalendar = () => {
       return;
     }
 
-    // If cant find patient id
-    if (!match) {
-      setAlert({
-        message: `Patient ID ${patientId} not found in user list.`,
-        type: "error",
-      });
-      return;
-    }
-
-    if (!override && !isAppointmentWithinVisitWindow(appointment, match)) {
+    // Check if its within the visit window
+    if (!override && !isAppointmentWithinVisitWindow(appointment, patient)) {
       setPendingAppointment(appointment);
       setOutsideWindowPopupOpen(true);
       return;
@@ -640,18 +658,18 @@ const MyCalendar = () => {
     // Add new appointment object structure
     const fullAppointment = {
       ...appointment,
-      title: `${match.Study}| ID: ${patientId}`,
-      Study: appointment.Study || match.Study || "UNKNOWN",
+      title: `${patient.Study}| ID: ${patientId}`,
+      Study: appointment.Study || patient.Study || "UNKNOWN",
       patientId,
-      Name: match.Name,
-      DOB: match.DOB,
-      site: match.site,
-      OutOfArea: match.OutOfArea,
-      Info: match.Info,
-      start: appointment.start, // Make an ISO object for correct parsing
-      end: appointment.end, // Make an ISO object for correct parsing
+      Name: patient.Name,
+      DOB: patient.DOB,
+      site: patient.site,
+      OutOfArea: patient.OutOfArea,
+      Info: patient.Info,
+      start: new Date(appointment.start), 
+      end: new Date(appointment.end), 
       type: "booked", // As no longer window
-      visitNum: match.visitNum ?? 1,
+      visitNum: patient.visitNum ?? 1,
       id: patientId,
       room: appointment.room,
       notes: appointment.notes,
@@ -659,34 +677,14 @@ const MyCalendar = () => {
 
     // Update bookedEvents state including the new appointment
     setBookedEvents(prevBooked => {
-      const exists = prevBooked.some(
-        evt => evt.id === fullAppointment.patientId && evt.visitNum === fullAppointment.visitNum
-      );
-
-      const updatedBooked = exists
-        ? prevBooked.map(evt =>
-            evt.id === fullAppointment.patientId && evt.visitNum === fullAppointment.visitNum
-              ? fullAppointment
-              : evt
-          )
-        : [...prevBooked, fullAppointment];
+      const updatedBooked = [...prevBooked, fullAppointment];
 
       // Save to localStorage with conversion to string for dates
-      const updatedBookedForStorage = updatedBooked.map((evt) => {
-        const start = new Date(evt.start);
-        const end = new Date(evt.end);
-
-        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-          console.error("Invalid start or end date:", evt);
-          return evt;
-        }
-
-        return {
-          ...evt,
-          start: start.toISOString(),
-          end: end.toISOString(),
-        };
-      });
+      const updatedBookedForStorage = updatedBooked.map(evt => ({
+        ...evt,
+        start: new Date(evt.start).toISOString(),
+        end: new Date(evt.end).toISOString(),
+      }));
 
       localStorage.setItem(
         "bookedEvents",
@@ -702,9 +700,9 @@ const MyCalendar = () => {
 
     // Context updater
     updatePatient(patientId, {
-      title: `${match.Study}| ID: ${patientId}`,
+      title: `${patient.Study}| ID: ${patientId}`,
       type: "booked",
-      visitNum: (match.visitNum ?? 1) + 1,
+      visitNum: (patient.visitNum ?? 1) + 1,
       start: appointment.start.toISOString(),
       end: appointment.end.toISOString(),
       notes: appointment.notes,
@@ -809,11 +807,17 @@ const MyCalendar = () => {
   const allEvents = [...bookedEvents, ...windowEvents, ...blockedEvents];
 
   const filteredAppointments = useMemo(() => {
-    return allEvents.filter((event) => {
+    return allEvents
+    .filter((event) => {
       if (event.blocked) return true;
       if (event.type === "window") return true; // Always show windows
       return selectedRooms.includes(event.room); // Filter booked by room
-    });
+    })
+    .map((evt) => ({
+      ...evt,
+      start: evt.start instanceof Date ? evt.start : new Date(evt.start),
+      end: evt.end instanceof Date ? evt.end : new Date(evt.end),
+    }));
   }, [allEvents, selectedRooms]);
 
   const dayPropGetter = (date) => {
