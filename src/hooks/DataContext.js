@@ -21,7 +21,9 @@ export const DataProvider = ({ children }) => {
     const fetchData = async () => {
       // Tries to load data from flask where the API stored data
       try {
-        const response = await axios.get(`${apiUrl}/data`, { timeout: 20000 });
+        const response = await axios.get(`${apiUrl}/api/data`, {
+          timeout: 20000,
+        });
         setData(response.data);
       } catch (err) {
         // Set error if encountered

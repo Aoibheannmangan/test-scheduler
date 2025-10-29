@@ -1,13 +1,17 @@
-from flask import Flask, jsonify, current_app
+from flask import Flask, jsonify, current_app, request
 from flask_cors import CORS
 import requests
 from config import REDCAP_API_URL, API_TOKEN
 import logging
 import os
+from extensions import db
+from models import Booking, Event
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
 def get_data():
+    # Fetches data from the REDCap API and returns it as JSON
     
     # Fetch records from REDCap API. Uses API_TOKEN and REDCAP_API_URL from config.py.
     # Returns JSON or an error response suitable for the frontend.
@@ -55,3 +59,62 @@ def get_data():
         return jsonify({'error': 'Failed to fetch data', 'status_code': response.status_code}), response.status_code
     
    
+def book_appointment():
+    """Handles the booking of a new appointment."""
+    data = request.get_json()
+    patient_id = data.get('patientId')
+    date_str = data.get('start')
+    notes = data.get('notes', '')
+
+    # Validate required input fields
+    if not all([patient_id, date_str]):
+        return jsonify({"error": "Missing patientId or start date"}), 400
+
+    try:
+        # Convert date string to datetime object, handling UTC 'Z' suffix
+        date_obj = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+
+        # Create a new Event entry
+        new_event = Event(event_type='booked', visit_num=1) # Default visit_num to 1 for new bookings
+        db.session.add(new_event)
+        db.session.flush() # Flush to get the event_id before committing
+
+        # Create a new Booking entry linked to the event
+        new_booking = Booking(
+            patient_id=patient_id,
+            date=date_obj,
+            blocked=False,
+            note=notes,
+            no_show=False,
+            event_id=new_event.event_id
+        )
+        db.session.add(new_booking)
+        db.session.commit() # Commit both event and booking to the database
+        return jsonify({"ok": True, "eventId": new_event.event_id}), 201
+    except Exception as e:
+        # Rollback in case of error and log the exception
+        db.session.rollback()
+        logger.error(f"Error booking appointment: {e}")
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+def delete_appointment(event_id):
+    """Handles the deletion of an appointment by event_id."""
+    try:
+        # Find the booking and event associated with the given event_id
+        booking_to_delete = Booking.query.filter_by(event_id=event_id).first()
+        event_to_update = Event.query.filter_by(event_id=event_id).first()
+
+        # Return 404 if appointment not found
+        if not booking_to_delete or not event_to_update:
+            return jsonify({"error": "Appointment not found"}), 404
+
+        # Delete the booking and update the event type to 'window' (as per Drizzle's logic)
+        db.session.delete(booking_to_delete)
+        event_to_update.event_type = 'window'
+        db.session.commit() # Commit changes to the database
+        return jsonify({"ok": True}), 200
+    except Exception as e:
+        # Rollback in case of error and log the exception
+        db.session.rollback()
+        logger.error(f"Error deleting appointment: {e}")
+        return jsonify({"ok": False, "error": str(e)}), 500
