@@ -44,6 +44,8 @@ const Appointments = () => {
     }
   }, [contextUserList]);
 
+  console.log("BOOKED EVENTS BEFORE MERGE:", bookedEvents);
+
   useEffect(() => {
     const merged = userList.map((window) => {
       const booked = bookedEvents.find(
