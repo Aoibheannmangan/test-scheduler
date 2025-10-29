@@ -115,7 +115,9 @@ const Forecast = () => {
             />
           </Paper>
         )}
-    </div>
+        <h1>Visit Window Forecast</h1>
+      </div>
+      
   );
 };
 

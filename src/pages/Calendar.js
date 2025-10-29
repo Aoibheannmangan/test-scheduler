@@ -147,6 +147,37 @@ const MyCalendar = () => {
     }
   };
 
+  const handleUnBlockDate = () => {
+    if (selectedDate) {
+      const startOfDay = moment(selectedDate).startOf("day").toISOString();
+      //Filter out the blocked date if its the same as the one being unblocked
+      setBlockedDates((prev) => {
+        const updated = prev.filer(
+          (evt) => !moment(evt.start).isSame(startOfDay, "day")
+        );
+
+        //Update the local storage
+        localStorage.setItem("blockedDates", JSON.stringify(updated));
+
+        if (updated.length !== prev.length) {
+          setAlert({
+            message: `Unblocked ${moment(selectedDate).format("YYYY-MM-DD")}`,
+            type: "success",
+          });
+        } else {
+          setAlert({
+            message: `This date was not blocked`,
+            type: "error",
+          });
+        }
+
+        return updated;
+      });
+    } else {
+      setAlert({ message: "Please select a date to unblock", type: "error" });
+    }
+  };
+
   const handleShowBlockedDates = () => {
     setShowBlockedDates((prev) => !prev);
   };
@@ -878,6 +909,9 @@ const MyCalendar = () => {
                       className="block-button"
                     >
                       {showBlockedDates ? "Hide" : "Show"} blocked dates
+                    </button>
+                    <button className="block-button" onClick={handleUnBlockDate}>
+                      Unblock Date
                     </button>
                   </div>
                   {showBlockedDates && (
