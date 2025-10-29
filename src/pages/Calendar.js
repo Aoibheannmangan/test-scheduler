@@ -304,13 +304,22 @@ const MyCalendar = () => {
     // Loops through studies -> Create visit window
     studies.forEach((study) => {
       let generated = [];
-      if (study === "AIMHIGH") {
-        generated = generateAimHighAppointments(birthDate, babyDaysEarly);
-      } else if (study === "COOLPRIME") {
-        generated = generateCoolPrimeAppointments(birthDate, babyDaysEarly);
-      } else if (study === "EDI") {
-        generated = generateEDIAppointment(birthDate, babyDaysEarly);
+
+      try {
+         if (study === "AIMHIGH") {
+          generated = generateAimHighAppointments(birthDate, babyDaysEarly);
+        } else if (study === "COOLPRIME") {
+          generated = generateCoolPrimeAppointments(birthDate, babyDaysEarly);
+        } else if (study === "EDI") {
+          generated = generateEDIAppointment(birthDate, babyDaysEarly);
+        }
+      } catch (error) {
+        console.error(`Error generating appointments for study ${study}:`, error);
+        generated = [];
       }
+
+      if (!Array.isArray(generated)) generated = [];
+     
 
       // Generate = study windows and display and set them
       const studyEvents = generated
@@ -326,6 +335,15 @@ const MyCalendar = () => {
 
       studyWindows = [...studyWindows, ...studyEvents];
     });
+
+    if (studyWindows.length === 0){
+      setAlert({
+        message: "No visit windows currently avaliable for this patient",
+        type: "info",
+      });
+      setWindowEvents([]);
+      return;
+    }
 
     setWindowEvents(studyWindows);
 
