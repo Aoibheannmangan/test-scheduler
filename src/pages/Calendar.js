@@ -410,10 +410,15 @@ const MyCalendar = () => {
 
     setWindowEvents(studyWindows);
 
-    // Check if patient has existing booked appointments and navigate to them
-    const patientBookedAppointments = bookedEvents.filter(
-      (appointment) => appointment.patientId === patient.id
-    );
+    //  Check if patient has existing booked appointments and navigate to them
+    const patientBookedAppointments = bookedEvents
+      .filter((appointment) => appointment.patientId === patient.id)
+      .map((appointment) => ({
+        ...appointment,
+        start: appointment.start ? new Date(appointment.start) : null,
+        end: appointment.end ? new Date(appointment.end) : null,
+      }));
+
 
     if (patientBookedAppointments.length > 0) {
       // Sort appointments by date and find the next upcoming appointment or the earliest one
