@@ -323,15 +323,30 @@ const MyCalendar = () => {
 
       // Generate = study windows and display and set them
       const studyEvents = generated
-        .filter((event) => event.type === "window")
-        .map((event) => ({
+      .filter(
+        (event) =>
+          event &&
+          event.type === "window" &&
+          event.start &&
+          event.end &&
+          !isNaN(new Date(event.start)) &&
+          !isNaN(new Date(event.end))
+      )
+      .map((event) => {
+        const startDate = new Date(event.start);
+        const endDate = new Date(event.end);
+        endDate.setDate(endDate.getDate() + 1); // add one day safely
+
+        return {
           ...event,
           title: `${study} Visit Window`,
           Name: patient.Name,
           id: patient.id,
-          start: new Date(event.start),
-          end: new Date(event.end + 1), // Add by one as the calendar is exclusive to the last date
-        }));
+          start: startDate,
+          end: endDate, // Add by one as the calendar is exclusive to the last date
+        };
+      });
+
 
       studyWindows = [...studyWindows, ...studyEvents];
     });
