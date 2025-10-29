@@ -58,9 +58,10 @@ const Appointments = () => {
         console.log("After parsing", start, end);
 
         return {
+          ...window,
           ...booked,
-          start: isNaN(start.getTime()) ? null : start,
-          end: isNaN(end.getTime()) ? null : end,
+          start: new Date(booked.start),
+          end: new Date(booked.end),
           type: "booked",
         };
       }
