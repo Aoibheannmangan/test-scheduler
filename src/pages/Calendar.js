@@ -693,7 +693,11 @@ const MyCalendar = () => {
         JSON.stringify(updatedBookedForStorage)
       );
 
-      return updatedBooked; // this updates the state
+      return updatedBooked.map(evt=> ({
+        ...evt,
+        start: new Date(evt.start),
+        end: new Date(evt.end),
+      })); // this updates the state
     });
 
     // Context updater
