@@ -644,30 +644,44 @@ const MyCalendar = () => {
     };
 
     // Update bookedEvents state including the new appointment
-    const existingBooked = bookedEvents;
-    const updatedBooked = [...existingBooked, fullAppointment];
-    setBookedEvents(updatedBooked);
+    setBookedEvents(prevBooked => {
+      const exists = prevBooked.some(
+        evt => evt.id === fullAppointment.patientId && evt.visitNum === fullAppointment.visitNum
+      );
 
-    // Save to localStorage with conversion to string for dates
-    const updatedBookedForStorage = updatedBooked.map((evt) => {
-      const start = new Date(evt.start);
-      const end = new Date(evt.end);
+      const updatedBooked = exists
+        ? prevBooked.map(evt =>
+            evt.id === fullAppointment.patientId && evt.visitNum === fullAppointment.visitNum
+              ? fullAppointment
+              : evt
+          )
+        : [...prevBooked, fullAppointment];
 
-      if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-        console.error("Invalid start or end date:", evt);
-        return evt; // Skip this event or handle it accordingly
-      }
+      // Save to localStorage with conversion to string for dates
+      const updatedBookedForStorage = updatedBooked.map((evt) => {
+        const start = new Date(evt.start);
+        const end = new Date(evt.end);
 
-      return {
-        ...evt,
-        start: isNaN(start.getTime()) ? evt.start : start.toISOString(),
-        end: isNaN(end.getTime()) ? evt.end : end.toISOString(),
-      };
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+          console.error("Invalid start or end date:", evt);
+          return evt;
+        }
+
+        return {
+          ...evt,
+          start: start.toISOString(),
+          end: end.toISOString(),
+        };
+      });
+
+      localStorage.setItem(
+        "bookedEvents",
+        JSON.stringify(updatedBookedForStorage)
+      );
+
+      return updatedBooked; // this updates the state
     });
-    localStorage.setItem(
-      "bookedEvents",
-      JSON.stringify(updatedBookedForStorage)
-    );
+
 
     // If trying to book another appointment for patient
     if (bookedEvents.some((e) => e.patientId === patientId)) {
