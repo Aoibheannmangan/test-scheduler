@@ -49,7 +49,12 @@ const Appointments = () => {
       const booked = bookedEvents.find(
         (b) => b.patientId === window.id && b.visitNum === window.visitNum
       );
-      return booked ? { ...booked, type: "booked" } : window;
+      if (!booked) return window;
+      return {
+        type: "booked",
+        start: booked.start ? new Date(booked.start) : null,
+        end: booked.end ? new Date(booked.end) : null,
+      };
     });
     setAllEvents(merged);
   }, [userList, bookedEvents]);
