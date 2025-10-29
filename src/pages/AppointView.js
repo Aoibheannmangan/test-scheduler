@@ -49,13 +49,21 @@ const Appointments = () => {
       const booked = bookedEvents.find(
         (b) => b.patientId === window.id && b.visitNum === window.visitNum
       );
-      if (!booked) return window;
-      return {
-        type: "booked",
-        start: booked.start ? new Date(booked.start) : null,
-        end: booked.end ? new Date(booked.end) : null,
-      };
+      if (booked) {
+        const start = new Date(booked.start);
+        const end = new Date(booked.end);
+
+        return {
+          ...booked,
+          start: isNaN(start.getTime()) ? null : start,
+          end: isNaN(end.getTime()) ? null : end,
+          type: "booked",
+        };
+      }
+      
+      return window;
     });
+    
     setAllEvents(merged);
   }, [userList, bookedEvents]);
 
