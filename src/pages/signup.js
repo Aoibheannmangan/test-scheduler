@@ -174,6 +174,13 @@ const SignUp = () => {
     }, 2000);
   };
 
+   const handlePasswordBlur = (e) => {
+    if (e.relatedTarget?.id !== "passwordRepeat") {
+      setShowPasswordMessage(false);
+    } 
+  }
+
+
 
   return (
     <div className="login-container">
@@ -247,7 +254,7 @@ const SignUp = () => {
                     value={password}
                     onChange={handlePasswordChange}
                     onFocus={() => setShowPasswordMessage(true)}
-                    onBlur={() => setShowPasswordMessage(false)}
+                    onBlur={handlePasswordBlur}
                     ref={passwordInputRef}
                     autoComplete="off"
                     required
