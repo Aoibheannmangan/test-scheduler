@@ -12,10 +12,12 @@ import { useData } from "../hooks/DataContext"; // <-- Import the API hook
 const Appointments = () => {
   const { data: contextUserList, loading, error } = useData();
   const [userList, setUserList] = useState([]);
+  const [allEvents, setAllEvents] = useState([]);
+  const [bookedEvents, setBookedEvents] = useState([]);
 
   useEffect(() => {
     // Debug line -> console.log("API user list received:", apiUserList);
-    if (userList && Array.isArray(contextUserList)) {
+    if (Array.isArray(contextUserList)) {
       // Map API fields to appointment fields
       const mapped = contextUserList.map((rec) => ({
         id: rec.record_id || "",
@@ -41,6 +43,16 @@ const Appointments = () => {
       setUserList([]);
     }
   }, [contextUserList]);
+
+  useEffect(() => {
+    const merged = userList.map((window) => {
+      const booked = bookedEvents.find(
+        (b) => b.patientId === window.id && b.visitNum === window.visitNum
+      );
+      return booked ? { ...booked, type: "booked" } : window;
+    });
+    setAllEvents(merged);
+  }, [userList, bookedEvents]);
 
   // make a today and month away var for distance indicators
   const today = new Date();
