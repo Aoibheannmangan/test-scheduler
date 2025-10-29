@@ -50,8 +50,12 @@ const Appointments = () => {
         (b) => b.patientId === window.id && b.visitNum === window.visitNum
       );
       if (booked) {
+        console.log("Before merge:", booked);
+        console.log("Type of start:", typeof booked.start, booked.start);
         const start = new Date(booked.start);
         const end = new Date(booked.end);
+
+        console.log("After parsing", start, end);
 
         return {
           ...booked,
@@ -63,7 +67,9 @@ const Appointments = () => {
       
       return window;
     });
-    
+
+    console.log("Merged events:", merged);
+
     setAllEvents(merged);
   }, [userList, bookedEvents]);
 
