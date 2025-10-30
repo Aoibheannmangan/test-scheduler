@@ -51,14 +51,16 @@ const Forecast = () => {
 
 
     useEffect(() => {
-        const counts = getAppointmentsPerMonth(bookedEvents);
+        const appointmentEvents = bookedEvents.filter(e => e.type === "booked")
+        const counts = getAppointmentsPerMonth(appointmentEvents);
         setMonthlyCounts(counts);
     }, [bookedEvents]);
 
     useEffect(() => {
-        const counts = getWindowsPerMonth(studyWindows);
+        const windowEvents = bookedEvents.filter(e => e.type === "window")
+        const counts = getWindowsPerMonth(windowEvents);
         setWindowCounts(counts);
-    }, [studyWindows]);
+    }, [bookedEvents]);
 
     useEffect(() => {
         const sortedEntries = Object.entries(monthlyCounts).sort(([a], [b]) => {
