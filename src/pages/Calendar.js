@@ -1172,7 +1172,10 @@ const MyCalendar = () => {
       {/*EDIT POPUP*/}
       <PopUp
         isOpen={rebookPopupOpen}
-        onClose={() => setRebookPopupOpen(false)}
+        onClose={() =>{
+          setRebookPopupOpen(false);
+          setAppOpen(false);
+        } }
         onConfirm={() => {
           openBookingFormWithPrefill(eventToRebook);
           setRebookPopupOpen(false);
