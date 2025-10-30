@@ -32,6 +32,7 @@ function createWinData(windowMonthYear, windowCount){
 const Forecast = () => { 
     const [bookedEvents, setBookedEvents] = useState([]);
     const [windowEvents, setWindowEvents] = useState([]);
+    const [studyWindows, setStudyWindows] = useState([]);
     const [monthlyCounts, setMonthlyCounts] = useState([]);
     const [windowCounts, setWindowCounts] = useState([]);
     const [rows, setRows] = useState([]);
@@ -48,22 +49,9 @@ const Forecast = () => {
             end: event.end ? new Date(event.end) : null,
         }));
         setBookedEvents(parsedEvents);
-    }, []);
 
-    //Load window data from userInfoList
-    useEffect(() => {
-      const storedUserInfoList = JSON.parse(localStorage.getItem("userInfoList")) || [];
-
-      const visitWindow = storedUserInfoList 
-        .map(user => ({
-          start: user.visitWindow?.start ? new Date(user.visitWindow.start) : null,
-          end: user.visitWindow?.end ? new Date(user.visitWindow.end) : null,
-          type: "window",
-          patientId: user.patientId || user.id,
-          title: user.title || `Window for ${user.patientId}`,
-        }))
-        .filter(window => window.start);
-      setWindowEvents(visitWindow);
+        const windowOnly = parsedEvents.filter(e => e.type === "window");
+        setWindowEvents(windowOnly);
     }, []);
 
     //Get the number of appointments per month
