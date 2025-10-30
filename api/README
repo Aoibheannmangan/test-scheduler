@@ -2,8 +2,9 @@
 
 ## Python Files Overview
 
-### `app.py`
+### `__init__.py`
 
+- Acts as a package for scheduler_api folder. Exports entire app.
 - Main Flask application entry point
 - Handles API routing and configuration
 - Good for small to medium applications
@@ -27,10 +28,3 @@
 - API endpoint definitions
 - Handles request/response logic
 - Modular and maintainable
-
-### `utils.py`
-
-- Helper functions and utilities
-- Reusable code components
-- Promotes DRY principles
-- Alternative: Could use dedicated packages for specific utilities

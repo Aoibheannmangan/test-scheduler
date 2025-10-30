@@ -7,3 +7,4 @@ load_dotenv()
 
 REDCAP_API_URL = os.getenv('REDCAP_API_URL', 'https://redcap.ucc.ie/api/')
 API_TOKEN = os.getenv('API_TOKEN')
+SECRET_KEY = os.getenv('SECRET_KEY')

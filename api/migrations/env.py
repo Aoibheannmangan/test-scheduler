@@ -2,8 +2,7 @@ import logging
 from logging.config import fileConfig
 
 from flask import current_app
-from app import create_app
-from models import User, Booking, Event 
+from scheduler_api import create_app 
 
 from alembic import context
 

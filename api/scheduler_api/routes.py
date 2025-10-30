@@ -4,9 +4,10 @@ import requests
 from config import REDCAP_API_URL, API_TOKEN
 import logging
 import os
-from extensions import db
-from models import Booking, Event
+from .extensions import db
+from .models import Booking, Event
 from datetime import datetime
+from .tokenDecorator import token_required
 
 logger = logging.getLogger(__name__)
 
@@ -59,8 +60,9 @@ def get_data():
         return jsonify({'error': 'Failed to fetch data', 'status_code': response.status_code}), response.status_code
     
    
-def book_appointment():
+def book_appointment(current_user):
     """Handles the booking of a new appointment."""
+    logger.info(f"Appointment booking request by user: {current_user.email}")
     data = request.get_json()
     patient_id = data.get('patientId')
     date_str = data.get('start')
