@@ -62,7 +62,7 @@ def login():
         #JWT payload
         payload = {
             "email":user.email,
-            "exp": datetime.now(timezone.utc) + timedelta(hours=2) # Expires in 2 hours
+            "exp": datetime.now(timezone.utc) + timedelta(hours=24) # Expires in 24 hours
         }
         # Encode token
         token = jwt.encode(payload, current_app.config['SECRET_KEY'], algorithm="HS256")
