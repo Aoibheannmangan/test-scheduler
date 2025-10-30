@@ -63,6 +63,10 @@ const Forecast = () => {
     }, [bookedEvents]);
 
     useEffect(() => {
+      console.log("Loaded booked events:", bookedEvents);
+    }, [bookedEvents]);
+
+    useEffect(() => {
         const sortedEntries = Object.entries(monthlyCounts).sort(([a], [b]) => {
             const [monthA, yearA] = a.split(' ');
             const [monthB, yearB] = b.split(' ');
