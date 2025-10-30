@@ -359,6 +359,15 @@ const Appointments = () => {
                               ? "Current"
                               : "Next";
 
+                            if (windowData.length > 0) {
+                              const existing = JSON.parse(localStorage.getItem("bookedEvents")) || [];
+                              const updated = [
+                                ...existing.filter(e => e.type !== "window" || e.patientId !== event.id || e.study !== study),
+                                ...windowData
+                              ];
+                              localStorage.setItem("bookedEvents", JSON.stringify(updated));
+                            }
+
                             return (
                               <div key={study}>
                                 <strong>
