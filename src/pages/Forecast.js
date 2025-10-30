@@ -32,7 +32,6 @@ function createWinData(windowMonthYear, windowCount){
 const Forecast = () => { 
     const [bookedEvents, setBookedEvents] = useState([]);
     const [windowEvents, setWindowEvents] = useState([]);
-    const [studyWindows, setStudyWindows] = useState([]);
     const [monthlyCounts, setMonthlyCounts] = useState([]);
     const [windowCounts, setWindowCounts] = useState([]);
     const [rows, setRows] = useState([]);
@@ -57,15 +56,15 @@ const Forecast = () => {
 
       const visitWindow = storedUserInfoList 
         .map(user => ({
-          start: user.visitWindow ? new Date(user.visitWindow.start) : null,
-          end: user.visitWindow ? new Date(user.visitWindow.end) : null,
+          start: user.visitWindow?.start ? new Date(user.visitWindow.start) : null,
+          end: user.visitWindow?.end ? new Date(user.visitWindow.end) : null,
           type: "window",
           patientId: user.patientId || user.id,
           title: user.title || `Window for ${user.patientId}`,
         }))
         .filter(window => window.start);
-        setWindowEvents(visitWindow);
-    })
+      setWindowEvents(visitWindow);
+    }, []);
 
     //Get the number of appointments per month
     useEffect(() => {
@@ -113,8 +112,6 @@ const Forecast = () => {
         setRowsPerPage(+event.target.value);
         setPage(0);
     };
-
-    
 
     return ( 
       <div style={{ padding: "1.5rem" }}>
@@ -194,7 +191,7 @@ const Forecast = () => {
                   {windowRows
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row) => (
-                      <TableRow hover TabIndex={-1} key={row.windowMonthYear}>
+                      <TableRow hover tabIndex={-1} key={row.windowMonthYear}>
                         {wincolumns.map((column) => {
                           const value = row[column.id];
                           return (
@@ -226,5 +223,4 @@ const Forecast = () => {
   );
 };
 
-
-export default Forecast; 
+export default Forecast;
