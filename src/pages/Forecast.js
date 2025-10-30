@@ -31,6 +31,7 @@ function createWinData(windowMonthYear, windowCount){
 
 const Forecast = () => { 
     const [bookedEvents, setBookedEvents] = useState([]);
+    const [windowEvents, setWindowEvents] = useState([]);
     const [studyWindows, setStudyWindows] = useState([]);
     const [monthlyCounts, setMonthlyCounts] = useState([]);
     const [windowCounts, setWindowCounts] = useState([]);
@@ -39,6 +40,7 @@ const Forecast = () => {
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
 
+    //Load the booked events (Appointments) from local storage
     useEffect(() => {
         const storedEvents = JSON.parse(localStorage.getItem("bookedEvents")) || [];
         const parsedEvents = storedEvents.map(event => ({
@@ -49,23 +51,36 @@ const Forecast = () => {
         setBookedEvents(parsedEvents);
     }, []);
 
+    //Load window data from userInfoList
+    useEffect(() => {
+      const storedUserInfoList = JSON.parse(localStorage.getItem("userInfoList")) || [];
 
+      const visitWindow = storedUserInfoList 
+        .map(user => ({
+          start: user.visitWindow ? new Date(user.visitWindow.start) : null,
+          end: user.visitWindow ? new Date(user.visitWindow.end) : null,
+          type: "window",
+          patientId: user.patientId || user.id,
+          title: user.title || `Window for ${user.patientId}`,
+        }))
+        .filter(window => window.start);
+        setWindowEvents(visitWindow);
+    })
+
+    //Get the number of appointments per month
     useEffect(() => {
         const appointmentEvents = bookedEvents.filter(e => e.type === "booked")
         const counts = getAppointmentsPerMonth(appointmentEvents);
         setMonthlyCounts(counts);
     }, [bookedEvents]);
 
+    //Get the number of visit windows per month
     useEffect(() => {
-        const windowEvents = bookedEvents.filter(e => e.type === "window")
         const counts = getWindowsPerMonth(windowEvents);
         setWindowCounts(counts);
-    }, [bookedEvents]);
+    }, [windowEvents]);
 
-    useEffect(() => {
-      console.log("Loaded booked events:", bookedEvents);
-    }, [bookedEvents]);
-
+    //Sort and map appointments
     useEffect(() => {
         const sortedEntries = Object.entries(monthlyCounts).sort(([a], [b]) => {
             const [monthA, yearA] = a.split(' ');
@@ -79,6 +94,7 @@ const Forecast = () => {
         setRows(dataRows);
     }, [monthlyCounts]);
 
+    //Sort and map visit windows
     useEffect(() => {
       const sortedWindowEntries = Object.entries(windowCounts).sort(([a], [b]) => {
         const [monthA, yearA] = a.split(' ');
