@@ -1,0 +1,36 @@
+# Single-database configuration for Flask
+
+## Python Files Overview
+
+### `app.py`
+
+- Main Flask application entry point
+- Handles API routing and configuration
+- Good for small to medium applications
+- Alternative: Could use FastAPI for async support
+
+### `models.py`
+
+- Database models using SQLAlchemy ORM
+- Defines data structure and relationships
+- Clean separation of concerns
+
+### `config.py`
+
+- Configuration settings and environment variables
+- Centralizes app settings management
+- Easy to modify for different environments
+- Alternative: Could use python-dotenv
+
+### `routes.py`
+
+- API endpoint definitions
+- Handles request/response logic
+- Modular and maintainable
+
+### `utils.py`
+
+- Helper functions and utilities
+- Reusable code components
+- Promotes DRY principles
+- Alternative: Could use dedicated packages for specific utilities
