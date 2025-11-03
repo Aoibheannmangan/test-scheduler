@@ -47,8 +47,22 @@ const MyCalendar = () => {
 
   const [blockedDates, setBlockedDates] = useState(() => {
     const stored = localStorage.getItem("blockedDates");
-    return stored ? JSON.parse(stored) : [];
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        return parsed.map((evt ) => ({
+          start: new Date(evt.start),
+          end: evt.end ? new Date(evt.end) : new Date(evt.start),
+        }));
+      } catch (e) {
+        console.error("Failed to parse blockedDates from storage:", e);
+        return [];
+      }
+    }
+
+    return [];
   });
+  
   const [selectedDate, setSelectedDate] = useState("");
   const [showBlockedDates, setShowBlockedDates] = useState(false);
 
