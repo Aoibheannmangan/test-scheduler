@@ -13,7 +13,7 @@
 
 .popup-content {
     background-color: #fff;
-    padding: 2rem;
+    padding: 0rem;
     border-radius: 15px;
     border: 2px solid #8D5A97;
     width: 90%;
@@ -35,6 +35,9 @@
     font-size: 1.3rem;
     font-family: 'Sansation', serif;
     text-align: center;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    width: 100%;
     margin-bottom: 1rem;
 }
 
@@ -42,12 +45,14 @@
     font-size: 1.1rem;
     margin-bottom: 1.5rem;
     font-family: 'Sansation', serif;
+    padding: 1.5rem 2rem;
 }
 .button-row {
     display: flex;
     gap: 1rem;
     width: 100%;
     justify-content: center;
+
 }
 
 .confirm-button, .cancel-button, .delete-button {
