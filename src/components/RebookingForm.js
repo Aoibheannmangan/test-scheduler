@@ -5,8 +5,8 @@ import dayjs from 'dayjs';
 
 const RebookingForm = ({ event, onSave, onCancel }) => {
     const [newDate, setNewDate] = useState(dayjs(event.start).format("YYYY-MM-DD"));
-    const [newStart, setNewStart] = useState(event.start);
-    const [newEnd, setNewEnd] = useState(event.end);
+    const [newStart, setNewStart] = useState(dayjs(event.start));
+    const [newEnd, setNewEnd] = useState(dayjs(event.end));
     const [noShowComment, setNoShowComment] = useState(event.noShowComment || "");
 
      const start = useMemo(() => {
@@ -75,14 +75,14 @@ const RebookingForm = ({ event, onSave, onCancel }) => {
                     skipDisabled={true}
                     views={["hours", "minutes"]}
                     format="HH:mm"
-                    onChange={(newValue) => setNewStart(newValue)}
+                    onChange={(newValue) => {setNewStart(newValue)}}
                     slotProps={{
                         textField: {
                             id: "newStartTime",
                             required: true,
                             fullWidth: true,
                         },
-                        digitalClockSelectionItem: {
+                        digitalClockSectionItem: {
                             sx: {
                                 '&[data-mui-seconds="15"], &[data-mui-seconds="45"]': {
                                 display: "none",
@@ -93,11 +93,30 @@ const RebookingForm = ({ event, onSave, onCancel }) => {
                 />
 
                 <label>New End Time:</label>
-                <input 
-                    type="datetime-local"
+                <TimePicker 
+                    label="New End Time"
                     value={newEnd}
-                    onChange={(e) => setNewEnd(e.target.value)}
+                    minutesStep={30}
+                    skipDisabled={true} 
+                    views={["hours", "minutes"]}
+                    format="HH:mm"
+                    onChange={(newValue) => { setNewEnd(newValue)}}
+                    slotProps = {{
+                        textField: {
+                            id: "newEndTime",
+                            required: true,
+                            fullWidth: true,
+                        },
+                        digitalClockSectionItem: {
+                            sx: {
+                                '&[data-mui-seconds="15"], &[data-mui-seconds="45"]': {
+                                display: "none",
+                                },
+                            },
+                        },
+                    }}
                 />
+                <br />
 
                 <label>Reason for Cancellation / No-Show: </label>
                 <input 
