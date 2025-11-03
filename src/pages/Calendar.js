@@ -251,10 +251,10 @@ const MyCalendar = () => {
       return;
     }
 
-    if (editedInfo.show && !editedInfo.noShow && appOpen) {
+    if (editedInfo.show && !editedInfo.noShow) {
       openBookingFormWithPrefill(selectedEvent);
     }
-  }, [editedInfo?.noShow, selectedEvent, editedInfo, appOpen]);
+  }, [editedInfo?.noShow, selectedEvent, editedInfo]);
 
   const openBookingFormWithPrefill = (event) => {
     setSelectedEvent(event);
@@ -264,7 +264,6 @@ const MyCalendar = () => {
   // Save when editing event info
   const saveEditedInfo = () => {
     if (!selectedEvent || !editedInfo) return;
-    
     // Prepare updated event object
     const updatedEvent = {
       ...selectedEvent,
@@ -304,16 +303,25 @@ const MyCalendar = () => {
     if (editedInfo.noShow) {
       setEventToRebook(updatedEvent);
       setRebookPopupOpen(true);
+      setAppOpen(false);
     }
 
-    setSelectedEvent(null);
-    setEditedInfo(null);
+    // Save edited info and close popup
+    setEditedInfo((prev) => ({
+      ...prev,
+      noShow: false,
+      show: false,
+    }));
     setShowRebookingForm(false);
     setAppOpen(false);
-
+    closePopup();
   };
 
-
+  // Close popup
+  const closePopup = () => {
+    setSelectedEvent(null);
+    setEditedInfo("");
+  };
 
   // Search patient by ID
   const handleSearchWindow = () => {
@@ -550,6 +558,7 @@ const MyCalendar = () => {
     setPopupOpen(false);
 
     // Will close edit popup if event is deleted
+    closePopup();
     setEventToDelete(null);
     setShowRebookingForm(false);
     setAppOpen(false);
@@ -1142,7 +1151,7 @@ const MyCalendar = () => {
               <button onClick={saveEditedInfo} className="confirm-button">
                 Save
               </button>
-              <button onClick={() => appOpen(false)} className="cancel-button">
+              <button onClick={closePopup} className="cancel-button">
                 Cancel
               </button>
               <button
