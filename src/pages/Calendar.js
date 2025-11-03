@@ -231,6 +231,7 @@ const MyCalendar = () => {
 
     if (newNoShowStatus) {
       setShowRebookingForm(true);
+      setAppOpen(false);
     } else {
       setShowRebookingForm(false);
     }
