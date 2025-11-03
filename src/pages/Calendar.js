@@ -761,14 +761,11 @@ const MyCalendar = () => {
     );
   };
 
-  const blockedEvents = blockedDates.map((date) => {
-    const start = new Date(`${date}T00:00:00`);
-    const end = new Date(`${date}T23:59:59`);
-
+  const blockedEvents = blockedDates.map((evt) => {
     return {
       title: "Blocked",
-      start,
-      end,
+      start: new Date(evt.start),
+      end: new Date(evt.end),
       allDay: true,
       blocked: true,
     };
@@ -855,7 +852,7 @@ const MyCalendar = () => {
     return{};
   }
 
-  const dateCell = ({children, value, onSelectSlot}) => {
+  const DateCellWrapper = ({children, value, onSelectSlot}) => {
     const isBlocked = blockedDates.some((evt) => moment(value).isSame(evt.start, "day"));
 
     return (
@@ -901,7 +898,6 @@ const MyCalendar = () => {
           onNavigate={setDate}
           dayPropGetter={dayPropGetter}
           blockedDates={blockedDates}
-          dateCellWrapper={dateCell}
           onSelectSlot={(slotInfo) => {
             setDate(slotInfo.start);
             setView("day");
@@ -935,15 +931,7 @@ const MyCalendar = () => {
               </div>
             ),
             toolbar: CustomToolbar,
-            dateCellWrapper: (props) => (
-              <dateCell
-                {...props}
-                onSelectSlot={(slot) => {
-                  setDate(slot.start);
-                  setView("day");
-                }}
-              />
-            ),
+            dateCellWrapper: DateCellWrapper,
           }}
         />
       </div>
