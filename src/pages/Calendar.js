@@ -847,6 +847,7 @@ const MyCalendar = () => {
     const isBlocked = blockedDates.some((evt) => moment(date).isSame(evt.start, "day"));
     if (isBlocked) {
       return {
+        style: { backgroundColor: "#ff0015ff" }, 
         className: "blocked-date-cell",
       };
     };
@@ -854,12 +855,21 @@ const MyCalendar = () => {
     return{};
   }
 
-  const BlockDateCell = ({children, value}) => {
+  const dateCell = ({children, value, onSelectSlot}) => {
     const isBlocked = blockedDates.some((evt) => moment(value).isSame(evt.start, "day"));
-    const style = isBlocked ? { backgroundColor: "#ff4d4d", color: "white", borderRadius: "4px"} : {};
 
-    return <div style={style}>{children}</div>
-  }
+    return (
+    <div 
+    style={{
+      backgroundColor: isBlocked ? "ff0015ff" : "transparent",
+      height: "100%",
+      width: "100%",
+      cursor: "pointer"
+    }} onClick={() => onSelectSlot && onSelectSlot({ start: value })}>
+      {children}
+    </div>
+    );
+  };
 
   //-------------------------------------------HTML------------------------------------------------------------------
 
@@ -926,7 +936,7 @@ const MyCalendar = () => {
             ),
             toolbar: CustomToolbar,
             dateCellWrapper: (props) => (
-              <ClickableDateCell
+              <dateCell
                 {...props}
                 onSelectSlot={(slot) => {
                   setDate(slot.start);
