@@ -847,7 +847,6 @@ const MyCalendar = () => {
     const isBlocked = blockedDates.some((evt) => moment(date).isSame(evt.start, "day"));
     if (isBlocked) {
       return {
-        style: { backgroundColor: "#ff0015ff" }, 
         className: "blocked-date-cell",
       };
     };

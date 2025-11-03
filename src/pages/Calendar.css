@@ -371,6 +371,11 @@ input[type="datetime-local"] {
   padding: 2px 5px;
 }
 
+.rbc-month-view .blocked-date-cell {
+  background-color: red !important;
+  color: white;
+  border-radius: 4px;
+}
 
 .rbc-blocked-cell {
   background-color: #f19e9e;  
