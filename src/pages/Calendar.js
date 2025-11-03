@@ -1142,7 +1142,7 @@ const MyCalendar = () => {
               <button onClick={saveEditedInfo} className="confirm-button">
                 Save
               </button>
-              <button onClick={closePopup} className="cancel-button">
+              <button onClick={() => appOpen(false)} className="cancel-button">
                 Cancel
               </button>
               <button
