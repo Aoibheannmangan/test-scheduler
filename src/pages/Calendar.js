@@ -901,7 +901,7 @@ const MyCalendar = () => {
           onNavigate={setDate}
           dayPropGetter={dayPropGetter}
           blockedDates={blockedDates}
-          dateCellWrapper={BlockDateCell}
+          dateCellWrapper={dateCell}
           onSelectSlot={(slotInfo) => {
             setDate(slotInfo.start);
             setView("day");
