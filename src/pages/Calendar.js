@@ -24,6 +24,7 @@ import PopUp from "../components/PopUp";
 import RebookingForm from "../components/RebookingForm";
 import { CiCalendar } from "react-icons/ci";
 import { useData } from "../hooks/DataContext";
+import axios from "axios";
 
 const MyCalendar = () => {
   const [view, setView] = useState("month");
@@ -57,33 +58,31 @@ const MyCalendar = () => {
   const { data: apiUserList, loading, error, updatePatient } = useData();
   const [userList, setUserList] = useState([]);
 
-  // Grab from local storage and in storedList
   useEffect(() => {
-    if (apiUserList && Array.isArray(apiUserList)) {
-      const mapped = apiUserList.map((rec) => ({
-        id: rec.record_id || "",
-        type: "window", // All are windows unless you have appointment info
-        visitNum: 1, // If you have visitNum, use it; otherwise default to 1
-        OutOfArea: rec.nicu_ooa === "1",
-        DOB: rec.nicu_dob || "",
-        site:
+    const fetchBookings = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          "http://localhost:5000/api/appointments",
           {
-            1: "CUMH",
-            2: "Coombe",
-            3: "Rotunda",
-          }[rec.nicu_dag] || "Unknown",
-        Study: ["AIMHIGH"],
-        DaysEarly: rec.nicu_days_early ? Number(rec.nicu_days_early) : 0,
-        Info: "", // Any aditional info field to import??**
-        notes: rec.nicu_email || "", // Use email as contact OR GET NUMBER?
-        email: rec.nicu_email || "",
-        participantGroup: rec.nicu_participant_group || "",
-      }));
-      setUserList(mapped);
-    } else {
-      setUserList([]);
-    }
-  }, [apiUserList]);
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const bookings = response.data.bookings.map((booking) => ({
+          ...booking,
+          start: new Date(booking.date),
+          end: new Date(new Date(booking.date).getTime() + 60 * 60 * 1000),
+        }));
+        setBookedEvents(bookings);
+      } catch (error) {
+        console.error("Error fetching bookings:", error);
+      }
+    };
+
+    fetchBookings();
+  }, []);
 
   useEffect(() => {
     const storedDates = localStorage.getItem("blockedDates");
@@ -213,59 +212,50 @@ const MyCalendar = () => {
   };
 
   // Save when editing event info
-  const saveEditedInfo = () => {
+  const saveEditedInfo = async () => {
     if (!selectedEvent || !editedInfo) return;
+
     // Prepare updated event object
     const updatedEvent = {
       ...selectedEvent,
-      title: editedInfo.title,
+      ...editedInfo,
       start: new Date(editedInfo.start),
       end: new Date(editedInfo.end),
-      noShow: editedInfo.noShow || false,
-      noShowComment: editedInfo.noShowComment || "",
-      room: editedInfo.room,
     };
 
-    // Update bookedEvents or windowEvents depending on type
-    if (selectedEvent.type === "booked") {
+    // Pull slected booking using JWT
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `http://localhost:5000/api/appointment/${selectedEvent.event_id}`,
+        {
+          date: updatedEvent.start.toISOString(),
+          note: updatedEvent.notes,
+          no_show: updatedEvent.noShow,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Update event
       const updatedBooked = bookedEvents.map((event) =>
-        event.id === selectedEvent.id &&
-        new Date(event.start).getTime() ===
-          new Date(selectedEvent.start).getTime()
-          ? updatedEvent
-          : event
+        event.event_id === selectedEvent.event_id ? updatedEvent : event
       );
-      // Set booked events when updated
       setBookedEvents(updatedBooked);
-      // Store in local storage
-      localStorage.setItem("bookedEvents", JSON.stringify(updatedBooked));
-    } else if (selectedEvent.type === "window") {
-      const updatedWindows = windowEvents.map((event) =>
-        event.id === selectedEvent.id &&
-        new Date(event.start).getTime() ===
-          new Date(selectedEvent.start).getTime()
-          ? updatedEvent
-          : event
-      );
-      setWindowEvents(updatedWindows);
+      closePopup();
+    } catch (error) {
+      console.error("Error updating appointment:", error);
+      setAlert({
+        message: "Failed to update appointment. Please try again.",
+        type: "error",
+      });
     }
-
-    // If edited info and noshow selected
-    if (editedInfo.noShow) {
-      setEventToRebook(updatedEvent);
-      setRebookPopupOpen(true);
-    }
-
-    // Save edited info and close popup
-    setEditedInfo((prev) => ({
-      ...prev,
-      noShow: false,
-    }));
-    setShowRebookingForm(false);
-    closePopup();
   };
 
-  // Close popup
+  // Close popup, reset selected event
   const closePopup = () => {
     setSelectedEvent(null);
     setEditedInfo("");
@@ -435,43 +425,37 @@ const MyCalendar = () => {
     setCurrentPatient(null);
   };
 
-  // Confirm delete on pop up, append to local storage
-  const confirmDeleteEvent = () => {
-    if (!eventToDelete?.patientId) {
-      console.error("Missing patientId on event", eventToDelete);
+  const confirmDeleteEvent = async () => {
+    if (!eventToDelete?.event_id) {
+      console.error("Missing event_id on event", eventToDelete);
       return;
     }
 
-    const updatedEvents = bookedEvents.filter(
-      (event) =>
-        event.id !== eventToDelete.id || event.start !== eventToDelete.start
-    );
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(
+        `http://localhost:5000/api/appointment/${eventToDelete.event_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    setBookedEvents(updatedEvents);
-    localStorage.setItem("bookedEvents", JSON.stringify(updatedEvents));
-
-    // If booking deleted then reset visit and type as its now a window again
-    const updatedUser = userList.map((p) => {
-      if (p.id === eventToDelete.patientId) {
-        return {
-          ...p,
-          type: "window",
-          visitNum: Math.max(1, p.visitNum - 1),
-        };
-      }
-      return p;
-    });
-
-    // Set and store after booking delete
-    setUserList(updatedUser);
-    localStorage.setItem("userInfoList", JSON.stringify(updatedUser));
-    setPopupOpen(false);
-
-    // Will close edit popup if event is deleted
-    closePopup();
-    setEventToDelete(null);
-    setShowRebookingForm(false);
-    setAppOpen(false);
+      const updatedEvents = bookedEvents.filter(
+        (event) => event.event_id !== eventToDelete.event_id
+      );
+      setBookedEvents(updatedEvents);
+      setPopupOpen(false);
+      setEventToDelete(null);
+      closePopup();
+    } catch (error) {
+      console.error("Error deleting appointment:", error);
+      setAlert({
+        message: "Failed to delete appointment. Please try again.",
+        type: "error",
+      });
+    }
   };
 
   // Store event clicked on and open pop up for delete

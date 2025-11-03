@@ -1,7 +1,7 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 from .extensions import db, migrate
-from .routes import get_data, book_appointment, delete_appointment, get_all_bookings
+from .routes import get_data, book_appointment, delete_appointment, get_all_bookings, update_appointment
 from .auth import register_user, login
 import os
 import logging
@@ -52,10 +52,10 @@ def create_app():
     def book_appointment_route(current_user):
         return book_appointment(current_user)
 
-    @app.route("/api/appointment/<event_id>", methods=["DELETE"])
+    @app.route("/api/appointment/<event_id>", methods=["PUT"])
     @token_required
-    def delete_appointment_route(current_user, event_id):
-        return delete_appointment(current_user, event_id)
+    def update_appointment_route(current_user, event_id):
+        return update_appointment(current_user, event_id)
     
     @app.route("/api/appointments", methods=["GET"])
     @token_required

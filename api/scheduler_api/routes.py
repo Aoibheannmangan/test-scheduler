@@ -5,7 +5,7 @@ from config import REDCAP_API_URL, API_TOKEN
 import logging
 import os
 from .extensions import db
-from .models import Booking, Event
+from .models import Booking, Event, Room
 from datetime import datetime
 from .tokenDecorator import token_required
 
@@ -67,10 +67,11 @@ def book_appointment(current_user):
     patient_id = data.get('patientId')
     date_str = data.get('start')
     notes = data.get('notes', '')
+    room_id = data.get('roomId')
 
     # Validate required input fields
-    if not all([patient_id, date_str]):
-        return jsonify({"error": "Missing patientId or start date"}), 400
+    if not all([patient_id, date_str, room_id]):
+        return jsonify({"error": "Missing patientId, start date, or roomId"}), 400
 
     try:
         # Convert date string to datetime object, handling UTC 'Z' suffix
@@ -88,7 +89,8 @@ def book_appointment(current_user):
             blocked=False,
             note=notes,
             no_show=False,
-            event_id=new_event.event_id
+            event_id=new_event.event_id,
+            room_id=room_id
         )
         db.session.add(new_booking)
         db.session.commit() # Commit both event and booking to the database
@@ -98,7 +100,8 @@ def book_appointment(current_user):
         db.session.rollback()
         logger.error(f"Error booking appointment: {e}")
         return jsonify({"ok": False, "error": str(e)}), 500
-    
+
+
 def get_all_bookings(current_user):
     """Retrieves all bookings from the database"""
     logger.info(f"Fetching all bookings for users: {current_user.email}")
@@ -108,35 +111,71 @@ def get_all_bookings(current_user):
     booking_list = []
     for booking in bookings:
         booking_list.append({
-            "room_id": booking.room_id,
+            "booking_id": booking.booking_id,
             "patient_id": booking.patient_id,
             "date": booking.date.isoformat(), # Convert date to ISO string
             "blocked": booking.blocked,
             "note": booking.note,
             "no_show": booking.no_show,
-            "event_id": booking.event_id
+            "event_id": booking.event_id,
+            "room_id": booking.room_id
         })
     return jsonify({"bookings": booking_list}), 200
+
 
 def delete_appointment(current_user, event_id):
     """Handles the deletion of an appointment by event_id."""
     logger.info(f"Appointment deletion requested by {current_user.email} for event {event_id}")
+    
     try:
         # Find the booking and event associated with the given event_id
         booking_to_delete = Booking.query.filter_by(event_id=event_id).first()
         event_to_update = Event.query.filter_by(event_id=event_id).first()
-
+        
         # Return 404 if appointment not found
         if not booking_to_delete or not event_to_update:
             return jsonify({"error": "Appointment not found"}), 404
 
-        # Delete the booking and update the event type to 'window' (as per Drizzle's logic)
+        # Delete the booking and update the event type to 'window'
         db.session.delete(booking_to_delete)
         event_to_update.event_type = 'window'
         db.session.commit() # Commit changes to the database
         return jsonify({"ok": True}), 200
+
     except Exception as e:
         # Rollback in case of error and log the exception
         db.session.rollback()
         logger.error(f"Error deleting appointment: {e}")
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+
+def update_appointment(current_user, event_id):
+    """Handles the updating of an appointment by event_id."""
+    logger.info(f"Appointment update requested by {current_user.email} for event {event_id}")
+    data = request.get_json()
+
+    try:
+        booking_to_update = Booking.query.filter_by(event_id=event_id).first()
+        
+        if not booking_to_update:
+            return jsonify({"error": "Appointment not found"}), 404
+
+        if 'date' in data:
+            booking_to_update.date = datetime.fromisoformat(data['date'].replace('Z', '+00:00'))
+
+        if 'note' in data:
+            booking_to_update.note = data['note']
+
+        if 'no_show' in data:
+            booking_to_update.no_show = data['no_show']
+
+        if 'roomId' in data:
+            booking_to_update.room_id = data['roomId']
+
+        db.session.commit()
+        return jsonify({"ok": True}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"Error updating appointment: {e}")
         return jsonify({"ok": False, "error": str(e)}), 500
