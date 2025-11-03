@@ -70,11 +70,16 @@ const MyCalendar = () => {
             },
           }
         );
-        const bookings = response.data.bookings.map((booking) => ({
-          ...booking,
-          start: new Date(booking.date),
-          end: new Date(new Date(booking.date).getTime() + 60 * 60 * 1000),
-        }));
+        const bookings = response.data.bookings.map((booking) => {
+          const room = roomList.find((r) => r.dbId === booking.room_id);
+
+          return {
+            ...booking,
+            start: new Date(booking.date),
+            end: new Date(new Date(booking.date).getTime() + 60 * 60 * 1000),
+            room: room ? room.id : null,
+          };
+        });
         setBookedEvents(bookings);
       } catch (error) {
         console.error("Error fetching bookings:", error);
@@ -470,25 +475,7 @@ const MyCalendar = () => {
   };
 
   // Create array to store booked appointments
-  const [bookedEvents, setBookedEvents] = useState(() => {
-    // Place in local storage + make date object to store
-    const stored = localStorage.getItem("bookedEvents");
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        return parsed.map((event) => ({
-          ...event,
-          start: new Date(event.start),
-          end: new Date(event.end),
-        }));
-      } catch (error) {
-        // Return error message
-        console.error("Failed to parse bookedEvents from storage:", error);
-        return [];
-      }
-    }
-    return [];
-  });
+  const [bookedEvents, setBookedEvents] = useState([]);
 
   // Sets current date and time
   const localizer = momentLocalizer(moment);
@@ -551,27 +538,6 @@ const MyCalendar = () => {
     const updatedBooked = [...existingBooked, fullAppointment];
     setBookedEvents(updatedBooked);
 
-    // Save to localStorage with conversion to string for dates
-    const updatedBookedForStorage = updatedBooked.map((evt) => {
-      const start = new Date(evt.start);
-      const end = new Date(evt.end);
-
-      if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-        console.error("Invalid start or end date:", evt);
-        return evt; // Skip this event or handle it accordingly
-      }
-
-      return {
-        ...evt,
-        start: isNaN(start.getTime()) ? evt.start : start.toISOString(),
-        end: isNaN(end.getTime()) ? evt.end : end.toISOString(),
-      };
-    });
-    localStorage.setItem(
-      "bookedEvents",
-      JSON.stringify(updatedBookedForStorage)
-    );
-
     // If trying to book another appointment for patient
     if (bookedEvents.some((e) => e.patientId === patientId)) {
       setAlert({
@@ -599,12 +565,16 @@ const MyCalendar = () => {
 
   // Selected rooms available
   const roomList = [
-    { id: "TeleRoom", label: "Telemetry Room (Room 2.10)" },
-    { id: "room1", label: "Assessment Room 1" },
-    { id: "room2", label: "Assessment Room 2" },
-    { id: "room3", label: "Assessment Room 3" },
-    { id: "room4", label: "Assessment Room 4" },
-    { id: "devRoom", label: "Developmental Assessment Room (Room 2.07)" },
+    { id: "TeleRoom", label: "Telemetry Room (Room 2.10)", dbId: 1 },
+    { id: "room1", label: "Assessment Room 1", dbId: 2 },
+    { id: "room2", label: "Assessment Room 2", dbId: 3 },
+    { id: "room3", label: "Assessment Room 3", dbId: 4 },
+    { id: "room4", label: "Assessment Room 4", dbId: 5 },
+    {
+      id: "devRoom",
+      label: "Developmental Assessment Room (Room 2.07)",
+      dbId: 6,
+    },
   ];
 
   // Replace study filter state with rooms filter
@@ -633,58 +603,6 @@ const MyCalendar = () => {
       blocked: true,
     };
   });
-
-  const cleanupPastAppointments = useCallback(() => {
-    const now = new Date();
-    let updatedBookedEvents = [...bookedEvents];
-    let updatedUserList = [...userList];
-    let userListChanged = false;
-
-    updatedUserList = updatedUserList.map((user) => {
-      const userAppointments = bookedEvents.filter(
-        (e) => e.patientId === user.id
-      );
-      const latestAppointment = userAppointments.sort(
-        (a, b) => new Date(b.end) - new Date(a.end)
-      )[0];
-
-      if (latestAppointment && new Date(latestAppointment.end) < now) {
-        updatedBookedEvents = updatedBookedEvents.filter(
-          (e) => e.id !== latestAppointment.id
-        );
-        userListChanged = true;
-
-        return {
-          ...user,
-          type: "window",
-          visitNum: (user.visitNum ?? 1) + 1,
-        };
-      }
-      return user;
-    });
-    // Only update state and localStorage if changes occurred
-    if (userListChanged || updatedBookedEvents.length !== bookedEvents.length) {
-      setBookedEvents(updatedBookedEvents);
-      setUserList(updatedUserList);
-
-      localStorage.setItem("bookedEvents", JSON.stringify(updatedBookedEvents));
-      localStorage.setItem("userInfoList", JSON.stringify(updatedUserList));
-    }
-  }, [bookedEvents, userList]);
-
-  // Run on state changes
-  useEffect(() => {
-    cleanupPastAppointments();
-  }, [cleanupPastAppointments]);
-
-  // Run automatically every 15 minutes
-  useEffect(() => {
-    const interval = setInterval(() => {
-      cleanupPastAppointments();
-    }, 15 * 60 * 1000); // 15 mins in ms
-
-    return () => clearInterval(interval); // cleanup on unmount
-  }, [cleanupPastAppointments]);
 
   // Array of all avents
   const allEvents = [...bookedEvents, ...windowEvents, ...blockedEvents];
