@@ -251,10 +251,10 @@ const MyCalendar = () => {
       return;
     }
 
-    if (editedInfo.show && !editedInfo.noShow) {
+    if (editedInfo.show && !editedInfo.noShow && appOpen) {
       openBookingFormWithPrefill(selectedEvent);
     }
-  }, [editedInfo?.noShow, selectedEvent, editedInfo]);
+  }, [editedInfo?.noShow, selectedEvent, editedInfo, appOpen]);
 
   const openBookingFormWithPrefill = (event) => {
     setSelectedEvent(event);
@@ -264,6 +264,7 @@ const MyCalendar = () => {
   // Save when editing event info
   const saveEditedInfo = () => {
     if (!selectedEvent || !editedInfo) return;
+    
     // Prepare updated event object
     const updatedEvent = {
       ...selectedEvent,
@@ -303,25 +304,16 @@ const MyCalendar = () => {
     if (editedInfo.noShow) {
       setEventToRebook(updatedEvent);
       setRebookPopupOpen(true);
-      setAppOpen(false);
     }
 
-    // Save edited info and close popup
-    setEditedInfo((prev) => ({
-      ...prev,
-      noShow: false,
-      show: false,
-    }));
+    setSelectedEvent(null);
+    setEditedInfo(null);
     setShowRebookingForm(false);
     setAppOpen(false);
-    closePopup();
+
   };
 
-  // Close popup
-  const closePopup = () => {
-    setSelectedEvent(null);
-    setEditedInfo("");
-  };
+
 
   // Search patient by ID
   const handleSearchWindow = () => {
@@ -558,7 +550,6 @@ const MyCalendar = () => {
     setPopupOpen(false);
 
     // Will close edit popup if event is deleted
-    closePopup();
     setEventToDelete(null);
     setShowRebookingForm(false);
     setAppOpen(false);
