@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './RebookingForm.css';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 
 const RebookingForm = ({ event, onSave, onCancel }) => {
     const [newStart, setNewStart] = useState(event.start);
@@ -24,10 +25,29 @@ const RebookingForm = ({ event, onSave, onCancel }) => {
                 <p><strong>Title: </strong>{event.title}</p>
 
                 <label>New Start Time:</label>
-                <input
+                <TimePicker
+                    label="New Start Time"
+                    minutesStep={30}
+                    skipDisabled={true}
+                    views={["hours", "minutes"]}
+                    format="HH:mm"
                     type="datetime-local"
                     value={newStart}
                     onChange={(e) => setNewStart(e.target.value)}
+                    slotProps={{
+                        textField: {
+                            id: "newStartTime",
+                            required: true,
+                            fullWidth: true,
+                        },
+                        digitalClockSectionItem: {
+                            sx: {
+                                '&[data-mui-seconds="15"], &[data-mui-seconds="45"]': {
+                                    display: "none",
+                            },
+                        },
+                    },
+                    }}
                 />
 
                 <label>New End Time:</label>
