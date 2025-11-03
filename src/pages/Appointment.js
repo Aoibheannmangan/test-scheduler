@@ -9,6 +9,7 @@ const ToggleAppointment = ({
   isOpen,
   onClose,
   bookedEvents,
+  roomList,
 }) => {
   // States vars for appointment booking
   const [appPatID, setAppPatID] = useState("");
@@ -18,15 +19,6 @@ const ToggleAppointment = ({
   const [patientStudy, setPatientStudy] = useState("");
   const [appRoom, setAppRoom] = useState("");
   const [appNote, setAppNote] = useState("");
-
-  const roomList = {
-    TeleRoom: "Telemetry Room (Room 2.10)",
-    room1: "Assessment Room 1",
-    room2: "Assessment Room 2",
-    room3: "Assessment Room 3",
-    room4: "Assessment Room 4",
-    devRoom: "Developmental Assessment Room (Room 2.07)",
-  };
 
   // Function to check if room is available at selected time
   const isRoomAvailable = (roomId, startTime, endTime, appointments) => {
@@ -53,20 +45,20 @@ const ToggleAppointment = ({
 
   // Generate room options with availability
   const roomOptions = useMemo(() => {
-    return Object.entries(roomList).map(([roomId, roomName]) => {
+    if (!roomList) return [];
+    return roomList.map((room) => {
       const available = isRoomAvailable(
-        roomId,
+        room.id,
         selectedStart,
         selectedEnd,
         bookedEvents
       );
       return {
-        id: roomId,
-        name: roomName,
+        ...room,
         available,
       };
     });
-  }, [selectedStart, selectedEnd, bookedEvents]);
+  }, [roomList, selectedStart, selectedEnd, bookedEvents]);
 
   // Handles putting in a booking
   const handleSubmit = (e) => {
@@ -85,27 +77,21 @@ const ToggleAppointment = ({
     const start = dayjs(appDate)
       .set("hour", appTimeStart.hour())
       .set("minute", appTimeStart.minute())
-      .set("second", 0)
-      .set("millisecond", 0)
       .toDate();
 
     const end = dayjs(appDate)
       .set("hour", appTimeEnd.hour())
       .set("minute", appTimeEnd.minute())
-      .set("second", 0)
-      .set("millisecond", 0)
       .toDate();
 
-    const appTitle = `${patientStudy.toUpperCase()} | ID: ${appPatID}`;
+    const selectedRoom = roomList.find((r) => r.id === appRoom);
+    const roomId = selectedRoom ? selectedRoom.dbId : null;
 
     const newAppointment = {
-      title: appTitle,
       patientId: appPatID,
-      start,
-      end,
-      type: "booked",
-      Study: [patientStudy] || "",
-      room: appRoom,
+      start: start.toISOString(),
+      end: end.toISOString(),
+      roomId, // Send the integer roomId to the backend
       notes: appNote,
     };
 
@@ -225,7 +211,7 @@ const ToggleAppointment = ({
                       backgroundColor: room.available ? "white" : "#f5f5f5",
                     }}
                   >
-                    {room.name} {room.available ? "" : "(Unavailable)"}
+                    {room.label} {room.available ? "" : "(Unavailable)"}
                   </option>
                 ))}
               </select>

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState, useMemo,} from "react";
 import axios from "axios";
 
 const DataContext = createContext();
@@ -47,18 +47,19 @@ export const DataProvider = ({ children }) => {
     );
   };
 
+  const value = useMemo(
+    () => ({
+      data,
+      loading,
+      error,
+      updatePatient: updatedPatient,
+    }),
+    [data, loading, error, updatedPatient]
+  );
+
   return (
     // Special component that can pass data down to any component wrapped inside
-    <DataContext.Provider
-      value={{
-        data,
-        loading,
-        error,
-        updatePatient: updatedPatient,
-      }}
-    >
-      {children}
-    </DataContext.Provider>
+    <DataContext.Provider value={value}>{children}</DataContext.Provider>
   );
 };
 

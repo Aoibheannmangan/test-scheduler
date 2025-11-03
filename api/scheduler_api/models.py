@@ -24,8 +24,10 @@ class Booking(db.Model):
     # Booking model representing the 'bookings' table in the database.
     __tablename__ = 'bookings'
     booking_id = db.Column(db.String, primary_key=True, default=generate_uuid) # Unique ID for the room booking
+    booking_title = db.Column(db.String, nullable=False) # Booking title for calendar
     patient_id = db.Column(db.String) # Identifier for the patient
     date = db.Column(db.DateTime, nullable=False) # Date and time of the booking
+    end_date = db.Column(db.DateTime, nullable=False) # Date and time of end of the booking
     blocked = db.Column(db.Boolean, default=False) # Flag if the slot is blocked
     note = db.Column(db.String, nullable=False) # Notes related to the booking
     no_show = db.Column(db.Boolean, default=False) # Flag if the patient was a no-show

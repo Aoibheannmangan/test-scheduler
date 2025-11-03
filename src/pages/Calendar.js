@@ -55,8 +55,28 @@ const MyCalendar = () => {
 
   const isFirstRender = useRef(true);
 
+  // Create array to store booked appointments
+  const [bookedEvents, setBookedEvents] = useState([]);
+
   const { data: apiUserList, loading, error, updatePatient } = useData();
   const [userList, setUserList] = useState([]);
+
+  // Selected rooms available
+  const roomList = useMemo(
+    () => [
+      { id: "TeleRoom", label: "Telemetry Room (Room 2.10)", dbId: 1 },
+      { id: "room1", label: "Assessment Room 1", dbId: 2 },
+      { id: "room2", label: "Assessment Room 2", dbId: 3 },
+      { id: "room3", label: "Assessment Room 3", dbId: 4 },
+      { id: "room4", label: "Assessment Room 4", dbId: 5 },
+      {
+        id: "devRoom",
+        label: "Developmental Assessment Room (Room 2.07)",
+        dbId: 6,
+      },
+    ],
+    []
+  );
 
   const fetchBookings = useCallback(async () => {
     try {
@@ -74,8 +94,9 @@ const MyCalendar = () => {
 
         return {
           ...booking,
-          start: new Date(booking.date),
-          end: new Date(new Date(booking.date).getTime() + 60 * 60 * 1000),
+          title: booking.title,
+          start: new Date(booking.start),
+          end: new Date(booking.end),
           room: room ? room.id : null,
         };
       });
@@ -83,7 +104,7 @@ const MyCalendar = () => {
     } catch (error) {
       console.error("Error fetching bookings:", error);
     }
-  });
+  }, [roomList, setBookedEvents]);
 
   // In use effect as it runs when component mounts
   useEffect(() => {
@@ -235,9 +256,12 @@ const MyCalendar = () => {
       await axios.put(
         `http://localhost:5000/api/appointment/${selectedEvent.event_id}`,
         {
-          date: updatedEvent.start.toISOString(),
+          start: updatedEvent.start.toISOString(),
+          end: updatedEvent.end.toISOString(),
+          title: updatedEvent.title,
           note: updatedEvent.notes,
           no_show: updatedEvent.noShow,
+          roomId: roomList.find((r) => r.id === updatedEvent.room)?.dbId,
         },
         {
           headers: {
@@ -475,17 +499,14 @@ const MyCalendar = () => {
     setAppOpen(true);
   };
 
-  // Create array to store booked appointments
-  const [bookedEvents, setBookedEvents] = useState([]);
-
   // Sets current date and time
   const localizer = momentLocalizer(moment);
 
   // Function to add appointment
   const handleAddAppointment = async (appointment, override = false) => {
     try {
-      await axios.post("https://localhost:5000/api/book", appointment, {
-        headers: { Authorization: "Bearer ${localStorage.getItem('token')}" },
+      await axios.post("http://localhost:5000/api/book", appointment, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
 
       await fetchBookings();
@@ -498,20 +519,6 @@ const MyCalendar = () => {
 
     setAppOpen(false);
   };
-
-  // Selected rooms available
-  const roomList = [
-    { id: "TeleRoom", label: "Telemetry Room (Room 2.10)", dbId: 1 },
-    { id: "room1", label: "Assessment Room 1", dbId: 2 },
-    { id: "room2", label: "Assessment Room 2", dbId: 3 },
-    { id: "room3", label: "Assessment Room 3", dbId: 4 },
-    { id: "room4", label: "Assessment Room 4", dbId: 5 },
-    {
-      id: "devRoom",
-      label: "Developmental Assessment Room (Room 2.07)",
-      dbId: 6,
-    },
-  ];
 
   // Replace study filter state with rooms filter
   const [selectedRooms, setSelectedRooms] = useState(
@@ -905,6 +912,7 @@ const MyCalendar = () => {
           isOpen={appOpen}
           onClose={() => setAppOpen(false)}
           bookedEvents={bookedEvents}
+          roomList={roomList}
         />
       </div>
 

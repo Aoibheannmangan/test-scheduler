@@ -65,17 +65,20 @@ def book_appointment(current_user):
     logger.info(f"Appointment booking request by user: {current_user.email}")
     data = request.get_json()
     patient_id = data.get('patientId')
-    date_str = data.get('start')
+    title = f"ID: {patient_id}"
+    start_str = data.get('start')
+    end_str = data.get('end')
     notes = data.get('notes', '')
     room_id = data.get('roomId')
 
     # Validate required input fields
-    if not all([patient_id, date_str, room_id]):
+    if not all([patient_id, start_str, end_str, room_id]):
         return jsonify({"error": "Missing patientId, start date, or roomId"}), 400
 
     try:
         # Convert date string to datetime object, handling UTC 'Z' suffix
-        date_obj = datetime.fromisoformat(date_str.replace('Z', '+00:00'))
+        start_obj = datetime.fromisoformat(start_str.replace('Z', '+00:00'))
+        end_obj = datetime.fromisoformat(end_str.replace('Z', '+00:00'))
 
         # Create a new Event entry
         new_event = Event(event_type='booked', visit_num=1) # Default visit_num to 1 for new bookings
@@ -85,7 +88,9 @@ def book_appointment(current_user):
         # Create a new Booking entry linked to the event
         new_booking = Booking(
             patient_id=patient_id,
-            date=date_obj,
+            booking_title=title,
+            date=start_obj,
+            end_date=end_obj,
             blocked=False,
             note=notes,
             no_show=False,
@@ -112,8 +117,10 @@ def get_all_bookings(current_user):
     for booking in bookings:
         booking_list.append({
             "booking_id": booking.booking_id,
+            "title": booking.booking_title,
             "patient_id": booking.patient_id,
-            "date": booking.date.isoformat(), # Convert date to ISO string
+            "start": booking.date.isoformat(), # Convert date to ISO string
+            "end": booking.end_date.isoformat(),
             "blocked": booking.blocked,
             "note": booking.note,
             "no_show": booking.no_show,
@@ -160,8 +167,14 @@ def update_appointment(current_user, event_id):
         if not booking_to_update:
             return jsonify({"error": "Appointment not found"}), 404
 
-        if 'date' in data:
-            booking_to_update.date = datetime.fromisoformat(data['date'].replace('Z', '+00:00'))
+        if 'start' in data:
+            booking_to_update.date = datetime.fromisoformat(data['start'].replace('Z', '+00:00'))
+        
+        if 'end' in data:
+            booking_to_update.date_end = datetime.fromisoformat(data['end'].replace('Z', '+00:00'))
+            
+        if 'title' in data:
+            booking_to_update.booking_title = data['title']
 
         if 'note' in data:
             booking_to_update.note = data['note']
