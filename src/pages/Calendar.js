@@ -311,6 +311,7 @@ const MyCalendar = () => {
       noShow: false,
     }));
     setShowRebookingForm(false);
+    setAppOpen(false);
     closePopup();
   };
 
