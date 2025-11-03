@@ -604,6 +604,7 @@ const MyCalendar = () => {
         message: "Missing required appointment fields.",
         type: "error",
       });
+      setAppOpen(false);
       return;
     }
 
@@ -611,7 +612,9 @@ const MyCalendar = () => {
       setAlert({
         message: "Please select a room for the appointment.",
         type: "error",
-      })
+      });
+      setAppOpen(false);
+      return;
     }
 
     const patientId = appointment.patientId;
@@ -623,6 +626,7 @@ const MyCalendar = () => {
         message: `Patient ID ${patientId} not found in user list.`,
         type: "error",
       });
+      setAppOpen(false);
       return;
     }
 
@@ -636,6 +640,7 @@ const MyCalendar = () => {
         message: "Cannot book appointment on a blocked date",
         type: "error",
       });
+      setAppOpen(false);
       return;
     }
 
