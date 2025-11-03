@@ -62,7 +62,7 @@ const MyCalendar = () => {
 
     return [];
   });
-  
+
   const [selectedDate, setSelectedDate] = useState("");
   const [showBlockedDates, setShowBlockedDates] = useState(false);
 
@@ -855,6 +855,13 @@ const MyCalendar = () => {
     return{};
   }
 
+  const BlockDateCell = ({children, value}) => {
+    const isBlocked = blockedDates.some((evt) => moment(value).isSame(evt.start, "day"));
+    const style = isBlocked ? { backgroundColor: "#ff4d4d", color: "white", borderRadius: "4px"} : {};
+
+    return <div style={style}>{children}</div>
+  }
+
   //-------------------------------------------HTML------------------------------------------------------------------
 
   // API loading or error message if encountered
@@ -885,6 +892,7 @@ const MyCalendar = () => {
           onNavigate={setDate}
           dayPropGetter={dayPropGetter}
           blockedDates={blockedDates}
+          dateCellWrapper={BlockDateCell}
           onSelectSlot={(slotInfo) => {
             setDate(slotInfo.start);
             setView("day");
