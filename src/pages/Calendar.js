@@ -61,6 +61,13 @@ const MyCalendar = () => {
   const { data: apiUserList, loading, error, updatePatient } = useData();
   const [userList, setUserList] = useState([]);
 
+  // Run whenever apiUserList changes
+  useEffect(() => {
+    if (apiUserList) {
+      setUserList(apiUserList);
+    }
+  }, [apiUserList]);
+
   // Selected rooms available
   const roomList = useMemo(
     () => [
@@ -132,6 +139,7 @@ const MyCalendar = () => {
         title: event.title || "",
         start: event.start,
         end: event.end,
+        note: event.note || "",
         room: event.room || "",
         noShow: event.noShow || false,
         noShowComment: event.noShowComment || "",
@@ -613,7 +621,7 @@ const MyCalendar = () => {
                   </strong>
                 </div>
                 <div style={{ fontSize: 12 }}>
-                  <strong>{event.notes}</strong>
+                  <strong>{event.note}</strong>
                 </div>{" "}
                 {/* Show description here */}
               </div>
