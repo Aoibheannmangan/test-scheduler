@@ -251,7 +251,7 @@ const MyCalendar = () => {
       return;
     }
 
-    if (editedInfo.show) {
+    if (editedInfo.show && !editedInfo.noShow) {
       openBookingFormWithPrefill(selectedEvent);
     }
   }, [editedInfo?.noShow, selectedEvent, editedInfo]);
@@ -303,12 +303,14 @@ const MyCalendar = () => {
     if (editedInfo.noShow) {
       setEventToRebook(updatedEvent);
       setRebookPopupOpen(true);
+      setAppOpen(false);
     }
 
     // Save edited info and close popup
     setEditedInfo((prev) => ({
       ...prev,
       noShow: false,
+      show: false,
     }));
     setShowRebookingForm(false);
     setAppOpen(false);
