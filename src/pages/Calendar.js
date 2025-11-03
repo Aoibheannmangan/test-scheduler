@@ -58,36 +58,37 @@ const MyCalendar = () => {
   const { data: apiUserList, loading, error, updatePatient } = useData();
   const [userList, setUserList] = useState([]);
 
+  const fetchBookings = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        "http://localhost:5000/api/appointments",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const bookings = response.data.bookings.map((booking) => {
+        const room = roomList.find((r) => r.dbId === booking.room_id);
+
+        return {
+          ...booking,
+          start: new Date(booking.date),
+          end: new Date(new Date(booking.date).getTime() + 60 * 60 * 1000),
+          room: room ? room.id : null,
+        };
+      });
+      setBookedEvents(bookings);
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+    }
+  });
+
+  // In use effect as it runs when component mounts
   useEffect(() => {
-    const fetchBookings = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(
-          "http://localhost:5000/api/appointments",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const bookings = response.data.bookings.map((booking) => {
-          const room = roomList.find((r) => r.dbId === booking.room_id);
-
-          return {
-            ...booking,
-            start: new Date(booking.date),
-            end: new Date(new Date(booking.date).getTime() + 60 * 60 * 1000),
-            room: room ? room.id : null,
-          };
-        });
-        setBookedEvents(bookings);
-      } catch (error) {
-        console.error("Error fetching bookings:", error);
-      }
-    };
-
     fetchBookings();
-  }, []);
+  }, [fetchBookings]);
 
   useEffect(() => {
     const storedDates = localStorage.getItem("blockedDates");
@@ -481,84 +482,19 @@ const MyCalendar = () => {
   const localizer = momentLocalizer(moment);
 
   // Function to add appointment
-  const handleAddAppointment = (appointment, override = false) => {
-    const patientId = appointment.patientId;
-    // Find patient Id
-    const match = userList.find((p) => p.id === patientId);
-
-    const isBlocked = blockedDates.some((blocked) =>
-      moment(appointment.start).isSame(blocked.start, "day")
-    );
-
-    if (isBlocked) {
-      setAlert({
-        message: "Cannot book appointment on a blocked date",
-        type: "error",
+  const handleAddAppointment = async (appointment, override = false) => {
+    try {
+      await axios.post("https://localhost:5000/api/book", appointment, {
+        headers: { Authorization: "Bearer ${localStorage.getItem('token')}" },
       });
-      return;
+
+      await fetchBookings();
+
+      setAlert({ message: "Appointment booked successfully", type: "success" });
+    } catch (error) {
+      console.error("Error booking appointment: ", error);
+      setAlert({ message: "Error booking appointment: ", type: "error" });
     }
-
-    // If cant find patient id
-    if (!match) {
-      setAlert({
-        message: `Patient ID ${patientId} not found in user list.`,
-        type: "error",
-      });
-      return;
-    }
-
-    if (!override && !isAppointmentWithinVisitWindow(appointment, match)) {
-      setPendingAppointment(appointment);
-      setOutsideWindowPopupOpen(true);
-      return;
-    }
-
-    // Add new appointment object structure
-    const fullAppointment = {
-      ...appointment,
-      title: `${match.Study}| ID: ${patientId}`,
-      Study: appointment.Study || match.Study || "UNKNOWN",
-      patientId,
-      Name: match.Name,
-      DOB: match.DOB,
-      site: match.site,
-      OutOfArea: match.OutOfArea,
-      Info: match.Info,
-      start: appointment.start, // Make an ISO object for correct parsing
-      end: appointment.end, // Make an ISO object for correct parsing
-      type: "booked", // As no longer window
-      visitNum: match.visitNum ?? 1,
-      id: patientId,
-      room: appointment.room,
-      notes: appointment.notes,
-    };
-
-    // Update bookedEvents state including the new appointment
-    const existingBooked = bookedEvents;
-    const updatedBooked = [...existingBooked, fullAppointment];
-    setBookedEvents(updatedBooked);
-
-    // If trying to book another appointment for patient
-    if (bookedEvents.some((e) => e.patientId === patientId)) {
-      setAlert({
-        message: "This patient already has a booked appointment.",
-        type: "error",
-      });
-      return;
-    }
-
-    // Context updater
-    updatePatient(patientId, {
-      title: `${match.Study}| ID: ${patientId}`,
-      type: "booked",
-      visitNum: (match.visitNum ?? 1) + 1,
-      start: appointment.start.toISOString(),
-      end: appointment.end.toISOString(),
-      notes: appointment.notes,
-    });
-
-    // Tell user appointment is booked
-    setAlert({ message: "Appointment booked successfully.", type: "success" });
 
     setAppOpen(false);
   };
