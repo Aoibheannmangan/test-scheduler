@@ -63,11 +63,6 @@ const RebookingForm = ({ event, onSave, onCancel }) => {
                 <p><strong>Title: </strong>{event.title}</p>
 
                 <label>New Start Time:</label>
-                <input
-                    type="datetime-local"
-                    value={newStart}
-                    onChange={(e) => setNewStart(e.target.value)}
-                />
                 <TimePicker
                     label="New Start Time"
                     value={newStart}

@@ -22,12 +22,16 @@ import CustomToolbar from "../components/CustomToolbar";
 import Alert from "../components/Alert";
 import PopUp from "../components/PopUp";
 import RebookingForm from "../components/RebookingForm";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { CiCalendar } from "react-icons/ci";
 import { useData } from "../hooks/DataContext";
+import dayjs from "dayjs";
 
 const MyCalendar = () => {
   const [view, setView] = useState("month");
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(dayjs(editedInfo.start).format("YYYY-MM-DD"));
+  const [startTime, setStartTime] = useState(dayjs(editedInfo.start));
+  const [endTime, setEndTime] = useState(dayjs(editedInfo.end));
   const [searchPatientId, setSearchPatientId] = useState("");
   const [windowEvents, setWindowEvents] = useState([]);
   const [currentPatient, setCurrentPatient] = useState(null);
@@ -62,6 +66,10 @@ const MyCalendar = () => {
 
     return [];
   });
+
+  const start = dayjs(`${date}T${startTime.format("HH:mm")}`).toDate();
+  const end = dayjs(`${date}T${endTime.format("HH:mm")}`).toDate();
+
 
   const [selectedDate, setSelectedDate] = useState("");
   const [showBlockedDates, setShowBlockedDates] = useState(false);
@@ -1093,35 +1101,34 @@ const MyCalendar = () => {
               />
             </label>
 
-            <label>
-              Start:
-              <input
-                type="datetime-local"
-                value={moment(editedInfo.start).format("YYYY-MM-DDTHH:mm")}
-                onChange={(e) =>
-                  setEditedInfo((prev) => ({
-                    ...prev,
-                    start: new Date(e.target.value),
-                  }))
-                }
-                className="date-edit"
-              />
-            </label>
+            <label>Date:</label>
+            <input 
+              type="date"
+              value={date}
+              onChange={(e) => setDate(new Date(e.target.value))}
+              required
+            />
 
-            <label>
-              End:
-              <input
-                type="datetime-local"
-                value={moment(editedInfo.end).format("YYYY-MM-DDTHH:mm")}
-                onChange={(e) =>
-                  setEditedInfo((prev) => ({
-                    ...prev,
-                    end: new Date(e.target.value),
-                  }))
-                }
-                className="date-edit"
-              />
-            </label>
+            <label>Start Time</label>
+            <TimePicker 
+              value={startTime}
+              minutesStep={30}
+              onChange={(newValue) => setStartTime(newValue)}
+              views={["hours", "minutes"]}
+              format="HH:mm"
+              required
+            />
+
+            <label>End Time</label>
+            <TimePicker 
+              value={endTime}
+              minutesStep={30}
+              onChange={(newValue) => setEndTime(newValue)}
+              views={["hours", "minutes"]}
+              format="HH:mm"
+              required
+            />
+            
 
             <label>
               Room:
