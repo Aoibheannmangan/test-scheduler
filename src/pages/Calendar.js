@@ -86,6 +86,17 @@ const MyCalendar = () => {
       const mapped = apiUserList.map((rec) => {
         const id = String(rec.record_id || "");
 
+        const existingApt = storedBookedEvents.find(
+          (evt) => String(evt.patientId) === id
+        );
+
+        if (existingApt) {
+          return {
+            ...existingApt,
+            type: "booked",
+          }
+        }
+
         // Find all past visits for this patient
         const patientVisits = storedBookedEvents.filter(
           (evt) => String(evt.patientId) === id
