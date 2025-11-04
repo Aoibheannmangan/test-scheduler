@@ -74,21 +74,35 @@ const MyCalendar = () => {
   // Grab from local storage and in storedList
   useEffect(() => {
     if (apiUserList && Array.isArray(apiUserList)) {
-      
-      const storedBookedEvents = JSON.parse(localStorage.getItem("bookedEvents")) || [];
+      let storedBookedEvents = [];
+      try {
+        storedBookedEvents =
+          JSON.parse(localStorage.getItem("bookedEvents")) || [];
+      } catch (error) {
+        console.error("Error parsing bookedEvents from localStorage:", error);
+        storedBookedEvents = [];
+      }
 
       const mapped = apiUserList.map((rec) => {
         const id = String(rec.record_id || "");
 
+        // Find all past visits for this patient
         const patientVisits = storedBookedEvents.filter(
           (evt) => String(evt.patientId) === id
         );
-        const latestVisitNum = patientVisits.length > 0 ? Math.max(...patientVisits.map((evt) => Number(evt.visitNum) || 1)) + 1 : 1;
-      
+
+        // Set visitNum to next appointment number
+        const newestVisitNum =
+          patientVisits.length > 0
+            ? Math.max(
+                ...patientVisits.map((evt) => Number(evt.visitNum) || 1)
+              ) + 1
+            : 1;
+
         return {
           id,
-          type: "window", // All are windows unless you have appointment info
-          visitNum: latestVisitNum, // If you have visitNum, use it; otherwise default to 1
+          type: "window",
+          visitNum: newestVisitNum,
           OutOfArea: rec.nicu_ooa === "1",
           DOB: rec.nicu_dob || "",
           site:
@@ -99,18 +113,18 @@ const MyCalendar = () => {
             }[rec.nicu_dag] || "Unknown",
           Study: ["AIMHIGH"],
           DaysEarly: rec.nicu_days_early ? Number(rec.nicu_days_early) : 0,
-          Info: "", // Any aditional info field to import??**
-          notes: rec.nicu_email || "", // Use email as contact OR GET NUMBER?
+          Info: "",
+          notes: rec.nicu_email || "",
           email: rec.nicu_email || "",
           participantGroup: rec.nicu_participant_group || "",
-        }
-      })
-      
+        };
+      });
+
       setUserList(mapped);
     } else {
       setUserList([]);
     }
-  }, [apiUserList, bookedEvents]);
+  }, [apiUserList]);
 
   useEffect(() => {
     const storedDates = localStorage.getItem("blockedDates");
