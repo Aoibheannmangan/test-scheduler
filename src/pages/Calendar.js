@@ -74,6 +74,7 @@ const MyCalendar = () => {
   // Grab from local storage and in storedList
   useEffect(() => {
     if (apiUserList && Array.isArray(apiUserList)) {
+      
       let storedBookedEvents = [];
       try {
         storedBookedEvents =
@@ -86,34 +87,32 @@ const MyCalendar = () => {
       const mapped = apiUserList.map((rec) => {
         const id = String(rec.record_id || "");
 
-        const existingApt = storedBookedEvents.find(
-          (evt) => String(evt.patientId) === id
-        );
+        const patientBooked = storedBookedEvents
+          .filter((evt) => String(evt.patientId) === id)
+          .sort((a, b) => (Number(a.visitNum) || 0) - (Number(b.visitNum) || 0));
 
-        if (existingApt) {
+        if (patientBooked.length > 0) {
+        // Show latest booked visit as booked
+        const latest = patientBooked[patientBooked.length - 1];
           return {
-            ...existingApt,
+            ...latest,
             type: "booked",
-          }
+            visitNum: Number(latest.visitNum) || 1,
+            DOB: rec.nicu_dob || latest.DOB || "",
+            site:
+              {
+                1: "CUMH",
+                2: "Coombe",
+                3: "Rotunda",
+              }[rec.nicu_dag] || "Unknown",
+            Study: latest.Study || ["AIMHIGH"],
+          };
         }
-
-        // Find all past visits for this patient
-        const patientVisits = storedBookedEvents.filter(
-          (evt) => String(evt.patientId) === id
-        );
-
-        // Set visitNum to next appointment number
-        const newestVisitNum =
-          patientVisits.length > 0
-            ? Math.max(
-                ...patientVisits.map((evt) => Number(evt.visitNum) || 1)
-              ) + 1
-            : 1;
 
         return {
           id,
           type: "window",
-          visitNum: newestVisitNum,
+          visitNum: 1,
           OutOfArea: rec.nicu_ooa === "1",
           DOB: rec.nicu_dob || "",
           site:

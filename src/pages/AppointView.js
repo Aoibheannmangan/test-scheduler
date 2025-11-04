@@ -46,36 +46,33 @@ const Appointments = () => {
 
   console.log("BOOKED EVENTS BEFORE MERGE:", bookedEvents);
 
-  useEffect(() => {
-    const merged = userList.map((window) => {
-      const booked = bookedEvents.find(
-        (b) => b.patientId === window.id && b.visitNum === window.visitNum
-      );
-      if (booked) {
-        console.log("Before merge:", booked);
-        console.log("Type of start:", typeof booked.start, booked.start);
-        const start = new Date(booked.start);
-        const end = new Date(booked.end);
+    useEffect(() => {
+    const merged = userList.map((patient) => {
+      // Find all booked events for this patient
+      const patientBooked = bookedEvents
+        .filter((b) => b.patientId === patient.id)
+        .sort((a, b) => (Number(a.visitNum) || 0) - (Number(b.visitNum) || 0));
 
-        console.log("After parsing", start, end);
-
+      if (patientBooked.length > 0) {
+        // Use the latest booked visit
+        const latest = patientBooked[patientBooked.length - 1];
         return {
-          ...window,
-          ...booked,
-          start: new Date(booked.start),
-          end: new Date(booked.end),
+          ...patient,
+          ...latest,
+          start: new Date(latest.start),
+          end: new Date(latest.end),
           type: "booked",
+          visitNum: Number(latest.visitNum) || 1,
         };
       }
-      
-      return window;
+
+      return patient; // keep as window if no booked appointments
     });
 
     console.log("Merged events:", merged);
-
     setAllEvents(merged);
   }, [userList, bookedEvents]);
-
+  
   // make a today and month away var for distance indicators
   const today = new Date();
   const oneMonthFromNow = new Date(today);
