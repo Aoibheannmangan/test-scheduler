@@ -1,7 +1,7 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 from .extensions import db, migrate
-from .routes import get_data, book_appointment, delete_appointment, get_all_bookings, update_appointment
+from .routes import get_data, book_appointment, delete_appointment, get_all_bookings, update_appointment, add_blocked_date, get_blocked_dates
 from .auth import register_user, login
 import os
 import logging
@@ -69,5 +69,15 @@ def create_app():
     @app.route("/api/login", methods=["POST"])
     def login_route():
         return login()
+
+    @app.route("/api/block-date", methods=["POST"])
+    @token_required
+    def add_blocked_date_route(current_user):
+        return add_blocked_date(current_user)
+
+    @app.route("/api/blocked-dates", methods=["GET"])
+    @token_required
+    def get_blocked_dates_route(current_user):
+        return get_blocked_dates(current_user)
 
     return app

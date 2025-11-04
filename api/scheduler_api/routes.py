@@ -11,6 +11,7 @@ from .tokenDecorator import token_required
 
 logger = logging.getLogger(__name__)
 
+# API func
 def get_data():
     # Fetches data from the REDCap API and returns it as JSON
     
@@ -59,7 +60,7 @@ def get_data():
     else:
         return jsonify({'error': 'Failed to fetch data', 'status_code': response.status_code}), response.status_code
     
-   
+# Booking funcs
 def book_appointment(current_user):
     """Handles the booking of a new appointment."""
     logger.info(f"Appointment booking request by user: {current_user.email}")
@@ -81,16 +82,20 @@ def book_appointment(current_user):
         end_obj = datetime.fromisoformat(end_str.replace('Z', '+00:00'))
 
         # Create a new Event entry
-        new_event = Event(event_type='booked', visit_num=1) # Default visit_num to 1 for new bookings
+        print(Event.__table__.columns)
+        new_event = Event(
+            event_title=title,
+            start_date=start_obj,
+            end_date=end_obj,
+            event_type='booked', 
+            visit_num=1 # Default visit_num to 1 for new bookings
+        )
         db.session.add(new_event)
         db.session.flush() # Flush to get the event_id before committing
 
         # Create a new Booking entry linked to the event
         new_booking = Booking(
             patient_id=patient_id,
-            booking_title=title,
-            date=start_obj,
-            end_date=end_obj,
             blocked=False,
             note=notes,
             no_show=False,
@@ -110,21 +115,22 @@ def book_appointment(current_user):
 def get_all_bookings(current_user):
     """Retrieves all bookings from the database"""
     logger.info(f"Fetching all bookings for users: {current_user.email}")
-    bookings = Booking.query.all()
+    bookings = db.session.query(Booking, Event).join(Event).all()
     
     # Serialise bookings to a list of dicts
     booking_list = []
-    for booking in bookings:
+    for booking, event in bookings:
         booking_list.append({
             "booking_id": booking.booking_id,
-            "title": booking.booking_title,
+            "title": event.event_title,
             "patient_id": booking.patient_id,
-            "start": booking.date.isoformat(), # Convert date to ISO string
-            "end": booking.end_date.isoformat(),
+            "start": event.start_date.isoformat(), # Convert date to ISO string
+            "end": event.end_date.isoformat(),
             "blocked": booking.blocked,
             "note": booking.note,
             "no_show": booking.no_show,
             "event_id": booking.event_id,
+            "event_type": event.event_type,
             "room_id": booking.room_id
         })
     return jsonify({"bookings": booking_list}), 200
@@ -163,18 +169,19 @@ def update_appointment(current_user, event_id):
 
     try:
         booking_to_update = Booking.query.filter_by(event_id=event_id).first()
+        event_to_update = Event.query.filter_by(event_id=event_id).first()
         
-        if not booking_to_update:
+        if not booking_to_update or not event_to_update:
             return jsonify({"error": "Appointment not found"}), 404
 
         if 'start' in data:
-            booking_to_update.date = datetime.fromisoformat(data['start'].replace('Z', '+00:00'))
+            event_to_update.start_date = datetime.fromisoformat(data['start'].replace('Z', '+00:00'))
         
         if 'end' in data:
-            booking_to_update.date_end = datetime.fromisoformat(data['end'].replace('Z', '+00:00'))
+            event_to_update.end_date = datetime.fromisoformat(data['end'].replace('Z', '+00:00'))
             
         if 'title' in data:
-            booking_to_update.booking_title = data['title']
+            event_to_update.event_title = data['title']
 
         if 'note' in data:
             booking_to_update.note = data['note']
@@ -192,3 +199,55 @@ def update_appointment(current_user, event_id):
         db.session.rollback()
         logger.error(f"Error updating appointment: {e}")
         return jsonify({"ok": False, "error": str(e)}), 500
+
+# Blocking funcs
+
+def add_blocked_date(current_user):
+    """Handles the blocking of a date."""
+    logger.info(f"Blocked date request by user: {current_user.email}")
+    data = request.get_json()
+    date_str = data.get('date')
+    title = "Blocked"
+
+    if not date_str:
+        return jsonify({"error": "Missing date"}), 400
+
+    try:
+        # For a full-day event, use the start of the day for both start and end
+        start_of_day = datetime.fromisoformat(date_str.replace('Z', '+00:00')).replace(hour=0, minute=0, second=0, microsecond=0)
+        end_of_day = datetime.fromisoformat(date_str.replace('Z', '+00:00')).replace(hour=23, minute=59, second=59, microsecond=999999)
+
+        print(Event.__table__.columns)
+        new_event = Event(
+            event_title='Blocked',
+            start_date=start_of_day,
+            end_date=end_of_day,
+            event_type='blocked',
+            visit_num=None
+        )
+        db.session.add(new_event)
+        db.session.commit()
+        return jsonify({"ok": True, "eventId": new_event.event_id}), 201
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"Error blocking date: {e}")
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+def get_blocked_dates(current_user):
+    """Retrieves all blocked dates from the database."""
+    logger.info(f"Fetching all blocked dates for user: {current_user.email}")
+    blocked_events = Event.query.filter_by(event_type='blocked').all()
+
+    blocked_dates_list = []
+    for event in blocked_events:
+        blocked_dates_list.append({
+            "eventId": event.event_id,
+            "title": event.event_title,
+            "start": event.start_date.isoformat(),
+            "end": event.end_date.isoformat(),
+            "allDay": True,
+            "blocked": True,
+            "event_type": event.event_type
+        })
+    
+    return jsonify({"blockedDates": blocked_dates_list}), 200
