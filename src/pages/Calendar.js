@@ -46,15 +46,36 @@ const MyCalendar = () => {
   const [rebookPopupOpen, setRebookPopupOpen] = useState(false);
   const [eventToRebook, setEventToRebook] = useState(null);
 
-  const [blockedDates, setBlockedDates] = useState(() => {
-    const stored = localStorage.getItem("blockedDates");
-    return stored ? JSON.parse(stored) : [];
-  });
   const [selectedDate, setSelectedDate] = useState("");
-  const [showBlockedDates, setShowBlockedDates] = useState(false);
-
   const isFirstRender = useRef(true);
 
+  /* Blocked dates portion */
+  // Create array for blocked dates and show blocked dates state
+  const [blockedDates, setBlockedDates] = useState([]);
+
+  useEffect(() => {
+    const fetchBlockedDates = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          "http://localhost:5000/api/blocked-dates",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setBlockedDates(response.data.blockedDates);
+      } catch (error) {
+        console.error("Error fetching blocked dates:", error);
+      }
+    };
+
+    fetchBlockedDates();
+  }, []);
+  const [showBlockedDates, setShowBlockedDates] = useState(false);
+
+  /* Appointment portion */
   // Create array to store booked appointments
   const [bookedEvents, setBookedEvents] = useState([]);
 
@@ -105,6 +126,7 @@ const MyCalendar = () => {
           start: new Date(booking.start),
           end: new Date(booking.end),
           room: room ? room.id : null,
+          event_type: booking.event_type,
         };
       });
       setBookedEvents(bookings);
@@ -117,17 +139,6 @@ const MyCalendar = () => {
   useEffect(() => {
     fetchBookings();
   }, [fetchBookings]);
-
-  useEffect(() => {
-    const storedDates = localStorage.getItem("blockedDates");
-    if (storedDates) {
-      setBlockedDates(JSON.parse(storedDates));
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("blockedDates", JSON.stringify(blockedDates));
-  }, [blockedDates]);
 
   // Open popup when clicking an event
   const handleSelectEvent = (event) => {
@@ -147,35 +158,39 @@ const MyCalendar = () => {
     }
   };
 
-  const handleBlockDate = () => {
+  const handleBlockDate = async () => {
     if (selectedDate) {
-      const startOfDay = moment(selectedDate).startOf("day").toISOString();
-      const endOfDay = moment(selectedDate).endOf("day").toISOString();
-
-      const blockedEvent = {
-        title: "Blocked",
-        start: startOfDay,
-        end: endOfDay,
-        allDay: true,
-        blocked: true,
-      };
-
-      setBlockedDates((prev) => {
-        const alreadyBlocked = prev.some((evt) =>
-          moment(evt.start).isSame(startOfDay, "day")
+      try {
+        const token = localStorage.getItem("token");
+        await axios.post(
+          "http://localhost:5000/api/block-date",
+          { date: selectedDate },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
-        if (!alreadyBlocked) {
-          const updated = [...prev, blockedEvent];
-          localStorage.setItem("blockedDates", JSON.stringify(updated));
-          return updated;
-        }
-        return prev;
-      });
+
+        // Refetch blocked dates to update the calendar
+        const response = await axios.get(
+          "http://localhost:5000/api/blocked-dates",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setBlockedDates(response.data.blockedDates);
 
       setAlert({
         message: `Blocked ${moment(selectedDate).format("YYYY-MM-DD")}`,
         type: "success",
       });
+      } catch (error) {
+        console.error("Error blocking date:", error);
+        setAlert({ message: "Error blocking date", type: "error" });
+      }
     } else {
       setAlert({ message: "Please select a date to block", type: "error" });
     }
@@ -227,7 +242,6 @@ const MyCalendar = () => {
       event.id === updatedEvent.id ? updatedEvent : event
     );
     setBookedEvents(updatedBooked);
-    localStorage.setItem("bookedEvents", JSON.stringify(updatedBooked));
   };
 
   useEffect(() => {
@@ -512,6 +526,16 @@ const MyCalendar = () => {
 
   // Function to add appointment
   const handleAddAppointment = async (appointment, override = false) => {
+    const patientId = appointment.patientId;
+    const match = userList.find((p) => p.record_id === patientId);
+
+    if (!match) {
+      setAlert({ message: "Patient with that ID not found", type: "error" });
+      setCurrentPatient(null);
+      setWindowEvents([]);
+      return;
+    }
+
     try {
       await axios.post("http://localhost:5000/api/book", appointment, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -542,21 +566,8 @@ const MyCalendar = () => {
     );
   };
 
-  const blockedEvents = blockedDates.map((date) => {
-    const start = new Date(`${date}T00:00:00`);
-    const end = new Date(`${date}T23:59:59`);
-
-    return {
-      title: "Blocked",
-      start,
-      end,
-      allDay: true,
-      blocked: true,
-    };
-  });
-
   // Array of all avents
-  const allEvents = [...bookedEvents, ...windowEvents, ...blockedEvents];
+  const allEvents = [...bookedEvents, ...windowEvents, ...blockedDates];
 
   const filteredAppointments = useMemo(() => {
     return allEvents.filter((event) => {
@@ -605,6 +616,7 @@ const MyCalendar = () => {
             event: ({ event }) => (
               <div>
                 {event.title}
+                {event.event_type === "booked" && (
                 <div style={{ fontSize: 14 }}>
                   <strong>
                     {new Date(event.start).toLocaleTimeString([], {
@@ -620,6 +632,7 @@ const MyCalendar = () => {
                     })}
                   </strong>
                 </div>
+                )}
                 <div style={{ fontSize: 12 }}>
                   <strong>{event.note}</strong>
                 </div>{" "}
@@ -920,6 +933,7 @@ const MyCalendar = () => {
           isOpen={appOpen}
           onClose={() => setAppOpen(false)}
           bookedEvents={bookedEvents}
+          blockedDates={blockedDates}
           roomList={roomList}
         />
       </div>
