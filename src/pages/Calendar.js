@@ -74,30 +74,43 @@ const MyCalendar = () => {
   // Grab from local storage and in storedList
   useEffect(() => {
     if (apiUserList && Array.isArray(apiUserList)) {
-      const mapped = apiUserList.map((rec) => ({
-        id: rec.record_id || "",
-        type: "window", // All are windows unless you have appointment info
-        visitNum: 1, // If you have visitNum, use it; otherwise default to 1
-        OutOfArea: rec.nicu_ooa === "1",
-        DOB: rec.nicu_dob || "",
-        site:
-          {
-            1: "CUMH",
-            2: "Coombe",
-            3: "Rotunda",
-          }[rec.nicu_dag] || "Unknown",
-        Study: ["AIMHIGH"],
-        DaysEarly: rec.nicu_days_early ? Number(rec.nicu_days_early) : 0,
-        Info: "", // Any aditional info field to import??**
-        notes: rec.nicu_email || "", // Use email as contact OR GET NUMBER?
-        email: rec.nicu_email || "",
-        participantGroup: rec.nicu_participant_group || "",
-      }));
+      
+      const storedBookedEvents = JSON.parse(localStorage.getItem("bookedEvents")) || [];
+
+      const mapped = apiUserList.map((rec) => {
+        const id = String(rec.record_id || "");
+
+        const patientVisits = storedBookedEvents.filter(
+          (evt) => String(evt.patientId) === id
+        );
+        const latestVisitNum = patientVisits.length > 0 ? Math.max(...patientVisits.map((evt) => Number(evt.visitNum) || 1)) + 1 : 1;
+      
+        return {
+          id,
+          type: "window", // All are windows unless you have appointment info
+          visitNum: latestVisitNum, // If you have visitNum, use it; otherwise default to 1
+          OutOfArea: rec.nicu_ooa === "1",
+          DOB: rec.nicu_dob || "",
+          site:
+            {
+              1: "CUMH",
+              2: "Coombe",
+              3: "Rotunda",
+            }[rec.nicu_dag] || "Unknown",
+          Study: ["AIMHIGH"],
+          DaysEarly: rec.nicu_days_early ? Number(rec.nicu_days_early) : 0,
+          Info: "", // Any aditional info field to import??**
+          notes: rec.nicu_email || "", // Use email as contact OR GET NUMBER?
+          email: rec.nicu_email || "",
+          participantGroup: rec.nicu_participant_group || "",
+        }
+      })
+      
       setUserList(mapped);
     } else {
       setUserList([]);
     }
-  }, [apiUserList]);
+  }, [apiUserList, bookedEvents]);
 
   useEffect(() => {
     const storedDates = localStorage.getItem("blockedDates");
@@ -732,12 +745,6 @@ const MyCalendar = () => {
       end: appointment.end.toISOString(),
       notes: appointment.notes,
     });
-
-    setUserList(prev => 
-      prev.map(user => 
-        user.id === patientId ? {...user, visitNum: nextVisitNum + 1} : user
-      )
-    );
 
     // Tell user appointment is booked
     setAlert({ message: "Appointment booked successfully.", type: "success" });
