@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import "./AppointView.css";
 import { useAppointmentFilters } from "../hooks/useAppointmentFilters";
 import "../components/useAppointmentFilters.css";
@@ -7,17 +7,87 @@ import {
   generateCoolPrimeAppointments,
   generateEDIAppointment,
 } from "../hooks/windowEventCalc";
-import { useData } from "../hooks/DataContext"; // <-- Import the API hook
+import { useData } from "../hooks/DataContext";
+import axios from "axios";
 
 const Appointments = () => {
-  const { data: contextUserList, loading, error } = useData();
+  /* Appointment portion */
+  // Create array to store booked appointments
+  const [bookedEvents, setBookedEvents] = useState([]);
+
+  const { data: apiUserList, loading, error, updatePatient } = useData();
   const [userList, setUserList] = useState([]);
+
+  const [allDisplayEvents, setAllDisplayEvents] = useState([]);
+
+  // Run whenever apiUserList changes
+  useEffect(() => {
+    if (apiUserList) {
+      setUserList(apiUserList);
+    }
+  }, [apiUserList]);
+
+  // Selected rooms available
+  const roomList = useMemo(
+    () => [
+      { id: "TeleRoom", label: "Telemetry Room (Room 2.10)", dbId: 1 },
+      { id: "room1", label: "Assessment Room 1", dbId: 2 },
+      { id: "room2", label: "Assessment Room 2", dbId: 3 },
+      { id: "room3", label: "Assessment Room 3", dbId: 4 },
+      { id: "room4", label: "Assessment Room 4", dbId: 5 },
+      {
+        id: "devRoom",
+        label: "Developmental Assessment Room (Room 2.07)",
+        dbId: 6,
+      },
+    ],
+    []
+  );
+
+  const fetchBookings = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        "http://localhost:5000/api/appointments",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const bookings = response.data.bookings.map((booking) => {
+        const room = roomList.find((r) => r.dbId === booking.room_id);
+
+        return {
+          ...booking,
+          title: booking.title,
+          start: new Date(booking.start),
+          end: new Date(booking.end),
+          room: room ? room.id : null,
+          event_type: booking.event_type,
+          // Keep both patient_id and id for consistency
+          patient_id: booking.patient_id,
+          id: booking.patient_id, // Map patient_id to id
+        };
+      });
+
+      setBookedEvents(bookings);
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+    }
+  }, [roomList]);
+
+  // In use effect as it runs when component mounts
+  useEffect(() => {
+    fetchBookings();
+  }, [fetchBookings]);
 
   useEffect(() => {
     // Debug line -> console.log("API user list received:", apiUserList);
-    if (userList && Array.isArray(contextUserList)) {
+    if (userList && Array.isArray(apiUserList)) {
       // Map API fields to appointment fields
-      const mapped = contextUserList.map((rec) => ({
+      const mapped = apiUserList.map((rec) => ({
         id: rec.record_id || "",
         type: rec.type || "window", // All are windows unless you have appointment info
         visitNum: 1, // Defaults as 1
@@ -29,7 +99,7 @@ const Appointments = () => {
             2: "Coombe",
             3: "Rotunda",
           }[rec.nicu_dag] || "Unknown",
-        Study: ["AIMHIGH"],
+        Study: ["AIMHIGH"], // Hardcoded as it pulls from the REDCap on AIMHIGH
         DaysEarly: rec.nicu_days_early ? Number(rec.nicu_days_early) : 0,
         Info: "", // Any aditional info field to import??**
         notes: rec.nicu_email || "", // Use email as contact OR GET NUMBER?
@@ -40,7 +110,7 @@ const Appointments = () => {
     } else {
       setUserList([]);
     }
-  }, [contextUserList]);
+  }, [apiUserList]);
 
   // make a today and month away var for distance indicators
   const today = new Date();
@@ -67,6 +137,54 @@ const Appointments = () => {
     return appointmentDate <= oneWeekFromNow;
   };
 
+  useEffect(() => {
+    if (userList.length > 0) {
+      const combined = [];
+      const patientsCoveredByBookings = new Set();
+
+      // Add all patients from REDCap
+      userList.forEach((redcapPatient) => {
+        // Find if this patient has a booking
+        const patientBooking = bookedEvents.find(
+          (booking) => booking.patient_id === redcapPatient.id
+        );
+
+        if (patientBooking) {
+          // Patient has a booking - show as booked
+          combined.push({
+            ...patientBooking,
+            type: "booked",
+            DOB: redcapPatient.DOB,
+            Study: redcapPatient.Study,
+            site: redcapPatient.site,
+            OutOfArea: redcapPatient.OutOfArea,
+            email: redcapPatient.email,
+            visitNum: patientBooking.visitNum,
+            displayId: patientBooking.patient_id,
+            // Important: Use patient_id from booking
+            id: patientBooking.patient_id,
+            patientId: patientBooking.patient_id,
+          });
+          patientsCoveredByBookings.add(redcapPatient.id);
+        } else {
+          // Patient doesn't have booking - show as window
+          combined.push({
+            ...redcapPatient,
+            type: "window",
+            displayId: redcapPatient.id,
+            visitNum: redcapPatient.visitNum || 1,
+            patientId: redcapPatient.id,
+            id: redcapPatient.id, // Ensure id is consistent
+          });
+        }
+      });
+
+      setAllDisplayEvents(combined);
+    } else {
+      setAllDisplayEvents([]);
+    }
+  }, [userList, bookedEvents]);
+
   //--------------------------------------------------------------------------------------
 
   // Track collapsed state for IDs
@@ -89,7 +207,7 @@ const Appointments = () => {
     selectedStudies,
     handleStudyChange,
     filteredAppointments,
-  } = useAppointmentFilters(userList);
+  } = useAppointmentFilters(allDisplayEvents);
   // ---------------------------------HTML--------------------------------------
   if (loading) return <div>Loading appointments...</div>;
   if (error) return <div>Error loading appointments: {error.message}</div>;
@@ -175,17 +293,18 @@ const Appointments = () => {
         </li>
 
         {filteredAppointments.map((event) => (
-          <li key={event.id} className="ID_element">
+          <li key={event.displayId || event.id} className="ID_element">
             <div className="idRow">
               {/*Patient ID Row*/}
               <label
                 className="patientRow"
-                onClick={() => toggleCollapseIds(event.id)}
+                onClick={() => toggleCollapseIds(event.displayId || event.id)}
               >
                 {event.type === "booked" && (
                   <>
-                    {event.id} {expandedIds[event.id] ? "-" : "+"}{" "}
-                    {/* Functions used to get distance from appointment and display indicator */}
+                    {event.displayId || event.id}{" "}
+                    {expandedIds[event.displayId || event.id] ? "-" : "+"}{" "}
+                    {/* Distance indicators */}
                     {event.start && isFarAway(event.start) && (
                       <span
                         className="farNotifier"
@@ -205,16 +324,18 @@ const Appointments = () => {
                 )}
                 {event.type === "window" && (
                   <>
-                    {/* Make id red to indicate no booking has been made */}
                     <span className="windowTitle">
-                      {event.id} {expandedIds[event.id] ? "-" : "+"}{" "}
+                      {event.displayId || event.id}{" "}
+                      {expandedIds[event.displayId || event.id] ? "-" : "+"}{" "}
                     </span>
                   </>
                 )}
               </label>
 
               {/*Display Visit Number*/}
-              <span className="visitNumContainer">{event.visitNum}</span>
+              <span className="visitNumContainer">
+                {event.visitNum || event.visit_num}
+              </span>
 
               {/*Put notifier under OOA - (Out Of Area)*/}
               <div className="dotContainer">
