@@ -733,6 +733,12 @@ const MyCalendar = () => {
       notes: appointment.notes,
     });
 
+    setUserList(prev => 
+      prev.map(user => 
+        user.id === patientId ? {...user, visitNum: nextVisitNum + 1} : user
+      )
+    );
+
     // Tell user appointment is booked
     setAlert({ message: "Appointment booked successfully.", type: "success" });
     setAppOpen(false);
