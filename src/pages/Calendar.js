@@ -678,6 +678,8 @@ const MyCalendar = () => {
       return;
     }
 
+     const nextVisitNum = (patient.visitNum ?? 1);
+    
     // Add new appointment object structure
     const fullAppointment = {
       ...appointment,
@@ -692,7 +694,7 @@ const MyCalendar = () => {
       start: new Date(appointment.start), 
       end: new Date(appointment.end), 
       type: "booked", // As no longer window
-      visitNum: patient.visitNum ?? 1,
+      visitNum: nextVisitNum,
       id: patientId,
       room: appointment.room,
       notes: appointment.notes,
@@ -725,7 +727,7 @@ const MyCalendar = () => {
     updatePatient(patientId, {
       title: `${patient.Study}| ID: ${patientId}`,
       type: "booked",
-      visitNum: (patient.visitNum ?? 1) + 1,
+      visitNum: nextVisitNum + 1,
       start: appointment.start.toISOString(),
       end: appointment.end.toISOString(),
       notes: appointment.notes,
@@ -733,7 +735,6 @@ const MyCalendar = () => {
 
     // Tell user appointment is booked
     setAlert({ message: "Appointment booked successfully.", type: "success" });
-
     setAppOpen(false);
   };
 
