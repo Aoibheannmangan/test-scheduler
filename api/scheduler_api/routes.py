@@ -81,8 +81,17 @@ def book_appointment(current_user):
         start_obj = datetime.fromisoformat(start_str.replace('Z', '+00:00'))
         end_obj = datetime.fromisoformat(end_str.replace('Z', '+00:00'))
 
+        # Check for overlapping blocked events
+        conflicting_blocked_event = Event.query.filter(
+            Event.event_type == 'blocked',
+            Event.start_date < end_obj,
+            Event.end_date > start_obj
+        ).first()
+
+        if conflicting_blocked_event:
+            return jsonify({"error": "The selected time slot is blocked."}), 409
+
         # Create a new Event entry
-        print(Event.__table__.columns)
         new_event = Event(
             event_title=title,
             start_date=start_obj,
@@ -217,7 +226,6 @@ def add_blocked_date(current_user):
         start_of_day = datetime.fromisoformat(date_str.replace('Z', '+00:00')).replace(hour=0, minute=0, second=0, microsecond=0)
         end_of_day = datetime.fromisoformat(date_str.replace('Z', '+00:00')).replace(hour=23, minute=59, second=59, microsecond=999999)
 
-        print(Event.__table__.columns)
         new_event = Event(
             event_title='Blocked',
             start_date=start_of_day,

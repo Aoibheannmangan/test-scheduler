@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 import "./Appointment.css";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import dayjs from "dayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 // Toggle is not visible by default
 const ToggleAppointment = ({
@@ -9,11 +10,12 @@ const ToggleAppointment = ({
   isOpen,
   onClose,
   bookedEvents,
+  blockedDates,
   roomList,
 }) => {
   // States vars for appointment booking
   const [appPatID, setAppPatID] = useState("");
-  const [appDate, setAppDate] = useState("");
+  const [appDate, setAppDate] = useState(null);
   const [appTimeStart, setAppTimeStart] = useState(null); // Changed from "" to null
   const [appTimeEnd, setAppTimeEnd] = useState(null); // Changed from "" to null
   const [patientStudy, setPatientStudy] = useState("");
@@ -32,15 +34,29 @@ const ToggleAppointment = ({
     });
   };
 
+  // Gray out blocked out dates
+  const isDateBlocked = (date) => {
+    if (!blockedDates) return false;
+    const formattedDate = dayjs(date).startOf("day");
+    return blockedDates.some((blockedDate) => {
+      const start = dayjs(blockedDate.start).startOf("day");
+      return formattedDate.isSame(start);
+    });
+  };
+
   // Calculate selected start and end times
   const selectedStart = useMemo(() => {
     if (!appDate || !appTimeStart || !dayjs.isDayjs(appTimeStart)) return null;
-    return dayjs(`${appDate}T${appTimeStart.format("HH:mm")}`).toDate();
+    return dayjs(
+      `${appDate.format("YYYY-MM-DD")}T${appTimeStart.format("HH:mm")}`
+    ).toDate();
   }, [appDate, appTimeStart]);
 
   const selectedEnd = useMemo(() => {
     if (!appDate || !appTimeEnd || !dayjs.isDayjs(appTimeEnd)) return null;
-    return dayjs(`${appDate}T${appTimeEnd.format("HH:mm")}`).toDate();
+    return dayjs(
+      `${appDate.format("YYYY-MM-DD")}T${appTimeEnd.format("HH:mm")}`
+    ).toDate();
   }, [appDate, appTimeEnd]);
 
   // Generate room options with availability
@@ -99,7 +115,7 @@ const ToggleAppointment = ({
 
     // Reset form
     setAppPatID("");
-    setAppDate("");
+    setAppDate(null);
     setAppTimeStart(null); // Reset to null instead of ""
     setAppTimeEnd(null); // Reset to null instead of ""
     setPatientStudy("");
@@ -126,12 +142,18 @@ const ToggleAppointment = ({
               />
 
               <label htmlFor="date">Appointment Date</label>
-              <input // date input for app
-                type="date"
-                id="date"
+              <DatePicker // date input for app
+                label="Appointment Date"
                 value={appDate}
-                onChange={(e) => setAppDate(e.target.value)}
-                required
+                onChange={(e) => setAppDate(e)}
+                shouldDisableDate={isDateBlocked}
+                slotProps={{
+                  textField: {
+                    id: "date",
+                    required: true,
+                    fullWidth: true,
+                  },
+                }}
               />
 
               <label htmlFor="startTime">Start Time</label>
