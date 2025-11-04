@@ -183,10 +183,10 @@ const MyCalendar = () => {
         );
         setBlockedDates(response.data.blockedDates);
 
-      setAlert({
-        message: `Blocked ${moment(selectedDate).format("YYYY-MM-DD")}`,
-        type: "success",
-      });
+        setAlert({
+          message: `Blocked ${moment(selectedDate).format("YYYY-MM-DD")}`,
+          type: "success",
+        });
       } catch (error) {
         console.error("Error blocking date:", error);
         setAlert({ message: "Error blocking date", type: "error" });
@@ -617,21 +617,21 @@ const MyCalendar = () => {
               <div>
                 {event.title}
                 {event.event_type === "booked" && (
-                <div style={{ fontSize: 14 }}>
-                  <strong>
-                    {new Date(event.start).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </strong>{" "}
-                  -{" "}
-                  <strong>
-                    {new Date(event.end).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </strong>
-                </div>
+                  <div style={{ fontSize: 14 }}>
+                    <strong>
+                      {new Date(event.start).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </strong>{" "}
+                    -{" "}
+                    <strong>
+                      {new Date(event.end).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </strong>
+                  </div>
                 )}
                 <div style={{ fontSize: 12 }}>
                   <strong>{event.note}</strong>
