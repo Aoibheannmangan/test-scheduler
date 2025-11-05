@@ -66,6 +66,7 @@ const Appointments = () => {
           end: new Date(booking.end),
           room: room ? room.id : null,
           event_type: booking.event_type,
+          visit_num: booking.visit_num, // Add visit_num here
           // Keep both patient_id and id for consistency
           patient_id: booking.patient_id,
           id: booking.patient_id, // Map patient_id to id
@@ -90,7 +91,7 @@ const Appointments = () => {
       const mapped = apiUserList.map((rec) => ({
         id: rec.record_id || "",
         type: rec.type || "window", // All are windows unless you have appointment info
-        visitNum: 1, // Defaults as 1
+        visit_num: 1, // Defaults as 1
         OutOfArea: rec.nicu_ooa === "1",
         DOB: rec.nicu_dob || "",
         site:
@@ -159,7 +160,7 @@ const Appointments = () => {
             site: redcapPatient.site,
             OutOfArea: redcapPatient.OutOfArea,
             email: redcapPatient.email,
-            visitNum: patientBooking.visitNum,
+            visit_num: patientBooking.visit_num,
             displayId: patientBooking.patient_id,
             // Important: Use patient_id from booking
             id: patientBooking.patient_id,
@@ -172,7 +173,7 @@ const Appointments = () => {
             ...redcapPatient,
             type: "window",
             displayId: redcapPatient.id,
-            visitNum: redcapPatient.visitNum || 1,
+            visit_num: redcapPatient.visit_num || 1,
             patientId: redcapPatient.id,
             id: redcapPatient.id, // Ensure id is consistent
           });
@@ -333,9 +334,7 @@ const Appointments = () => {
               </label>
 
               {/*Display Visit Number*/}
-              <span className="visitNumContainer">
-                {event.visitNum || event.visit_num}
-              </span>
+              <span className="visitNumContainer">{event.visit_num}</span>
 
               {/*Put notifier under OOA - (Out Of Area)*/}
               <div className="dotContainer">
@@ -393,19 +392,19 @@ const Appointments = () => {
                             windowData = generateAimHighAppointments(
                               birthDate,
                               daysEarly,
-                              event.visitNum
+                              event.visit_num
                             );
                           } else if (study === "COOLPRIME") {
                             windowData = generateCoolPrimeAppointments(
                               birthDate,
                               daysEarly,
-                              event.visitNum
+                              event.visit_num
                             );
                           } else if (study === "EDI") {
                             windowData = generateEDIAppointment(
                               birthDate,
                               daysEarly,
-                              event.visitNum
+                              event.visit_num
                             );
                           }
 
@@ -470,7 +469,8 @@ const Appointments = () => {
                             return (
                               <div key={study}>
                                 <strong>{study} Status:</strong> No visit
-                                windows available (Visit #{event.visitNum || 1})
+                                windows available (Visit #{event.visit_num || 1}
+                                )
                                 <br />
                               </div>
                             );
