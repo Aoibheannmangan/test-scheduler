@@ -12,4 +12,8 @@ services:
       - "5000:5000"
     volumes:
       - ./api:/app
+      - backend_instance:/app/instance
     restart: unless-stopped
+
+volumes:
+  backend_instance:

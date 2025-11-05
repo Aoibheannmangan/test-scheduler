@@ -16,20 +16,9 @@ def create_app():
     if app.config.get('SECRET_KEY') is None:
         app.config.from_pyfile('config.py', silent=True)
 
-    # Configure the database URI to use the instance folder
-    db_path = os.path.join(app.instance_path, 'scheduler.db')
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', f'sqlite:///{db_path}')
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-    # Ensure the instance folder exists
-    try:
-        os.makedirs(app.instance_path)
-    except OSError:
-        pass
-
     # Initialize Flask extensions
     db.init_app(app)
-    migrate.init_app(app, db)
+    migrate.init_app(app, db, directory=app.config['MIGRATION_DIR'])
 
     # Enable CORS
     CORS(app)
