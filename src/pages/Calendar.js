@@ -318,7 +318,9 @@ const MyCalendar = () => {
 
   // Search patient by ID
   const handleSearchWindow = () => {
-    const patient = apiUserList.find((p) => p.record_id === searchPatientId.trim());
+    const patient = apiUserList.find(
+      (p) => p.record_id === searchPatientId.trim()
+    );
     if (!patient) {
       setAlert({ message: "Patient with that ID not found", type: "error" });
       setCurrentPatient(null);
@@ -338,7 +340,11 @@ const MyCalendar = () => {
     }
 
     if (!patient.DOB) {
-      setAlert({ message: "Patient has no Date of Birth recorded, cannot generate visit windows.", type: "error" });
+      setAlert({
+        message:
+          "Patient has no Date of Birth recorded, cannot generate visit windows.",
+        type: "error",
+      });
       setCurrentPatient(null);
       setWindowEvents([]);
       return;
@@ -544,6 +550,13 @@ const MyCalendar = () => {
       setCurrentPatient(null);
       setWindowEvents([]);
       return;
+    }
+
+    // Check if the appointment is within the visit window
+    if (!override && !isAppointmentWithinVisitWindow(appointment, match)) {
+      setPendingAppointment(appointment);
+      setOutsideWindowPopupOpen(true);
+      return; // Stop here, wait for user confirmation
     }
 
     try {
