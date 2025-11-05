@@ -318,7 +318,7 @@ const MyCalendar = () => {
 
   // Search patient by ID
   const handleSearchWindow = () => {
-    const patient = userList.find((p) => p.id === searchPatientId.trim());
+    const patient = apiUserList.find((p) => p.record_id === searchPatientId.trim());
     if (!patient) {
       setAlert({ message: "Patient with that ID not found", type: "error" });
       setCurrentPatient(null);
@@ -337,9 +337,16 @@ const MyCalendar = () => {
       return;
     }
 
+    if (!patient.DOB) {
+      setAlert({ message: "Patient has no Date of Birth recorded, cannot generate visit windows.", type: "error" });
+      setCurrentPatient(null);
+      setWindowEvents([]);
+      return;
+    }
+
     // Set current patient info
     setCurrentPatient(patient);
-    const birthDate = new Date(patient.DOB);
+    const birthDate = patient.DOB;
     const babyDaysEarly = patient.DaysEarly;
     const studies = Array.isArray(patient.Study)
       ? patient.Study

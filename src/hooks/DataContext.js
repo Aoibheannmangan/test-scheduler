@@ -24,7 +24,15 @@ export const DataProvider = ({ children }) => {
         const response = await axios.get(`${apiUrl}/api/data`, {
           timeout: 20000,
         });
-        setData(response.data);
+        const processedData = response.data.map((patient) => ({
+          ...patient,
+          DOB: patient.nicu_dob ? new Date(patient.nicu_dob) : null, // Convert to Date object, handle empty
+          DaysEarly: parseInt(patient.nicu_days_early) || 0, // Convert to int, default to 0
+          Study: "AIMHIGH", // Hardcode as AIMHIGH
+          Name: `Patient ${patient.record_id}`, // Create a display name
+          id: patient.record_id, // Map record_id to id for Calendar.js search
+        }));
+        setData(processedData);
       } catch (err) {
         // Set error if encountered
         setError(err);
