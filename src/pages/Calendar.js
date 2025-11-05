@@ -24,6 +24,7 @@ import PopUp from "../components/PopUp";
 import RebookingForm from "../components/RebookingForm";
 import { CiCalendar } from "react-icons/ci";
 import { useData } from "../hooks/DataContext";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import axios from "axios";
 
 const MyCalendar = () => {
@@ -46,7 +47,7 @@ const MyCalendar = () => {
   const [rebookPopupOpen, setRebookPopupOpen] = useState(false);
   const [eventToRebook, setEventToRebook] = useState(null);
 
-  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedDate, setSelectedDate] = useState(null);
   const isFirstRender = useRef(true);
 
   /* Blocked dates portion */
@@ -201,7 +202,7 @@ const MyCalendar = () => {
   };
 
   const handleDateChange = (event) => {
-    setSelectedDate(event.target.value);
+    setSelectedDate(event);
   };
 
   const blockedEventGetter = (event) => {
@@ -681,10 +682,18 @@ const MyCalendar = () => {
                 <div className="blockContainer">
                   <label>
                     Select Date to Block:
-                    <input
-                      type="date"
+                    <DatePicker // date input for app
+                      views={["day", "month", "year"]}
                       value={selectedDate}
                       onChange={handleDateChange}
+                      format="DD/MM/YYYY"
+                      slotProps={{
+                        textField: {
+                          id: "date",
+                          required: true,
+                          fullWidth: true,
+                        },
+                      }}
                     />
                   </label>
                   <div className="button-row">
