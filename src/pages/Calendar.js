@@ -143,8 +143,9 @@ const MyCalendar = () => {
 
   // Open popup when clicking an event
   const handleSelectEvent = (event) => {
+    console.log("Selected Event:", event); // DEBUG
     // So only booked events can be altered
-    if (event.type === "booked") {
+    if (event.event_type === "booked") {
       setSelectedEvent(event);
       // Copy all editable properties into editedInfo state
       setEditedInfo({
@@ -263,6 +264,7 @@ const MyCalendar = () => {
 
   // Save when editing event info
   const saveEditedInfo = async () => {
+    console.log("Saving Edited Info:", editedInfo); // DEBUG
     if (!selectedEvent || !editedInfo) return;
 
     // Prepare updated event object
