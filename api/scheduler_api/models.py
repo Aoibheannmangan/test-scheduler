@@ -37,5 +37,5 @@ class Event(db.Model):
     event_title = db.Column(db.String, nullable=False) # Booking title for calendar
     start_date = db.Column(db.DateTime, nullable=False) # Date and time of the booking
     end_date = db.Column(db.DateTime, nullable=False) # Date and time of end of the booking
-    event_type = db.Column(db.Enum('booked', 'window', 'blocked', name='event_type_enum'), nullable=False) # Type of event (e.g., booked, window, blocked)
+    event_type = db.Column(db.Enum('booked', 'window', 'blocked', 'completed', name='event_type_enum'), nullable=False) # Type of event (e.g., booked, window, blocked, completed)
     visit_num = db.Column(db.Integer, nullable=True) # Visit number for the event

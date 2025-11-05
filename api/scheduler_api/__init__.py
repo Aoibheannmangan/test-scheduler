@@ -40,6 +40,11 @@ def create_app():
     @token_required # Applying decorator
     def book_appointment_route(current_user):
         return book_appointment(current_user)
+    
+    @app.route("/api/appointment/<event_id>", methods=["DELETE"])
+    @token_required
+    def delete_appointment_route(current_user, event_id):
+        return delete_appointment(current_user, event_id)
 
     @app.route("/api/appointment/<event_id>", methods=["PUT"])
     @token_required

@@ -92,13 +92,21 @@ def book_appointment(current_user):
             return jsonify({"error": "The selected time slot is blocked."}), 409
 
         # Create a new Event entry
+        # Find the highest visit_num for the patient
+        last_booking_event = db.session.query(Event).join(Booking).filter(Booking.patient_id == patient_id, Event.event_type == 'booked').order_by(Event.visit_num.desc()).first()
+
+        if last_booking_event and last_booking_event.visit_num is not None:
+            new_visit_num = last_booking_event.visit_num + 1
+        else:
+            new_visit_num = 2 # First visit in the system starts at 2
+
         new_event = Event(
             event_title=title,
             start_date=start_obj,
             end_date=end_obj,
             event_type='booked', 
-            visit_num=1 # Default visit_num to 1 for new bookings
-        )
+            visit_num=new_visit_num # Use calculated visit_num
+        )   
         db.session.add(new_event)
         db.session.flush() # Flush to get the event_id before committing
 
@@ -140,7 +148,8 @@ def get_all_bookings(current_user):
             "no_show": booking.no_show,
             "event_id": booking.event_id,
             "event_type": event.event_type,
-            "room_id": booking.room_id
+            "room_id": booking.room_id,
+            "visit_num": event.visit_num
         })
     return jsonify({"bookings": booking_list}), 200
 
