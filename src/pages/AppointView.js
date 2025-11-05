@@ -373,6 +373,14 @@ const Appointments = () => {
                 {/*Visit window in info if a window patient*/}
                 {event.type === "window" &&
                   (() => {
+                    if (event.visit_num > 6) {
+                      return (
+                        <div>
+                          <strong>Status:</strong> Patient is complete
+                        </div>
+                      );
+                    }
+
                     const birthDate = new Date(event.DOB || event.dob);
                     const daysEarly = event.DaysEarly ?? event.daysEarly ?? 0;
                     if (
@@ -411,7 +419,7 @@ const Appointments = () => {
                           const today = new Date();
                           today.setHours(0, 0, 0, 0);
 
-                          // Look to see ig theres an active/ upcoming window if a window hasnt ended yet
+                          // Look to see if theres an active/ upcoming window if a window hasnt ended yet
 
                           const activeWindow = windowData.find(
                             ({ start, end }) => {
