@@ -360,7 +360,7 @@ const Appointments = () => {
                 {/*Format date of birth*/}
                 {new Date(event.DOB).toLocaleDateString(undefined, {
                   year: "numeric",
-                  month: "long",
+                  month: "numeric",
                   day: "numeric",
                 })}
                 <br />
@@ -517,36 +517,60 @@ const Appointments = () => {
                   })()}
                 {/*Additional Notes Dropdown*/}
                 {(() => {
-                  const noteContent = event.email; // Always show email as contact
-
-                  // Only show the section if there is actual content
-                  if (!noteContent || noteContent.trim() === "") return null;
-
                   // Tracks id of toggled notes
                   const toggleKey = `${event.id}-notes`;
 
-                  return (
-                    <>
-                      <label
-                        style={{ cursor: "pointer", fontWeight: "bold" }}
-                        onClick={() =>
-                          setExpandedNotes((prev) => ({
-                            ...prev,
-                            [toggleKey]: !prev[toggleKey],
-                          }))
-                        }
-                      >
-                        Contact: {expandedNotes[toggleKey] ? "-" : "+"}
-                      </label>
+                  if (event.type === "window" && event.email) {
+                    const emailContent = event.email; // Always show email as contact
+                    return (
+                      <>
+                        <label
+                          style={{ cursor: "pointer", fontWeight: "bold" }}
+                          onClick={() =>
+                            setExpandedNotes((prev) => ({
+                              ...prev,
+                              [toggleKey]: !prev[toggleKey],
+                            }))
+                          }
+                        >
+                          Contact: {expandedNotes[toggleKey] ? "-" : "+"}
+                        </label>
 
-                      {expandedNotes[toggleKey] && (
-                        <div className="info">
-                          <strong>{noteContent}</strong>
-                          <br />
-                        </div>
-                      )}
-                    </>
-                  );
+                        {expandedNotes[toggleKey] && (
+                          <div className="info">
+                            <strong>{emailContent}</strong>
+                            <br />
+                          </div>
+                        )}
+                      </>
+                    );
+                  } else if (event.note && event.type === "booked") {
+                    const noteContent = event.note;
+                    return (
+                      <>
+                        <label
+                          style={{ cursor: "pointer", fontWeight: "bold" }}
+                          onClick={() =>
+                            setExpandedNotes((prev) => ({
+                              ...prev,
+                              [toggleKey]: !prev[toggleKey],
+                            }))
+                          }
+                        >
+                          Booking Note: {expandedNotes[toggleKey] ? "-" : "+"}
+                        </label>
+
+                        {expandedNotes[toggleKey] && (
+                          <div className="info">
+                            <strong>{noteContent}</strong>
+                            <br />
+                          </div>
+                        )}
+                      </>
+                    );
+                  } else {
+                    return null;
+                  }
                 })()}
               </div>
             )}
