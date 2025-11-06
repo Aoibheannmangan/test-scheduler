@@ -25,6 +25,9 @@ import RebookingForm from "../components/RebookingForm";
 import { CiCalendar } from "react-icons/ci";
 import { useData } from "../hooks/DataContext";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import axios from "axios";
 
 const MyCalendar = () => {
@@ -150,8 +153,8 @@ const MyCalendar = () => {
       // Copy all editable properties into editedInfo state
       setEditedInfo({
         title: event.title || "",
-        start: event.start,
-        end: event.end,
+        start: moment(event.start),
+        end: moment(event.end),
         note: event.note || "",
         room: event.room || "",
         noShow: event.noShow || false,
@@ -589,6 +592,35 @@ const MyCalendar = () => {
     );
   };
 
+  const isDateBlocked = (date) => {
+    const formattedDate = moment(date).format('YYYY-MM-DD');
+    return blockedDates.some(blockedDate => moment(blockedDate.start).format('YYYY-MM-DD') === formattedDate);
+  };
+
+  const isTimeSlotBooked = (date, eventIdToExclude) => {
+    const selectedStartTime = moment(date).valueOf();
+
+    return bookedEvents.some(booking => {
+        if (booking.event_id === eventIdToExclude) return false;
+
+        const bookingStartTime = moment(booking.start).valueOf();
+        const bookingEndTime = moment(booking.end).valueOf();
+
+        return selectedStartTime >= bookingStartTime && selectedStartTime < bookingEndTime;
+    });
+  };
+
+  const shouldDisableDate = (date) => {
+      return isDateBlocked(date);
+  };
+
+  const shouldDisableTime = (time, clockType) => {
+      if (isTimeSlotBooked(time, selectedEvent?.event_id)) {
+          return true;
+      }
+      return false;
+  };
+
   // Array of all avents
   const allEvents = [...bookedEvents, ...windowEvents, ...blockedDates];
 
@@ -838,35 +870,28 @@ const MyCalendar = () => {
               />
             </label>
 
-            <label>
-              Start:
-              <input
-                type="datetime-local"
-                value={moment(editedInfo.start).format("YYYY-MM-DDTHH:mm")}
-                onChange={(e) =>
-                  setEditedInfo((prev) => ({
-                    ...prev,
-                    start: new Date(e.target.value),
-                  }))
+            <LocalizationProvider dateAdapter={AdapterMoment}>
+              <DateTimePicker
+                label="Start Time"
+                value={editedInfo.start}
+                onChange={(newValue) =>
+                  setEditedInfo((prev) => ({ ...prev, start: newValue }))
                 }
-                className="date-edit"
+                shouldDisableDate={shouldDisableDate}
+                shouldDisableTime={shouldDisableTime}
+                ampm={false}
               />
-            </label>
-
-            <label>
-              End:
-              <input
-                type="datetime-local"
-                value={moment(editedInfo.end).format("YYYY-MM-DDTHH:mm")}
-                onChange={(e) =>
-                  setEditedInfo((prev) => ({
-                    ...prev,
-                    end: new Date(e.target.value),
-                  }))
+              <DateTimePicker
+                label="End Time"
+                value={editedInfo.end}
+                onChange={(newValue) =>
+                  setEditedInfo((prev) => ({ ...prev, end: newValue }))
                 }
-                className="date-edit"
+                shouldDisableDate={shouldDisableDate}
+                shouldDisableTime={shouldDisableTime}
+                ampm={false}
               />
-            </label>
+            </LocalizationProvider>
 
             <label>
               Room:
@@ -908,6 +933,8 @@ const MyCalendar = () => {
                   setShowRebookingForm(false);
                 }}
                 onCancel={() => setShowRebookingForm(false)}
+                blockedDates={blockedDates}
+                bookedEvents={bookedEvents}
               />
             )}
 
