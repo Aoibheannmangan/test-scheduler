@@ -61,7 +61,7 @@ const MyCalendar = () => {
     }
 
     return [];
-  });
+  }); 
 
   const [selectedDate, setSelectedDate] = useState("");
   const [showBlockedDates, setShowBlockedDates] = useState(false);
@@ -164,6 +164,8 @@ const MyCalendar = () => {
     }
   };
 
+
+  //Blocking dates so they cannot be booked
   const handleBlockDate = () => {
     if (selectedDate) {
       const startOfDay = moment(selectedDate).startOf("day").toISOString();
@@ -198,6 +200,7 @@ const MyCalendar = () => {
     }
   };
 
+  //Unblock previously blocked dates
   const handleUnBlockDate = () => {
   try {
     if (!selectedDate) {
@@ -208,7 +211,6 @@ const MyCalendar = () => {
     const startOfDay = moment(selectedDate).startOf("day");
 
     setBlockedDates((prev) => {
-      // Make sure prev is always an array
       const safePrev = Array.isArray(prev) ? prev : [];
 
       // Filter out the blocked event that matches the selected date

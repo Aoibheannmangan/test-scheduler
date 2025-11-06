@@ -1,0 +1,26 @@
+site_name: Test Scheduler Documentation
+site_url: https://aoibheannmangan.github.io/test-scheduler/
+
+repo_url: https://github.com/Aoibheannmangan/test-scheduler.git
+
+docs_dir: docs 
+site_dir: site
+
+nav:
+  - Home: index.md
+  - About: about.md
+  - User Guide:
+      - Getting Started: user-guide/getting-started.md
+      - License: user-guide/license.md
+
+theme:
+  name: mkdocs
+  highlightjs: true
+  hljs_languages:
+    - python
+    - bash
+
+
+
+
+
