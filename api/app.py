@@ -18,6 +18,30 @@ def get_data_route():
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve(path):
+    """Serve: 
+    
+    This serves the React frontend and static files for it to be hosted.
+
+    Any request that is not an API endpoint is routed to `index.html`
+    to support client-side routing in React.
+    If the requested static file exists, it serves that file.
+
+    Args:
+        path (str): The requested path from the URL.
+
+    Returns:
+      Response: 
+          - The requested static file if it exists.
+          - `index.html` for client-side routing.
+          - 404 error if the file or index.html is missing.
+          - 500 error if an unexpected exception occurs.
+
+    Example: 
+        Get /                     -> serve index.html
+        
+        Get /static/js/main.js    -> serve static/js/main.js
+    
+    """
     try: 
         if path.startswith("api/"):
             return "API endpoint not found", 404

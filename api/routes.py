@@ -9,6 +9,46 @@ CORS(app)
 @app.route('/api/data', methods=['GET'])
 #If REDCAP credentials are missing, return an error
 def get_data():
+
+    """Fetches data from the REDCap API and returns it ias JSON.
+       This endpoint sends a POST request to the REDCap API the API_TOKEN 
+       and REDCap url provided in the config.py file. It retrieves selected 
+       fields such as site, date of birth and gestational age in weeks + days.
+
+       **Request:**
+       - Method: GET
+       - Endpoint: `/api/data`
+       - No request parameters required.
+
+       **Behavior:**
+        - If `REDCAP_API_URL` or `API_TOKEN` are missing, returns a 500 error with an 
+        appropriate message.
+        - Constructs a payload specifying which REDCap fields to retrieve.
+        - Makes a POST request to the REDCap API to fetch the data.
+        - If successful, returns the records in JSON format.
+        - If the API request fails, returns an error message and HTTP 500.
+
+        **Returns:**
+        - `200 OK` and JSON array of REDCap records on success.
+        - `500 Internal Server Error` and JSON error message if configuration or API 
+        request fails.
+
+        **Example Response:**
+        ```json
+        [
+            {
+                "record_id": "001",
+                "nicu_dob": "2020-05-12",
+                "nicu_sex": "F",
+                "v2_next_visit_range": "2021-06-01 to 2021-06-15",
+                ...
+            },
+            ...
+        ]
+        ```       
+        
+    """
+        
     if not REDCAP_API_URL or not API_TOKEN:
         return jsonify({"error": "Missing REDCAP_API_URL or API_TOKEN"}), 500
      
