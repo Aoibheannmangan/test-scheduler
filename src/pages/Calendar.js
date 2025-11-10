@@ -9,11 +9,6 @@ import "./Calendar.css";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import {
-  generateAimHighAppointments,
-  generateCoolPrimeAppointments,
-  generateEDIAppointment,
-} from "../hooks/windowEventCalc";
 import ClickableDateCell from "../components/ClickableCell";
 import { eventPropGetter } from "../hooks/eventPropGetter";
 import ToggleAppointment from "./Appointment";
@@ -24,6 +19,11 @@ import PopUp from "../components/PopUp";
 import RebookingForm from "../components/RebookingForm";
 import { CiCalendar } from "react-icons/ci";
 import { useData } from "../hooks/DataContext";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import axios from "axios";
 
 const MyCalendar = () => {
   const [view, setView] = useState("month");
@@ -45,67 +45,118 @@ const MyCalendar = () => {
   const [rebookPopupOpen, setRebookPopupOpen] = useState(false);
   const [eventToRebook, setEventToRebook] = useState(null);
 
-  const [blockedDates, setBlockedDates] = useState(() => {
-    const stored = localStorage.getItem("blockedDates");
-    return stored ? JSON.parse(stored) : [];
-  });
-  const [selectedDate, setSelectedDate] = useState("");
-  const [showBlockedDates, setShowBlockedDates] = useState(false);
-
+  const [selectedDate, setSelectedDate] = useState(null);
   const isFirstRender = useRef(true);
 
-  const { data: apiUserList, loading, error, updatePatient } = useData();
+  /* Blocked dates portion */
+  // Create array for blocked dates and show blocked dates state
+  const [blockedDates, setBlockedDates] = useState([]);
+
+  useEffect(() => {
+    const fetchBlockedDates = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.get(
+          "http://localhost:5000/api/blocked-dates",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setBlockedDates(response.data.blockedDates);
+      } catch (error) {
+        console.error("Error fetching blocked dates:", error);
+      }
+    };
+
+    fetchBlockedDates();
+  }, []);
+  const [showBlockedDates, setShowBlockedDates] = useState(false);
+
+  /* Appointment portion */
+  // Create array to store booked appointments
+  const [bookedEvents, setBookedEvents] = useState([]);
+
+  const {
+    data: apiUserList,
+    loading,
+    error,
+    updatePatient,
+    refetchData,
+  } = useData();
   const [userList, setUserList] = useState([]);
 
-  // Grab from local storage and in storedList
+  // Run whenever apiUserList changes
   useEffect(() => {
-    if (apiUserList && Array.isArray(apiUserList)) {
-      const mapped = apiUserList.map((rec) => ({
-        id: rec.record_id || "",
-        type: "window", // All are windows unless you have appointment info
-        visitNum: 1, // If you have visitNum, use it; otherwise default to 1
-        OutOfArea: rec.nicu_ooa === "1",
-        DOB: rec.nicu_dob || "",
-        site:
-          {
-            1: "CUMH",
-            2: "Coombe",
-            3: "Rotunda",
-          }[rec.nicu_dag] || "Unknown",
-        Study: ["AIMHIGH"],
-        DaysEarly: rec.nicu_days_early ? Number(rec.nicu_days_early) : 0,
-        Info: "", // Any aditional info field to import??**
-        notes: rec.nicu_email || "", // Use email as contact OR GET NUMBER?
-        email: rec.nicu_email || "",
-        participantGroup: rec.nicu_participant_group || "",
-      }));
-      setUserList(mapped);
-    } else {
-      setUserList([]);
+    if (apiUserList) {
+      setUserList(apiUserList);
     }
   }, [apiUserList]);
 
-  useEffect(() => {
-    const storedDates = localStorage.getItem("blockedDates");
-    if (storedDates) {
-      setBlockedDates(JSON.parse(storedDates));
-    }
-  }, []);
+  // Selected rooms available
+  const roomList = useMemo(
+    () => [
+      { id: "TeleRoom", label: "Telemetry Room (Room 2.10)", dbId: 1 },
+      { id: "room1", label: "Assessment Room 1", dbId: 2 },
+      { id: "room2", label: "Assessment Room 2", dbId: 3 },
+      { id: "room3", label: "Assessment Room 3", dbId: 4 },
+      { id: "room4", label: "Assessment Room 4", dbId: 5 },
+      {
+        id: "devRoom",
+        label: "Developmental Assessment Room (Room 2.07)",
+        dbId: 6,
+      },
+    ],
+    []
+  );
 
+  const fetchBookings = useCallback(async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        "http://localhost:5000/api/appointments",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const bookings = response.data.events.map((event) => {
+        const room = roomList.find((r) => r.dbId === event.room_id);
+
+        return {
+          ...event,
+          title: event.title,
+          start: new Date(event.start),
+          end: new Date(event.end),
+          room: room ? room.id : null,
+          event_type: event.event_type,
+        };
+      });
+      setBookedEvents(bookings);
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+    }
+  }, [roomList, setBookedEvents]);
+
+  // In use effect as it runs when component mounts
   useEffect(() => {
-    localStorage.setItem("blockedDates", JSON.stringify(blockedDates));
-  }, [blockedDates]);
+    fetchBookings();
+  }, [fetchBookings]);
 
   // Open popup when clicking an event
   const handleSelectEvent = (event) => {
+    console.log("Selected Event:", event); // DEBUG
     // So only booked events can be altered
-    if (event.type === "booked") {
+    if (event.event_type === "booked") {
       setSelectedEvent(event);
       // Copy all editable properties into editedInfo state
       setEditedInfo({
         title: event.title || "",
-        start: event.start,
-        end: event.end,
+        start: moment(event.start),
+        end: moment(event.end),
+        note: event.note || "",
         room: event.room || "",
         noShow: event.noShow || false,
         noShowComment: event.noShowComment || "",
@@ -113,35 +164,39 @@ const MyCalendar = () => {
     }
   };
 
-  const handleBlockDate = () => {
+  const handleBlockDate = async () => {
     if (selectedDate) {
-      const startOfDay = moment(selectedDate).startOf("day").toISOString();
-      const endOfDay = moment(selectedDate).endOf("day").toISOString();
-
-      const blockedEvent = {
-        title: "Blocked",
-        start: startOfDay,
-        end: endOfDay,
-        allDay: true,
-        blocked: true,
-      };
-
-      setBlockedDates((prev) => {
-        const alreadyBlocked = prev.some((evt) =>
-          moment(evt.start).isSame(startOfDay, "day")
+      try {
+        const token = localStorage.getItem("token");
+        await axios.post(
+          "http://localhost:5000/api/block-date",
+          { date: selectedDate },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
-        if (!alreadyBlocked) {
-          const updated = [...prev, blockedEvent];
-          localStorage.setItem("blockedDates", JSON.stringify(updated));
-          return updated;
-        }
-        return prev;
-      });
 
-      setAlert({
-        message: `Blocked ${moment(selectedDate).format("YYYY-MM-DD")}`,
-        type: "success",
-      });
+        // Refetch blocked dates to update the calendar
+        const response = await axios.get(
+          "http://localhost:5000/api/blocked-dates",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setBlockedDates(response.data.blockedDates);
+
+        setAlert({
+          message: `Blocked ${moment(selectedDate).format("YYYY-MM-DD")}`,
+          type: "success",
+        });
+      } catch (error) {
+        console.error("Error blocking date:", error);
+        setAlert({ message: "Error blocking date", type: "error" });
+      }
     } else {
       setAlert({ message: "Please select a date to block", type: "error" });
     }
@@ -152,7 +207,7 @@ const MyCalendar = () => {
   };
 
   const handleDateChange = (event) => {
-    setSelectedDate(event.target.value);
+    setSelectedDate(event);
   };
 
   const blockedEventGetter = (event) => {
@@ -193,7 +248,6 @@ const MyCalendar = () => {
       event.id === updatedEvent.id ? updatedEvent : event
     );
     setBookedEvents(updatedBooked);
-    localStorage.setItem("bookedEvents", JSON.stringify(updatedBooked));
   };
 
   useEffect(() => {
@@ -213,59 +267,54 @@ const MyCalendar = () => {
   };
 
   // Save when editing event info
-  const saveEditedInfo = () => {
+  const saveEditedInfo = async () => {
+    console.log("Saving Edited Info:", editedInfo); // DEBUG
     if (!selectedEvent || !editedInfo) return;
+
     // Prepare updated event object
     const updatedEvent = {
       ...selectedEvent,
-      title: editedInfo.title,
+      ...editedInfo,
       start: new Date(editedInfo.start),
       end: new Date(editedInfo.end),
-      noShow: editedInfo.noShow || false,
-      noShowComment: editedInfo.noShowComment || "",
-      room: editedInfo.room,
     };
 
-    // Update bookedEvents or windowEvents depending on type
-    if (selectedEvent.type === "booked") {
+    // Pull slected booking using JWT
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `http://localhost:5000/api/appointment/${selectedEvent.event_id}`,
+        {
+          start: updatedEvent.start.toISOString(),
+          end: updatedEvent.end.toISOString(),
+          title: updatedEvent.title,
+          note: updatedEvent.notes,
+          no_show: updatedEvent.noShow,
+          roomId: roomList.find((r) => r.id === updatedEvent.room)?.dbId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Update event
       const updatedBooked = bookedEvents.map((event) =>
-        event.id === selectedEvent.id &&
-        new Date(event.start).getTime() ===
-          new Date(selectedEvent.start).getTime()
-          ? updatedEvent
-          : event
+        event.event_id === selectedEvent.event_id ? updatedEvent : event
       );
-      // Set booked events when updated
       setBookedEvents(updatedBooked);
-      // Store in local storage
-      localStorage.setItem("bookedEvents", JSON.stringify(updatedBooked));
-    } else if (selectedEvent.type === "window") {
-      const updatedWindows = windowEvents.map((event) =>
-        event.id === selectedEvent.id &&
-        new Date(event.start).getTime() ===
-          new Date(selectedEvent.start).getTime()
-          ? updatedEvent
-          : event
-      );
-      setWindowEvents(updatedWindows);
+      closePopup();
+    } catch (error) {
+      console.error("Error updating appointment:", error);
+      setAlert({
+        message: "Failed to update appointment. Please try again.",
+        type: "error",
+      });
     }
-
-    // If edited info and noshow selected
-    if (editedInfo.noShow) {
-      setEventToRebook(updatedEvent);
-      setRebookPopupOpen(true);
-    }
-
-    // Save edited info and close popup
-    setEditedInfo((prev) => ({
-      ...prev,
-      noShow: false,
-    }));
-    setShowRebookingForm(false);
-    closePopup();
   };
 
-  // Close popup
+  // Close popup, reset selected event
   const closePopup = () => {
     setSelectedEvent(null);
     setEditedInfo("");
@@ -273,7 +322,9 @@ const MyCalendar = () => {
 
   // Search patient by ID
   const handleSearchWindow = () => {
-    const patient = userList.find((p) => p.id === searchPatientId.trim());
+    const patient = apiUserList.find(
+      (p) => p.record_id === searchPatientId.trim()
+    );
     if (!patient) {
       setAlert({ message: "Patient with that ID not found", type: "error" });
       setCurrentPatient(null);
@@ -292,130 +343,154 @@ const MyCalendar = () => {
       return;
     }
 
-    // Set current patient info
-    setCurrentPatient(patient);
-    const birthDate = new Date(patient.DOB);
-    const babyDaysEarly = patient.DaysEarly;
-    const studies = Array.isArray(patient.Study)
-      ? patient.Study
-      : [patient.Study];
-    let studyWindows = [];
-
-    // Loops through studies -> Create visit window
-    studies.forEach((study) => {
-      let generated = [];
-      if (study === "AIMHIGH") {
-        generated = generateAimHighAppointments(birthDate, babyDaysEarly);
-      } else if (study === "COOLPRIME") {
-        generated = generateCoolPrimeAppointments(birthDate, babyDaysEarly);
-      } else if (study === "EDI") {
-        generated = generateEDIAppointment(birthDate, babyDaysEarly);
-      }
-
-      // Generate = study windows and display and set them
-      const studyEvents = generated
-        .filter((event) => event.type === "window")
-        .map((event) => ({
-          ...event,
-          title: `${study} Visit Window`,
-          Name: patient.Name,
-          id: patient.id,
-          start: new Date(event.start),
-          end: new Date(event.end + 1), // Add by one as the calendar is exclusive to the last date
-        }));
-
-      studyWindows = [...studyWindows, ...studyEvents];
-    });
-
-    setWindowEvents(studyWindows);
-
-    // Check if patient has existing booked appointments and navigate to them
-    const patientBookedAppointments = bookedEvents.filter(
-      (appointment) => appointment.patientId === patient.id
-    );
-
-    if (patientBookedAppointments.length > 0) {
-      // Sort appointments by date and find the next upcoming appointment or the earliest one
-      const now = new Date();
-      const sortedAppointments = patientBookedAppointments.sort(
-        (a, b) => new Date(a.start) - new Date(b.start)
-      );
-
-      // Try to find next upcoming appointment, otherwise use the first one
-      const nextAppointment =
-        sortedAppointments.find((apt) => new Date(apt.start) >= now) ||
-        sortedAppointments[0];
-
-      // Navigate calendar to the appointment date
-      setDate(new Date(nextAppointment.start));
-      setView("month");
-
+    if (!patient.nicu_dob) {
       setAlert({
-        message: `Found patient: ${patient.Name} - Navigated to booked appointment`,
-        type: "success",
+        message:
+          "Patient has no Date of Birth recorded, cannot generate visit windows.",
+        type: "error",
       });
-    } else if (studyWindows.length > 0) {
-      // If no booked appointments, navigate to the first visit window
-      const sortedWindows = studyWindows.sort(
-        (a, b) => new Date(a.start) - new Date(b.start)
-      );
-      const firstWindow = sortedWindows[0];
+      setCurrentPatient(null);
+      setWindowEvents([]);
+      return;
+    }
+
+    let visit_num = 1;
+    if (patient.visit_1_nicu_discharge_complete === "1") {
+      visit_num = 2;
+      for (let i = 2; i <= 6; i++) {
+        if (patient[`v${i}_attend`] === "1") {
+          visit_num = i + 1;
+        } else {
+          break;
+        }
+      }
+    }
+
+    const getWindowDates = (visit_num) => {
+      switch (visit_num) {
+        case 2:
+          return { start: patient.reg_date1, end: patient.reg_date2 };
+        case 3:
+          return {
+            start: patient.reg_9_month_window,
+            end: patient.reg_12_month_window,
+          };
+        case 4:
+          return {
+            start: patient.reg_17_month_window,
+            end: patient.reg_19_month_window,
+          };
+        case 5:
+          return {
+            start: patient.reg_23_month_window,
+            end: patient.reg_25_month_window,
+          };
+        case 6:
+          return {
+            start: patient.reg_30_month_window,
+            end: patient.reg_31_month_window,
+          };
+        default:
+          return null;
+      }
+    };
+
+    const windowDates = getWindowDates(visit_num);
+
+    if (windowDates) {
+      const { start, end } = windowDates;
+      const windowStart = new Date(start);
+      const windowEnd = new Date(end);
+
+      const studyWindow = {
+        title: `Visit ${visit_num} Window`,
+        start: windowStart,
+        end: windowEnd,
+        type: "window",
+        id: patient.record_id,
+        Name: `Patient ${patient.record_id}`,
+      };
+
+      setWindowEvents([studyWindow]);
 
       // Navigate calendar to the window start date
-      setDate(new Date(firstWindow.start));
-      setView("day"); // Switch to day view to show the window clearly
+      setDate(new Date(studyWindow.start));
+      setView("month");
 
       setAlert({
         message: `Found patient: - Showing visit window`,
         type: "success",
       });
+    } else {
+      setWindowEvents([]);
+      setAlert({
+        message: "No upcoming visit windows for this patient.",
+        type: "info",
+      });
     }
+
+    setCurrentPatient({ ...patient, visitNum: visit_num });
   };
 
   // If booking within study window
   const isAppointmentWithinVisitWindow = (appointment, patient) => {
-    const birthDate = new Date(patient.DOB);
-    const daysEarly = patient.DaysEarly ?? 0;
-    const visitNum = patient.visitNum;
-    const studies = Array.isArray(patient.Study)
-      ? patient.Study
-      : [patient.Study];
-
-    // Get the appointment date (ignoring time)
-    const appointmentDate = new Date(appointment.start);
-    appointmentDate.setHours(0, 0, 0, 0); // Reset to start of day
-
-    for (const study of studies) {
-      let windows = [];
-      if (study === "AIMHIGH") {
-        windows = generateAimHighAppointments(birthDate, daysEarly, visitNum);
-      } else if (study === "COOLPRIME") {
-        windows = generateCoolPrimeAppointments(birthDate, daysEarly, visitNum);
-      } else if (study === "EDI") {
-        windows = generateEDIAppointment(birthDate, daysEarly, visitNum);
-      }
-
-      for (const window of windows) {
-        // Get window start and end dates (ignoring time)
-        const windowStart = new Date(window.start);
-        windowStart.setHours(0, 0, 0, 0);
-
-        const windowEnd = new Date(window.end);
-        windowEnd.setHours(23, 59, 59, 999); // Set to end of day
-
-        // Check if appointment date falls within window date range
-        if (appointmentDate >= windowStart && appointmentDate <= windowEnd) {
-          console.log(
-            `Appointment on ${appointmentDate.toDateString()} is within window: ${windowStart.toDateString()} to ${windowEnd.toDateString()}`
-          );
-          return true;
+    let visit_num = 1;
+    if (patient.visit_1_nicu_discharge_complete === "1") {
+      visit_num = 2;
+      for (let i = 2; i <= 6; i++) {
+        if (patient[`v${i}_attend`] === "1") {
+          visit_num = i + 1;
+        } else {
+          break;
         }
       }
     }
 
-    console.log(
-      `Appointment on ${appointmentDate.toDateString()} is outside all visit windows`
-    );
+    const getWindowDates = (visit_num) => {
+      switch (visit_num) {
+        case 2:
+          return { start: patient.reg_date1, end: patient.reg_date2 };
+        case 3:
+          return {
+            start: patient.reg_9_month_window,
+            end: patient.reg_12_month_window,
+          };
+        case 4:
+          return {
+            start: patient.reg_17_month_window,
+            end: patient.reg_19_month_window,
+          };
+        case 5:
+          return {
+            start: patient.reg_23_month_window,
+            end: patient.reg_25_month_window,
+          };
+        case 6:
+          return {
+            start: patient.reg_30_month_window,
+            end: patient.reg_31_month_window,
+          };
+        default:
+          return null;
+      }
+    };
+
+    const windowDates = getWindowDates(visit_num);
+
+    if (windowDates) {
+      const { start, end } = windowDates;
+      const windowStart = new Date(start);
+      const windowEnd = new Date(end);
+      const appointmentDate = new Date(appointment.start);
+
+      // Set hours to 0 to compare dates only
+      windowStart.setHours(0, 0, 0, 0);
+      windowEnd.setHours(23, 59, 59, 999);
+      appointmentDate.setHours(0, 0, 0, 0);
+
+      return appointmentDate >= windowStart && appointmentDate <= windowEnd;
+    }
+
     return false;
   };
 
@@ -435,43 +510,38 @@ const MyCalendar = () => {
     setCurrentPatient(null);
   };
 
-  // Confirm delete on pop up, append to local storage
-  const confirmDeleteEvent = () => {
-    if (!eventToDelete?.patientId) {
-      console.error("Missing patientId on event", eventToDelete);
+  const confirmDeleteEvent = async () => {
+    if (!eventToDelete?.event_id) {
+      console.error("Missing event_id on event", eventToDelete);
       return;
     }
 
-    const updatedEvents = bookedEvents.filter(
-      (event) =>
-        event.id !== eventToDelete.id || event.start !== eventToDelete.start
-    );
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(
+        `http://localhost:5000/api/appointment/${eventToDelete.event_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    setBookedEvents(updatedEvents);
-    localStorage.setItem("bookedEvents", JSON.stringify(updatedEvents));
-
-    // If booking deleted then reset visit and type as its now a window again
-    const updatedUser = userList.map((p) => {
-      if (p.id === eventToDelete.patientId) {
-        return {
-          ...p,
-          type: "window",
-          visitNum: Math.max(1, p.visitNum - 1),
-        };
-      }
-      return p;
-    });
-
-    // Set and store after booking delete
-    setUserList(updatedUser);
-    localStorage.setItem("userInfoList", JSON.stringify(updatedUser));
-    setPopupOpen(false);
-
-    // Will close edit popup if event is deleted
-    closePopup();
-    setEventToDelete(null);
-    setShowRebookingForm(false);
-    setAppOpen(false);
+      const updatedEvents = bookedEvents.filter(
+        (event) => event.event_id !== eventToDelete.event_id
+      );
+      setBookedEvents(updatedEvents);
+      setPopupOpen(false);
+      setEventToDelete(null);
+      closePopup();
+      refetchData(); // Re-fetch patient data to update visit windows
+    } catch (error) {
+      console.error("Error deleting appointment:", error);
+      setAlert({
+        message: "Failed to delete appointment. Please try again.",
+        type: "error",
+      });
+    }
   };
 
   // Store event clicked on and open pop up for delete
@@ -485,143 +555,44 @@ const MyCalendar = () => {
     setAppOpen(true);
   };
 
-  // Create array to store booked appointments
-  const [bookedEvents, setBookedEvents] = useState(() => {
-    // Place in local storage + make date object to store
-    const stored = localStorage.getItem("bookedEvents");
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        return parsed.map((event) => ({
-          ...event,
-          start: new Date(event.start),
-          end: new Date(event.end),
-        }));
-      } catch (error) {
-        // Return error message
-        console.error("Failed to parse bookedEvents from storage:", error);
-        return [];
-      }
-    }
-    return [];
-  });
-
   // Sets current date and time
   const localizer = momentLocalizer(moment);
 
   // Function to add appointment
-  const handleAddAppointment = (appointment, override = false) => {
+  const handleAddAppointment = async (appointment, override = false) => {
     const patientId = appointment.patientId;
-    // Find patient Id
-    const match = userList.find((p) => p.id === patientId);
+    const match = userList.find((p) => p.record_id === patientId);
 
-    const isBlocked = blockedDates.some((blocked) =>
-      moment(appointment.start).isSame(blocked.start, "day")
-    );
-
-    if (isBlocked) {
-      setAlert({
-        message: "Cannot book appointment on a blocked date",
-        type: "error",
-      });
-      return;
-    }
-
-    // If cant find patient id
     if (!match) {
-      setAlert({
-        message: `Patient ID ${patientId} not found in user list.`,
-        type: "error",
-      });
+      setAlert({ message: "Patient with that ID not found", type: "error" });
+      setCurrentPatient(null);
+      setWindowEvents([]);
       return;
     }
 
+    // Check if the appointment is within the visit window
     if (!override && !isAppointmentWithinVisitWindow(appointment, match)) {
       setPendingAppointment(appointment);
       setOutsideWindowPopupOpen(true);
-      return;
+      return; // Stop here, wait for user confirmation
     }
 
-    // Add new appointment object structure
-    const fullAppointment = {
-      ...appointment,
-      title: `${match.Study}| ID: ${patientId}`,
-      Study: appointment.Study || match.Study || "UNKNOWN",
-      patientId,
-      Name: match.Name,
-      DOB: match.DOB,
-      site: match.site,
-      OutOfArea: match.OutOfArea,
-      Info: match.Info,
-      start: appointment.start, // Make an ISO object for correct parsing
-      end: appointment.end, // Make an ISO object for correct parsing
-      type: "booked", // As no longer window
-      visitNum: match.visitNum ?? 1,
-      id: patientId,
-      room: appointment.room,
-      notes: appointment.notes,
-    };
-
-    // Update bookedEvents state including the new appointment
-    const existingBooked = bookedEvents;
-    const updatedBooked = [...existingBooked, fullAppointment];
-    setBookedEvents(updatedBooked);
-
-    // Save to localStorage with conversion to string for dates
-    const updatedBookedForStorage = updatedBooked.map((evt) => {
-      const start = new Date(evt.start);
-      const end = new Date(evt.end);
-
-      if (isNaN(start.getTime()) || isNaN(end.getTime())) {
-        console.error("Invalid start or end date:", evt);
-        return evt; // Skip this event or handle it accordingly
-      }
-
-      return {
-        ...evt,
-        start: isNaN(start.getTime()) ? evt.start : start.toISOString(),
-        end: isNaN(end.getTime()) ? evt.end : end.toISOString(),
-      };
-    });
-    localStorage.setItem(
-      "bookedEvents",
-      JSON.stringify(updatedBookedForStorage)
-    );
-
-    // If trying to book another appointment for patient
-    if (bookedEvents.some((e) => e.patientId === patientId)) {
-      setAlert({
-        message: "This patient already has a booked appointment.",
-        type: "error",
+    try {
+      await axios.post("http://localhost:5000/api/book", appointment, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
-      return;
+
+      await fetchBookings();
+      refetchData(); // Re-fetch patient data to update visit windows and visit numbers
+
+      setAlert({ message: "Appointment booked successfully", type: "success" });
+    } catch (error) {
+      console.error("Error booking appointment: ", error);
+      setAlert({ message: "Error booking appointment: ", type: "error" });
     }
-
-    // Context updater
-    updatePatient(patientId, {
-      title: `${match.Study}| ID: ${patientId}`,
-      type: "booked",
-      visitNum: (match.visitNum ?? 1) + 1,
-      start: appointment.start.toISOString(),
-      end: appointment.end.toISOString(),
-      notes: appointment.notes,
-    });
-
-    // Tell user appointment is booked
-    setAlert({ message: "Appointment booked successfully.", type: "success" });
 
     setAppOpen(false);
   };
-
-  // Selected rooms available
-  const roomList = [
-    { id: "TeleRoom", label: "Telemetry Room (Room 2.10)" },
-    { id: "room1", label: "Assessment Room 1" },
-    { id: "room2", label: "Assessment Room 2" },
-    { id: "room3", label: "Assessment Room 3" },
-    { id: "room4", label: "Assessment Room 4" },
-    { id: "devRoom", label: "Developmental Assessment Room (Room 2.07)" },
-  ];
 
   // Replace study filter state with rooms filter
   const [selectedRooms, setSelectedRooms] = useState(
@@ -637,73 +608,43 @@ const MyCalendar = () => {
     );
   };
 
-  const blockedEvents = blockedDates.map((date) => {
-    const start = new Date(`${date}T00:00:00`);
-    const end = new Date(`${date}T23:59:59`);
+  const isDateBlocked = (date) => {
+    const formattedDate = moment(date).format("YYYY-MM-DD");
+    return blockedDates.some(
+      (blockedDate) =>
+        moment(blockedDate.start).format("YYYY-MM-DD") === formattedDate
+    );
+  };
 
-    return {
-      title: "Blocked",
-      start,
-      end,
-      allDay: true,
-      blocked: true,
-    };
-  });
+  const isTimeSlotBooked = (date, eventIdToExclude) => {
+    const selectedStartTime = moment(date).valueOf();
 
-  const cleanupPastAppointments = useCallback(() => {
-    const now = new Date();
-    let updatedBookedEvents = [...bookedEvents];
-    let updatedUserList = [...userList];
-    let userListChanged = false;
+    return bookedEvents.some((booking) => {
+      if (booking.event_id === eventIdToExclude) return false;
 
-    updatedUserList = updatedUserList.map((user) => {
-      const userAppointments = bookedEvents.filter(
-        (e) => e.patientId === user.id
+      const bookingStartTime = moment(booking.start).valueOf();
+      const bookingEndTime = moment(booking.end).valueOf();
+
+      return (
+        selectedStartTime >= bookingStartTime &&
+        selectedStartTime < bookingEndTime
       );
-      const latestAppointment = userAppointments.sort(
-        (a, b) => new Date(b.end) - new Date(a.end)
-      )[0];
-
-      if (latestAppointment && new Date(latestAppointment.end) < now) {
-        updatedBookedEvents = updatedBookedEvents.filter(
-          (e) => e.id !== latestAppointment.id
-        );
-        userListChanged = true;
-
-        return {
-          ...user,
-          type: "window",
-          visitNum: (user.visitNum ?? 1) + 1,
-        };
-      }
-      return user;
     });
-    // Only update state and localStorage if changes occurred
-    if (userListChanged || updatedBookedEvents.length !== bookedEvents.length) {
-      setBookedEvents(updatedBookedEvents);
-      setUserList(updatedUserList);
+  };
 
-      localStorage.setItem("bookedEvents", JSON.stringify(updatedBookedEvents));
-      localStorage.setItem("userInfoList", JSON.stringify(updatedUserList));
+  const shouldDisableDate = (date) => {
+    return isDateBlocked(date);
+  };
+
+  const shouldDisableTime = (time, clockType) => {
+    if (isTimeSlotBooked(time, selectedEvent?.event_id)) {
+      return true;
     }
-  }, [bookedEvents, userList]);
-
-  // Run on state changes
-  useEffect(() => {
-    cleanupPastAppointments();
-  }, [cleanupPastAppointments]);
-
-  // Run automatically every 15 minutes
-  useEffect(() => {
-    const interval = setInterval(() => {
-      cleanupPastAppointments();
-    }, 15 * 60 * 1000); // 15 mins in ms
-
-    return () => clearInterval(interval); // cleanup on unmount
-  }, [cleanupPastAppointments]);
+    return false;
+  };
 
   // Array of all avents
-  const allEvents = [...bookedEvents, ...windowEvents, ...blockedEvents];
+  const allEvents = [...bookedEvents, ...windowEvents, ...blockedDates];
 
   const filteredAppointments = useMemo(() => {
     return allEvents.filter((event) => {
@@ -752,23 +693,25 @@ const MyCalendar = () => {
             event: ({ event }) => (
               <div>
                 {event.title}
-                <div style={{ fontSize: 14 }}>
-                  <strong>
-                    {new Date(event.start).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </strong>{" "}
-                  -{" "}
-                  <strong>
-                    {new Date(event.end).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </strong>
-                </div>
+                {event.event_type === "booked" && (
+                  <div style={{ fontSize: 14 }}>
+                    <strong>
+                      {new Date(event.start).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </strong>{" "}
+                    -{" "}
+                    <strong>
+                      {new Date(event.end).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </strong>
+                  </div>
+                )}
                 <div style={{ fontSize: 12 }}>
-                  <strong>{event.notes}</strong>
+                  <strong>{event.note}</strong>
                 </div>{" "}
                 {/* Show description here */}
               </div>
@@ -815,10 +758,18 @@ const MyCalendar = () => {
                 <div className="blockContainer">
                   <label>
                     Select Date to Block:
-                    <input
-                      type="date"
+                    <DatePicker // date input for app
+                      views={["day", "month", "year"]}
                       value={selectedDate}
                       onChange={handleDateChange}
+                      format="DD/MM/YYYY"
+                      slotProps={{
+                        textField: {
+                          id: "date",
+                          required: true,
+                          fullWidth: true,
+                        },
+                      }}
                     />
                   </label>
                   <div className="button-row">
@@ -941,35 +892,28 @@ const MyCalendar = () => {
               />
             </label>
 
-            <label>
-              Start:
-              <input
-                type="datetime-local"
-                value={moment(editedInfo.start).format("YYYY-MM-DDTHH:mm")}
-                onChange={(e) =>
-                  setEditedInfo((prev) => ({
-                    ...prev,
-                    start: new Date(e.target.value),
-                  }))
+            <LocalizationProvider dateAdapter={AdapterMoment}>
+              <DateTimePicker
+                label="Start Time"
+                value={editedInfo.start}
+                onChange={(newValue) =>
+                  setEditedInfo((prev) => ({ ...prev, start: newValue }))
                 }
-                className="date-edit"
+                shouldDisableDate={shouldDisableDate}
+                shouldDisableTime={shouldDisableTime}
+                ampm={false}
               />
-            </label>
-
-            <label>
-              End:
-              <input
-                type="datetime-local"
-                value={moment(editedInfo.end).format("YYYY-MM-DDTHH:mm")}
-                onChange={(e) =>
-                  setEditedInfo((prev) => ({
-                    ...prev,
-                    end: new Date(e.target.value),
-                  }))
+              <DateTimePicker
+                label="End Time"
+                value={editedInfo.end}
+                onChange={(newValue) =>
+                  setEditedInfo((prev) => ({ ...prev, end: newValue }))
                 }
-                className="date-edit"
+                shouldDisableDate={shouldDisableDate}
+                shouldDisableTime={shouldDisableTime}
+                ampm={false}
               />
-            </label>
+            </LocalizationProvider>
 
             <label>
               Room:
@@ -1011,6 +955,8 @@ const MyCalendar = () => {
                   setShowRebookingForm(false);
                 }}
                 onCancel={() => setShowRebookingForm(false)}
+                blockedDates={blockedDates}
+                bookedEvents={bookedEvents}
               />
             )}
 
@@ -1039,8 +985,8 @@ const MyCalendar = () => {
         onConfirm={() => {
           confirmDeleteEvent();
         }}
-        message={`Delete ${eventToDelete?.title || "this event"} for ${
-          eventToDelete?.patientId || "Unknown ID"
+        message={`Delete ${selectedEvent?.title || "this event"} for ${
+          selectedEvent?.patientId || "Unknown ID"
         }?`}
         option1="Confirm"
         option2="Cancel"
@@ -1067,6 +1013,8 @@ const MyCalendar = () => {
           isOpen={appOpen}
           onClose={() => setAppOpen(false)}
           bookedEvents={bookedEvents}
+          blockedDates={blockedDates}
+          roomList={roomList}
         />
       </div>
 

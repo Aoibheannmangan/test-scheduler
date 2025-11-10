@@ -3,6 +3,7 @@ import "./login.css";
 import { useNavigate } from "react-router-dom";
 import { FaUser, FaLock } from "react-icons/fa";
 import Alert from "../components/Alert";
+import axios from "axios";
 
 const LogIn = () => {
   const [email, setEmail] = useState("");
@@ -16,6 +17,13 @@ const LogIn = () => {
   const passwordInputRef = useRef(null);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/calender");
+    }
+  }, [navigate]);
 
   useEffect(() => {
     //To check if the caps lock is on
@@ -39,26 +47,32 @@ const LogIn = () => {
     };
   }, []);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     //Login Logic
     e.preventDefault();
+    setIsSubmitting(true);
 
-    const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
+    try {
+      const response = await axios.post("http://localhost:5000/api/login", {
+        email,
+        password,
+      });
 
-    // Check if any user in the array matches the entered details
-    const matchedUser = storedUsers.find(
-      (user) => user.email === email && user.password === password
-    );
-
-    if (matchedUser) {
-      setIsSubmitting(true);
-      setTimeout(() => {
+      if (response.data.message) {
+        localStorage.setItem("token", response.data.message);
         setAlert({ message: "Login Successful!", type: "success" });
-        setIsSubmitting(false);
-        navigate("/calender");
-      }, 2000);
-    } else {
-      setAlert({ message: "Email or Password is incorrect!", type: "error" });
+        setTimeout(() => {
+          navigate("/calender");
+        }, 2000);
+      }
+    } catch (error) {
+      if (error.response && error.response.data && error.response.data.error) {
+        setAlert({ message: error.response.data.error, type: "error" });
+      } else {
+        setAlert({ message: "An unexpected error occurred", type: "error" });
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 

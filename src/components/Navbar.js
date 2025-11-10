@@ -1,28 +1,48 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import './Navbar.css';
+import React from "react";
+import { Link, useNavigate } from "react-router-dom";
+import "./Navbar.css";
 
 const Navbar = () => {
-    return (
-        <nav className="navbar">
-            <div className="navbar-left">
-                <Link to="/" className="logo">INFANT</Link>
-            </div>
+  const navigate = useNavigate();
 
-            <div className="navbar-center">
-                <ul className="nav-links">
-                    <li><Link to="/appoint">Appointment View</Link></li>
-                    <li><Link to="/calender">Calendar</Link></li>
-                    <li><Link to="https://redcap.ucc.ie/index.php?action=myprojects">REDCap</Link></li>
-                </ul>
-            </div>
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
 
-            <div className="navbar-right">
-                <Link to="/account" className="nav-link">Patients</Link>
-                <Link to="/login" className="nav-link">Log Out</Link>
-            </div>
-        </nav>
-    );
+  return (
+    <nav className="navbar">
+      <div className="navbar-left">
+        <a className="logo">INFANT</a>
+      </div>
+
+      <div className="navbar-center">
+        <ul className="nav-links">
+          <li>
+            <Link to="/appoint">Appointment View</Link>
+          </li>
+          <li>
+            <Link to="/calender">Calendar</Link>
+          </li>
+          <li>
+            <Link to="https://redcap.ucc.ie/index.php?action=myprojects">
+              REDCap
+            </Link>
+          </li>
+        </ul>
+      </div>
+
+      <div className="navbar-right">
+        <Link to="/account" className="nav-link">
+          Patients
+        </Link>
+
+        <button onClick={handleLogout} className="nav-logout">
+          Log Out
+        </button>
+      </div>
+    </nav>
+  );
 };
 
 export default Navbar;

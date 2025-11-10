@@ -11,6 +11,7 @@ import ToggleAppointment from "./pages/Appointment";
 import "@fontsource/sansation";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   const location = useLocation();
@@ -21,15 +22,17 @@ function App() {
       {!hideNavbarPaths.includes(location.pathname) && <Navbar />}
       <div className="App">
         <Routes>
-          <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route path="/appoint" element={<Appointments />} />
-          <Route path="/info" element={<UserInfo />} />
-          <Route path="/calender" element={<MyCalendar />} />
-          <Route path="/account" element={<Account />} />
           <Route path="/login" element={<LogIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgotpsw" element={<ForgotPsw />} />
-          <Route path="/toggleAppointment" element={<ToggleAppointment />} />
+          <Route path="/" element={<ProtectedRoute />}>
+            <Route path="/" element={<Navigate to="/calender" replace />} />
+            <Route path="/appoint" element={<Appointments />} />
+            <Route path="/info" element={<UserInfo />} />
+            <Route path="/calender" element={<MyCalendar />} />
+            <Route path="/account" element={<Account />} />
+            <Route path="/toggleAppointment" element={<ToggleAppointment />} />
+          </Route>
         </Routes>
       </div>
     </LocalizationProvider>
