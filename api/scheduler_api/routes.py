@@ -33,20 +33,31 @@ def get_data():
         'content': 'record',
         'format': 'json',
         'type': 'flat',
+        # general info on infant
         'fields[0]': 'record_id', # Record id
         'fields[1]': 'nicu_ooa', # Kildare?
         'fields[2]': 'nicu_participant_group', # Part group
         'fields[3]': 'nicu_dob', # Dat of birth
         'fields[4]': 'nicu_dag', # Site
         'fields[5]': 'nicu_email',# Contact email
-        'fields[6]': 'nicu_days_early',# Days early
-        'fields[7]': 'nicu_sex',# Sex of patient
-        'fields[9]': 'nicu_gest_age_w',# Weeks of gestation
-        'fields[10]': 'nicu_gest_age_d',# Days of gestation (Additional days of gestation)
-        'fields[11]': 'v2_next_visit_range', # visit 2 window
-        'fields[12]': 'v3_next_visit_between', # visit 3 window
-        'fields[13]': 'v4_next_visit_range', # visit 4 window
-        'fields[14]': 'v5_next_visit_range', # visit 5 window
+        'fields[6]': 'nicu_days_early',
+        'fields[7]': 'nicu_sex',
+        # gest days/ weeks
+        'fields[8]': 'nicu_gest_age_w',
+        'fields[9]': 'nicu_gest_age_d',
+        # visit x range (for window range)
+        'field [10]': 'nicu_visit_range', # range for v2
+        'fields[11]': 'v2_next_visit_range', # range for v3, and so on.. 
+        'fields[12]': 'v3_next_visit_between',
+        'fields[13]': 'v4_next_visit_range',
+        'fields[14]': 'v5_next_visit_range',
+        # visit x attended? (Used for visit num)
+        'fields[15]': 'visit_1_nicu_discharge_complete', # completed visit 1
+        'fields[16]': 'v2_attend', # completed visit 2, and so on.. 
+        'fields[17]': 'v3_attend',
+        'fields[18]': 'v4_attend',
+        'fields[19]': 'v5_attend',
+        'fields[20]': 'v6_attend',
     }
     
     # Make the POST request to the REDCap API
@@ -129,29 +140,72 @@ def book_appointment(current_user):
         return jsonify({"ok": False, "error": str(e)}), 500
 
 
-def get_all_bookings(current_user):
-    """Retrieves all bookings from the database"""
-    logger.info(f"Fetching all bookings for users: {current_user.email}")
-    bookings = db.session.query(Booking, Event).join(Event).all()
-    
-    # Serialise bookings to a list of dicts
-    booking_list = []
-    for booking, event in bookings:
-        booking_list.append({
-            "booking_id": booking.booking_id,
-            "title": event.event_title,
-            "patient_id": booking.patient_id,
-            "start": event.start_date.isoformat(), # Convert date to ISO string
-            "end": event.end_date.isoformat(),
-            "blocked": booking.blocked,
-            "note": booking.note,
-            "no_show": booking.no_show,
-            "event_id": booking.event_id,
-            "event_type": event.event_type,
-            "room_id": booking.room_id,
-            "visit_num": event.visit_num
-        })
-    return jsonify({"bookings": booking_list}), 200
+def get_all_events(current_user):
+    """Retrieves all events from the database with prioritization."""
+    logger.info(f"Fetching all events for user: {current_user.email}")
+    events = Event.query.all()
+
+    # Group events by patient_id
+    patient_events_map = {}
+    for event in events:
+        patient_id = None
+        if event.event_type == 'booked':
+            booking = Booking.query.filter_by(event_id=event.event_id).first()
+            if booking:
+                patient_id = booking.patient_id
+        elif event.event_type == 'window':
+            try:
+                if event.event_title and event.event_title.startswith("ID: "):
+                    patient_id = event.event_title.split(': ')[1]
+            except IndexError:
+                patient_id = None
+
+        if patient_id:
+            if patient_id not in patient_events_map:
+                patient_events_map[patient_id] = []
+            patient_events_map[patient_id].append(event)
+
+    final_event_list = []
+    for patient_id, events_for_patient in patient_events_map.items():
+        # Step 1: Prioritize 'booked' events with the highest visit_num
+        booked_candidates = [e for e in events_for_patient if e.event_type == 'booked']
+        highest_visit_booked_event = None
+        if booked_candidates:
+            highest_visit_booked_event = max(booked_candidates, key=lambda e: e.visit_num if e.visit_num is not None else -1)
+
+        # Step 2: If no 'booked' event, then prioritize 'window' events with the highest visit_num
+        selected_event = None
+        if highest_visit_booked_event:
+            selected_event = highest_visit_booked_event
+        else:
+            window_candidates = [e for e in events_for_patient if e.event_type == 'window']
+            if window_candidates:
+                selected_event = max(window_candidates, key=lambda e: e.visit_num if e.visit_num is not None else -1)
+        
+        # Step 3: If a relevant event is selected, add its data to the final list
+        if selected_event:
+            event_data = {
+                "event_id": selected_event.event_id,
+                "title": selected_event.event_title,
+                "start": selected_event.start_date.isoformat(),
+                "end": selected_event.end_date.isoformat(),
+                "event_type": selected_event.event_type,
+                "visit_num": selected_event.visit_num,
+            }
+
+            if selected_event.event_type == 'booked':
+                booking = Booking.query.filter_by(event_id=selected_event.event_id).first()
+                if booking:
+                    event_data["patient_id"] = booking.patient_id
+                    event_data["note"] = booking.note
+                    event_data["no_show"] = booking.no_show
+                    event_data["room_id"] = booking.room_id
+            elif selected_event.event_type == 'window':
+                event_data["patient_id"] = patient_id # Already extracted
+
+            final_event_list.append(event_data)
+
+    return jsonify({"events": final_event_list}), 200
 
 
 def delete_appointment(current_user, event_id):
