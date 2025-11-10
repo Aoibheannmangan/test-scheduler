@@ -87,6 +87,10 @@
 <li>
     <a href="../calendar/" class="dropdown-item">Calendar</a>
 </li>
+                                    
+<li>
+    <a href="../appointment/" class="dropdown-item">Appointment</a>
+</li>
                                 </ul>
                             </li>
                         </ul>
@@ -123,7 +127,7 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-bs-level="2"><a href="#signupjsxelement" class="nav-link">SignUp()JSX.Element</a>
+            <li class="nav-item" data-bs-level="2"><a href="#signup-jsxelement" class="nav-link">SignUp() =&gt; JSX.Element</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -133,7 +137,7 @@
                     <div class="col-md-9" role="main">
 
 <p><a name="SignUp"></a></p>
-<h2 id="signupjsxelement">SignUp()<code>JSX.Element</code></h2>
+<h2 id="signup-jsxelement">SignUp() =&gt; <code>JSX.Element</code></h2>
 <p>SignUp component that renders the SignUp form and handles user registration</p>
 <p>Validates user input, checks for existing users, creates new user accounts,
 navigates to the calendar page on success, displays alert if failed</p>
@@ -144,16 +148,16 @@ navigates to the calendar page on success, displays alert if failed</p>
 <pre><code class="language-js">&lt;Route path=&quot;/signup&quot; element={&lt;SignUp /&gt;} /&gt;
 </code></pre>
 <ul>
-<li><a href="#SignUp">SignUp()</a> <code>JSX.Element</code><ul>
+<li><a href="#SignUp">SignUp()</a> =&gt; <code>JSX.Element</code><ul>
 <li><a href="#SignUp..handlePasswordChange">~handlePasswordChange(e)</a></li>
-<li><a href="#SignUp..isEmailRegistered">~isEmailRegistered(email)</a>  <code>boolean</code></li>
-<li><a href="#SignUp..isIdInUse">~isIdInUse(staffId)</a>  <code>boolean</code></li>
-<li><a href="#SignUp..handleSubmit">~handleSubmit(e)</a>  <code>void</code></li>
+<li><a href="#SignUp..isEmailRegistered">~isEmailRegistered(email)</a> =&gt; <code>boolean</code></li>
+<li><a href="#SignUp..isIdInUse">~isIdInUse(staffId)</a> =&gt; <code>boolean</code></li>
+<li><a href="#SignUp..handleSubmit">~handleSubmit(e)</a> =&gt; <code>void</code></li>
 </ul>
 </li>
 </ul>
 <p><a name="SignUp..handlePasswordChange"></a></p>
-<h3 id="signuphandlepasswordchangee">SignUp~handlePasswordChange(e)</h3>
+<h3 id="signuphandlepasswordchangee">SignUp~handlePasswordChange(e) =&gt;</h3>
 <p>Password validation handler to validate password requirements</p>
 <p><strong>Kind</strong>: inner method of <a href="#SignUp"><code>SignUp</code></a>  </p>
 <table>
@@ -173,7 +177,7 @@ navigates to the calendar page on success, displays alert if failed</p>
 </tbody>
 </table>
 <p><a name="SignUp..isEmailRegistered"></a></p>
-<h3 id="signupisemailregisteredemail-boolean">SignUp~isEmailRegistered(email) <code>boolean</code></h3>
+<h3 id="signupisemailregisteredemail-boolean">SignUp~isEmailRegistered(email) =&gt; <code>boolean</code></h3>
 <p>Checks if the email is already registered</p>
 <p><strong>Kind</strong>: inner method of <a href="#SignUp"><code>SignUp</code></a><br />
 <strong>Returns</strong>: <code>boolean</code> - True if email is registered, false otherwise  </p>
@@ -194,7 +198,7 @@ navigates to the calendar page on success, displays alert if failed</p>
 </tbody>
 </table>
 <p><a name="SignUp..isIdInUse"></a></p>
-<h3 id="signupisidinusestaffid-boolean">SignUp~isIdInUse(staffId) <code>boolean</code></h3>
+<h3 id="signupisidinusestaffid-boolean">SignUp~isIdInUse(staffId)  =&gt; <code>boolean</code></h3>
 <p>Checks if the given ID is already in use</p>
 <p><strong>Kind</strong>: inner method of <a href="#SignUp"><code>SignUp</code></a><br />
 <strong>Returns</strong>: <code>boolean</code> - True if ID is in use, false otherwise  </p>
@@ -215,7 +219,7 @@ navigates to the calendar page on success, displays alert if failed</p>
 </tbody>
 </table>
 <p><a name="SignUp..handleSubmit"></a></p>
-<h3 id="signuphandlesubmite-void">SignUp~handleSubmit(e) <code>void</code></h3>
+<h3 id="signuphandlesubmite-void">SignUp~handleSubmit(e) =&gt;  <code>void</code></h3>
 <p>Handles the signup form submission, validates input data
 saves new user to local storage if valid
 navigates to calendar page on success, shows alert on failure</p>

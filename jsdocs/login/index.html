@@ -87,6 +87,10 @@
 <li>
     <a href="../calendar/" class="dropdown-item">Calendar</a>
 </li>
+                                    
+<li>
+    <a href="../appointment/" class="dropdown-item">Appointment</a>
+</li>
                                 </ul>
                             </li>
                         </ul>
@@ -123,7 +127,7 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-bs-level="2"><a href="#login-jsxelement" class="nav-link">LogIn() JSX.Element</a>
+            <li class="nav-item" data-bs-level="2"><a href="#login-jsxelement" class="nav-link">LogIn() =&gt; JSX.Element</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -133,7 +137,7 @@
                     <div class="col-md-9" role="main">
 
 <p><a name="LogIn"></a></p>
-<h2 id="login-jsxelement">LogIn() <code>JSX.Element</code></h2>
+<h2 id="login-jsxelement">LogIn() =&gt; <code>JSX.Element</code></h2>
 <p>LogIn component that renders the LogIn form and handles user authentication</p>
 <p>Checks for stored users, verifies credentials,
 navigates to the calendar page on success, displays alert if failed</p>
@@ -144,7 +148,7 @@ navigates to the calendar page on success, displays alert if failed</p>
 <pre><code class="language-js">&lt;Route path=&quot;/login&quot; element={&lt;LogIn /&gt;} /&gt;
 </code></pre>
 <p><a name="LogIn..handleLogin"></a></p>
-<h3 id="loginhandlelogine-void">LogIn~handleLogin(e) <code>void</code></h3>
+<h3 id="loginhandlelogine-void">LogIn~handleLogin(e) =&gt; <code>void</code></h3>
 <p>Handles the login form submission</p>
 <p>Checks if the email and password submitted by the user match an already created account.
 Displays a success alert and navigates to the calendar page if credentials are correct.

@@ -6,9 +6,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         
-        <link rel="canonical" href="https://aoibheannmangan.github.io/test-scheduler/jsdocs/forgotpsw/">
+        <link rel="canonical" href="https://aoibheannmangan.github.io/test-scheduler/jsdocs/appointment/">
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>Forgot Password - Test Scheduler Documentation</title>
+        <title>Appointment - Test Scheduler Documentation</title>
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/fontawesome.min.css" rel="stylesheet">
         <link href="../../css/brands.min.css" rel="stylesheet">
@@ -73,7 +73,7 @@
 </li>
                                     
 <li>
-    <a href="./" class="dropdown-item active" aria-current="page">Forgot Password</a>
+    <a href="../forgotpsw/" class="dropdown-item">Forgot Password</a>
 </li>
                                     
 <li>
@@ -89,7 +89,7 @@
 </li>
                                     
 <li>
-    <a href="../appointment/" class="dropdown-item">Appointment</a>
+    <a href="./" class="dropdown-item active" aria-current="page">Appointment</a>
 </li>
                                 </ul>
                             </li>
@@ -97,17 +97,17 @@
 
                     <ul class="nav navbar-nav ms-md-auto">
                             <li class="nav-item">
-                                <a rel="prev" href="../signup/" class="nav-link">
+                                <a rel="prev" href="../calendar/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../forecast/" class="nav-link">
+                                <a rel="next" class="nav-link disabled">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="https://github.com/Aoibheannmangan/test-scheduler.git/edit/master/docs/jsdocs/forgotpsw.md" class="nav-link"><i class="fa-brands fa-github"></i> Edit on GitHub</a>
+                                <a href="https://github.com/Aoibheannmangan/test-scheduler.git/edit/master/docs/jsdocs/appointment.md" class="nav-link"><i class="fa-brands fa-github"></i> Edit on GitHub</a>
                             </li>
                     </ul>
                 </div>
@@ -127,7 +127,7 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-bs-level="2"><a href="#forgotpsw-jsxelement" class="nav-link">ForgotPsw() =&gt; JSX.Element</a>
+            <li class="nav-item" data-bs-level="2"><a href="#toggleappointment-void" class="nav-link">ToggleAppointment() =&gt; void</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -136,17 +136,90 @@
 </div></div>
                     <div class="col-md-9" role="main">
 
-<p><a name="ForgotPsw"></a></p>
-<h2 id="forgotpsw-jsxelement">ForgotPsw() =&gt; <code>JSX.Element</code></h2>
-<p>ForgotPsw component that renders the password reset form and handles password resetting
-validates new password, checks for existing user email,
-navigates to calendar page on success, displays alert if failed</p>
+<p><a name="ToggleAppointment"></a></p>
+<h2 id="toggleappointment-void">ToggleAppointment() =&gt; <code>void</code></h2>
+<p>Toggle is not visible by default</p>
 <p><strong>Kind</strong>: global function<br />
-<strong>Returns</strong>: <code>JSX.Element</code> - The ForgotPsw component<br />
-<strong>Component</strong>: <br />
-<strong>Example</strong>  </p>
-<pre><code class="language-js">&lt;Route path=&quot;/forgot-password&quot; element={&lt;ForgotPsw /&gt;} /&gt;
-</code></pre></div>
+<strong>Returns</strong>: <code>void</code> - Does not return a value  </p>
+<ul>
+<li><a href="#ToggleAppointment">ToggleAppointment()</a> =&gt; <code>void</code><ul>
+<li><a href="#ToggleAppointment..selectedStart">~selectedStart</a> =&gt; <code>Date</code> | <code>null</code> | <code>Date</code> | <code>null</code></li>
+<li><a href="#ToggleAppointment..roomOptions">~roomOptions</a> =&gt; <code>Array.&lt;Object&gt;</code></li>
+<li><a href="#ToggleAppointment..isRoomAvailable">~isRoomAvailable(roomId, startTime, endTime, appointments)</a> =&gt; <code>Boolean</code></li>
+<li><a href="#ToggleAppointment..handleSubmit">~handleSubmit(e)</a> =&gt; <code>void</code></li>
+</ul>
+</li>
+</ul>
+<p><a name="ToggleAppointment..selectedStart"></a></p>
+<h3 id="toggleappointmentselectedstart-date-null-date-null">ToggleAppointment~selectedStart =&gt; <code>Date</code> | <code>null</code> | <code>Date</code> | <code>null</code></h3>
+<p>Calculates the selected start and end times based on the provided date and time.
+These values are memoized to avoid recalculating unless dependencies change.</p>
+<p><strong>Kind</strong>: inner constant of <a href="#ToggleAppointment"><code>ToggleAppointment</code></a><br />
+<strong>Returns</strong>: <code>Date</code> | <code>null</code> - The selected start time or <code>null</code> if invalid inputs.<code>Date</code> | <code>null</code> - The selected end time or <code>null</code> if invalid inputs.<br />
+<a name="ToggleAppointment..roomOptions"></a></p>
+<h3 id="toggleappointmentroomoptions-arrayobject">ToggleAppointment~roomOptions =&gt; <code>Array.&lt;Object&gt;</code></h3>
+<p>Generates the room options with avaliability based on selected start times</p>
+<p><strong>Kind</strong>: inner constant of <a href="#ToggleAppointment"><code>ToggleAppointment</code></a><br />
+<strong>Returns</strong>: <code>Array.&lt;Object&gt;</code> - - A list of rooms with their avaliabilty status<br />
+<a name="ToggleAppointment..isRoomAvailable"></a></p>
+<h3 id="toggleappointmentisroomavailableroomid-starttime-endtime-appointments-boolean">ToggleAppointment~isRoomAvailable(roomId, startTime, endTime, appointments) =&gt; <code>Boolean</code></h3>
+<p>Checks if a room is avaliable at a time</p>
+<p><strong>Kind</strong>: inner method of <a href="#ToggleAppointment"><code>ToggleAppointment</code></a><br />
+<strong>Returns</strong>: <code>Boolean</code> - - Returns true if avaliable, false if not  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>roomId</td>
+<td><code>string</code></td>
+<td>The ID of the room</td>
+</tr>
+<tr>
+<td>startTime</td>
+<td><code>Date</code></td>
+<td>Appointment start time</td>
+</tr>
+<tr>
+<td>endTime</td>
+<td><code>Date</code></td>
+<td>Appointment end time</td>
+</tr>
+<tr>
+<td>appointments</td>
+<td><code>Array.&lt;Object&gt;</code></td>
+<td>List of current appointments</td>
+</tr>
+</tbody>
+</table>
+<p><a name="ToggleAppointment..handleSubmit"></a></p>
+<h3 id="toggleappointmenthandlesubmite-void">ToggleAppointment~handleSubmit(e) =&gt; <code>void</code></h3>
+<p>Handles form submission for new appointments
+Validates the start and end times
+Constructs a new appointment object and calls onAddAppointment
+Resets form state after submission</p>
+<p><strong>Kind</strong>: inner method of <a href="#ToggleAppointment"><code>ToggleAppointment</code></a>  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>e</td>
+<td><code>Event</code></td>
+<td>Event triggered by form submission</td>
+</tr>
+</tbody>
+</table></div>
             </div>
         </div>
 

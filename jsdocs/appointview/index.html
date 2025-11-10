@@ -87,6 +87,10 @@
 <li>
     <a href="../calendar/" class="dropdown-item">Calendar</a>
 </li>
+                                    
+<li>
+    <a href="../appointment/" class="dropdown-item">Appointment</a>
+</li>
                                 </ul>
                             </li>
                         </ul>
@@ -123,7 +127,7 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-bs-level="2"><a href="#appointments-jsxelement" class="nav-link">Appointments() JSX.Element</a>
+            <li class="nav-item" data-bs-level="2"><a href="#appointments-jsxelement" class="nav-link">Appointments() =&gt; JSX.Element</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -133,7 +137,7 @@
                     <div class="col-md-9" role="main">
 
 <p><a name="Appointments"></a></p>
-<h2 id="appointments-jsxelement">Appointments() <code>JSX.Element</code></h2>
+<h2 id="appointments-jsxelement">Appointments() =&gt; <code>JSX.Element</code></h2>
 <p>Appointments component that renders an overview of patient appointments.
 Fetches user data from an API, merges it with booked events from localStorage,
 and displays the information with search and filter capabilities.</p>
@@ -145,15 +149,15 @@ and displays the information with search and filter capabilities.</p>
 </code></pre>
 <ul>
 <li><a href="#Appointments">Appointments()</a> <code>JSX.Element</code><ul>
-<li><a href="#Appointments..isFarAway">~isFarAway(date)</a> <code>boolean</code></li>
-<li><a href="#Appointments..isMid">~isMid(date)</a> <code>boolean</code></li>
-<li><a href="#Appointments..isClose">~isClose(date)</a> <code>boolean</code></li>
-<li><a href="#Appointments..toggleCollapseIds">~toggleCollapseIds(id)</a> <code>void</code></li>
+<li><a href="#Appointments..isFarAway">~isFarAway(date)</a> =&gt; <code>boolean</code></li>
+<li><a href="#Appointments..isMid">~isMid(date)</a> =&gt; <code>boolean</code></li>
+<li><a href="#Appointments..isClose">~isClose(date)</a> =&gt; <code>boolean</code></li>
+<li><a href="#Appointments..toggleCollapseIds">~toggleCollapseIds(id)</a>  =&gt; <code>void</code></li>
 </ul>
 </li>
 </ul>
 <p><a name="Appointments..isFarAway"></a></p>
-<h3 id="appointmentsisfarawaydate-boolean">Appointments~isFarAway(date) <code>boolean</code></h3>
+<h3 id="appointmentsisfarawaydate-boolean">Appointments~isFarAway(date) =&gt; <code>boolean</code></h3>
 <p>Checks if the appointment date is more than one month away.</p>
 <p><strong>Kind</strong>: inner method of <a href="#Appointments"><code>Appointments</code></a><br />
 <strong>Returns</strong>: <code>boolean</code> - True if the date is more than one month away, false otherwise.  </p>
@@ -174,7 +178,7 @@ and displays the information with search and filter capabilities.</p>
 </tbody>
 </table>
 <p><a name="Appointments..isMid"></a></p>
-<h3 id="appointmentsismiddate-boolean">Appointments~isMid(date) <code>boolean</code></h3>
+<h3 id="appointmentsismiddate-boolean">Appointments~isMid(date) =&gt; <code>boolean</code></h3>
 <p>Checks if the appointment date is between one week and one month away.</p>
 <p><strong>Kind</strong>: inner method of <a href="#Appointments"><code>Appointments</code></a><br />
 <strong>Returns</strong>: <code>boolean</code> - True if the date is between one week and one month away, false otherwise.  </p>
@@ -195,7 +199,7 @@ and displays the information with search and filter capabilities.</p>
 </tbody>
 </table>
 <p><a name="Appointments..isClose"></a></p>
-<h3 id="appointmentsisclosedate-boolean">Appointments~isClose(date) <code>boolean</code></h3>
+<h3 id="appointmentsisclosedate-boolean">Appointments~isClose(date) =&gt; <code>boolean</code></h3>
 <p>Checks if the appointment date is within one week.</p>
 <p><strong>Kind</strong>: inner method of <a href="#Appointments"><code>Appointments</code></a><br />
 <strong>Returns</strong>: <code>boolean</code> - True if the date is within one week, false otherwise.  </p>
@@ -216,7 +220,7 @@ and displays the information with search and filter capabilities.</p>
 </tbody>
 </table>
 <p><a name="Appointments..toggleCollapseIds"></a></p>
-<h3 id="appointmentstogglecollapseidsid-void">Appointments~toggleCollapseIds(id) <code>void</code></h3>
+<h3 id="appointmentstogglecollapseidsid-void">Appointments~toggleCollapseIds(id) =&gt; <code>void</code></h3>
 <p>Toggles the collapsed state for a given appointment ID.</p>
 <p><strong>Kind</strong>: inner method of <a href="#Appointments"><code>Appointments</code></a>  </p>
 <table>

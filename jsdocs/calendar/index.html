@@ -87,6 +87,10 @@
 <li>
     <a href="./" class="dropdown-item active" aria-current="page">Calendar</a>
 </li>
+                                    
+<li>
+    <a href="../appointment/" class="dropdown-item">Appointment</a>
+</li>
                                 </ul>
                             </li>
                         </ul>
@@ -98,7 +102,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" class="nav-link disabled">
+                                <a rel="next" href="../appointment/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -123,7 +127,7 @@
     <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
         <ul class="nav flex-column">
             
-            <li class="nav-item" data-bs-level="2"><a href="#mycalendar-jsxelement" class="nav-link">MyCalendar() JSX.Element</a>
+            <li class="nav-item" data-bs-level="2"><a href="#mycalendar-jsxelement" class="nav-link">MyCalendar() =&gt; JSX.Element</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -133,7 +137,7 @@
                     <div class="col-md-9" role="main">
 
 <p><a name="MyCalendar"></a></p>
-<h2 id="mycalendar-jsxelement">MyCalendar() <code>JSX.Element</code></h2>
+<h2 id="mycalendar-jsxelement">MyCalendar() =&gt; <code>JSX.Element</code></h2>
 <p>Calendar component that renders the main calendar view and handles appointment management.
 Includes functionality for booking, editing, deleting appointments,
 blocking dates, searching patients, and managing visit windows.</p>
@@ -145,55 +149,55 @@ blocking dates, searching patients, and managing visit windows.</p>
 </code></pre>
 <ul>
 <li><a href="#MyCalendar">MyCalendar()</a> <code>JSX.Element</code><ul>
-<li><a href="#MyCalendar..roomList">~roomList</a>  <code>void</code></li>
-<li><a href="#MyCalendar..cleanupPastAppointments">~cleanupPastAppointments</a>  <code>void</code></li>
-<li><a href="#MyCalendar..allEvents">~allEvents</a> <code>Array.&lt;Object&gt;</code></li>
-<li><a href="#MyCalendar..filteredAppointments">~filteredAppointments</a>  <code>Array.&lt;Object&gt;</code></li>
-<li><a href="#MyCalendar..handleSelectEvent">~handleSelectEvent(event)</a> <code>void</code></li>
-<li><a href="#MyCalendar..handleBlockDate">~handleBlockDate()</a>  <code>void</code></li>
-<li><a href="#MyCalendar..handleUnBlockDate">~handleUnBlockDate()</a>  <code>void</code></li>
-<li><a href="#MyCalendar..handleShowBlockedDates">~handleShowBlockedDates()</a>  <code>void</code></li>
-<li><a href="#MyCalendar..handleDateChange">~handleDateChange(event)</a> <code>void</code></li>
-<li><a href="#MyCalendar..combinedEventGetter">~combinedEventGetter(event)</a>  <code>void</code></li>
-<li><a href="#MyCalendar..handleNoShowChange">~handleNoShowChange(e)</a> <code>void</code></li>
-<li><a href="#MyCalendar..handleUpdateEvent">~handleUpdateEvent(updatedEvent)</a>  <code>void</code></li>
-<li><a href="#MyCalendar..saveEditedInfo">~saveEditedInfo()</a>  <code>void</code></li>
-<li><a href="#MyCalendar..handleSearchWindow">~handleSearchWindow()</a>  <code>void</code><ul>
-<li><a href="#MyCalendar..handleSearchWindow..patientBookedAppointments">~patientBookedAppointments</a> <code>void</code></li>
+<li><a href="#MyCalendar..roomList">~roomList</a> =&gt;  <code>void</code></li>
+<li><a href="#MyCalendar..cleanupPastAppointments">~cleanupPastAppointments</a> =&gt;  <code>void</code></li>
+<li><a href="#MyCalendar..allEvents">~allEvents</a> =&gt; <code>Array.&lt;Object&gt;</code></li>
+<li><a href="#MyCalendar..filteredAppointments">~filteredAppointments</a> =&gt; <code>Array.&lt;Object&gt;</code></li>
+<li><a href="#MyCalendar..handleSelectEvent">~handleSelectEvent(event)</a> =&gt; <code>void</code></li>
+<li><a href="#MyCalendar..handleBlockDate">~handleBlockDate()</a> =&gt; <code>void</code></li>
+<li><a href="#MyCalendar..handleUnBlockDate">~handleUnBlockDate()</a> =&gt;  <code>void</code></li>
+<li><a href="#MyCalendar..handleShowBlockedDates">~handleShowBlockedDates()</a>  =&gt; <code>void</code></li>
+<li><a href="#MyCalendar..handleDateChange">~handleDateChange(event)</a> =&gt; <code>void</code></li>
+<li><a href="#MyCalendar..combinedEventGetter">~combinedEventGetter(event)</a>  =&gt; <code>void</code></li>
+<li><a href="#MyCalendar..handleNoShowChange">~handleNoShowChange(e)</a> =&gt; <code>void</code></li>
+<li><a href="#MyCalendar..handleUpdateEvent">~handleUpdateEvent(updatedEvent)</a>  =&gt; <code>void</code></li>
+<li><a href="#MyCalendar..saveEditedInfo">~saveEditedInfo()</a> =&gt; <code>void</code></li>
+<li><a href="#MyCalendar..handleSearchWindow">~handleSearchWindow()</a> =&gt; <code>void</code><ul>
+<li><a href="#MyCalendar..handleSearchWindow..patientBookedAppointments">~patientBookedAppointments</a>  =&gt; <code>void</code></li>
 </ul>
 </li>
-<li><a href="#MyCalendar..isAppointmentWithinVisitWindow">~isAppointmentWithinVisitWindow(appointment, patient)</a> <code>boolean</code></li>
-<li><a href="#MyCalendar..proceedWithOutOfWindowBooking">~proceedWithOutOfWindowBooking()</a> <code>void</code></li>
-<li><a href="#MyCalendar..handleClearWindow">~handleClearWindow()</a>  <code>void</code></li>
-<li><a href="#MyCalendar..confirmDeleteEvent">~confirmDeleteEvent()</a>  <code>void</code></li>
-<li><a href="#MyCalendar..handleEventClick">~handleEventClick(event)</a>  <code>void</code></li>
-<li><a href="#MyCalendar..handleEventAdd">~handleEventAdd()</a>  <code>void</code></li>
-<li><a href="#MyCalendar..handleAddAppointment">~handleAddAppointment(appointment, [override])</a>  <code>void</code></li>
+<li><a href="#MyCalendar..isAppointmentWithinVisitWindow">~isAppointmentWithinVisitWindow(appointment, patient)</a> =&gt; <code>boolean</code></li>
+<li><a href="#MyCalendar..proceedWithOutOfWindowBooking">~proceedWithOutOfWindowBooking()</a> =&gt; <code>void</code></li>
+<li><a href="#MyCalendar..handleClearWindow">~handleClearWindow()</a> =&gt; <code>void</code></li>
+<li><a href="#MyCalendar..confirmDeleteEvent">~confirmDeleteEvent()</a> =&gt;  <code>void</code></li>
+<li><a href="#MyCalendar..handleEventClick">~handleEventClick(event)</a>  =&gt; <code>void</code></li>
+<li><a href="#MyCalendar..handleEventAdd">~handleEventAdd()</a> =&gt; <code>void</code></li>
+<li><a href="#MyCalendar..handleAddAppointment">~handleAddAppointment(appointment, [override])</a> =&gt; <code>void</code></li>
 </ul>
 </li>
 </ul>
 <p><a name="MyCalendar..roomList"></a></p>
-<h3 id="mycalendarroomlist-void">MyCalendar~roomList  <code>void</code></h3>
+<h3 id="mycalendarroomlist-void">MyCalendar~roomList =&gt;  <code>void</code></h3>
 <p>State to manage selected rooms for filtering appointments.</p>
 <p><strong>Kind</strong>: inner constant of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
 <strong>Returns</strong>: <code>void</code> - Does not return a value.<br />
 <a name="MyCalendar..cleanupPastAppointments"></a></p>
-<h3 id="mycalendarcleanuppastappointments-void">MyCalendar~cleanupPastAppointments  <code>void</code></h3>
+<h3 id="mycalendarcleanuppastappointments-void">MyCalendar~cleanupPastAppointments =&gt; <code>void</code></h3>
 <p>Cleans up past appointments by removing them from bookedEvents and updating userList accordingly.</p>
 <p><strong>Kind</strong>: inner constant of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
 <strong>Returns</strong>: <code>void</code> - Does not return a value.<br />
 <a name="MyCalendar..allEvents"></a></p>
-<h3 id="mycalendarallevents-arrayobject">MyCalendar~allEvents <code>Array.&lt;Object&gt;</code></h3>
+<h3 id="mycalendarallevents-arrayobject">MyCalendar~allEvents =&gt; <code>Array.&lt;Object&gt;</code></h3>
 <p>Combines all event types into a single array for calendar display and applies filtering based on selected rooms.</p>
 <p><strong>Kind</strong>: inner constant of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
 <strong>Returns</strong>: <code>Array.&lt;Object&gt;</code> - Array of filtered appointment objects for calendar display.<br />
 <a name="MyCalendar..filteredAppointments"></a></p>
-<h3 id="mycalendarfilteredappointments-arrayobject">MyCalendar~filteredAppointments  <code>Array.&lt;Object&gt;</code></h3>
+<h3 id="mycalendarfilteredappointments-arrayobject">MyCalendar~filteredAppointments =&gt; <code>Array.&lt;Object&gt;</code></h3>
 <p>Filters appointments based on selected rooms and ensures date objects are properly formatted.</p>
 <p><strong>Kind</strong>: inner constant of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
 <strong>Returns</strong>: <code>Array.&lt;Object&gt;</code> - Array of filtered appointment objects with proper date formatting.<br />
 <a name="MyCalendar..handleSelectEvent"></a></p>
-<h3 id="mycalendarhandleselecteventevent-void">MyCalendar~handleSelectEvent(event) <code>void</code></h3>
+<h3 id="mycalendarhandleselecteventevent-void">MyCalendar~handleSelectEvent(event) =&gt; <code>void</code></h3>
 <p>Handles selecting an event on the calendar.</p>
 <p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a>  </p>
 <table>
@@ -248,19 +252,19 @@ blocking dates, searching patients, and managing visit windows.</p>
 </tbody>
 </table>
 <p><a name="MyCalendar..handleBlockDate"></a></p>
-<h3 id="mycalendarhandleblockdate-void">MyCalendar~handleBlockDate()  <code>void</code></h3>
+<h3 id="mycalendarhandleblockdate-void">MyCalendar~handleBlockDate()  =&gt; <code>void</code></h3>
 <p>Handles blocking a selected date on the calendar.</p>
 <p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
 <a name="MyCalendar..handleUnBlockDate"></a></p>
-<h3 id="mycalendarhandleunblockdate-void">MyCalendar~handleUnBlockDate() <code>void</code></h3>
+<h3 id="mycalendarhandleunblockdate-void">MyCalendar~handleUnBlockDate() =&gt; <code>void</code></h3>
 <p>Handles unblocking a previously blocked date on the calendar.</p>
 <p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
 <a name="MyCalendar..handleShowBlockedDates"></a></p>
-<h3 id="mycalendarhandleshowblockeddates-void">MyCalendar~handleShowBlockedDates() <code>void</code></h3>
+<h3 id="mycalendarhandleshowblockeddates-void">MyCalendar~handleShowBlockedDates() =&gt; <code>void</code></h3>
 <p>Toggles the display of blocked dates on the calendar.</p>
 <p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
 <a name="MyCalendar..handleDateChange"></a></p>
-<h3 id="mycalendarhandledatechangeevent-void">MyCalendar~handleDateChange(event) <code>void</code></h3>
+<h3 id="mycalendarhandledatechangeevent-void">MyCalendar~handleDateChange(event) =&gt; <code>void</code></h3>
 <p>Handles the change of selected date from the date input.</p>
 <p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a>  </p>
 <table>
@@ -285,7 +289,7 @@ blocking dates, searching patients, and managing visit windows.</p>
 </tbody>
 </table>
 <p><a name="MyCalendar..combinedEventGetter"></a></p>
-<h3 id="mycalendarcombinedeventgetterevent-void">MyCalendar~combinedEventGetter(event) <code>void</code></h3>
+<h3 id="mycalendarcombinedeventgetterevent-void">MyCalendar~combinedEventGetter(event) =&gt; <code>void</code></h3>
 <p>Handles combining event properties for styling and blocked status.</p>
 <p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a>  </p>
 <table>
@@ -345,7 +349,7 @@ blocking dates, searching patients, and managing visit windows.</p>
 </tbody>
 </table>
 <p><a name="MyCalendar..handleNoShowChange"></a></p>
-<h3 id="mycalendarhandlenoshowchangee-void">MyCalendar~handleNoShowChange(e) <code>void</code></h3>
+<h3 id="mycalendarhandlenoshowchangee-void">MyCalendar~handleNoShowChange(e) =&gt; <code>void</code></h3>
 <p>Handles changes to the no-show checkbox in the event edit form.</p>
 <p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a>  </p>
 <table>
@@ -365,7 +369,7 @@ blocking dates, searching patients, and managing visit windows.</p>
 </tbody>
 </table>
 <p><a name="MyCalendar..handleUpdateEvent"></a></p>
-<h3 id="mycalendarhandleupdateeventupdatedevent-void">MyCalendar~handleUpdateEvent(updatedEvent)  <code>void</code></h3>
+<h3 id="mycalendarhandleupdateeventupdatedevent-void">MyCalendar~handleUpdateEvent(updatedEvent) =&gt; <code>void</code></h3>
 <p>Handles updating an existing event in the booked events list.</p>
 <p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a>  </p>
 <table>
@@ -420,22 +424,22 @@ blocking dates, searching patients, and managing visit windows.</p>
 </tbody>
 </table>
 <p><a name="MyCalendar..saveEditedInfo"></a></p>
-<h3 id="mycalendarsaveeditedinfo-void">MyCalendar~saveEditedInfo()  <code>void</code></h3>
+<h3 id="mycalendarsaveeditedinfo-void">MyCalendar~saveEditedInfo() =&gt;  <code>void</code></h3>
 <p>Handles saving edited event information.</p>
 <p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
 <a name="MyCalendar..handleSearchWindow"></a></p>
-<h3 id="mycalendarhandlesearchwindow-void">MyCalendar~handleSearchWindow()  <code>void</code></h3>
+<h3 id="mycalendarhandlesearchwindow-void">MyCalendar~handleSearchWindow()  =&gt; <code>void</code></h3>
 <p>Handles searching for a patient by their ID.</p>
 <p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
 <a name="MyCalendar..handleSearchWindow..patientBookedAppointments"></a></p>
-<h4 id="handlesearchwindowpatientbookedappointments-void">handleSearchWindow~patientBookedAppointments <code>void</code></h4>
+<h4 id="handlesearchwindowpatientbookedappointments-void">handleSearchWindow~patientBookedAppointments =&gt; <code>void</code></h4>
 <p>Handles checking for existing booked appointments for the patient and navigating the calendar accordingly.
 If booked appointments exist, navigates to the next upcoming appointment or the earliest one.
 If no booked appointments exist, navigates to the first visit window.
 Displays alerts based on the navigation action taken.</p>
 <p><strong>Kind</strong>: inner constant of <a href="#MyCalendar..handleSearchWindow"><code>handleSearchWindow</code></a><br />
 <a name="MyCalendar..isAppointmentWithinVisitWindow"></a></p>
-<h3 id="mycalendarisappointmentwithinvisitwindowappointment-patient-boolean">MyCalendar~isAppointmentWithinVisitWindow(appointment, patient)  <code>boolean</code></h3>
+<h3 id="mycalendarisappointmentwithinvisitwindowappointment-patient-boolean">MyCalendar~isAppointmentWithinVisitWindow(appointment, patient) =&gt; <code>boolean</code></h3>
 <p>Handles checking if an appointment falls within the patient's visit windows.</p>
 <p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
 <strong>Returns</strong>: <code>boolean</code> - True if the appointment is within any visit window, false otherwise.  </p>
@@ -461,19 +465,19 @@ Displays alerts based on the navigation action taken.</p>
 </tbody>
 </table>
 <p><a name="MyCalendar..proceedWithOutOfWindowBooking"></a></p>
-<h3 id="mycalendarproceedwithoutofwindowbooking-void">MyCalendar~proceedWithOutOfWindowBooking() <code>void</code></h3>
+<h3 id="mycalendarproceedwithoutofwindowbooking-void">MyCalendar~proceedWithOutOfWindowBooking() =&gt; <code>void</code></h3>
 <p>Handles proceeding with booking an appointment outside the visit window after confirmation.</p>
 <p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
 <a name="MyCalendar..handleClearWindow"></a></p>
-<h3 id="mycalendarhandleclearwindow-void">MyCalendar~handleClearWindow() <code>void</code></h3>
+<h3 id="mycalendarhandleclearwindow-void">MyCalendar~handleClearWindow() =&gt; <code>void</code></h3>
 <p>Handles clearing the search and window events on the calendar.</p>
 <p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
 <a name="MyCalendar..confirmDeleteEvent"></a></p>
-<h3 id="mycalendarconfirmdeleteevent-void">MyCalendar~confirmDeleteEvent()  <code>void</code></h3>
+<h3 id="mycalendarconfirmdeleteevent-void">MyCalendar~confirmDeleteEvent()  =&gt; <code>void</code></h3>
 <p>Handles confirming the deletion of an event from the booked events list.</p>
 <p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
 <a name="MyCalendar..handleEventClick"></a></p>
-<h3 id="mycalendarhandleeventclickevent-void">MyCalendar~handleEventClick(event)  <code>void</code></h3>
+<h3 id="mycalendarhandleeventclickevent-void">MyCalendar~handleEventClick(event)  =&gt; <code>void</code></h3>
 <p>Handles clicking on an event in the calendar to open the delete confirmation popup.</p>
 <p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a>  </p>
 <table>
@@ -493,11 +497,11 @@ Displays alerts based on the navigation action taken.</p>
 </tbody>
 </table>
 <p><a name="MyCalendar..handleEventAdd"></a></p>
-<h3 id="mycalendarhandleeventadd-void">MyCalendar~handleEventAdd() <code>void</code></h3>
+<h3 id="mycalendarhandleeventadd-void">MyCalendar~handleEventAdd() =&gt; <code>void</code></h3>
 <p>Handles adding a new appointment by opening the appointment booking popup.</p>
 <p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
 <a name="MyCalendar..handleAddAppointment"></a></p>
-<h3 id="mycalendarhandleaddappointmentappointment-override-void">MyCalendar~handleAddAppointment(appointment, [override]) <code>void</code></h3>
+<h3 id="mycalendarhandleaddappointmentappointment-override-void">MyCalendar~handleAddAppointment(appointment, [override]) =&gt; <code>void</code></h3>
 <p>Hand;es adding a new appointment to the booked events list and updating patient context.</p>
 <p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
 <strong>Returns</strong>: <code>void</code> - Does not return a value.  </p>

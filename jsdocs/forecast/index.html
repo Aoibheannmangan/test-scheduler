@@ -87,6 +87,10 @@
 <li>
     <a href="../calendar/" class="dropdown-item">Calendar</a>
 </li>
+                                    
+<li>
+    <a href="../appointment/" class="dropdown-item">Appointment</a>
+</li>
                                 </ul>
                             </li>
                         </ul>
@@ -128,12 +132,12 @@
               </ul>
             </li>
             
-            <li class="nav-item" data-bs-level="2"><a href="#createdatamonthyear-count-object" class="nav-link">createData(monthYear, count) Object</a>
+            <li class="nav-item" data-bs-level="2"><a href="#createdatamonthyear-count-object" class="nav-link">createData(monthYear, count) =&gt; Object</a>
               <ul class="nav flex-column">
               </ul>
             </li>
             
-            <li class="nav-item" data-bs-level="2"><a href="#forecast-jsxelement" class="nav-link">Forecast() JSX.Element</a>
+            <li class="nav-item" data-bs-level="2"><a href="#forecast-jsxelement" class="nav-link">Forecast() =&gt; JSX.Element</a>
               <ul class="nav flex-column">
               </ul>
             </li>
@@ -153,7 +157,7 @@
 </dl>
 
 <p><a name="createData"></a></p>
-<h2 id="createdatamonthyear-count-object">createData(monthYear, count) <code>Object</code></h2>
+<h2 id="createdatamonthyear-count-object">createData(monthYear, count) =&gt; <code>Object</code></h2>
 <p>Creates a data row for the table.</p>
 <p><strong>Kind</strong>: global function<br />
 <strong>Returns</strong>: <code>Object</code> - A data row object containing the monthYear and count.  </p>
@@ -179,19 +183,19 @@
 </tbody>
 </table>
 <p><a name="Forecast"></a></p>
-<h2 id="forecast-jsxelement">Forecast() <code>JSX.Element</code></h2>
+<h2 id="forecast-jsxelement">Forecast() =&gt; <code>JSX.Element</code></h2>
 <p>Forecast component for displaying appointments.</p>
 <p><strong>Kind</strong>: global function<br />
 <strong>Returns</strong>: <code>JSX.Element</code> - The Forecast component that displays the forecast of booked appointments per month.  </p>
 <ul>
-<li><a href="#Forecast">Forecast()</a>  <code>JSX.Element</code><ul>
-<li><a href="#Forecast..handleChangePage">~handleChangePage(_event, newPage)</a> <code>void</code></li>
-<li><a href="#Forecast..handleChangeRowsPerPage">~handleChangeRowsPerPage(event)</a> <code>void</code></li>
+<li><a href="#Forecast">Forecast()</a>  =&gt; <code>JSX.Element</code><ul>
+<li><a href="#Forecast..handleChangePage">~handleChangePage(_event, newPage)</a> =&gt; <code>void</code></li>
+<li><a href="#Forecast..handleChangeRowsPerPage">~handleChangeRowsPerPage(event)</a> =&gt; <code>void</code></li>
 </ul>
 </li>
 </ul>
 <p><a name="Forecast..handleChangePage"></a></p>
-<h3 id="forecasthandlechangepage_event-newpage-void">Forecast~handleChangePage(_event, newPage)  <code>void</code></h3>
+<h3 id="forecasthandlechangepage_event-newpage-void">Forecast~handleChangePage(_event, newPage) =&gt;  <code>void</code></h3>
 <p>Handles page change in the table pagination.</p>
 <p><strong>Kind</strong>: inner method of <a href="#Forecast"><code>Forecast</code></a>  </p>
 <table>
@@ -216,7 +220,7 @@
 </tbody>
 </table>
 <p><a name="Forecast..handleChangeRowsPerPage"></a></p>
-<h3 id="forecasthandlechangerowsperpageevent-void">Forecast~handleChangeRowsPerPage(event)  <code>void</code></h3>
+<h3 id="forecasthandlechangerowsperpageevent-void">Forecast~handleChangeRowsPerPage(event)  =&gt; <code>void</code></h3>
 <p>Handles the change in the number of rows per page in the table pagination.</p>
 <p><strong>Kind</strong>: inner method of <a href="#Forecast"><code>Forecast</code></a>  </p>
 <table>
