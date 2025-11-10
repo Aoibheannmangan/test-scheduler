@@ -6,9 +6,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         
-        <link rel="canonical" href="https://aoibheannmangan.github.io/test-scheduler/user-guide/license/">
+        <link rel="canonical" href="https://aoibheannmangan.github.io/test-scheduler/jsdocs/forecast/">
         <link rel="shortcut icon" href="../../img/favicon.ico">
-        <title>License - Test Scheduler Documentation</title>
+        <title>Forecast - Test Scheduler Documentation</title>
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/fontawesome.min.css" rel="stylesheet">
         <link href="../../css/brands.min.css" rel="stylesheet">
@@ -44,40 +44,40 @@
                                 <a href="../../about/" class="nav-link">About</a>
                             </li>
                             <li class="nav-item dropdown">
-                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">User Guide</a>
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">User Guide</a>
                                 <ul class="dropdown-menu">
                                     
 <li>
-    <a href="../getting-started/" class="dropdown-item">Getting Started</a>
+    <a href="../../user-guide/getting-started/" class="dropdown-item">Getting Started</a>
 </li>
                                     
 <li>
-    <a href="../requirements/" class="dropdown-item">Requirements</a>
+    <a href="../../user-guide/requirements/" class="dropdown-item">Requirements</a>
 </li>
                                     
 <li>
-    <a href="./" class="dropdown-item active" aria-current="page">License</a>
+    <a href="../../user-guide/license/" class="dropdown-item">License</a>
 </li>
                                 </ul>
                             </li>
                             <li class="nav-item dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Scheduler Guider</a>
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Scheduler Guider</a>
                                 <ul class="dropdown-menu">
                                     
 <li>
-    <a href="../../jsdocs/login/" class="dropdown-item">Login</a>
+    <a href="../login/" class="dropdown-item">Login</a>
 </li>
                                     
 <li>
-    <a href="../../jsdocs/signup/" class="dropdown-item">Signup</a>
+    <a href="../signup/" class="dropdown-item">Signup</a>
 </li>
                                     
 <li>
-    <a href="../../jsdocs/forgotpsw/" class="dropdown-item">Forgot Password</a>
+    <a href="../forgotpsw/" class="dropdown-item">Forgot Password</a>
 </li>
                                     
 <li>
-    <a href="../../jsdocs/forecast/" class="dropdown-item">Forecast</a>
+    <a href="./" class="dropdown-item active" aria-current="page">Forecast</a>
 </li>
                                 </ul>
                             </li>
@@ -85,17 +85,17 @@
 
                     <ul class="nav navbar-nav ms-md-auto">
                             <li class="nav-item">
-                                <a rel="prev" href="../requirements/" class="nav-link">
+                                <a rel="prev" href="../forgotpsw/" class="nav-link">
                                     <i class="fa fa-arrow-left"></i> Previous
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" href="../../jsdocs/login/" class="nav-link">
+                                <a rel="next" class="nav-link disabled">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="https://github.com/Aoibheannmangan/test-scheduler.git/edit/master/docs/user-guide/license.md" class="nav-link"><i class="fa-brands fa-github"></i> Edit on GitHub</a>
+                                <a href="https://github.com/Aoibheannmangan/test-scheduler.git/edit/master/docs/jsdocs/forecast.md" class="nav-link"><i class="fa-brands fa-github"></i> Edit on GitHub</a>
                             </li>
                     </ul>
                 </div>
@@ -114,13 +114,119 @@
     
     <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
         <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="2"><a href="#functions" class="nav-link">Functions</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-bs-level="2"><a href="#createdatamonthyear-count-object" class="nav-link">createData(monthYear, count) Object</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-bs-level="2"><a href="#forecast-jsxelement" class="nav-link">Forecast() JSX.Element</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
         </ul>
     </div>
 </div></div>
                     <div class="col-md-9" role="main">
 
-<p><strong>Sample License goes here:</strong></p>
-<p><em>Will actually write when finished</em></p></div>
+<h2 id="functions">Functions</h2>
+<dl>
+<dt><a href="#createData">createData(monthYear, count)</a> <code>Object</code></dt>
+<dd><p>Creates a data row for the table.</p>
+</dd>
+<dt><a href="#Forecast">Forecast()</a>  <code>JSX.Element</code></dt>
+<dd><p>Forecast component for displaying appointments.</p>
+</dd>
+</dl>
+
+<p><a name="createData"></a></p>
+<h2 id="createdatamonthyear-count-object">createData(monthYear, count) <code>Object</code></h2>
+<p>Creates a data row for the table.</p>
+<p><strong>Kind</strong>: global function<br />
+<strong>Returns</strong>: <code>Object</code> - A data row object containing the monthYear and count.  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>monthYear</td>
+<td><code>string</code></td>
+<td>The month and year (e.g., "January 2025").</td>
+</tr>
+<tr>
+<td>count</td>
+<td><code>number</code></td>
+<td>The number of appointments booked in that month.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="Forecast"></a></p>
+<h2 id="forecast-jsxelement">Forecast() <code>JSX.Element</code></h2>
+<p>Forecast component for displaying appointments.</p>
+<p><strong>Kind</strong>: global function<br />
+<strong>Returns</strong>: <code>JSX.Element</code> - The Forecast component that displays the forecast of booked appointments per month.  </p>
+<ul>
+<li><a href="#Forecast">Forecast()</a>  <code>JSX.Element</code><ul>
+<li><a href="#Forecast..handleChangePage">~handleChangePage(_event, newPage)</a> <code>void</code></li>
+<li><a href="#Forecast..handleChangeRowsPerPage">~handleChangeRowsPerPage(event)</a> <code>void</code></li>
+</ul>
+</li>
+</ul>
+<p><a name="Forecast..handleChangePage"></a></p>
+<h3 id="forecasthandlechangepage_event-newpage-void">Forecast~handleChangePage(_event, newPage)  <code>void</code></h3>
+<p>Handles page change in the table pagination.</p>
+<p><strong>Kind</strong>: inner method of <a href="#Forecast"><code>Forecast</code></a>  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>_event</td>
+<td><code>Event</code></td>
+<td>The pagination event.</td>
+</tr>
+<tr>
+<td>newPage</td>
+<td><code>number</code></td>
+<td>The new page number to display.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="Forecast..handleChangeRowsPerPage"></a></p>
+<h3 id="forecasthandlechangerowsperpageevent-void">Forecast~handleChangeRowsPerPage(event)  <code>void</code></h3>
+<p>Handles the change in the number of rows per page in the table pagination.</p>
+<p><strong>Kind</strong>: inner method of <a href="#Forecast"><code>Forecast</code></a>  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>event</td>
+<td><code>React.ChangeEvent</code></td>
+<td>The event triggering the change in rows per page.</td>
+</tr>
+</tbody>
+</table></div>
             </div>
         </div>
 
