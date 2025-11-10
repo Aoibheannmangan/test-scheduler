@@ -56,28 +56,20 @@ const Appointments = () => {
         }
       );
 
-      const bookings = response.data.bookings.map((booking) => {
-        const room = roomList.find((r) => r.dbId === booking.room_id);
-
+      const events = response.data.events.map((event) => {
         return {
-          ...booking,
-          title: booking.title,
-          start: new Date(booking.start),
-          end: new Date(booking.end),
-          room: room ? room.id : null,
-          event_type: booking.event_type,
-          visit_num: booking.visit_num, // Add visit_num here
-          // Keep both patient_id and id for consistency
-          patient_id: booking.patient_id,
-          id: booking.patient_id, // Map patient_id to id
+          ...event,
+          start: new Date(event.start),
+          end: new Date(event.end),
+          id: event.patient_id, // Map patient_id to id
         };
       });
 
-      setBookedEvents(bookings);
+      setBookedEvents(events);
     } catch (error) {
       console.error("Error fetching bookings:", error);
     }
-  }, [roomList]);
+  }, []);
 
   // In use effect as it runs when component mounts
   useEffect(() => {
@@ -88,25 +80,48 @@ const Appointments = () => {
     // Debug line -> console.log("API user list received:", apiUserList);
     if (userList && Array.isArray(apiUserList)) {
       // Map API fields to appointment fields
-      const mapped = apiUserList.map((rec) => ({
-        id: rec.record_id || "",
-        type: rec.type || "window", // All are windows unless you have appointment info
-        visit_num: 1, // Defaults as 1
-        OutOfArea: rec.nicu_ooa === "1",
-        DOB: rec.nicu_dob || "",
-        site:
-          {
-            1: "CUMH",
-            2: "Coombe",
-            3: "Rotunda",
-          }[rec.nicu_dag] || "Unknown",
-        Study: ["AIMHIGH"], // Hardcoded as it pulls from the REDCap on AIMHIGH
-        DaysEarly: rec.nicu_days_early ? Number(rec.nicu_days_early) : 0,
-        Info: "", // Any aditional info field to import??**
-        notes: rec.nicu_email || "", // Use email as contact OR GET NUMBER?
-        email: rec.nicu_email || "",
-        participantGroup: rec.nicu_participant_group || "",
-      }));
+      const mapped = apiUserList.map((rec) => {
+        let visit_num = 1;
+        if (rec.visit_1_nicu_discharge_complete === "1") {
+          visit_num = 2;
+          for (let i = 2; i <= 6; i++) {
+            if (rec[`v${i}_attend`] === "1") {
+              visit_num = i + 1;
+            } else {
+              break;
+            }
+          }
+        }
+        return {
+          id: rec.record_id || "",
+          type: rec.type || "window", // All are windows unless you have appointment info
+          visit_num: visit_num,
+          OutOfArea: rec.reg_ooa === "1",
+          DOB: rec.nicu_dob || "",
+          site:
+            {
+              1: "CUMH",
+              2: "Coombe",
+              3: "Rotunda",
+            }[rec.reg_dag] || "Unknown",
+          Study: ["AIMHIGH"], // Hardcoded as it pulls from the REDCap on AIMHIGH
+          DaysEarly: rec.reg_days_early ? Number(rec.reg_days_early) : 0,
+          Info: "", // Any aditional info field to import??**
+          notes: rec.nicu_email || "", // Use email as contact OR GET NUMBER?
+          email: rec.nicu_email || "",
+          participantGroup: rec.reg_participant_group || "",
+          reg_date1: rec.reg_date1,
+          reg_date2: rec.reg_date2,
+          reg_9_month_window: rec.reg_9_month_window,
+          reg_12_month_window: rec.reg_12_month_window,
+          reg_17_month_window: rec.reg_17_month_window,
+          reg_19_month_window: rec.reg_19_month_window,
+          reg_23_month_window: rec.reg_23_month_window,
+          reg_25_month_window: rec.reg_25_month_window,
+          reg_30_month_window: rec.reg_30_month_window,
+          reg_31_month_window: rec.reg_31_month_window,
+        };
+      });
       setUserList(mapped);
     } else {
       setUserList([]);
@@ -139,47 +154,56 @@ const Appointments = () => {
   };
 
   useEffect(() => {
+    console.log(
+      "AppointView: userList or bookedEvents changed. userList:",
+      userList,
+      "bookedEvents:",
+      bookedEvents
+    );
     if (userList.length > 0) {
       const combined = [];
-      const patientsCoveredByBookings = new Set();
-
-      // Add all patients from REDCap
       userList.forEach((redcapPatient) => {
-        // Find if this patient has a booking
-        const patientBooking = bookedEvents.find(
-          (booking) => booking.patient_id === redcapPatient.id
+        const patientBookedEvents = bookedEvents.filter(
+          (event) => event.patient_id === redcapPatient.id
         );
 
-        if (patientBooking) {
-          // Patient has a booking - show as booked
-          combined.push({
-            ...patientBooking,
-            type: "booked",
-            DOB: redcapPatient.DOB,
-            Study: redcapPatient.Study,
-            site: redcapPatient.site,
-            OutOfArea: redcapPatient.OutOfArea,
-            email: redcapPatient.email,
-            visit_num: patientBooking.visit_num,
-            displayId: patientBooking.patient_id,
-            // Important: Use patient_id from booking
-            id: patientBooking.patient_id,
-            patientId: patientBooking.patient_id,
-          });
-          patientsCoveredByBookings.add(redcapPatient.id);
+        let eventToDisplay = null;
+
+        const today = new Date();
+        const bookedEvent = patientBookedEvents.find(
+          (event) => event.event_type === "booked" && event.end >= today
+        );
+        if (bookedEvent) {
+          eventToDisplay = bookedEvent;
         } else {
-          // Patient doesn't have booking - show as window
+          // If no 'booked' event, look for a 'window' event
+          const windowEvent = patientBookedEvents.find(
+            (event) => event.event_type === "window"
+          );
+          if (windowEvent) {
+            eventToDisplay = windowEvent;
+          }
+        }
+
+        if (eventToDisplay) {
+          combined.push({
+            ...redcapPatient,
+            ...eventToDisplay,
+            type: eventToDisplay.event_type,
+            visit_num: eventToDisplay.visit_num,
+            displayId: redcapPatient.id,
+          });
+        } else {
           combined.push({
             ...redcapPatient,
             type: "window",
             displayId: redcapPatient.id,
-            visit_num: redcapPatient.visit_num || 1,
-            patientId: redcapPatient.id,
-            id: redcapPatient.id, // Ensure id is consistent
+            visit_num: redcapPatient.visit_num, // Use redcapPatient's visit_num even if no booking
           });
         }
       });
 
+      console.log("AppointView: Combined events:", combined);
       setAllDisplayEvents(combined);
     } else {
       setAllDisplayEvents([]);
@@ -334,7 +358,31 @@ const Appointments = () => {
               </label>
 
               {/*Display Visit Number*/}
-              <span className="visitNumContainer">{event.visit_num}</span>
+              {/* Transition visit num if window */}
+
+              {event.type === "window" &&
+                (event.visit_num <= 6 ? (
+                  <>
+                    <span className="visitNumContainer">
+                      {event.visit_num - 1}
+                      {" → "}
+                      {event.visit_num}
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <span className="visitNumContainer">
+                      <strong>Complete</strong>
+                    </span>
+                  </>
+                ))}
+
+              {/* Solid visit num for booked */}
+              {event.type === "booked" && (
+                <>
+                  <span className="visitNumContainer">{event.visit_num}</span>
+                </>
+              )}
 
               {/*Put notifier under OOA - (Out Of Area)*/}
               <div className="dotContainer">
@@ -359,7 +407,7 @@ const Appointments = () => {
                 {/*Format date of birth*/}
                 {new Date(event.DOB).toLocaleDateString(undefined, {
                   year: "numeric",
-                  month: "numeric",
+                  month: "long",
                   day: "numeric",
                 })}
                 <br />
@@ -381,120 +429,77 @@ const Appointments = () => {
                       );
                     }
 
-                    const birthDate = new Date(event.DOB || event.dob);
-                    const daysEarly = event.DaysEarly ?? event.daysEarly ?? 0;
-                    if (
-                      !(birthDate instanceof Date) ||
-                      isNaN(birthDate.getTime())
-                    )
-                      return [];
+                    const getWindowDates = (visit_num) => {
+                      switch (visit_num) {
+                        case 2:
+                          return {
+                            start: event.reg_date1,
+                            end: event.reg_date2,
+                          };
+                        case 3:
+                          return {
+                            start: event.reg_9_month_window,
+                            end: event.reg_12_month_window,
+                          };
+                        case 4:
+                          return {
+                            start: event.reg_17_month_window,
+                            end: event.reg_19_month_window,
+                          };
+                        case 5:
+                          return {
+                            start: event.reg_23_month_window,
+                            end: event.reg_25_month_window,
+                          };
+                        case 6:
+                          return {
+                            start: event.reg_30_month_window,
+                            end: event.reg_31_month_window,
+                          };
+                        default:
+                          return null;
+                      }
+                    };
 
-                    const studyWindows = Array.isArray(event.Study)
-                      ? event.Study
-                      : [event.Study];
-                    return (
-                      <div>
-                        {studyWindows.map((study) => {
-                          let windowData = [];
-                          if (study === "AIMHIGH") {
-                            windowData = generateAimHighAppointments(
-                              birthDate,
-                              daysEarly,
-                              event.visit_num
-                            );
-                          } else if (study === "COOLPRIME") {
-                            windowData = generateCoolPrimeAppointments(
-                              birthDate,
-                              daysEarly,
-                              event.visit_num
-                            );
-                          } else if (study === "EDI") {
-                            windowData = generateEDIAppointment(
-                              birthDate,
-                              daysEarly,
-                              event.visit_num
-                            );
-                          }
+                    const windowDates = getWindowDates(event.visit_num);
 
-                          const today = new Date();
-                          today.setHours(0, 0, 0, 0);
+                    if (windowDates) {
+                      const { start, end } = windowDates;
+                      const windowStart = new Date(start);
+                      const windowEnd = new Date(end);
 
-                          // Look to see if theres an active/ upcoming window if a window hasnt ended yet
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
 
-                          const activeWindow = windowData.find(
-                            ({ start, end }) => {
-                              const windowStart = new Date(start);
-                              const windowEnd = new Date(end);
+                      const isCurrentlyActive =
+                        windowStart <= today && windowEnd >= today;
+                      const statusText = isCurrentlyActive ? "Current" : "Next";
 
-                              windowStart.setHours(0, 0, 0, 0);
-                              windowEnd.setHours(23, 59, 59, 999);
-
-                              return windowEnd >= today;
-                            }
-                          );
-
-                          // If no active window found, check if there are any future windows
-                          const futureWindow = windowData.find(({ start }) => {
-                            const windowStart = new Date(start);
-                            windowStart.setHours(0, 0, 0, 0);
-                            return windowStart >= today;
-                          });
-
-                          const displayWindow = activeWindow || futureWindow;
-
-                          if (displayWindow) {
-                            const { start, end } = displayWindow;
-                            const windowStart = new Date(start);
-                            const windowEnd = new Date(end);
-
-                            const isCurrentlyActive =
-                              windowStart <= today && windowEnd >= today;
-                            const statusText = isCurrentlyActive
-                              ? "Current"
-                              : "Next";
-
-                            return (
-                              <div key={study}>
-                                <strong>
-                                  {statusText} {study} Visit Window:
-                                </strong>{" "}
-                                {windowStart.toLocaleDateString(undefined, {
-                                  year: "numeric",
-                                  month: "long",
-                                  day: "numeric",
-                                })}{" "}
-                                –{" "}
-                                {windowEnd.toLocaleDateString(undefined, {
-                                  year: "numeric",
-                                  month: "long",
-                                  day: "numeric",
-                                })}
-                                <br />
-                              </div>
-                            );
-                          } else if (windowData.length === 0) {
-                            // No generated windows (possibly due to visitNum too high)
-                            return (
-                              <div key={study}>
-                                <strong>{study} Status:</strong> No visit
-                                windows available (Visit #{event.visit_num || 1}
-                                )
-                                <br />
-                              </div>
-                            );
-                          } else {
-                            // All possible windows have passed
-                            return (
-                              <div key={study}>
-                                <strong>{study} Status:</strong> All visit
-                                windows have passed
-                                <br />
-                              </div>
-                            );
-                          }
-                        })}
-                      </div>
-                    );
+                      return (
+                        <div>
+                          <strong>{statusText} Visit Window:</strong>{" "}
+                          {windowStart.toLocaleDateString(undefined, {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })}{" "}
+                          –{" "}
+                          {windowEnd.toLocaleDateString(undefined, {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })}
+                          <br />
+                        </div>
+                      );
+                    } else {
+                      return (
+                        <div>
+                          <strong>Status:</strong> No visit windows available
+                          <br />
+                        </div>
+                      );
+                    }
                   })()}
                 {/*Visit window in info if a booked patient
                     Displays date of app and time from and to*/}
@@ -506,7 +511,14 @@ const Appointments = () => {
                       <div>
                         <strong>Appointment Date:</strong>{" "}
                         {event.start
-                          ? new Date(event.start).toLocaleDateString()
+                          ? new Date(event.start).toLocaleDateString(
+                              undefined,
+                              {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              }
+                            )
                           : "N/A"}
                         <br />
                         <strong>Time of Appointment:</strong>{" "}

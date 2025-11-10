@@ -25,9 +25,9 @@ import RebookingForm from "../components/RebookingForm";
 import { CiCalendar } from "react-icons/ci";
 import { useData } from "../hooks/DataContext";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import axios from "axios";
 
 const MyCalendar = () => {
@@ -83,7 +83,13 @@ const MyCalendar = () => {
   // Create array to store booked appointments
   const [bookedEvents, setBookedEvents] = useState([]);
 
-  const { data: apiUserList, loading, error, updatePatient } = useData();
+  const {
+    data: apiUserList,
+    loading,
+    error,
+    updatePatient,
+    refetchData,
+  } = useData();
   const [userList, setUserList] = useState([]);
 
   // Run whenever apiUserList changes
@@ -121,16 +127,16 @@ const MyCalendar = () => {
           },
         }
       );
-      const bookings = response.data.bookings.map((booking) => {
-        const room = roomList.find((r) => r.dbId === booking.room_id);
+      const bookings = response.data.events.map((event) => {
+        const room = roomList.find((r) => r.dbId === event.room_id);
 
         return {
-          ...booking,
-          title: booking.title,
-          start: new Date(booking.start),
-          end: new Date(booking.end),
+          ...event,
+          title: event.title,
+          start: new Date(event.start),
+          end: new Date(event.end),
           room: room ? room.id : null,
-          event_type: booking.event_type,
+          event_type: event.event_type,
         };
       });
       setBookedEvents(bookings);
@@ -342,7 +348,7 @@ const MyCalendar = () => {
       return;
     }
 
-    if (!patient.DOB) {
+    if (!patient.nicu_dob) {
       setAlert({
         message:
           "Patient has no Date of Birth recorded, cannot generate visit windows.",
@@ -353,130 +359,143 @@ const MyCalendar = () => {
       return;
     }
 
-    // Set current patient info
-    setCurrentPatient(patient);
-    const birthDate = patient.DOB;
-    const babyDaysEarly = patient.DaysEarly;
-    const studies = Array.isArray(patient.Study)
-      ? patient.Study
-      : [patient.Study];
-    let studyWindows = [];
-
-    // Loops through studies -> Create visit window
-    studies.forEach((study) => {
-      let generated = [];
-      if (study === "AIMHIGH") {
-        generated = generateAimHighAppointments(birthDate, babyDaysEarly);
-      } else if (study === "COOLPRIME") {
-        generated = generateCoolPrimeAppointments(birthDate, babyDaysEarly);
-      } else if (study === "EDI") {
-        generated = generateEDIAppointment(birthDate, babyDaysEarly);
+    let visit_num = 1;
+    if (patient.visit_1_nicu_discharge_complete === "1") {
+      visit_num = 2;
+      for (let i = 2; i <= 6; i++) {
+        if (patient[`v${i}_attend`] === "1") {
+          visit_num = i + 1;
+        } else {
+          break;
+        }
       }
+    }
 
-      // Generate = study windows and display and set them
-      const studyEvents = generated
-        .filter((event) => event.type === "window")
-        .map((event) => ({
-          ...event,
-          title: `${study} Visit Window`,
-          Name: patient.Name,
-          id: patient.id,
-          start: new Date(event.start),
-          end: new Date(event.end + 1), // Add by one as the calendar is exclusive to the last date
-        }));
+    const getWindowDates = (visit_num) => {
+      switch (visit_num) {
+        case 2:
+          return { start: patient.reg_date1, end: patient.reg_date2 };
+        case 3:
+          return {
+            start: patient.reg_9_month_window,
+            end: patient.reg_12_month_window,
+          };
+        case 4:
+          return {
+            start: patient.reg_17_month_window,
+            end: patient.reg_19_month_window,
+          };
+        case 5:
+          return {
+            start: patient.reg_23_month_window,
+            end: patient.reg_25_month_window,
+          };
+        case 6:
+          return {
+            start: patient.reg_30_month_window,
+            end: patient.reg_31_month_window,
+          };
+        default:
+          return null;
+      }
+    };
 
-      studyWindows = [...studyWindows, ...studyEvents];
-    });
+    const windowDates = getWindowDates(visit_num);
 
-    setWindowEvents(studyWindows);
+    if (windowDates) {
+      const { start, end } = windowDates;
+      const windowStart = new Date(start);
+      const windowEnd = new Date(end);
 
-    // Check if patient has existing booked appointments and navigate to them
-    const patientBookedAppointments = bookedEvents.filter(
-      (appointment) => appointment.patientId === patient.id
-    );
+      const studyWindow = {
+        title: `Visit ${visit_num} Window`,
+        start: windowStart,
+        end: windowEnd,
+        type: "window",
+        id: patient.record_id,
+        Name: `Patient ${patient.record_id}`,
+      };
 
-    if (patientBookedAppointments.length > 0) {
-      // Sort appointments by date and find the next upcoming appointment or the earliest one
-      const now = new Date();
-      const sortedAppointments = patientBookedAppointments.sort(
-        (a, b) => new Date(a.start) - new Date(b.start)
-      );
-
-      // Try to find next upcoming appointment, otherwise use the first one
-      const nextAppointment =
-        sortedAppointments.find((apt) => new Date(apt.start) >= now) ||
-        sortedAppointments[0];
-
-      // Navigate calendar to the appointment date
-      setDate(new Date(nextAppointment.start));
-      setView("month");
-
-      setAlert({
-        message: `Found patient: ${patient.Name} - Navigated to booked appointment`,
-        type: "success",
-      });
-    } else if (studyWindows.length > 0) {
-      // If no booked appointments, navigate to the first visit window
-      const sortedWindows = studyWindows.sort(
-        (a, b) => new Date(a.start) - new Date(b.start)
-      );
-      const firstWindow = sortedWindows[0];
+      setWindowEvents([studyWindow]);
 
       // Navigate calendar to the window start date
-      setDate(new Date(firstWindow.start));
-      setView("day"); // Switch to day view to show the window clearly
+      setDate(new Date(studyWindow.start));
+      setView("month");
 
       setAlert({
         message: `Found patient: - Showing visit window`,
         type: "success",
       });
+    } else {
+      setWindowEvents([]);
+      setAlert({
+        message: "No upcoming visit windows for this patient.",
+        type: "info",
+      });
     }
+
+    setCurrentPatient({ ...patient, visitNum: visit_num });
   };
 
   // If booking within study window
   const isAppointmentWithinVisitWindow = (appointment, patient) => {
-    const birthDate = new Date(patient.DOB);
-    const daysEarly = patient.DaysEarly ?? 0;
-    const visitNum = patient.visitNum;
-    const studies = Array.isArray(patient.Study)
-      ? patient.Study
-      : [patient.Study];
-
-    // Get the appointment date (ignoring time)
-    const appointmentDate = new Date(appointment.start);
-    appointmentDate.setHours(0, 0, 0, 0); // Reset to start of day
-
-    for (const study of studies) {
-      let windows = [];
-      if (study === "AIMHIGH") {
-        windows = generateAimHighAppointments(birthDate, daysEarly, visitNum);
-      } else if (study === "COOLPRIME") {
-        windows = generateCoolPrimeAppointments(birthDate, daysEarly, visitNum);
-      } else if (study === "EDI") {
-        windows = generateEDIAppointment(birthDate, daysEarly, visitNum);
-      }
-
-      for (const window of windows) {
-        // Get window start and end dates (ignoring time)
-        const windowStart = new Date(window.start);
-        windowStart.setHours(0, 0, 0, 0);
-
-        const windowEnd = new Date(window.end);
-        windowEnd.setHours(23, 59, 59, 999); // Set to end of day
-
-        // Check if appointment date falls within window date range
-        if (appointmentDate >= windowStart && appointmentDate <= windowEnd) {
-          console.log(
-            `Appointment on ${appointmentDate.toDateString()} is within window: ${windowStart.toDateString()} to ${windowEnd.toDateString()}`
-          );
-          return true;
+    let visit_num = 1;
+    if (patient.visit_1_nicu_discharge_complete === "1") {
+      visit_num = 2;
+      for (let i = 2; i <= 6; i++) {
+        if (patient[`v${i}_attend`] === "1") {
+          visit_num = i + 1;
+        } else {
+          break;
         }
       }
     }
 
-    console.log(
-      `Appointment on ${appointmentDate.toDateString()} is outside all visit windows`
-    );
+    const getWindowDates = (visit_num) => {
+      switch (visit_num) {
+        case 2:
+          return { start: patient.reg_date1, end: patient.reg_date2 };
+        case 3:
+          return {
+            start: patient.reg_9_month_window,
+            end: patient.reg_12_month_window,
+          };
+        case 4:
+          return {
+            start: patient.reg_17_month_window,
+            end: patient.reg_19_month_window,
+          };
+        case 5:
+          return {
+            start: patient.reg_23_month_window,
+            end: patient.reg_25_month_window,
+          };
+        case 6:
+          return {
+            start: patient.reg_30_month_window,
+            end: patient.reg_31_month_window,
+          };
+        default:
+          return null;
+      }
+    };
+
+    const windowDates = getWindowDates(visit_num);
+
+    if (windowDates) {
+      const { start, end } = windowDates;
+      const windowStart = new Date(start);
+      const windowEnd = new Date(end);
+      const appointmentDate = new Date(appointment.start);
+
+      // Set hours to 0 to compare dates only
+      windowStart.setHours(0, 0, 0, 0);
+      windowEnd.setHours(23, 59, 59, 999);
+      appointmentDate.setHours(0, 0, 0, 0);
+
+      return appointmentDate >= windowStart && appointmentDate <= windowEnd;
+    }
+
     return false;
   };
 
@@ -520,6 +539,7 @@ const MyCalendar = () => {
       setPopupOpen(false);
       setEventToDelete(null);
       closePopup();
+      refetchData(); // Re-fetch patient data to update visit windows
     } catch (error) {
       console.error("Error deleting appointment:", error);
       setAlert({
@@ -568,6 +588,7 @@ const MyCalendar = () => {
       });
 
       await fetchBookings();
+      refetchData(); // Re-fetch patient data to update visit windows and visit numbers
 
       setAlert({ message: "Appointment booked successfully", type: "success" });
     } catch (error) {
@@ -593,32 +614,38 @@ const MyCalendar = () => {
   };
 
   const isDateBlocked = (date) => {
-    const formattedDate = moment(date).format('YYYY-MM-DD');
-    return blockedDates.some(blockedDate => moment(blockedDate.start).format('YYYY-MM-DD') === formattedDate);
+    const formattedDate = moment(date).format("YYYY-MM-DD");
+    return blockedDates.some(
+      (blockedDate) =>
+        moment(blockedDate.start).format("YYYY-MM-DD") === formattedDate
+    );
   };
 
   const isTimeSlotBooked = (date, eventIdToExclude) => {
     const selectedStartTime = moment(date).valueOf();
 
-    return bookedEvents.some(booking => {
-        if (booking.event_id === eventIdToExclude) return false;
+    return bookedEvents.some((booking) => {
+      if (booking.event_id === eventIdToExclude) return false;
 
-        const bookingStartTime = moment(booking.start).valueOf();
-        const bookingEndTime = moment(booking.end).valueOf();
+      const bookingStartTime = moment(booking.start).valueOf();
+      const bookingEndTime = moment(booking.end).valueOf();
 
-        return selectedStartTime >= bookingStartTime && selectedStartTime < bookingEndTime;
+      return (
+        selectedStartTime >= bookingStartTime &&
+        selectedStartTime < bookingEndTime
+      );
     });
   };
 
   const shouldDisableDate = (date) => {
-      return isDateBlocked(date);
+    return isDateBlocked(date);
   };
 
   const shouldDisableTime = (time, clockType) => {
-      if (isTimeSlotBooked(time, selectedEvent?.event_id)) {
-          return true;
-      }
-      return false;
+    if (isTimeSlotBooked(time, selectedEvent?.event_id)) {
+      return true;
+    }
+    return false;
   };
 
   // Array of all avents
@@ -963,8 +990,8 @@ const MyCalendar = () => {
         onConfirm={() => {
           confirmDeleteEvent();
         }}
-        message={`Delete ${eventToDelete?.title || "this event"} for ${
-          eventToDelete?.patientId || "Unknown ID"
+        message={`Delete ${selectedEvent?.title || "this event"} for ${
+          selectedEvent?.patientId || "Unknown ID"
         }?`}
         option1="Confirm"
         option2="Cancel"

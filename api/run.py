@@ -2,22 +2,12 @@
 import os
 import logging
 from scheduler_api import create_app
-from scheduler_api.update_appointments import update_past_appointments
+
 from apscheduler.schedulers.background import BackgroundScheduler
 
 app = create_app()
 
-def run_update_appointments():
-    with app.app_context():
-        update_past_appointments()
 
-if __name__ == "__main__":
-    # Run the job immediately on startup for testing purposes
-    run_update_appointments()
-
-    scheduler = BackgroundScheduler()
-    scheduler.add_job(run_update_appointments, 'interval', minutes=30)
-    scheduler.start()
 
     host = os.getenv("HOST", "0.0.0.0")
     port = int(os.getenv("PORT", 5000))

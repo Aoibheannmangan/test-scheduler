@@ -35,33 +35,44 @@ def get_data():
         'type': 'flat',
         # general info on infant
         'fields[0]': 'record_id', # Record id
-        'fields[1]': 'nicu_ooa', # Kildare?
-        'fields[2]': 'nicu_participant_group', # Part group
+        'fields[1]': 'reg_ooa', # Kildare?
+        'fields[2]': 'reg_participant_group', # Part group
         'fields[3]': 'nicu_dob', # Dat of birth
-        'fields[4]': 'nicu_dag', # Site
+        'fields[4]': 'reg_dag', # Site
         'fields[5]': 'nicu_email',# Contact email
-        'fields[6]': 'nicu_days_early',
+        'fields[6]': 'reg_days_early',
         'fields[7]': 'nicu_sex',
         # gest days/ weeks
-        'fields[8]': 'nicu_gest_age_w',
-        'fields[9]': 'nicu_gest_age_d',
+        'fields[8]': 'reg_gest_age_w',
+        'fields[9]': 'reg_gest_age_d',
         # visit x range (for window range)
-        'field [10]': 'nicu_visit_range', # range for v2
-        'fields[11]': 'v2_next_visit_range', # range for v3, and so on.. 
-        'fields[12]': 'v3_next_visit_between',
-        'fields[13]': 'v4_next_visit_range',
-        'fields[14]': 'v5_next_visit_range',
+        
+        'fields[10]':'reg_date1', #v2 window dates
+        'fields[11]':'reg_date2',
+        
+        'fields[12]':'reg_9_month_window', #v3 window date, and so on...
+        'fields[13]':'reg_12_month_window',
+
+        'fields[14]':'reg_17_month_window',
+        'fields[15]':'reg_19_month_window',
+
+        'fields[16]':'reg_23_month_window',
+        'fields[17]':'reg_25_month_window',
+
+        'fields[18]':'reg_30_month_window',
+        'fields[19]':'reg_31_month_window',
+        
         # visit x attended? (Used for visit num)
-        'fields[15]': 'visit_1_nicu_discharge_complete', # completed visit 1
-        'fields[16]': 'v2_attend', # completed visit 2, and so on.. 
-        'fields[17]': 'v3_attend',
-        'fields[18]': 'v4_attend',
-        'fields[19]': 'v5_attend',
-        'fields[20]': 'v6_attend',
+        'fields[20]': 'visit_1_nicu_discharge_complete', # completed visit 1
+        'fields[21]': 'v2_attend', # completed visit 2, and so on.. 
+        'fields[22]': 'v3_attend',
+        'fields[23]': 'v4_attend',
+        'fields[24]': 'v5_attend',
+        'fields[25]': 'v6_attend',
     }
     
     # Make the POST request to the REDCap API
-    response = requests.post(REDCAP_API_URL, data=payload)
+    response = requests.post(REDCAP_API_URL, data=payload, verify=False)
     
     # Check if the request was successful
     if response.status_code == 200:
@@ -69,6 +80,7 @@ def get_data():
         return jsonify(data)  # Return the data as a JSON response
         
     else:
+        logger.error(f"Failed to fetch data from REDCap. Status Code: {response.status_code}, Response: {response.text}")
         return jsonify({'error': 'Failed to fetch data', 'status_code': response.status_code}), response.status_code
     
 # Booking funcs
