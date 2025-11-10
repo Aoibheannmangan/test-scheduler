@@ -8,7 +8,7 @@
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   z-index: 1000;
-  animation: slideIn 0.3s ease out;
+  animation: slideIn 0.3s ease-out forwards;
   font-weight: 500;
   display: flex;
   justify-content: space-between;
@@ -83,10 +83,29 @@
 @keyframes slideIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(-100%);
+    transform: translateX(-50%);
   }
   to {
-    opacity: 1;
-    transform: translateY(0);
+    opacity: 0.95;
+    transform: translateY(-20px);
+    transform: translateX(-50%);
   }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 0.95;
+    transform: translateY(0);
+    transform: translateX(-50%);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+    transform: translateX(-50%);
+  }
+}
+
+.alert-popup.closing {
+  animation: fadeOut 0.5s ease-out forwards;
 }

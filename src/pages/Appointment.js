@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 import "./Appointment.css";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import dayjs from "dayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 // Toggle is not visible by default
 const ToggleAppointment = ({
@@ -9,24 +10,17 @@ const ToggleAppointment = ({
   isOpen,
   onClose,
   bookedEvents,
+  blockedDates,
+  roomList,
 }) => {
   // States vars for appointment booking
   const [appPatID, setAppPatID] = useState("");
-  const [appDate, setAppDate] = useState("");
+  const [appDate, setAppDate] = useState(null);
   const [appTimeStart, setAppTimeStart] = useState(null); // Changed from "" to null
   const [appTimeEnd, setAppTimeEnd] = useState(null); // Changed from "" to null
   const [patientStudy, setPatientStudy] = useState("");
   const [appRoom, setAppRoom] = useState("");
   const [appNote, setAppNote] = useState("");
-
-  const roomList = {
-    TeleRoom: "Telemetry Room (Room 2.10)",
-    room1: "Assessment Room 1",
-    room2: "Assessment Room 2",
-    room3: "Assessment Room 3",
-    room4: "Assessment Room 4",
-    devRoom: "Developmental Assessment Room (Room 2.07)",
-  };
 
   // Function to check if room is available at selected time
   const isRoomAvailable = (roomId, startTime, endTime, appointments) => {
@@ -40,33 +34,47 @@ const ToggleAppointment = ({
     });
   };
 
+  // Gray out blocked out dates
+  const isDateBlocked = (date) => {
+    if (!blockedDates) return false;
+    const formattedDate = dayjs(date).startOf("day");
+    return blockedDates.some((blockedDate) => {
+      const start = dayjs(blockedDate.start).startOf("day");
+      return formattedDate.isSame(start);
+    });
+  };
+
   // Calculate selected start and end times
   const selectedStart = useMemo(() => {
     if (!appDate || !appTimeStart || !dayjs.isDayjs(appTimeStart)) return null;
-    return dayjs(`${appDate}T${appTimeStart.format("HH:mm")}`).toDate();
+    return dayjs(
+      `${appDate.format("YYYY-MM-DD")}T${appTimeStart.format("HH:mm")}`
+    ).toDate();
   }, [appDate, appTimeStart]);
 
   const selectedEnd = useMemo(() => {
     if (!appDate || !appTimeEnd || !dayjs.isDayjs(appTimeEnd)) return null;
-    return dayjs(`${appDate}T${appTimeEnd.format("HH:mm")}`).toDate();
+    return dayjs(
+      `${appDate.format("YYYY-MM-DD")}T${appTimeEnd.format("HH:mm")}`
+    ).toDate();
   }, [appDate, appTimeEnd]);
 
   // Generate room options with availability
   const roomOptions = useMemo(() => {
-    return Object.entries(roomList).map(([roomId, roomName]) => {
+    if (!roomList) return [];
+    return roomList.map((room) => {
       const available = isRoomAvailable(
-        roomId,
+        room.id,
         selectedStart,
         selectedEnd,
         bookedEvents
       );
       return {
-        id: roomId,
-        name: roomName,
+        ...room,
         available,
       };
     });
-  }, [selectedStart, selectedEnd, bookedEvents]);
+  }, [roomList, selectedStart, selectedEnd, bookedEvents]);
 
   // Handles putting in a booking
   const handleSubmit = (e) => {
@@ -85,27 +93,21 @@ const ToggleAppointment = ({
     const start = dayjs(appDate)
       .set("hour", appTimeStart.hour())
       .set("minute", appTimeStart.minute())
-      .set("second", 0)
-      .set("millisecond", 0)
       .toDate();
 
     const end = dayjs(appDate)
       .set("hour", appTimeEnd.hour())
       .set("minute", appTimeEnd.minute())
-      .set("second", 0)
-      .set("millisecond", 0)
       .toDate();
 
-    const appTitle = `${patientStudy.toUpperCase()} | ID: ${appPatID}`;
+    const selectedRoom = roomList.find((r) => r.id === appRoom);
+    const roomId = selectedRoom ? selectedRoom.dbId : null;
 
     const newAppointment = {
-      title: appTitle,
       patientId: appPatID,
-      start,
-      end,
-      type: "booked",
-      Study: [patientStudy] || "",
-      room: appRoom,
+      start: start.toISOString(),
+      end: end.toISOString(),
+      roomId, // Send the integer roomId to the backend
       notes: appNote,
     };
 
@@ -113,7 +115,7 @@ const ToggleAppointment = ({
 
     // Reset form
     setAppPatID("");
-    setAppDate("");
+    setAppDate(null);
     setAppTimeStart(null); // Reset to null instead of ""
     setAppTimeEnd(null); // Reset to null instead of ""
     setPatientStudy("");
@@ -140,12 +142,18 @@ const ToggleAppointment = ({
               />
 
               <label htmlFor="date">Appointment Date</label>
-              <input // date input for app
-                type="date"
-                id="date"
+              <DatePicker // date input for app
                 value={appDate}
-                onChange={(e) => setAppDate(e.target.value)}
-                required
+                onChange={(e) => setAppDate(e)}
+                shouldDisableDate={isDateBlocked}
+                format="DD/MM/YYYY"
+                slotProps={{
+                  textField: {
+                    id: "date",
+                    required: true,
+                    fullWidth: true,
+                  },
+                }}
               />
 
               <label htmlFor="startTime">Start Time</label>
@@ -225,7 +233,7 @@ const ToggleAppointment = ({
                       backgroundColor: room.available ? "white" : "#f5f5f5",
                     }}
                   >
-                    {room.name} {room.available ? "" : "(Unavailable)"}
+                    {room.label} {room.available ? "" : "(Unavailable)"}
                   </option>
                 ))}
               </select>

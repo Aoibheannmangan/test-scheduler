@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+} from "react";
 import axios from "axios";
 
 const DataContext = createContext();
@@ -14,13 +21,29 @@ export const DataProvider = ({ children }) => {
   // To store any errors recieved
   const [error, setError] = useState(null);
 
+  // Use a configurable API base url so the same build can work in Docker/K8s/locally
+  const apiUrl = process.env.REACT_APP_API_URL?.replace(/\/$/, "") || "/api";
+
   useEffect(() => {
     const fetchData = async () => {
       // Tries to load data from flask where the API stored data
       try {
-        // Flask url
-        const response = await axios.get("http://127.0.0.1:5000/api/data");
-        setData(response.data);
+        const response = await axios.get(`${apiUrl}/api/data`, {
+          timeout: 20000,
+        });
+        if (Array.isArray(response.data)) {
+          const processedData = response.data.map((patient) => ({
+            ...patient,
+            DOB: patient.nicu_dob ? new Date(patient.nicu_dob) : null, // Convert to Date object, handle empty
+            DaysEarly: parseInt(patient.nicu_days_early) || 0, // Convert to int, default to 0
+            Study: "AIMHIGH", // Hardcode as AIMHIGH
+            Name: `Patient ${patient.record_id}`, // Create a display name
+            id: patient.record_id, // Map record_id to id for Calendar.js search
+          }));
+          setData(processedData);
+        } else {
+          throw new Error("API did not return an array of data.");
+        }
       } catch (err) {
         // Set error if encountered
         setError(err);
@@ -43,18 +66,46 @@ export const DataProvider = ({ children }) => {
     );
   };
 
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${apiUrl}/api/data`, {
+        timeout: 20000,
+      });
+      const processedData = response.data.map((patient) => ({
+        ...patient,
+        DOB: patient.nicu_dob ? new Date(patient.nicu_dob) : null, // Convert to Date object, handle empty
+        DaysEarly: parseInt(patient.reg_days_early) || 0, // Convert to int, default to 0
+        Study: "AIMHIGH", // Hardcode as AIMHIGH
+        Name: `Patient ${patient.record_id}`, // Create a display name
+        id: patient.record_id, // Map record_id to id for Calendar.js search
+      }));
+      setData(processedData);
+    } catch (err) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [apiUrl]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const value = useMemo(
+    () => ({
+      data,
+      loading,
+      error,
+      updatePatient: updatedPatient,
+      refetchData: fetchData, // Expose fetchData as refetchData
+    }),
+    [data, loading, error, updatedPatient, fetchData]
+  );
+
   return (
     // Special component that can pass data down to any component wrapped inside
-    <DataContext.Provider
-      value={{
-        data,
-        loading,
-        error,
-        updatePatient: updatedPatient,
-      }}
-    >
-      {children}
-    </DataContext.Provider>
+    <DataContext.Provider value={value}>{children}</DataContext.Provider>
   );
 };
 

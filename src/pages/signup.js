@@ -3,14 +3,13 @@ import "./login.css";
 import { useNavigate } from "react-router-dom";
 import { FaUser, FaLock, FaEnvelope } from "react-icons/fa";
 import Alert from "../components/Alert";
-
+import axios from "axios";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
   const [staffId, setStaffId] = useState("");
   const [password, setPassword] = useState("");
   const [repeatPassword, setRepeatPassword] = useState("");
-
 
   const [showPasswordMessage, setShowPasswordMessage] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -21,17 +20,12 @@ const SignUp = () => {
     length: false,
   });
 
-
-  const [showAlert, setShowAlert] = useState(true);
   const [alert, setAlert] = useState(null);
-
 
   const [capsLockOn, setCapsLockOn] = useState(false);
 
-
   const passwordInputRef = useRef(null);
   const navigate = useNavigate();
-
 
   //Checking if caps lock is on
   useEffect(() => {
@@ -43,12 +37,10 @@ const SignUp = () => {
       }
     };
 
-
     const input = passwordInputRef.current;
     if (input) {
       input.addEventListener("keyup", handleKeyUp);
     }
-
 
     return () => {
       if (input) {
@@ -57,12 +49,10 @@ const SignUp = () => {
     };
   }, []);
 
-
   // Password Validation for making sure the password has the different requirements
   const handlePasswordChange = (e) => {
     const value = e.target.value;
     setPassword(value);
-
 
     setPasswordValidations({
       // Password needs a lowercase letter, an uppercase letter, a number and needs to be longer than eight characters
@@ -73,24 +63,8 @@ const SignUp = () => {
     });
   };
 
-
-  //Checking if email is already registered
-  const isEmailRegistered = (email) => {
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-    return users.some((user) => user.email === email);
-  };
-
-
-  //Checking if ID is already in use
-  const isIdInUse = (staffId) => {
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-    return users.some((user) => user.staffId === staffId);
-  };
-
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
 
     //Makes sure the password is valid
     const isValid =
@@ -98,7 +72,6 @@ const SignUp = () => {
       passwordValidations.uppercase &&
       passwordValidations.number &&
       passwordValidations.length;
-
 
     //Alert if it's not valid and make them try again
     if (!isValid) {
@@ -110,7 +83,6 @@ const SignUp = () => {
       return;
     }
 
-
     // For email validation, makes sure it ends in @ucc.ie
     const emailPattern = /^[a-zA-Z0-9._+-]+@ucc\.ie$/;
     if (!emailPattern.test(email)) {
@@ -121,27 +93,12 @@ const SignUp = () => {
       return;
     }
 
-
-    // Alerts the user if the email/ID are already in use
-    if (isEmailRegistered(email)) {
-      setAlert({ message: "Email is already registered", type: "info" });
-      return;
-    }
-
-
-    if (isIdInUse(staffId)) {
-      setAlert({ message: "ID is already registered", type: "info" });
-      return;
-    }
-
-
     // For ID validation, makes sure it is exactly 5 numbers long
     const staffIdPattern = /^\d{5}$/;
     if (!staffIdPattern.test(staffId)) {
       setAlert({ message: "Invalid Staff ID Format", type: "warning" });
       return;
     }
-
 
     // Makes sure password and initial password works
     if (password !== repeatPassword) {
@@ -152,28 +109,32 @@ const SignUp = () => {
       return;
     }
 
-
-    const userData = {
-      email,
-      staffId,
-      password,
-    };
-
-
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-    users.push(userData);
-    localStorage.setItem("users", JSON.stringify(users));
-
-
-    // Loading only if login is successful
     setIsSubmitting(true);
-    setTimeout(() => {
-      setShowAlert({ message: "Login Successful!", type: "success" });
-      setIsSubmitting(false);
-      navigate("/calender");
-    }, 2000);
-  };
 
+    try {
+      const response = await axios.post("http://localhost:5000/api/register", {
+        // TODO: Hardcoded - Must change later. Same in Login **
+        email,
+        staff_number: staffId,
+        password,
+      });
+
+      if (response.data.message) {
+        setAlert({ message: response.data.message, type: "success" });
+        setTimeout(() => {
+          navigate("/login");
+        }, 2000);
+      }
+    } catch (error) {
+      if (error.response && error.response.data && error.response.data.error) {
+        setAlert({ message: error.response.data.error, type: "error" });
+      } else {
+        setAlert({ message: "An unexpected error occurred.", type: "error" });
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="login-container">
@@ -212,7 +173,6 @@ const SignUp = () => {
                 </div>
               </div>
 
-
               {/* User inputs staff ID */}
               <div className="input-group">
                 <label htmlFor="staffId">
@@ -231,7 +191,6 @@ const SignUp = () => {
                   />
                 </div>
               </div>
-
 
               {/* User inputs password */}
               <div className="input-group">
@@ -255,7 +214,6 @@ const SignUp = () => {
                 </div>
               </div>
 
-
               {/* User re-enters password */}
               <div className="input-group">
                 <label htmlFor="passwordRepeat">
@@ -273,7 +231,6 @@ const SignUp = () => {
                     required
                   />
 
-
                   {/* Caplocks Warning */}
                   {capsLockOn && (
                     <div
@@ -285,7 +242,6 @@ const SignUp = () => {
                   )}
                 </div>
               </div>
-
 
               <div className="clearfix">
                 <div className="button-row">
@@ -331,6 +287,5 @@ const SignUp = () => {
     </div>
   );
 };
-
 
 export default SignUp;
