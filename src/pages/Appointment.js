@@ -144,7 +144,6 @@ const ToggleAppointment = ({
               <label htmlFor="date">Appointment Date</label>
               <DatePicker // date input for app
                 value={appDate}
-                views={["day", "month", "year"]}
                 onChange={(e) => setAppDate(e)}
                 shouldDisableDate={isDateBlocked}
                 format="DD/MM/YYYY"
