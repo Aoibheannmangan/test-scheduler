@@ -67,6 +67,14 @@
 <li>
     <a href="./" class="dropdown-item active" aria-current="page">Login</a>
 </li>
+                                    
+<li>
+    <a href="../signup/" class="dropdown-item">Signup</a>
+</li>
+                                    
+<li>
+    <a href="../forgotpsw/" class="dropdown-item">Forgot Password</a>
+</li>
                                 </ul>
                             </li>
                         </ul>
@@ -78,7 +86,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" class="nav-link disabled">
+                                <a rel="next" href="../signup/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -124,7 +132,7 @@ navigates to the calendar page on success, displays alert if failed</p>
 <pre><code class="language-js">&lt;Route path=&quot;/login&quot; element={&lt;LogIn /&gt;} /&gt;
 </code></pre>
 <p><a name="LogIn..handleLogin"></a></p>
-<h3 id="loginhandlelogine-void">LogIn~handleLogin(e)  <code>void</code></h3>
+<h3 id="loginhandlelogine-void">LogIn~handleLogin(e) <code>void</code></h3>
 <p>Handles the login form submission</p>
 <p>Checks if the email and password submitted by the user match an already created account.
 Displays a success alert and navigates to the calendar page if credentials are correct.
