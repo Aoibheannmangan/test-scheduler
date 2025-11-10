@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useEffect, useState, useMemo,} from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+} from "react";
 import axios from "axios";
 
 const DataContext = createContext();
@@ -24,15 +31,19 @@ export const DataProvider = ({ children }) => {
         const response = await axios.get(`${apiUrl}/api/data`, {
           timeout: 20000,
         });
-        const processedData = response.data.map((patient) => ({
-          ...patient,
-          DOB: patient.nicu_dob ? new Date(patient.nicu_dob) : null, // Convert to Date object, handle empty
-          DaysEarly: parseInt(patient.nicu_days_early) || 0, // Convert to int, default to 0
-          Study: "AIMHIGH", // Hardcode as AIMHIGH
-          Name: `Patient ${patient.record_id}`, // Create a display name
-          id: patient.record_id, // Map record_id to id for Calendar.js search
-        }));
-        setData(processedData);
+        if (Array.isArray(response.data)) {
+          const processedData = response.data.map((patient) => ({
+            ...patient,
+            DOB: patient.nicu_dob ? new Date(patient.nicu_dob) : null, // Convert to Date object, handle empty
+            DaysEarly: parseInt(patient.nicu_days_early) || 0, // Convert to int, default to 0
+            Study: "AIMHIGH", // Hardcode as AIMHIGH
+            Name: `Patient ${patient.record_id}`, // Create a display name
+            id: patient.record_id, // Map record_id to id for Calendar.js search
+          }));
+          setData(processedData);
+        } else {
+          throw new Error("API did not return an array of data.");
+        }
       } catch (err) {
         // Set error if encountered
         setError(err);
@@ -55,14 +66,41 @@ export const DataProvider = ({ children }) => {
     );
   };
 
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${apiUrl}/api/data`, {
+        timeout: 20000,
+      });
+      const processedData = response.data.map((patient) => ({
+        ...patient,
+        DOB: patient.nicu_dob ? new Date(patient.nicu_dob) : null, // Convert to Date object, handle empty
+        DaysEarly: parseInt(patient.reg_days_early) || 0, // Convert to int, default to 0
+        Study: "AIMHIGH", // Hardcode as AIMHIGH
+        Name: `Patient ${patient.record_id}`, // Create a display name
+        id: patient.record_id, // Map record_id to id for Calendar.js search
+      }));
+      setData(processedData);
+    } catch (err) {
+      setError(err);
+    } finally {
+      setLoading(false);
+    }
+  }, [apiUrl]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
   const value = useMemo(
     () => ({
       data,
       loading,
       error,
       updatePatient: updatedPatient,
+      refetchData: fetchData, // Expose fetchData as refetchData
     }),
-    [data, loading, error, updatedPatient]
+    [data, loading, error, updatedPatient, fetchData]
   );
 
   return (
