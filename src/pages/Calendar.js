@@ -9,11 +9,6 @@ import "./Calendar.css";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import {
-  generateAimHighAppointments,
-  generateCoolPrimeAppointments,
-  generateEDIAppointment,
-} from "../hooks/windowEventCalc";
 import ClickableDateCell from "../components/ClickableCell";
 import { eventPropGetter } from "../hooks/eventPropGetter";
 import ToggleAppointment from "./Appointment";

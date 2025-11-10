@@ -2,11 +2,6 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import "./AppointView.css";
 import { useAppointmentFilters } from "../hooks/useAppointmentFilters";
 import "../components/useAppointmentFilters.css";
-import {
-  generateAimHighAppointments,
-  generateCoolPrimeAppointments,
-  generateEDIAppointment,
-} from "../hooks/windowEventCalc";
 import { useData } from "../hooks/DataContext";
 import axios from "axios";
 
