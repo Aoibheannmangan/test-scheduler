@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: login.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: login.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState, useEffect, useRef } from "react";
+import "./login.css";
+import { useNavigate } from "react-router-dom";
+import { FaUser, FaLock } from "react-icons/fa";
+import Alert from "../components/Alert";
+
+/**
+ * LogIn component that renders the LogIn form and handles user authentication
+ * 
+ * Checks for stored users, verifies credentials,
+ * navigates to the calendar page on success, displays alert if failed
+ * 
+ * @component
+ * @example
+ * &lt;Route path="/login" element={&lt;LogIn />} />
+ * 
+ * @returns {JSX.Element} The LogIn component 
+ */
+
+const LogIn = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [alert, setAlert] = useState(null);
+  const [capsLockOn, setCapsLockOn] = useState(false);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const passwordInputRef = useRef(null);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    //To check if the caps lock is on
+    const handleKeyUp = (event) => {
+      if (event.getModifierState("CapsLock")) {
+        setCapsLockOn(true);
+      } else {
+        setCapsLockOn(false);
+      }
+    };
+
+    const input = passwordInputRef.current;
+    if (input) {
+      input.addEventListener("keyup", handleKeyUp);
+    }
+
+    return () => {
+      if (input) {
+        input.removeEventListener("keyup", handleKeyUp);
+      }
+    };
+  }, []);
+
+  const handleLogin = (e) => {
+    //Login Logic
+    e.preventDefault();
+
+    const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
+
+    // Check if any user in the array matches the entered details
+    const matchedUser = storedUsers.find(
+      (user) => user.email === email &amp;&amp; user.password === password
+    );
+
+    if (matchedUser) {
+      setIsSubmitting(true);
+      setTimeout(() => {
+        setAlert({ message: "Login Successful!", type: "success" });
+        setIsSubmitting(false);
+        navigate("/calender");
+      }, 2000);
+    } else {
+      setAlert({ message: "Email or Password is incorrect!", type: "error" });
+    }
+  };
+
+ 
+  return (
+    &lt;div className="login-container">
+      &lt;div className="form-wrapper">
+        &lt;div className="login-card">
+          {alert &amp;&amp; (
+            &lt;Alert
+              message={alert.message}
+              type={alert.type}
+              onClose={() => setAlert(null)}
+            />
+          )}
+
+          {/* Login Form */}
+          &lt;form onSubmit={handleLogin}>
+            &lt;div className="form-headers">
+              &lt;h1 className="title">Log In&lt;/h1>
+            &lt;/div>
+            &lt;div className="form-body">
+              &lt;div className="input-group">
+                &lt;label htmlFor="email">
+                  &lt;b>Email&lt;/b>
+                &lt;/label>
+                &lt;div className="input-icon-wrapper">
+                  &lt;FaUser className="icon" />
+                  &lt;input
+                    type="text"
+                    id="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    autoComplete="off"
+                    required
+                  />
+                &lt;/div>
+              &lt;/div>
+
+              {/* User enters password */}
+              &lt;div className="input-group">
+                &lt;label htmlFor="password">
+                  &lt;b>Password&lt;/b>
+                &lt;/label>
+                &lt;div className="input-icon-wrapper">
+                  &lt;FaLock className="icon" />
+                  &lt;input
+                    type="password"
+                    id="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    autoComplete="off"
+                    ref={passwordInputRef}
+                    required
+                  />
+                &lt;/div>
+                {capsLockOn &amp;&amp; (
+                  &lt;div
+                    className="caps-warning"
+                    style={{ color: "red", marginTop: "5px" }}
+                  >
+                    Warning: Caps Lock is ON
+                  &lt;/div>
+                )}
+                &lt;div className="forgot-password-link">
+                  &lt;a href="/forgotpsw">
+                    &lt;br />
+                    Forgot Password?
+                  &lt;/a>
+                &lt;/div>
+              &lt;/div>
+              &lt;button
+                type="submit"
+                className="login-button"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? &lt;div className="spinner">&lt;/div> : "Log In"}
+              &lt;/button>
+              &lt;div className="signup-link">
+                &lt;span className="change">
+                  Don't have an account? &lt;a href="/signup">Sign Up&lt;/a>
+                &lt;/span>
+              &lt;/div>
+            &lt;/div>
+          &lt;/form>
+        &lt;/div>
+      &lt;/div>
+    &lt;/div>
+  );
+};
+
+export default LogIn;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#LogIn">LogIn</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Nov 10 2025 09:04:42 GMT+0000 (Greenwich Mean Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
