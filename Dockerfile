@@ -1,5 +1,15 @@
 
 FROM node:16 AS build
+
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    python3 \
+    python3-pip \
+    g++ \
+    make \
+    libsqlite3-dev \
+    && rm -rf /var/lib/apt/lists/*
+    
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install
