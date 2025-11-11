@@ -10,7 +10,8 @@ const app = express();
 // Middleware for security and performance
 app.use(helmet());
 app.use(compression());
-app.use(morgan('combined')); // Logging
+app.use(morgan('combined'));  // Logging
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -26,7 +27,6 @@ app.get('/api/some-endpoint', (req, res) => {
 
 // Catch-all handler for all routes to serve the React app
 app.get('*', (req, res) => {
-  console.log(req.originalUrl);
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
