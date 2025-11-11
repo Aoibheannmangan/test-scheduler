@@ -9,6 +9,8 @@ FROM node:16
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install --only=production
+
 COPY --from=build /app/build /app/build
+COPY server.js/
 EXPOSE 3000
 CMD ["node", "server.js"]
