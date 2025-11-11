@@ -1,5 +1,5 @@
 
-FROM node:16 AS build
+FROM node:16-bullseye AS build 
 
 RUN apt-get update && apt-get install -y \
     build-essential \
