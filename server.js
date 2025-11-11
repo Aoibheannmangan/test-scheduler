@@ -25,13 +25,15 @@ app.get('/api/some-endpoint', (req, res) => {
   res.json({ message: 'Test' });
 });
 
-// Catch-all handler for all routes to serve the React app
-app.use((req, res, next) => {
-  res.status(404).json({
-    message: `The URL ${req.originalUrl} doesn't exist`
-  });
-});
+// Serve React build
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, 'build')));
 
+  // Handle React routing, return index.html for any unknown route
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+  });
+}
 
 // Error handling
 app.use((err, req, res, next) => {
