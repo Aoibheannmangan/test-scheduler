@@ -343,7 +343,7 @@ const MyCalendar = () => {
       return;
     }
 
-    if (!patient.nicu_dob) {
+    if (!patient.nn_dob) {
       setAlert({
         message:
           "Patient has no Date of Birth recorded, cannot generate visit windows.",

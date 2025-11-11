@@ -34,7 +34,7 @@ export const DataProvider = ({ children }) => {
         if (Array.isArray(response.data)) {
           const processedData = response.data.map((patient) => ({
             ...patient,
-            DOB: patient.nicu_dob ? new Date(patient.nicu_dob) : null, // Convert to Date object, handle empty
+            DOB: patient.nn_dob ? new Date(patient.nn_dob) : null, // Convert to Date object, handle empty
             DaysEarly: parseInt(patient.nicu_days_early) || 0, // Convert to int, default to 0
             Study: "AIMHIGH", // Hardcode as AIMHIGH
             Name: `Patient ${patient.record_id}`, // Create a display name
@@ -74,7 +74,7 @@ export const DataProvider = ({ children }) => {
       });
       const processedData = response.data.map((patient) => ({
         ...patient,
-        DOB: patient.nicu_dob ? new Date(patient.nicu_dob) : null, // Convert to Date object, handle empty
+        DOB: patient.nn_dob ? new Date(patient.nn_dob) : null, // Convert to Date object, handle empty
         DaysEarly: parseInt(patient.reg_days_early) || 0, // Convert to int, default to 0
         Study: "AIMHIGH", // Hardcode as AIMHIGH
         Name: `Patient ${patient.record_id}`, // Create a display name

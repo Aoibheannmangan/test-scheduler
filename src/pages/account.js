@@ -25,7 +25,7 @@ const Account = () => {
         visitNum: rec.visitNum || 1,
         OutOfArea:
           rec.OutOfArea !== undefined ? rec.OutOfArea : rec.nicu_ooa === "1",
-        DOB: rec.DOB || rec.nicu_dob || "",
+        DOB: rec.DOB || rec.nn_dob || "",
         Sex:
           {
             1: "Male",

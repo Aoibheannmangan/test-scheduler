@@ -92,7 +92,7 @@ const Appointments = () => {
           type: rec.type || "window", // All are windows unless you have appointment info
           visit_num: visit_num,
           OutOfArea: rec.reg_ooa === "1",
-          DOB: rec.nicu_dob || "",
+          DOB: rec.nn_dob || "",
           site:
             {
               1: "CUMH",
