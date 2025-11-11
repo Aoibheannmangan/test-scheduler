@@ -1,18 +1,38 @@
 const express = require('express');
 const path = require('path');
+const compression = require('compression');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const bodyParser = require('body-parser');
+
 const app = express();
 
-// Serve static files from the React app build directory
-app.use(express.static(path.join(__dirname, 'build')));
+// Middleware for security and performance
+app.use(helmet());
+app.use(compression());
+app.use(morgan('combined')); // Logging
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-// Your API routes (if any)
+// Serve static files only in production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, 'build')));
+}
+
+// Example API route
 app.get('/api/some-endpoint', (req, res) => {
   res.json({ message: 'Test' });
 });
 
-// Catch-all handler for all routes, so React Router works in client-side routing
+// Catch-all handler for all routes to serve the React app
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
+
+// Error handling
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send('Something went wrong!');
 });
 
 // Set the port and listen
