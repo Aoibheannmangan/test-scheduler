@@ -37,9 +37,9 @@ def get_data():
         'fields[0]': 'record_id', # Record id
         'fields[1]': 'reg_ooa', # Kildare?
         'fields[2]': 'reg_participant_group', # Part group
-        'fields[3]': 'nicu_dob', # Dat of birth
+        'fields[3]': 'nn_dob', # Dat of birth
         'fields[4]': 'reg_dag', # Site
-        'fields[5]': 'nicu_email',# Contact email
+        'fields[5]': 'nn_email',# Contact email
         'fields[6]': 'reg_days_early',
         'fields[7]': 'nicu_sex',
         # gest days/ weeks

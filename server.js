@@ -2,21 +2,21 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
-// Serve static files first
+// Serve static files from the React app build directory
 app.use(express.static(path.join(__dirname, 'build')));
 
-// Example API route
+// Your API routes (if any)
 app.get('/api/some-endpoint', (req, res) => {
-    res.json({ message: "Test" });
+  res.json({ message: 'Test' });
 });
 
-// Handle all other routes (React client-side routing)
+// Catch-all handler for all routes, so React Router works in client-side routing
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
-// Start server on specified port (5000 or process.env.PORT)
+// Set the port and listen
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
