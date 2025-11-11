@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm install
+RUN npm ci
 COPY . ./
 RUN npm run build
 
