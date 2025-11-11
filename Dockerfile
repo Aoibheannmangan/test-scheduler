@@ -1,9 +1,6 @@
-FROM node:16-bullseye AS build
+FROM node:18 AS build
 
-# Update APT sources to use the correct archived repositories for Debian Bullseye
-RUN sed -i 's|http://deb.debian.org/debian|http://archive.debian.org/debian|g' /etc/apt/sources.list \
-    && sed -i 's|http://security.debian.org/debian-security|http://archive.debian.org/debian-security|g' /etc/apt/sources.list \
-    && apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y \
     build-essential \
     python3 \
     python3-pip \
@@ -20,20 +17,7 @@ COPY . ./
 RUN npm run build
 
 
-FROM node:16
-
-# Update APT sources to use the correct archived repositories for Debian Bullseye
-RUN sed -i 's|http://deb.debian.org/debian|http://archive.debian.org/debian|g' /etc/apt/sources.list \
-    && sed -i 's|http://security.debian.org/debian-security|http://archive.debian.org/debian-security|g' /etc/apt/sources.list \
-    && apt-get update && apt-get install -y \
-    build-essential \
-    python3 \
-    python3-pip \
-    g++ \
-    make \
-    libsqlite3-dev \
-    gcc \
-    && rm -rf /var/lib/apt/lists/*
+FROM node:18
 
 WORKDIR /app
 COPY package.json package-lock.json ./
