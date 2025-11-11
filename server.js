@@ -26,14 +26,12 @@ app.get('/api/some-endpoint', (req, res) => {
 });
 
 // Serve React build
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'build')));
+const buildPath = path.join(__dirname, 'build');
+app.use(express.static(buildPath))
 
-  // Handle React routing, return index.html for any unknown route
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'build', 'index.html'));
-  });
-}
+app.get('*', (req, res) => {
+  res.sendFile(path.join(buildPath, 'index.html'));
+});
 
 // Error handling
 app.use((err, req, res, next) => {
