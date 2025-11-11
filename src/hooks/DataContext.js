@@ -35,7 +35,7 @@ export const DataProvider = ({ children }) => {
           const processedData = response.data.map((patient) => ({
             ...patient,
             DOB: patient.nn_dob ? new Date(patient.nn_dob) : null, // Convert to Date object, handle empty
-            DaysEarly: parseInt(patient.nicu_days_early) || 0, // Convert to int, default to 0
+            DaysEarly: parseInt(patient.reg_days_early) || 0, // Convert to int, default to 0
             Study: "AIMHIGH", // Hardcode as AIMHIGH
             Name: `Patient ${patient.record_id}`, // Create a display name
             id: patient.record_id, // Map record_id to id for Calendar.js search

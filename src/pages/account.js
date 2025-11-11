@@ -37,14 +37,14 @@ const Account = () => {
             2: "Coombe",
             3: "Rotunda",
           }[rec.nicu_dag] || "Unknown",
-        DaysEarly: rec.nicu_days_early ? Number(rec.nicu_days_early) : 0,
+        DaysEarly: rec.reg_days_early ? Number(rec.reg_days_early) : 0,
         participantGroup:
           {
             1: "High Risk Infant",
             2: "Control",
           }[rec.nicu_participant_group] || "Unknown",
-        gestWeeks: rec.nicu_gest_age_w,
-        gestDays: rec.nicu_gest_age_d,
+        gestWeeks: rec.reg_gest_age_w,
+        gestDays: rec.reg_gest_age_d,
         Study: rec.Study || ["AIMHIGH"], // No info on this (Depends on API eg: this is from an AIMHIGH REDCap)
         notes: rec.notes || rec.nicu_email || "", // No info on this
         Info: rec.Info || "", // No info on this
