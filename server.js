@@ -26,7 +26,7 @@ app.get('/api/some-endpoint', (req, res) => {
 
 // Catch-all handler for all routes to serve the React app
 app.get('*', (req, res) => {
-  console.log(req.params.wildcard);
+  console.log(req.originalUrl);
   res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
