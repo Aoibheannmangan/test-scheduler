@@ -44,7 +44,11 @@ const Account = () => {
           Info: "", // Any aditional info field to import??**
           notes: rec.nicu_email || "", // Use email as contact OR GET NUMBER?
           email: rec.nicu_email || "",
-          participantGroup: rec.reg_participant_group || "",
+          participantGroup:
+            {
+              1: "Control",
+              2: "High Risk Infant",
+            }[rec.reg_participant_group] || "Unknown",
           gestWeeks: rec.reg_gest_age_w,
           gestDays: rec.reg_gest_age_d,
           reg_date1: rec.reg_date1,
@@ -89,6 +93,14 @@ const Account = () => {
   const handleEdit = (user) => {
     localStorage.setItem("editPatient", JSON.stringify(user));
     navigate("/info");
+  };
+
+  const daysNegative = (daysEarly, isNegative) => {
+    if (isNegative) {
+      return "Birth on time";
+    } else {
+      return daysEarly;
+    }
   };
 
   //------------------------------------------------ HTML ------------------------------------------------------------
@@ -150,10 +162,17 @@ const Account = () => {
           <hr className="divider" />
           <ul>
             <li>
-              <strong>Date of Birth:</strong> {user.DOB}
+              <strong>Date of Birth: </strong>
+              {/*Format date of birth*/}
+              {new Date(user.DOB).toLocaleDateString(undefined, {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
             </li>
             <li>
-              <strong>Days Early:</strong> {user.DaysEarly}
+              <strong>Days Early:</strong>{" "}
+              {daysNegative(user.DaysEarly, user.DaysEarly < 0)}
             </li>
             <li>
               <strong>Sex:</strong> {user.Sex}
