@@ -1,0 +1,12 @@
+__pychache__
+
+node_modules
+build
+npm-debug.log
+yarn-error.log
+
+.git
+.gitignore
+
+.vscode
+.DS_Store
