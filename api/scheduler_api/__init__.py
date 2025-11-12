@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
 from .extensions import db, migrate
 from .routes import get_data, book_appointment, delete_appointment, get_all_events, update_appointment, add_blocked_date, get_blocked_dates
@@ -27,21 +27,6 @@ def create_app():
     from . import models
 
     # --- Register Routes ---
-
-    @app.route("/", methods=["GET"])
-    def index():
-        return jsonify({
-            "message": "Scheduler API is running",
-            "avaliable_routes": [
-                "/api/health",
-                "/api/data",
-                "/api/book",
-                "/api/appointments",
-                "/api/register",
-                "/api/login"
-            ]
-        }), 200
-
     @app.route("/api/data", methods=["GET"])
     def get_data_route():
         return get_data()
@@ -87,5 +72,14 @@ def create_app():
     @token_required
     def get_blocked_dates_route(current_user):
         return get_blocked_dates(current_user)
+    
+    @app.route("/", defaults={"path": ""})
+    @app.route("/<path:path>")
+    def serve_react(path):
+        build_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "build")
+        if path != "" and os.path.exists(os.path.join(build_dir, path)):
+            return send_from_directory(build_dir, path)
+        else:
+            return send_from_directory(build_dir, "index.html")
 
     return app
