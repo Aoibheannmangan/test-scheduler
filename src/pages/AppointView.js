@@ -22,23 +22,6 @@ const Appointments = () => {
     }
   }, [apiUserList]);
 
-  // Selected rooms available
-  const roomList = useMemo(
-    () => [
-      { id: "TeleRoom", label: "Telemetry Room (Room 2.10)", dbId: 1 },
-      { id: "room1", label: "Assessment Room 1", dbId: 2 },
-      { id: "room2", label: "Assessment Room 2", dbId: 3 },
-      { id: "room3", label: "Assessment Room 3", dbId: 4 },
-      { id: "room4", label: "Assessment Room 4", dbId: 5 },
-      {
-        id: "devRoom",
-        label: "Developmental Assessment Room (Room 2.07)",
-        dbId: 6,
-      },
-    ],
-    []
-  );
-
   const fetchBookings = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
@@ -185,7 +168,7 @@ const Appointments = () => {
             ...redcapPatient,
             ...eventToDisplay,
             type: eventToDisplay.event_type,
-            visit_num: eventToDisplay.visit_num,
+            visit_num: redcapPatient.visit_num,
             displayId: redcapPatient.id,
           });
         } else {
