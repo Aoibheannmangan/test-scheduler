@@ -1,4 +1,3 @@
-# api/wsgi.py
-from scheduler_api import create_app
+from api.scheduler_api import create_app
 
 app = create_app()
