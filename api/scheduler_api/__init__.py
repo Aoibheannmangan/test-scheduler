@@ -28,6 +28,20 @@ def create_app():
 
     # --- Register Routes ---
 
+    @app.route("/", methods=["GET"])
+    def index():
+        return jsonify({
+            "message": "Scheduler API is running",
+            "avaliable_routes": [
+                "/api/health",
+                "/api/data",
+                "/api/book",
+                "/api/appointments",
+                "/api/register",
+                "/api/login"
+            ]
+        }), 200
+
     @app.route("/api/data", methods=["GET"])
     def get_data_route():
         return get_data()
