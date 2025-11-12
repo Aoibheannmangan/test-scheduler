@@ -3,8 +3,6 @@ import os
 import logging
 from scheduler_api import create_app
 
-from apscheduler.schedulers.background import BackgroundScheduler
-
 app = create_app()
 
 
