@@ -15,7 +15,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY api ./api
 
 COPY --from=build-frontend /app/build ./build
+RUN mkdir -p /app/api/instance && chmod -R 777 /app/api/instance
 ENV FLASK_ENV=production PYTHONUNBUFFERED=1
 EXPOSE 5000
 CMD ["gunicorn", "api.wsgi:app", "--bind", "0.0.0.0:5000", "--chdir", "/app"]
+
 

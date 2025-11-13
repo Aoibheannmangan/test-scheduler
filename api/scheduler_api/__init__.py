@@ -84,4 +84,10 @@ def create_app():
     def serve_react(path):
         return send_from_directory(app.static_folder, "index.html")
 
+    @app.errorhandler(404)
+    def not_found(e):
+        from flask import request
+        if not request.path.startswith("/api/"):
+            return send_from_directory(app.static_folder, "index.html")
+        return e  # For API routes, return normal 404
     return app

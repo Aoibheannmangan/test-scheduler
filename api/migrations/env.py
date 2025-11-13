@@ -2,7 +2,7 @@ import logging
 from logging.config import fileConfig
 
 from flask import current_app
-from scheduler_api import create_app 
+from api.scheduler_api import create_app 
 
 from alembic import context
 
