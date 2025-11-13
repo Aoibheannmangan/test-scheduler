@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: AppointView.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: AppointView.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState, useEffect } from "react";
+import "./AppointView.css";
+import { useAppointmentFilters } from "../hooks/useAppointmentFilters";
+import "../components/useAppointmentFilters.css";
+import {
+  generateAimHighAppointments,
+  generateCoolPrimeAppointments,
+  generateEDIAppointment,
+} from "../hooks/windowEventCalc";
+import { useData } from "../hooks/DataContext"; // &lt;-- Import the API hook
+
+/**
+ * 
+ *  Appointments component that renders an overview of patient appointments.
+ * Fetches user data from an API, merges it with booked events from localStorage,
+ * and displays the information with search and filter capabilities.
+ * @component
+ * @example
+ * &lt;Route path="/appointments" element={&lt;Appointments />} />
+ * 
+ * @returns {JSX.Element} The Appointments component that renders the appointment overview.
+ */
+
+const Appointments = () => {
+  const { data: contextUserList, loading, error } = useData();
+  const [userList, setUserList] = useState([]);
+  const [allEvents, setAllEvents] = useState([]);
+  const [bookedEvents, setBookedEvents] = useState([]);
+
+  useEffect(() => {
+    /**
+     * Maps API user data to the appointment format used in the application.
+     * 
+     * @returns {void}
+     */
+
+    // Debug line -> console.log("API user list received:", apiUserList);
+    if (Array.isArray(contextUserList)) {
+      // Map API fields to appointment fields
+      const mapped = contextUserList.map((rec) => ({
+        id: rec.record_id || "",
+        type: rec.type || "window", // All are windows unless you have appointment info
+        visitNum: 1, // Defaults as 1
+        OutOfArea: rec.nicu_ooa === "1",
+        DOB: rec.nicu_dob || "",
+        site:
+          {
+            1: "CUMH",
+            2: "Coombe",
+            3: "Rotunda",
+          }[rec.nicu_dag] || "Unknown",
+        Study: ["AIMHIGH"],
+        DaysEarly: rec.nicu_days_early ? Number(rec.nicu_days_early) : 0,
+        Info: "", // Any aditional info field to import??**
+        notes: rec.nicu_email || "", // Use email as contact OR GET NUMBER?
+        email: rec.nicu_email || "",
+        participantGroup: rec.nicu_participant_group || "",
+      }));
+      setUserList(mapped);
+    } else {
+      setUserList([]);
+    }
+  }, [contextUserList]);
+
+  console.log("BOOKED EVENTS BEFORE MERGE:", bookedEvents);
+
+    /**
+     * Merges user list with booked events from localStorage.
+     * Prioritizes booked events over window events for each patient.
+     * 
+     * @returns {void}
+     */
+
+    useEffect(() => {
+    const merged = userList.map((patient) => {
+      // Find all booked events for this patient
+      const patientBooked = bookedEvents
+        .filter((b) => b.patientId === patient.id)
+        .sort((a, b) => (Number(a.visitNum) || 0) - (Number(b.visitNum) || 0));
+
+      if (patientBooked.length > 0) {
+        // Use the latest booked visit
+        const latest = patientBooked[patientBooked.length - 1];
+        return {
+          ...patient,
+          ...latest,
+          start: new Date(latest.start),
+          end: new Date(latest.end),
+          type: "booked",
+          visitNum: Number(latest.visitNum) || 1,
+        };
+      }
+
+      return patient; // keep as window if no booked appointments
+    });
+
+    console.log("Merged events:", merged);
+    setAllEvents(merged);
+  }, [userList, bookedEvents]);
+  
+  // make a today and month away var for distance indicators
+  const today = new Date();
+  const oneMonthFromNow = new Date(today);
+  oneMonthFromNow.setMonth(today.getMonth() + 1);
+
+  const oneWeekFromNow = new Date(today);
+  oneWeekFromNow.setDate(today.getDate() + 7);
+
+  /**
+   * Checks if the appointment date is more than one month away.
+   * @param {Date|string} date - The date to check. 
+   * @returns {boolean} True if the date is more than one month away, false otherwise.
+   */
+  const isFarAway = (date) => {
+    const appointmentDate = new Date(date);
+    return appointmentDate > oneMonthFromNow;
+  };
+
+  /**
+   * Checks if the appointment date is between one week and one month away.
+   * @param {Date|string} date - The date to check. 
+   * @returns {boolean} True if the date is between one week and one month away, false otherwise.
+   */
+
+  const isMid = (date) => {
+    const appointmentDate = new Date(date);
+    return (
+      appointmentDate &lt;= oneMonthFromNow &amp;&amp; appointmentDate > oneWeekFromNow
+    );
+  };
+
+  /**
+   * Checks if the appointment date is within one week.
+   * @param {Date|string} date - The date to check. 
+   * @returns {boolean} True if the date is within one week, false otherwise.
+   */
+  const isClose = (date) => {
+    const appointmentDate = new Date(date);
+    return appointmentDate &lt;= oneWeekFromNow;
+  };
+
+  //--------------------------------------------------------------------------------------
+
+  // Track collapsed state for IDs
+  const [expandedIds, setExpandedIds] = useState({});
+
+  /**
+   * Toggles the collapsed state for a given appointment ID.
+   * @param {string} id - The appointment ID to toggle. 
+   * @returns {void}
+   */
+  const toggleCollapseIds = (id) => {
+    setExpandedIds((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
+  // Track collapsed state for notes (same logic from IDs) **TODO: Make modular**
+  const [expandedNotes, setExpandedNotes] = useState({});
+
+  // Extracts search and filter-related data and functions from useAppointmentFilters to manage appointment filtering.
+  const {
+    searchQuery,
+    setSearchQuery,
+    selectedStudies,
+    handleStudyChange,
+    filteredAppointments,
+  } = useAppointmentFilters(userList);
+  // ---------------------------------HTML--------------------------------------
+  if (loading) return &lt;div>Loading appointments...&lt;/div>;
+  if (error) return &lt;div>Error loading appointments: {error.message}&lt;/div>;
+
+  return (
+    &lt;div className="App">
+      &lt;h1>Visit Overview&lt;/h1>
+      {/*Container for searchbar and filter*/}
+      &lt;div className="searchContainer" role="region">
+        &lt;label htmlFor="searchInput" className="searchBarTitle">
+          Search Patient:
+        &lt;/label>
+        &lt;input
+          id="searchInput"
+          aria-label="searchBar"
+          type="text"
+          placeholder="Search ID"
+          role="searchbox"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{
+            padding: "8px",
+            width: "220px",
+            marginBottom: "12px",
+            marginLeft: "0px",
+          }}
+        />
+
+        {/*Filter boxes*/}
+        &lt;div className="filterRowBox">
+          &lt;div className="filter-checkbox">
+            &lt;label>
+              &lt;input
+                aria-label="AimhighCheck"
+                className="AHCheck"
+                type="checkbox"
+                checked={selectedStudies.includes("AIMHIGH")}
+                onChange={() => handleStudyChange("AIMHIGH")}
+              />
+              AIMHIGH
+            &lt;/label>
+          &lt;/div>
+
+          &lt;div className="filter-checkbox">
+            &lt;label>
+              &lt;input
+                aria-label="CoolprimeCheck"
+                className="CPCheck"
+                type="checkbox"
+                checked={selectedStudies.includes("COOLPRIME")}
+                onChange={() => handleStudyChange("COOLPRIME")}
+              />
+              COOLPRIME
+            &lt;/label>
+          &lt;/div>
+
+          &lt;div className="filter-checkbox">
+            &lt;label>
+              &lt;input
+                aria-label="EDICheck"
+                className="EDICheck"
+                type="checkbox"
+                checked={selectedStudies.includes("EDI")}
+                onChange={() => handleStudyChange("EDI")}
+              />
+              EDI
+            &lt;/label>
+          &lt;/div>
+        &lt;/div>
+      &lt;/div>
+
+      &lt;ul className="appointmentList" aria-label="mainTable">
+        &lt;li className="headings-row">
+          &lt;div className="heading-left">
+            &lt;strong>Patient ID&lt;/strong>
+          &lt;/div>
+          &lt;div className="heading-center">
+            &lt;strong>Visit No.&lt;/strong>
+          &lt;/div>
+          &lt;div className="heading-right">
+            &lt;strong>Kildare&lt;/strong>
+          &lt;/div>
+        &lt;/li>
+
+        {filteredAppointments.map((event) => (
+          &lt;li key={event.id} className="ID_element">
+            &lt;div className="idRow">
+              {/*Patient ID Row*/}
+              &lt;label
+                className="patientRow"
+                onClick={() => toggleCollapseIds(event.id)}
+              >
+                {event.type === "booked" &amp;&amp; (
+                  &lt;>
+                    {event.id} {expandedIds[event.id] ? "-" : "+"}{" "}
+                    {/* Functions used to get distance from appointment and display indicator */}
+                    {event.start &amp;&amp; isFarAway(event.start) &amp;&amp; (
+                      &lt;span
+                        className="farNotifier"
+                        title="More than a month away"
+                      />
+                    )}
+                    {event.start &amp;&amp; isMid(event.start) &amp;&amp; (
+                      &lt;span
+                        className="midNotifier"
+                        title="Between a week and a month away"
+                      />
+                    )}
+                    {event.start &amp;&amp; isClose(event.start) &amp;&amp; (
+                      &lt;span className="closeNotifier" title="Within a week" />
+                    )}
+                  &lt;/>
+                )}
+                {event.type === "window" &amp;&amp; (
+                  &lt;>
+                    {/* Make id red to indicate no booking has been made */}
+                    &lt;span className="windowTitle">
+                      {event.id} {expandedIds[event.id] ? "-" : "+"}{" "}
+                    &lt;/span>
+                  &lt;/>
+                )}
+              &lt;/label>
+
+              {/*Display Visit Number*/}
+              &lt;span className="visitNumContainer">{event.visitNum}&lt;/span>
+
+              {/*Put notifier under OOA - (Out Of Area)*/}
+              &lt;div className="dotContainer">
+                {event.OutOfArea === true ? (
+                  &lt;span className="OoaNotifier" title="Out Of Area" />
+                ) : (
+                  &lt;span
+                    style={{ visibility: "hidden" }}
+                    className="OoaNotifier"
+                  >&lt;/span>
+                )}
+              &lt;/div>
+            &lt;/div>
+
+            {/*Main Info Body when expanded*/}
+            {expandedIds[event.id] &amp;&amp; (
+              &lt;div className="info">
+                {/* NO NAME FIELD
+                &lt;strong>Name:&lt;/strong> {event.Name}
+                &lt;br />*/}
+                &lt;strong>Date of Birth: &lt;/strong>
+                {/*Format date of birth*/}
+                {new Date(event.DOB).toLocaleDateString(undefined, {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+                &lt;br />
+                &lt;strong>Location:&lt;/strong> {event.site}
+                &lt;br />
+                &lt;strong>Study:&lt;/strong>{" "}
+                {Array.isArray(event.Study)
+                  ? event.Study.join(", ")
+                  : [event.Study]}
+                &lt;br />
+                {/*Visit window in info if a window patient*/}
+                {event.type === "window" &amp;&amp;
+                  (() => {
+                    const birthDate = new Date(event.DOB || event.dob);
+                    const daysEarly = event.DaysEarly ?? event.daysEarly ?? 0;
+                    if (
+                      !(birthDate instanceof Date) ||
+                      isNaN(birthDate.getTime())
+                    )
+                      return [];
+
+                    const studyWindows = Array.isArray(event.Study)
+                      ? event.Study
+                      : [event.Study];
+                    return (
+                      &lt;div>
+                        {studyWindows.map((study) => {
+                          let windowData = [];
+                          if (study === "AIMHIGH") {
+                            windowData = generateAimHighAppointments(
+                              birthDate,
+                              daysEarly,
+                              event.visitNum
+                            );
+                          } else if (study === "COOLPRIME") {
+                            windowData = generateCoolPrimeAppointments(
+                              birthDate,
+                              daysEarly,
+                              event.visitNum
+                            );
+                          } else if (study === "EDI") {
+                            windowData = generateEDIAppointment(
+                              birthDate,
+                              daysEarly,
+                              event.visitNum
+                            );
+                          }
+
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0);
+
+                          // Look to see ig theres an active/ upcoming window if a window hasnt ended yet
+
+                          const activeWindow = windowData.find(
+                            ({ start, end }) => {
+                              const windowStart = new Date(start);
+                              const windowEnd = new Date(end);
+
+                              windowStart.setHours(0, 0, 0, 0);
+                              windowEnd.setHours(23, 59, 59, 999);
+
+                              return windowEnd >= today;
+                            }
+                          );
+
+                          // If no active window found, check if there are any future windows
+                          const futureWindow = windowData.find(({ start }) => {
+                            const windowStart = new Date(start);
+                            windowStart.setHours(0, 0, 0, 0);
+                            return windowStart >= today;
+                          });
+
+                          const displayWindow = activeWindow || futureWindow;
+
+                          if (displayWindow) {
+                            const { start, end } = displayWindow;
+                            const windowStart = new Date(start);
+                            const windowEnd = new Date(end);
+
+                            const isCurrentlyActive =
+                              windowStart &lt;= today &amp;&amp; windowEnd >= today;
+                            const statusText = isCurrentlyActive
+                              ? "Current"
+                              : "Next";
+
+                            if (windowData.length > 0) {
+                              const existing = JSON.parse(localStorage.getItem("bookedEvents")) || [];
+                              const updated = [
+                                ...existing.filter(e => e.type !== "window" || e.patientId !== event.id || e.study !== study),
+                                ...windowData
+                              ];
+                              localStorage.setItem("bookedEvents", JSON.stringify(updated));
+                            }
+
+                            return (
+                              &lt;div key={study}>
+                                &lt;strong>
+                                  {statusText} {study} Visit Window:
+                                &lt;/strong>{" "}
+                                {windowStart.toLocaleDateString(undefined, {
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                })}{" "}
+                                –{" "}
+                                {windowEnd.toLocaleDateString(undefined, {
+                                  year: "numeric",
+                                  month: "long",
+                                  day: "numeric",
+                                })}
+                                &lt;br />
+                              &lt;/div>
+                            );
+                          } else if (windowData.length === 0) {
+                            // No generated windows (possibly due to visitNum too high)
+                            return (
+                              &lt;div key={study}>
+                                &lt;strong>{study} Status:&lt;/strong> No visit
+                                windows available (Visit #{event.visitNum || 1})
+                                &lt;br />
+                              &lt;/div>
+                            );
+                          } else {
+                            // All possible windows have passed
+                            return (
+                              &lt;div key={study}>
+                                &lt;strong>{study} Status:&lt;/strong> All visit
+                                windows have passed
+                                &lt;br />
+                              &lt;/div>
+                            );
+                          }
+                        })}
+                      &lt;/div>
+                    );
+                  })()}
+                {/*Visit window in info if a booked patient
+                    Displays date of app and time from and to*/}
+                {event.type === "booked" &amp;&amp;
+                  (() => {
+                    console.log("Rendering event:", event);
+                    console.log("Start:", event.start, "End:", event.end);
+                    console.log("Parsed Start:", new Date(event.start));
+
+
+                    return (
+                      &lt;div>
+                        &lt;strong>Appointment Date:&lt;/strong>{" "}
+                        {event.start
+                          ? new Date(event.start).toLocaleDateString()
+                          : "N/A"}
+                        &lt;br />
+                        &lt;strong>Time of Appointment:&lt;/strong>{" "}
+                        {event.start &amp;&amp; event.end
+                          ? `${new Date(event.start).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })} - ${new Date(event.end).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}`
+                          : "N/A"}
+                        &lt;br />
+                      &lt;/div>
+                    );
+                  })()}
+                {/*Additional Notes Dropdown*/}
+                {(() => {
+                  const noteContent = event.email; // Always show email as contact
+
+                  // Only show the section if there is actual content
+                  if (!noteContent || noteContent.trim() === "") return null;
+
+                  // Tracks id of toggled notes
+                  const toggleKey = `${event.id}-notes`;
+
+                  return (
+                    &lt;>
+                      &lt;label
+                        style={{ cursor: "pointer", fontWeight: "bold" }}
+                        onClick={() =>
+                          setExpandedNotes((prev) => ({
+                            ...prev,
+                            [toggleKey]: !prev[toggleKey],
+                          }))
+                        }
+                      >
+                        Contact: {expandedNotes[toggleKey] ? "-" : "+"}
+                      &lt;/label>
+
+                      {expandedNotes[toggleKey] &amp;&amp; (
+                        &lt;div className="info">
+                          &lt;strong>{noteContent}&lt;/strong>
+                          &lt;br />
+                        &lt;/div>
+                      )}
+                    &lt;/>
+                  );
+                })()}
+              &lt;/div>
+            )}
+          &lt;/li>
+        ))}
+        {/* If no matches from search */}
+        {filteredAppointments.length === 0 &amp;&amp; (
+          &lt;p> No matching appointments found.&lt;/p>
+        )}
+      &lt;/ul>
+    &lt;/div>
+  );
+};
+
+export default Appointments;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#Appointments">Appointments</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Nov 10 2025 11:52:00 GMT+0000 (Greenwich Mean Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -9,6 +9,18 @@ import {
 } from "../hooks/windowEventCalc";
 import { useData } from "../hooks/DataContext"; // <-- Import the API hook
 
+/**
+ * 
+ *  Appointments component that renders an overview of patient appointments.
+ * Fetches user data from an API, merges it with booked events from localStorage,
+ * and displays the information with search and filter capabilities.
+ * @component
+ * @example
+ * <Route path="/appointments" element={<Appointments />} />
+ * 
+ * @returns {JSX.Element} The Appointments component that renders the appointment overview.
+ */
+
 const Appointments = () => {
   const { data: contextUserList, loading, error } = useData();
   const [userList, setUserList] = useState([]);
@@ -16,6 +28,12 @@ const Appointments = () => {
   const [bookedEvents, setBookedEvents] = useState([]);
 
   useEffect(() => {
+    /**
+     * Maps API user data to the appointment format used in the application.
+     * 
+     * @returns {void}
+     */
+
     // Debug line -> console.log("API user list received:", apiUserList);
     if (Array.isArray(contextUserList)) {
       // Map API fields to appointment fields
@@ -45,6 +63,13 @@ const Appointments = () => {
   }, [contextUserList]);
 
   console.log("BOOKED EVENTS BEFORE MERGE:", bookedEvents);
+
+    /**
+     * Merges user list with booked events from localStorage.
+     * Prioritizes booked events over window events for each patient.
+     * 
+     * @returns {void}
+     */
 
     useEffect(() => {
     const merged = userList.map((patient) => {
@@ -81,10 +106,21 @@ const Appointments = () => {
   const oneWeekFromNow = new Date(today);
   oneWeekFromNow.setDate(today.getDate() + 7);
 
+  /**
+   * Checks if the appointment date is more than one month away.
+   * @param {Date|string} date - The date to check. 
+   * @returns {boolean} True if the date is more than one month away, false otherwise.
+   */
   const isFarAway = (date) => {
     const appointmentDate = new Date(date);
     return appointmentDate > oneMonthFromNow;
   };
+
+  /**
+   * Checks if the appointment date is between one week and one month away.
+   * @param {Date|string} date - The date to check. 
+   * @returns {boolean} True if the date is between one week and one month away, false otherwise.
+   */
 
   const isMid = (date) => {
     const appointmentDate = new Date(date);
@@ -93,6 +129,11 @@ const Appointments = () => {
     );
   };
 
+  /**
+   * Checks if the appointment date is within one week.
+   * @param {Date|string} date - The date to check. 
+   * @returns {boolean} True if the date is within one week, false otherwise.
+   */
   const isClose = (date) => {
     const appointmentDate = new Date(date);
     return appointmentDate <= oneWeekFromNow;
@@ -103,6 +144,11 @@ const Appointments = () => {
   // Track collapsed state for IDs
   const [expandedIds, setExpandedIds] = useState({});
 
+  /**
+   * Toggles the collapsed state for a given appointment ID.
+   * @param {string} id - The appointment ID to toggle. 
+   * @returns {void}
+   */
   const toggleCollapseIds = (id) => {
     setExpandedIds((prev) => ({
       ...prev,

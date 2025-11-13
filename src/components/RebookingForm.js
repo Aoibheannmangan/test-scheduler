@@ -3,6 +3,16 @@ import './RebookingForm.css';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import dayjs from 'dayjs';
 
+/**
+ * A form component that allows user to reschedule and event
+ * Users can select a new start and end time, and provide a reason for the no-show
+ * 
+ * @param {Object} param0 - The props object
+ * @param {Object} param0.event - The event to be rebooked, with details such as start and end time
+ * @param {Function} param0.onSave - A function to save the updated event with new details
+ * @param {Function} param0.onCancel - A function to cancel the rebooking process and close the form
+ * @returns {JSX.Element} The JSX for rendering the rebooking form
+ */
 const RebookingForm = ({ event, onSave, onCancel }) => {
     const [newDate, setNewDate] = useState(dayjs(event.start).format("YYYY-MM-DD"));
     const [newStart, setNewStart] = useState(dayjs(event.start));

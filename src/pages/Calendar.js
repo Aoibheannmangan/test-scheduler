@@ -25,6 +25,16 @@ import RebookingForm from "../components/RebookingForm";
 import { CiCalendar } from "react-icons/ci";
 import { useData } from "../hooks/DataContext";
 
+/**
+ * Calendar component that renders the main calendar view and handles appointment management.
+ * Includes functionality for booking, editing, deleting appointments,
+ * blocking dates, searching patients, and managing visit windows.
+ * @component
+ * @example
+ * <Route path="/calendar" element={<MyCalendar />} />
+ * @returns {JSX.Element} The Calendar component that renders the main calendar view and handles appointment management.
+ */
+
 const MyCalendar = () => {
   const [view, setView] = useState("month");
   const [date, setDate] = useState(new Date());
@@ -45,6 +55,12 @@ const MyCalendar = () => {
   const [rebookPopupOpen, setRebookPopupOpen] = useState(false);
   const [eventToRebook, setEventToRebook] = useState(null);
 
+  /**
+   * State to manage blocked dates
+   * @type {Array<{start: Date, end: Date}>}
+   * @returns {void}
+   * 
+   */
   const [blockedDates, setBlockedDates] = useState(() => {
     const stored = localStorage.getItem("blockedDates");
     if (stored) {
@@ -71,6 +87,12 @@ const MyCalendar = () => {
   const { data: apiUserList, loading, error, updatePatient } = useData();
   const [userList, setUserList] = useState([]);
 
+  /**
+   * Effect to map API user data with booked events from localStorage
+   * and set the combined user list state.
+   * @returns {void}
+   *
+   */
   // Grab from local storage and in storedList
   useEffect(() => {
     if (apiUserList && Array.isArray(apiUserList)) {
@@ -136,6 +158,11 @@ const MyCalendar = () => {
     }
   }, [apiUserList]);
 
+  /**
+   * Effect to load blocked dates from localStorage on component mount.
+   * @returns {void}
+   */
+
   useEffect(() => {
     const storedDates = localStorage.getItem("blockedDates");
     if (storedDates) {
@@ -143,10 +170,25 @@ const MyCalendar = () => {
     }
   }, []);
 
+
   useEffect(() => {
     localStorage.setItem("blockedDates", JSON.stringify(blockedDates));
   }, [blockedDates]);
 
+  /**
+   * 
+   * Handles selecting an event on the calendar.
+   * 
+   * @param {Object} event - The event object that was selected.
+   * @param {string} event.type - The type of the event (e.g., "booked", "window").
+   * @param {string} event.title - The title of the event.
+   * @param {Date} event.start - The start date/time of the event.
+   * @param {Date} event.end - The end date/time of the event.
+   * @param {string} event.room - The room assigned to the event.
+   * @param {boolean} event.noShow - Indicates if the event was marked as a no-show.
+   * @param {string} event.noShowComment - Comments related to the no-show status. 
+   * @returns {void}
+   */
   // Open popup when clicking an event
   const handleSelectEvent = (event) => {
     // So only booked events can be altered
@@ -164,6 +206,11 @@ const MyCalendar = () => {
     }
   };
 
+
+  /**
+   * Handles blocking a selected date on the calendar.
+   * @returns {void}
+   */
 
   //Blocking dates so they cannot be booked
   const handleBlockDate = () => {
@@ -199,7 +246,11 @@ const MyCalendar = () => {
       setAlert({ message: "Please select a date to block", type: "error" });
     }
   };
-
+  
+  /**
+   * Handles unblocking a previously blocked date on the calendar.
+   * @returns {void}
+   */
   //Unblock previously blocked dates
   const handleUnBlockDate = () => {
   try {
@@ -247,11 +298,20 @@ const MyCalendar = () => {
   }
 };
 
-
+/**
+ * Toggles the display of blocked dates on the calendar.
+ * @returns {void}
+ */
   const handleShowBlockedDates = () => {
     setShowBlockedDates((prev) => !prev);
   };
 
+  /**
+   * Handles the change of selected date from the date input.
+   * @param {Object} event - The event object from the date input change.
+   * @param {string} event.target.value - The new selected date value.
+   * @return {void} 
+   */
   const handleDateChange = (event) => {
     setSelectedDate(event.target.value);
   };
@@ -265,6 +325,20 @@ const MyCalendar = () => {
     return {};
   };
 
+  /**
+   * Handles combining event properties for styling and blocked status.
+   * 
+   * @param {Object} event - The event object to get properties for. 
+   * @param {string} event.type - The type of the event (e.g., "booked", "window").
+   * @param {string} event.title - The title of the event.
+   * @param {Date} event.start - The start date/time of the event.
+   * @param {Date} event.end - The end date/time of the event.
+   * @param {boolean} event.blocked - Indicates if the event is blocked.
+   * @param {string} event.room - The room assigned to the event.
+   * @param {boolean} event.noShow - Indicates if the event was marked as a no-show.
+   * @param {string} event.noShowComment - Comments related to the no-show status.
+   *  @returns {void}
+   */
   const combinedEventGetter = (event) => {
     const blockedProps = blockedEventGetter(event);
     const styleProps = eventPropGetter(event);
@@ -275,6 +349,11 @@ const MyCalendar = () => {
     };
   };
 
+  /**
+   * Handles changes to the no-show checkbox in the event edit form.
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The change event from the checkbox.
+   * @return {void} 
+   */
   const handleNoShowChange = (e) => {
     const newNoShowStatus = e.target.checked;
     setEditedInfo((prev) => ({
@@ -289,6 +368,19 @@ const MyCalendar = () => {
       setShowRebookingForm(false);
     }
   };
+
+  /**
+   * Handles updating an existing event in the booked events list.
+   * @param {Object} updatedEvent - The event object with updated details.
+   * @param {string} updatedEvent.id - The unique identifier of the event.
+   * @param {string} updatedEvent.title - The title of the event.
+   * @param {Date} updatedEvent.start - The start date/time of the event.
+   * @param {Date} updatedEvent.end - The end date/time of the event.
+   * @param {string} updatedEvent.room - The room assigned to the event.
+   * @param {boolean} updatedEvent.noShow - Indicates if the event was marked as a no-show.
+   * @param {string} updatedEvent.noShowComment - Comments related to the no-show status.
+   * @return {void} 
+   */
 
   const handleUpdateEvent = (updatedEvent) => {
     const updatedBooked = bookedEvents.map((event) =>
@@ -314,6 +406,10 @@ const MyCalendar = () => {
     setShowRebookingForm(true);
   };
 
+  /**
+   * Handles saving edited event information.
+   * @returns {void}
+   */
   // Save when editing event info
   const saveEditedInfo = () => {
     if (!selectedEvent || !editedInfo) return;
@@ -328,6 +424,10 @@ const MyCalendar = () => {
       room: editedInfo.room,
     };
 
+    /**
+     * Handles updating bookedEvents or windowEvents based on the selected event type.
+     * @returns {void}
+     */
     // Update bookedEvents or windowEvents depending on type
     if (selectedEvent.type === "booked") {
       const updatedBooked = bookedEvents.map((event) =>
@@ -352,6 +452,10 @@ const MyCalendar = () => {
       setWindowEvents(updatedWindows);
     }
 
+    /**
+     * Handles opening the rebooking popup if the event was marked as a no-show.
+     * @returns {void}
+     */
     // If edited info and noshow selected
     if (editedInfo.noShow) {
       setEventToRebook(updatedEvent);
@@ -376,6 +480,10 @@ const MyCalendar = () => {
     setEditedInfo("");
   };
 
+  /**
+   * Handles searching for a patient by their ID.
+   * @returns {void}
+   */
   // Search patient by ID
   const handleSearchWindow = () => {
     const patient = userList.find((p) => p.id === searchPatientId.trim());
@@ -397,6 +505,15 @@ const MyCalendar = () => {
       return;
     }
 
+    /**
+     * Handles generating visit windows for the found patient and navigating to booked appointments if they exist.
+     * Sets the current patient and window events state.
+     * Loops through the patient's studies to generate visit windows.
+     * Validates and formats the generated visit windows before setting them in state.
+     * Updates the calendar view to navigate to booked appointments or visit windows as appropriate.
+     * Displays alerts based on the patient's appointment status.
+     * @returns {void}
+     */
     // Set current patient info
     setCurrentPatient(patient);
     const birthDate = new Date(patient.DOB);
@@ -467,6 +584,14 @@ const MyCalendar = () => {
 
     setWindowEvents(studyWindows);
 
+    /**
+     * Handles checking for existing booked appointments for the patient and navigating the calendar accordingly.
+     * If booked appointments exist, navigates to the next upcoming appointment or the earliest one.
+     * If no booked appointments exist, navigates to the first visit window.
+     * Displays alerts based on the navigation action taken.
+     * @returns {void}
+     */
+
     //  Check if patient has existing booked appointments and navigate to them
     const patientBookedAppointments = bookedEvents
       .filter((appointment) => appointment.patientId === patient.id)
@@ -515,6 +640,13 @@ const MyCalendar = () => {
     }
   };
 
+  /**
+   * Handles checking if an appointment falls within the patient's visit windows.
+   * 
+   * @param {Object} appointment - The appointment object to check. 
+   * @param {Object} patient - The patient object containing visit window information. 
+   * @returns {boolean} True if the appointment is within any visit window, false otherwise.
+   */
   // If booking within study window
   const isAppointmentWithinVisitWindow = (appointment, patient) => {
     const birthDate = new Date(patient.DOB);
@@ -562,6 +694,10 @@ const MyCalendar = () => {
     return false;
   };
 
+  /**
+   * Handles proceeding with booking an appointment outside the visit window after confirmation.
+   * @returns {void}
+   */
   // If confirm on outside study window pop up
   const proceedWithOutOfWindowBooking = () => {
     if (!pendingAppointment) return;
@@ -571,6 +707,10 @@ const MyCalendar = () => {
     setPendingAppointment(null);
   };
 
+  /**
+   * Handles clearing the search and window events on the calendar.
+   * @returns {void}
+   */
   // Clear search and window on calender
   const handleClearWindow = () => {
     setWindowEvents([]);
@@ -578,6 +718,10 @@ const MyCalendar = () => {
     setCurrentPatient(null);
   };
 
+  /**
+   * Handles confirming the deletion of an event from the booked events list.
+   * @returns {void}
+   */
   // Confirm delete on pop up, append to local storage
   const confirmDeleteEvent = () => {
     if (!eventToDelete?.patientId) {
@@ -617,17 +761,32 @@ const MyCalendar = () => {
     setAppOpen(false);
   };
 
+  /**
+   * Handles clicking on an event in the calendar to open the delete confirmation popup.
+   * @param {Object} event - The event object that was clicked.
+   * @return {void} 
+   */
   // Store event clicked on and open pop up for delete
   const handleEventClick = (event) => {
     setEventToDelete(event);
     setPopupOpen(true);
   };
 
+  /**
+   * Handles adding a new appointment by opening the appointment booking popup.
+   * @return {void}
+   */
   // Store event clicked on and open pop up for delete
   const handleEventAdd = () => {
     setAppOpen(true);
   };
 
+  /**
+   * State to manage booked appointments.
+   * @type {Array<Object>} 
+   * @returns {void} Does not return a value.
+   * 
+   */
   // Create array to store booked appointments
   const [bookedEvents, setBookedEvents] = useState(() => {
     // Place in local storage + make date object to store
@@ -652,6 +811,13 @@ const MyCalendar = () => {
   // Sets current date and time
   const localizer = momentLocalizer(moment);
 
+  /**
+   * Hand;es adding a new appointment to the booked events list and updating patient context.
+   * 
+   * @param {Object} appointment - The appointment object containing details for the new appointment. 
+   * @param {boolean} [override=false] - Flag indicating whether to override visit window checks. 
+   * @returns {void} Does not return a value.
+   */
   // Function to add appointment
   const handleAddAppointment = (appointment, override = false) => {
     //validate required fields
@@ -777,6 +943,11 @@ const MyCalendar = () => {
     setAppOpen(false);
   };
 
+  /**
+   * State to manage selected rooms for filtering appointments.
+   * @type {Array<{id: string, label: string}>} 
+   * @returns {void} Does not return a value.
+   */
   // Selected rooms available
   const roomList = [
     { id: "TeleRoom", label: "Telemetry Room (Room 2.10)" },
@@ -811,6 +982,10 @@ const MyCalendar = () => {
     };
   });
 
+  /**
+   * Cleans up past appointments by removing them from bookedEvents and updating userList accordingly.
+   * @returns {void} Does not return a value.
+   */
   const cleanupPastAppointments = useCallback(() => {
     const now = new Date();
     let updatedBookedEvents = [...bookedEvents];
@@ -863,9 +1038,19 @@ const MyCalendar = () => {
     return () => clearInterval(interval); // cleanup on unmount
   }, [cleanupPastAppointments]);
 
+  /**
+   * Combines all event types into a single array for calendar display and applies filtering based on selected rooms.
+   * @returns {Array<Object>} Array of filtered appointment objects for calendar display.
+   * 
+   */
   // Array of all avents
   const allEvents = [...bookedEvents, ...windowEvents, ...blockedEvents];
 
+  /**
+   * Filters appointments based on selected rooms and ensures date objects are properly formatted.
+   * 
+   * @returns {Array<Object>} Array of filtered appointment objects with proper date formatting.
+   */
   const filteredAppointments = useMemo(() => {
     return allEvents
     .filter((event) => {

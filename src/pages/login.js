@@ -4,6 +4,19 @@ import { useNavigate } from "react-router-dom";
 import { FaUser, FaLock } from "react-icons/fa";
 import Alert from "../components/Alert";
 
+/**
+ * LogIn component that renders the LogIn form and handles user authentication
+ * 
+ * Checks for stored users, verifies credentials,
+ * navigates to the calendar page on success, displays alert if failed
+ * 
+ * @component
+ * @example
+ * <Route path="/login" element={<LogIn />} />
+ * 
+ * @returns {JSX.Element} The LogIn component 
+ */
+
 const LogIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,6 +30,11 @@ const LogIn = () => {
 
   const navigate = useNavigate();
 
+    /**
+     * 
+     * Event handler to check if caps lock is on
+     * @param {KeyboardEvent} event - The keyboard event/ 
+     */
   useEffect(() => {
     //To check if the caps lock is on
     const handleKeyUp = (event) => {
@@ -38,6 +56,18 @@ const LogIn = () => {
       }
     };
   }, []);
+
+  /**
+   * 
+   * Handles the login form submission
+   * 
+   * Checks if the email and password submitted by the user match an already created account.
+   * Displays a success alert and navigates to the calendar page if credentials are correct.
+   * Displays an error alert if credentials are incorrect.
+   * 
+   * @param {React.FormEvent<HTMLFormElement>} e - The form submission event.
+   * @returns {void} 
+   */
 
   const handleLogin = (e) => {
     //Login Logic

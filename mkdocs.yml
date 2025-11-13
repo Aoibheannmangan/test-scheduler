@@ -11,7 +11,23 @@ nav:
   - About: about.md
   - User Guide:
       - Getting Started: user-guide/getting-started.md
+      - Requirements: user-guide/requirements.md
       - License: user-guide/license.md
+  - Scheduler Guide:
+      - Login: jsdocs/login.md
+      - Signup: jsdocs/signup.md
+      - Forgot Password: jsdocs/forgotpsw.md
+      - Forecast: jsdocs/forecast.md
+      - Appointment View: jsdocs/appointview.md
+      - Calendar: jsdocs/calendar.md
+      - Appointment: jsdocs/appointment.md
+  - Components Guide:
+      - Alert: jsdocs/alert.md
+      - Clickable Cell: jsdocs/clickablecell.md
+      - Custom Toolbar: jsdocs/customtoolbar.md
+      - Navbar: jsdocs/navbar.md
+      - Pop Up: jsdocs/popup.md
+      - Rebooking Form: jsdocs/rebooking.md
 
 theme:
   name: mkdocs
@@ -25,6 +41,8 @@ plugins:
       handlers:
         python:
           paths: ["."]
+        
+        
 
 
 

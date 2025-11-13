@@ -2,6 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './Navbar.css';
 
+/**
+ * Customised Navbar component that provides navigation links for the application.
+ * Includes links to Appointment View, Calendar, Forecast and Sign Out
+ * @returns {JSX.Element} The rendered Navbar with links to the pages
+ */
 const Navbar = () => {
     return (
         <nav className="navbar">

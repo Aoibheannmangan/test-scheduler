@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://aoibheannmangan.github.io/test-scheduler/jsdocs/calendar/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Calendar - Test Scheduler Documentation</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/python.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/bash.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">Test Scheduler Documentation</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../../about/" class="nav-link">About</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">User Guide</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../user-guide/getting-started/" class="dropdown-item">Getting Started</a>
+</li>
+                                    
+<li>
+    <a href="../../user-guide/requirements/" class="dropdown-item">Requirements</a>
+</li>
+                                    
+<li>
+    <a href="../../user-guide/license/" class="dropdown-item">License</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Scheduler Guide</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../login/" class="dropdown-item">Login</a>
+</li>
+                                    
+<li>
+    <a href="../signup/" class="dropdown-item">Signup</a>
+</li>
+                                    
+<li>
+    <a href="../forgotpsw/" class="dropdown-item">Forgot Password</a>
+</li>
+                                    
+<li>
+    <a href="../forecast/" class="dropdown-item">Forecast</a>
+</li>
+                                    
+<li>
+    <a href="../appointview/" class="dropdown-item">Appointment View</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">Calendar</a>
+</li>
+                                    
+<li>
+    <a href="../appointment/" class="dropdown-item">Appointment</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Components Guide</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../alert/" class="dropdown-item">Alert</a>
+</li>
+                                    
+<li>
+    <a href="../clickablecell/" class="dropdown-item">Clickable Cell</a>
+</li>
+                                    
+<li>
+    <a href="../customtoolbar/" class="dropdown-item">Custom Toolbar</a>
+</li>
+                                    
+<li>
+    <a href="../navbar/" class="dropdown-item">Navbar</a>
+</li>
+                                    
+<li>
+    <a href="../popup/" class="dropdown-item">Pop Up</a>
+</li>
+                                    
+<li>
+    <a href="../rebooking/" class="dropdown-item">Rebooking Form</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                            <li class="nav-item">
+                                <a rel="prev" href="../appointview/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../appointment/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/Aoibheannmangan/test-scheduler.git/edit/master/docs/jsdocs/calendar.md" class="nav-link"><i class="fa-brands fa-github"></i> Edit on GitHub</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="2"><a href="#mycalendar-jsxelement" class="nav-link">MyCalendar() =&gt; JSX.Element</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<p><a name="MyCalendar"></a></p>
+<h2 id="mycalendar-jsxelement">MyCalendar() =&gt; <code>JSX.Element</code></h2>
+<p>Calendar component that renders the main calendar view and handles appointment management.
+Includes functionality for booking, editing, deleting appointments,
+blocking dates, searching patients, and managing visit windows.</p>
+<p><strong>Kind</strong>: global function<br />
+<strong>Returns</strong>: <code>JSX.Element</code> - The Calendar component that renders the main calendar view and handles appointment management.<br />
+<strong>Component</strong>: <br />
+<strong>Example</strong>  </p>
+<pre><code class="language-js">&lt;Route path=&quot;/calendar&quot; element={&lt;MyCalendar /&gt;} /&gt;
+</code></pre>
+<ul>
+<li><a href="#MyCalendar">MyCalendar()</a> <code>JSX.Element</code><ul>
+<li><a href="#MyCalendar..roomList">~roomList</a> =&gt;  <code>void</code></li>
+<li><a href="#MyCalendar..cleanupPastAppointments">~cleanupPastAppointments</a> =&gt;  <code>void</code></li>
+<li><a href="#MyCalendar..allEvents">~allEvents</a> =&gt; <code>Array.&lt;Object&gt;</code></li>
+<li><a href="#MyCalendar..filteredAppointments">~filteredAppointments</a> =&gt; <code>Array.&lt;Object&gt;</code></li>
+<li><a href="#MyCalendar..handleSelectEvent">~handleSelectEvent(event)</a> =&gt; <code>void</code></li>
+<li><a href="#MyCalendar..handleBlockDate">~handleBlockDate()</a> =&gt; <code>void</code></li>
+<li><a href="#MyCalendar..handleUnBlockDate">~handleUnBlockDate()</a> =&gt;  <code>void</code></li>
+<li><a href="#MyCalendar..handleShowBlockedDates">~handleShowBlockedDates()</a>  =&gt; <code>void</code></li>
+<li><a href="#MyCalendar..handleDateChange">~handleDateChange(event)</a> =&gt; <code>void</code></li>
+<li><a href="#MyCalendar..combinedEventGetter">~combinedEventGetter(event)</a>  =&gt; <code>void</code></li>
+<li><a href="#MyCalendar..handleNoShowChange">~handleNoShowChange(e)</a> =&gt; <code>void</code></li>
+<li><a href="#MyCalendar..handleUpdateEvent">~handleUpdateEvent(updatedEvent)</a>  =&gt; <code>void</code></li>
+<li><a href="#MyCalendar..saveEditedInfo">~saveEditedInfo()</a> =&gt; <code>void</code></li>
+<li><a href="#MyCalendar..handleSearchWindow">~handleSearchWindow()</a> =&gt; <code>void</code><ul>
+<li><a href="#MyCalendar..handleSearchWindow..patientBookedAppointments">~patientBookedAppointments</a>  =&gt; <code>void</code></li>
+</ul>
+</li>
+<li><a href="#MyCalendar..isAppointmentWithinVisitWindow">~isAppointmentWithinVisitWindow(appointment, patient)</a> =&gt; <code>boolean</code></li>
+<li><a href="#MyCalendar..proceedWithOutOfWindowBooking">~proceedWithOutOfWindowBooking()</a> =&gt; <code>void</code></li>
+<li><a href="#MyCalendar..handleClearWindow">~handleClearWindow()</a> =&gt; <code>void</code></li>
+<li><a href="#MyCalendar..confirmDeleteEvent">~confirmDeleteEvent()</a> =&gt;  <code>void</code></li>
+<li><a href="#MyCalendar..handleEventClick">~handleEventClick(event)</a>  =&gt; <code>void</code></li>
+<li><a href="#MyCalendar..handleEventAdd">~handleEventAdd()</a> =&gt; <code>void</code></li>
+<li><a href="#MyCalendar..handleAddAppointment">~handleAddAppointment(appointment, [override])</a> =&gt; <code>void</code></li>
+</ul>
+</li>
+</ul>
+<p><a name="MyCalendar..roomList"></a></p>
+<h3 id="mycalendarroomlist-void">MyCalendar~roomList =&gt;  <code>void</code></h3>
+<p>State to manage selected rooms for filtering appointments.</p>
+<p><strong>Kind</strong>: inner constant of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
+<strong>Returns</strong>: <code>void</code> - Does not return a value.<br />
+<a name="MyCalendar..cleanupPastAppointments"></a></p>
+<h3 id="mycalendarcleanuppastappointments-void">MyCalendar~cleanupPastAppointments =&gt; <code>void</code></h3>
+<p>Cleans up past appointments by removing them from bookedEvents and updating userList accordingly.</p>
+<p><strong>Kind</strong>: inner constant of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
+<strong>Returns</strong>: <code>void</code> - Does not return a value.<br />
+<a name="MyCalendar..allEvents"></a></p>
+<h3 id="mycalendarallevents-arrayobject">MyCalendar~allEvents =&gt; <code>Array.&lt;Object&gt;</code></h3>
+<p>Combines all event types into a single array for calendar display and applies filtering based on selected rooms.</p>
+<p><strong>Kind</strong>: inner constant of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
+<strong>Returns</strong>: <code>Array.&lt;Object&gt;</code> - Array of filtered appointment objects for calendar display.<br />
+<a name="MyCalendar..filteredAppointments"></a></p>
+<h3 id="mycalendarfilteredappointments-arrayobject">MyCalendar~filteredAppointments =&gt; <code>Array.&lt;Object&gt;</code></h3>
+<p>Filters appointments based on selected rooms and ensures date objects are properly formatted.</p>
+<p><strong>Kind</strong>: inner constant of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
+<strong>Returns</strong>: <code>Array.&lt;Object&gt;</code> - Array of filtered appointment objects with proper date formatting.<br />
+<a name="MyCalendar..handleSelectEvent"></a></p>
+<h3 id="mycalendarhandleselecteventevent-void">MyCalendar~handleSelectEvent(event) =&gt; <code>void</code></h3>
+<p>Handles selecting an event on the calendar.</p>
+<p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a>  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>event</td>
+<td><code>Object</code></td>
+<td>The event object that was selected.</td>
+</tr>
+<tr>
+<td>event.type</td>
+<td><code>string</code></td>
+<td>The type of the event (e.g., "booked", "window").</td>
+</tr>
+<tr>
+<td>event.title</td>
+<td><code>string</code></td>
+<td>The title of the event.</td>
+</tr>
+<tr>
+<td>event.start</td>
+<td><code>Date</code></td>
+<td>The start date/time of the event.</td>
+</tr>
+<tr>
+<td>event.end</td>
+<td><code>Date</code></td>
+<td>The end date/time of the event.</td>
+</tr>
+<tr>
+<td>event.room</td>
+<td><code>string</code></td>
+<td>The room assigned to the event.</td>
+</tr>
+<tr>
+<td>event.noShow</td>
+<td><code>boolean</code></td>
+<td>Indicates if the event was marked as a no-show.</td>
+</tr>
+<tr>
+<td>event.noShowComment</td>
+<td><code>string</code></td>
+<td>Comments related to the no-show status.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="MyCalendar..handleBlockDate"></a></p>
+<h3 id="mycalendarhandleblockdate-void">MyCalendar~handleBlockDate()  =&gt; <code>void</code></h3>
+<p>Handles blocking a selected date on the calendar.</p>
+<p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
+<a name="MyCalendar..handleUnBlockDate"></a></p>
+<h3 id="mycalendarhandleunblockdate-void">MyCalendar~handleUnBlockDate() =&gt; <code>void</code></h3>
+<p>Handles unblocking a previously blocked date on the calendar.</p>
+<p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
+<a name="MyCalendar..handleShowBlockedDates"></a></p>
+<h3 id="mycalendarhandleshowblockeddates-void">MyCalendar~handleShowBlockedDates() =&gt; <code>void</code></h3>
+<p>Toggles the display of blocked dates on the calendar.</p>
+<p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
+<a name="MyCalendar..handleDateChange"></a></p>
+<h3 id="mycalendarhandledatechangeevent-void">MyCalendar~handleDateChange(event) =&gt; <code>void</code></h3>
+<p>Handles the change of selected date from the date input.</p>
+<p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a>  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>event</td>
+<td><code>Object</code></td>
+<td>The event object from the date input change.</td>
+</tr>
+<tr>
+<td>event.target.value</td>
+<td><code>string</code></td>
+<td>The new selected date value.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="MyCalendar..combinedEventGetter"></a></p>
+<h3 id="mycalendarcombinedeventgetterevent-void">MyCalendar~combinedEventGetter(event) =&gt; <code>void</code></h3>
+<p>Handles combining event properties for styling and blocked status.</p>
+<p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a>  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>event</td>
+<td><code>Object</code></td>
+<td>The event object to get properties for.</td>
+</tr>
+<tr>
+<td>event.type</td>
+<td><code>string</code></td>
+<td>The type of the event (e.g., "booked", "window").</td>
+</tr>
+<tr>
+<td>event.title</td>
+<td><code>string</code></td>
+<td>The title of the event.</td>
+</tr>
+<tr>
+<td>event.start</td>
+<td><code>Date</code></td>
+<td>The start date/time of the event.</td>
+</tr>
+<tr>
+<td>event.end</td>
+<td><code>Date</code></td>
+<td>The end date/time of the event.</td>
+</tr>
+<tr>
+<td>event.blocked</td>
+<td><code>boolean</code></td>
+<td>Indicates if the event is blocked.</td>
+</tr>
+<tr>
+<td>event.room</td>
+<td><code>string</code></td>
+<td>The room assigned to the event.</td>
+</tr>
+<tr>
+<td>event.noShow</td>
+<td><code>boolean</code></td>
+<td>Indicates if the event was marked as a no-show.</td>
+</tr>
+<tr>
+<td>event.noShowComment</td>
+<td><code>string</code></td>
+<td>Comments related to the no-show status.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="MyCalendar..handleNoShowChange"></a></p>
+<h3 id="mycalendarhandlenoshowchangee-void">MyCalendar~handleNoShowChange(e) =&gt; <code>void</code></h3>
+<p>Handles changes to the no-show checkbox in the event edit form.</p>
+<p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a>  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>e</td>
+<td><code>React.ChangeEvent.&lt;HTMLInputElement&gt;</code></td>
+<td>The change event from the checkbox.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="MyCalendar..handleUpdateEvent"></a></p>
+<h3 id="mycalendarhandleupdateeventupdatedevent-void">MyCalendar~handleUpdateEvent(updatedEvent) =&gt; <code>void</code></h3>
+<p>Handles updating an existing event in the booked events list.</p>
+<p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a>  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>updatedEvent</td>
+<td><code>Object</code></td>
+<td>The event object with updated details.</td>
+</tr>
+<tr>
+<td>updatedEvent.id</td>
+<td><code>string</code></td>
+<td>The unique identifier of the event.</td>
+</tr>
+<tr>
+<td>updatedEvent.title</td>
+<td><code>string</code></td>
+<td>The title of the event.</td>
+</tr>
+<tr>
+<td>updatedEvent.start</td>
+<td><code>Date</code></td>
+<td>The start date/time of the event.</td>
+</tr>
+<tr>
+<td>updatedEvent.end</td>
+<td><code>Date</code></td>
+<td>The end date/time of the event.</td>
+</tr>
+<tr>
+<td>updatedEvent.room</td>
+<td><code>string</code></td>
+<td>The room assigned to the event.</td>
+</tr>
+<tr>
+<td>updatedEvent.noShow</td>
+<td><code>boolean</code></td>
+<td>Indicates if the event was marked as a no-show.</td>
+</tr>
+<tr>
+<td>updatedEvent.noShowComment</td>
+<td><code>string</code></td>
+<td>Comments related to the no-show status.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="MyCalendar..saveEditedInfo"></a></p>
+<h3 id="mycalendarsaveeditedinfo-void">MyCalendar~saveEditedInfo() =&gt;  <code>void</code></h3>
+<p>Handles saving edited event information.</p>
+<p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
+<a name="MyCalendar..handleSearchWindow"></a></p>
+<h3 id="mycalendarhandlesearchwindow-void">MyCalendar~handleSearchWindow()  =&gt; <code>void</code></h3>
+<p>Handles searching for a patient by their ID.</p>
+<p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
+<a name="MyCalendar..handleSearchWindow..patientBookedAppointments"></a></p>
+<h4 id="handlesearchwindowpatientbookedappointments-void">handleSearchWindow~patientBookedAppointments =&gt; <code>void</code></h4>
+<p>Handles checking for existing booked appointments for the patient and navigating the calendar accordingly.
+If booked appointments exist, navigates to the next upcoming appointment or the earliest one.
+If no booked appointments exist, navigates to the first visit window.
+Displays alerts based on the navigation action taken.</p>
+<p><strong>Kind</strong>: inner constant of <a href="#MyCalendar..handleSearchWindow"><code>handleSearchWindow</code></a><br />
+<a name="MyCalendar..isAppointmentWithinVisitWindow"></a></p>
+<h3 id="mycalendarisappointmentwithinvisitwindowappointment-patient-boolean">MyCalendar~isAppointmentWithinVisitWindow(appointment, patient) =&gt; <code>boolean</code></h3>
+<p>Handles checking if an appointment falls within the patient's visit windows.</p>
+<p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
+<strong>Returns</strong>: <code>boolean</code> - True if the appointment is within any visit window, false otherwise.  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appointment</td>
+<td><code>Object</code></td>
+<td>The appointment object to check.</td>
+</tr>
+<tr>
+<td>patient</td>
+<td><code>Object</code></td>
+<td>The patient object containing visit window information.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="MyCalendar..proceedWithOutOfWindowBooking"></a></p>
+<h3 id="mycalendarproceedwithoutofwindowbooking-void">MyCalendar~proceedWithOutOfWindowBooking() =&gt; <code>void</code></h3>
+<p>Handles proceeding with booking an appointment outside the visit window after confirmation.</p>
+<p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
+<a name="MyCalendar..handleClearWindow"></a></p>
+<h3 id="mycalendarhandleclearwindow-void">MyCalendar~handleClearWindow() =&gt; <code>void</code></h3>
+<p>Handles clearing the search and window events on the calendar.</p>
+<p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
+<a name="MyCalendar..confirmDeleteEvent"></a></p>
+<h3 id="mycalendarconfirmdeleteevent-void">MyCalendar~confirmDeleteEvent()  =&gt; <code>void</code></h3>
+<p>Handles confirming the deletion of an event from the booked events list.</p>
+<p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
+<a name="MyCalendar..handleEventClick"></a></p>
+<h3 id="mycalendarhandleeventclickevent-void">MyCalendar~handleEventClick(event)  =&gt; <code>void</code></h3>
+<p>Handles clicking on an event in the calendar to open the delete confirmation popup.</p>
+<p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a>  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>event</td>
+<td><code>Object</code></td>
+<td>The event object that was clicked.</td>
+</tr>
+</tbody>
+</table>
+<p><a name="MyCalendar..handleEventAdd"></a></p>
+<h3 id="mycalendarhandleeventadd-void">MyCalendar~handleEventAdd() =&gt; <code>void</code></h3>
+<p>Handles adding a new appointment by opening the appointment booking popup.</p>
+<p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
+<a name="MyCalendar..handleAddAppointment"></a></p>
+<h3 id="mycalendarhandleaddappointmentappointment-override-void">MyCalendar~handleAddAppointment(appointment, [override]) =&gt; <code>void</code></h3>
+<p>Hand;es adding a new appointment to the booked events list and updating patient context.</p>
+<p><strong>Kind</strong>: inner method of <a href="#MyCalendar"><code>MyCalendar</code></a><br />
+<strong>Returns</strong>: <code>void</code> - Does not return a value.  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>appointment</td>
+<td><code>Object</code></td>
+<td></td>
+<td>The appointment object containing details for the new appointment.</td>
+</tr>
+<tr>
+<td>[override]</td>
+<td><code>boolean</code></td>
+<td><code>false</code></td>
+<td>Flag indicating whether to override visit window checks.</td>
+</tr>
+</tbody>
+</table></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+
+        <div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

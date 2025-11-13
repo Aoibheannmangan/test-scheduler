@@ -13,6 +13,7 @@ import "@fontsource/sansation";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
+//i
 function App() {
   const location = useLocation();
   const hideNavbarPaths = ["/signup", "/login", "/forgotpsw"];

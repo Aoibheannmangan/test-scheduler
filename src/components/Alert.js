@@ -1,6 +1,11 @@
 import React from 'react';
 import './Alert.css';
 
+/**
+ * Custom Alert Popup that displays a message with
+ * a specified type
+ * a close button
+ */
 const Alert = ({message, type, onClose}) => {
     return (
         <div role="alert" className={`alert-popup ${type}`}>

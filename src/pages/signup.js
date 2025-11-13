@@ -4,6 +4,18 @@ import { useNavigate } from "react-router-dom";
 import { FaUser, FaLock, FaEnvelope } from "react-icons/fa";
 import Alert from "../components/Alert";
 
+/**
+ * SignUp component that renders the SignUp form and handles user registration
+ * 
+ * Validates user input, checks for existing users, creates new user accounts,
+ * navigates to the calendar page on success, displays alert if failed
+ * 
+ * @component
+ * @example
+ * <Route path="/signup" element={<SignUp />} />
+ * 
+ * @returns {JSX.Element} The SignUp component
+ */
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -33,6 +45,11 @@ const SignUp = () => {
   const navigate = useNavigate();
 
 
+    /**
+     * 
+     * Event handler to check if caps lock is on
+     * @param {KeyboardEvent} event - The keyboard event/ 
+     */
   //Checking if caps lock is on
   useEffect(() => {
     const handleKeyUp = (event) => {
@@ -57,6 +74,12 @@ const SignUp = () => {
     };
   }, []);
 
+  /**
+   * 
+   * Password validation handler to validate password requirements
+   * 
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The event from the password input 
+   */
 
   // Password Validation for making sure the password has the different requirements
   const handlePasswordChange = (e) => {
@@ -73,13 +96,26 @@ const SignUp = () => {
     });
   };
 
-
+  /**
+   * 
+   * Checks if the email is already registered
+   * 
+   * @param {string} email - The email address to check 
+   * @returns {boolean} True if email is registered, false otherwise
+   */
   //Checking if email is already registered
   const isEmailRegistered = (email) => {
     const users = JSON.parse(localStorage.getItem("users")) || [];
     return users.some((user) => user.email === email);
   };
 
+  /**
+   * 
+   * Checks if the given ID is already in use
+   * 
+   * @param {string} staffId - The staff ID to check 
+   * @returns {boolean} True if ID is in use, false otherwise
+   */
 
   //Checking if ID is already in use
   const isIdInUse = (staffId) => {
@@ -88,6 +124,14 @@ const SignUp = () => {
   };
 
 
+  /**
+   * 
+   * Handles the signup form submission, validates input data
+   * saves new user to local storage if valid
+   * navigates to calendar page on success, shows alert on failure
+   * @param {React.FormEvent<HTMLFormElement>} e - THe form submission event. 
+   * @returns {void}
+   */
   const handleSubmit = (e) => {
     e.preventDefault();
 

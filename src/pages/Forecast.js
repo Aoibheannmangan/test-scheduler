@@ -8,16 +8,38 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TablePagination from "@mui/material/TablePagination";
 
+/**
+ * Forecast component that displays a forecast of booked appointments per month.
+ * 
+ * Fetches booked events from `localStorage`, counts appointments per month, and 
+ * displays the data in a paginated table.
+ * 
+ * @component
+ * @example
+ * <Route path="/forecast" element={<Forecast />} />
+ * @returns {JSX.Element} The Forecast component that renders the appointment forecast table.
+ */
 import { getAppointmentsPerMonth } from "../hooks/forecast";
+
 // Table column definitions
 const columns = [
   { id: "monthYear", label: "Month", minWidth: 170 },
   { id: "count", label: "Number of Appointments", minWidth: 100, align: "right" }
 ];
 
-// Helper functions to format row data
+/**
+ * Creates a data row for the table.
+ * 
+ * @param {string} monthYear - The month and year (e.g., "January 2025").
+ * @param {number} count - The number of appointments booked in that month.
+ * @returns {Object} A data row object containing the monthYear and count.
+ */
 const createData = (monthYear, count) => ({ monthYear, count });
 
+/**
+ * Forecast component for displaying appointments.
+ * @returns {JSX.Element} The Forecast component that displays the forecast of booked appointments per month.
+ */
 const Forecast = () => {
   const [bookedEvents, setBookedEvents] = useState([]);
   const [monthlyCounts, setMonthlyCounts] = useState({});
@@ -25,7 +47,12 @@ const Forecast = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  // Load booked events from localStorage
+  /**
+   * Loads booked events from localStorage and parses the dates into Date objects.
+   * This effect runs only once when the component is mounted.
+   * 
+   * @returns {void}
+   */
   useEffect(() => {
     const storedEvents = JSON.parse(localStorage.getItem("bookedEvents")) || [];
     const parsedEvents = storedEvents.map((event) => ({
@@ -36,14 +63,24 @@ const Forecast = () => {
     setBookedEvents(parsedEvents);
   }, []);
 
-  // Count appointments per month
+  /**
+   * Filters booked events and counts the number of appointments per month.
+   * Updates the monthlyCounts state with the results.
+   * 
+   * @returns {void}
+   */
   useEffect(() => {
     const appointmentEvents = bookedEvents.filter((e) => e.type === "booked");
     const counts = getAppointmentsPerMonth(appointmentEvents);
     setMonthlyCounts(counts);
   }, [bookedEvents]);
 
-  // Prepare appointment table rows
+  /**
+   * Prepares the table rows based on the monthly appointment counts.
+   * The rows are sorted chronologically by month and year.
+   * 
+   * @returns {void}
+   */
   useEffect(() => {
     const sorted = Object.entries(monthlyCounts)
       .sort(([a], [b]) => {
@@ -55,7 +92,21 @@ const Forecast = () => {
     setAppointmentRows(sorted);
   }, [monthlyCounts]);
 
+  /**
+   * Handles page change in the table pagination.
+   * 
+   * @param {Event} _event - The pagination event.
+   * @param {number} newPage - The new page number to display.
+   * @returns {void}
+   */
   const handleChangePage = (_event, newPage) => setPage(newPage);
+
+  /**
+   * Handles the change in the number of rows per page in the table pagination.
+   * 
+   * @param {React.ChangeEvent} event - The event triggering the change in rows per page.
+   * @returns {void}
+   */
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);

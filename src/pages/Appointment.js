@@ -3,6 +3,10 @@ import "./Appointment.css";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import dayjs from "dayjs";
 
+/**
+ * Toggle is not visible by default
+ * @returns {void} Does not return a value
+ */
 // Toggle is not visible by default
 const ToggleAppointment = ({
   onAddAppointment,
@@ -28,6 +32,14 @@ const ToggleAppointment = ({
     devRoom: "Developmental Assessment Room (Room 2.07)",
   };
 
+  /**
+   * Checks if a room is avaliable at a time
+   * @param {string} roomId - The ID of the room
+   * @param {Date} startTime - Appointment start time
+   * @param {Date} endTime  - Appointment end time
+   * @param {Array<Object>} appointments - List of current appointments
+   * @returns {Boolean} - Returns true if avaliable, false if not
+   */
   // Function to check if room is available at selected time
   const isRoomAvailable = (roomId, startTime, endTime, appointments) => {
     if (!startTime || !endTime) return true; // If no time selected, show all as available
@@ -40,6 +52,14 @@ const ToggleAppointment = ({
     });
   };
 
+  /**
+ * Calculates the selected start and end times based on the provided date and time.
+ * These values are memoized to avoid recalculating unless dependencies change.
+ * 
+ * @returns {Date|null} The selected start time or `null` if invalid inputs.
+ * @returns {Date|null} The selected end time or `null` if invalid inputs.
+ */
+
   // Calculate selected start and end times
   const selectedStart = useMemo(() => {
     if (!appDate || !appTimeStart || !dayjs.isDayjs(appTimeStart)) return null;
@@ -51,7 +71,11 @@ const ToggleAppointment = ({
     return dayjs(`${appDate}T${appTimeEnd.format("HH:mm")}`).toDate();
   }, [appDate, appTimeEnd]);
 
-  // Generate room options with availability
+  /**
+   * Generates the room options with avaliability based on selected start times
+   * 
+   * @returns {Array<Object>} - A list of rooms with their avaliabilty status
+   */
   const roomOptions = useMemo(() => {
     return Object.entries(roomList).map(([roomId, roomName]) => {
       const available = isRoomAvailable(
@@ -68,6 +92,15 @@ const ToggleAppointment = ({
     });
   }, [selectedStart, selectedEnd, bookedEvents]);
 
+  /**
+   * Handles form submission for new appointments
+   * Validates the start and end times
+   * Constructs a new appointment object and calls onAddAppointment
+   * Resets form state after submission
+   * 
+   * @param {Event} e - Event triggered by form submission 
+   * @returns {void}
+   */
   // Handles putting in a booking
   const handleSubmit = (e) => {
     e.preventDefault();

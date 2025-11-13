@@ -5,6 +5,15 @@
 // onSelectedSlot = Callback function when cell is clicked
 import moment from 'moment';
 
+/**
+ * A custom clickable cell that allows the selection of a date unless it's been blocked 
+ * @param {Object} param0 - The prop object passed to the ClickableCell component
+ * @param {React.ReactNode} param0.children - The content to be displayed inside the date cell
+ * @param {Date} param0.value - THe date value the cell represents
+ * @param {Function} param0.onSelectedSlot - A callback function that is triggered when the date cell is selected
+ * @param {Array<Object>} param0.blockedDates - An array containing all the blocked dates
+ * @returns {JSX.Element} The code that renders the clickable date cell.
+ */
 const ClickableDateCell = ({ children, value, onSelectSlot, blockedDates }) => {
   const safeBlockedDates = Array.isArray(blockedDates) ? blockedDates : [];
   
