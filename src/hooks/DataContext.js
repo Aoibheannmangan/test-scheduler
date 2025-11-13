@@ -28,7 +28,7 @@ export const DataProvider = ({ children }) => {
     const fetchData = async () => {
       // Tries to load data from flask where the API stored data
       try {
-        const response = await axios.get(`${apiUrl}/api/data`, {
+        const response = await axios.get(`${apiUrl}/data`, {
           timeout: 20000,
         });
         if (Array.isArray(response.data)) {
@@ -69,7 +69,7 @@ export const DataProvider = ({ children }) => {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${apiUrl}/api/data`, {
+      const response = await axios.get(`${apiUrl}/data`, {
         timeout: 20000,
       });
       const processedData = response.data.map((patient) => ({
