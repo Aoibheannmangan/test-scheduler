@@ -34,5 +34,3 @@ EXPOSE 5000
 
 #Start gunicorn
 CMD ["gunicorn", "api.wsgi:app", "--bind", "0.0.0.0:5000", "--chdir", "/app"]
-
-
