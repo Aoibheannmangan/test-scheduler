@@ -22,7 +22,7 @@ export const DataProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   // Use a configurable API base url so the same build can work in Docker/K8s/locally
-  const apiUrl = process.env.REACT_APP_API_URL?.replace(/\/$/, "") || "/api";
+  const apiUrl = process.env.REACT_APP_API_URL?.replace(/\/$/, "");
 
   useEffect(() => {
     const fetchData = async () => {
