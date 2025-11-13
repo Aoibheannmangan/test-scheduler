@@ -9,7 +9,13 @@ from .tokenDecorator import token_required
 
 def create_app():
     """Creates and configures the Flask application."""
-    app = Flask(__name__, instance_relative_config=True)
+    import os
+    from flask import Flask, send_from_directory
+
+    # Absolute path to the build folder
+    build_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../build"))
+
+    app = Flask(__name__, static_folder=build_dir, static_url_path="/")
 
     # Load configuration from config.py and instance/config.py
     app.config.from_object('api.config')
@@ -76,11 +82,6 @@ def create_app():
     @app.route("/", defaults={"path": ""})
     @app.route("/<path:path>")
     def serve_react(path):
-        build_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../build")
-        build_dir = os.path.abspath(build_dir)
-        if path != "" and os.path.exists(os.path.join(build_dir, path)):
-            return send_from_directory(build_dir, path)
-        else:
-            return send_from_directory(build_dir, "index.html")
+        return send_from_directory(app.static_folder, "index.html")
 
     return app
