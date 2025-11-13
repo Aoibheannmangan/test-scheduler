@@ -402,7 +402,13 @@ const Appointments = () => {
                     if (event.visit_num > 6) {
                       return (
                         <div>
-                          <strong>Status:</strong> Patient is complete
+                          <strong>Status:</strong> Participant is complete
+                        </div>
+                      );
+                    } else if (event.visit_num === 1) {
+                      return (
+                        <div>
+                          <strong>Status:</strong> Participant is still in NICU
                         </div>
                       );
                     }
