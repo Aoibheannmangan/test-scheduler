@@ -2,10 +2,11 @@
 FROM node:18 AS build-frontend
 WORKDIR /app
 COPY package*.json ./
+RUN npm install
+
 COPY public ./public
 COPY src ./src
 
-RUN npm install
 RUN npm run build
 
 #Build the python backend
@@ -27,10 +28,8 @@ ENV FLASK_ENV=production PYTHONUNBUFFERED=1
 
 #Run database migrations at build time
 ENV FLASK_APP=api.wsgi
-RUN flask db upgrade || echo "Database already upto date"
-
 #Expose port
 EXPOSE 5000
 
 #Start gunicorn
-CMD ["gunicorn", "api.wsgi:app", "--bind", "0.0.0.0:5000", "--chdir", "/app"]
+CMD flask db upgrade && gunicorn api.wsgi:app --bind 0.0.0.0:5000 --chdir /app
