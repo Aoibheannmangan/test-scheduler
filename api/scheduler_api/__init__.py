@@ -24,7 +24,7 @@ def create_app():
     if app.config.get('SECRET_KEY') is None:
         app.config.from_pyfile('config.py', silent=True)
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///db.sqlite')
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # Initialize Flask extensions
@@ -34,9 +34,9 @@ def create_app():
     with app.app_context():
         from . import models
         db.create_all()
-        
+
     # Enable CORS
-    CORS(app)
+    CORS(app, origins=["https://test-scheduler-2.onrender.com/"])
 
     # Import models here to avoid circular imports
     from . import models
