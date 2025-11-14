@@ -17,10 +17,15 @@ def create_app():
 
     app = Flask(__name__, static_folder=build_dir, static_url_path="/")
 
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev_key')
+
     # Load configuration from config.py and instance/config.py
     app.config.from_object('api.config')
     if app.config.get('SECRET_KEY') is None:
         app.config.from_pyfile('config.py', silent=True)
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///db.sqlite')
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # Initialize Flask extensions
     db.init_app(app)
