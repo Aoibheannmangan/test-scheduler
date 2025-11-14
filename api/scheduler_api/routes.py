@@ -39,7 +39,7 @@ def get_data():
         'fields[2]': 'reg_participant_group', # Part group
         'fields[3]': 'nn_dob', # Dat of birth
         'fields[4]': 'reg_dag', # Site
-        'fields[5]': 'nicu_email',# Contact email
+        'fields[5]': 'reg_email',# Contact email
         'fields[6]': 'reg_days_early',
         'fields[7]': 'nn_sex',
         # gest days/ weeks

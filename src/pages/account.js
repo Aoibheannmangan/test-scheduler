@@ -46,7 +46,7 @@ const Account = () => {
         gestWeeks: rec.reg_gest_age_w,
         gestDays: rec.reg_gest_age_d,
         Study: rec.Study || ["AIMHIGH"], // No info on this (Depends on API eg: this is from an AIMHIGH REDCap)
-        notes: rec.notes || rec.nicu_email || "", // No info on this
+        notes: rec.notes || rec.reg_email || "", // No info on this
         Info: rec.Info || "", // No info on this
         room: rec.room || "", // No info on this (room requirements??)
       }));
