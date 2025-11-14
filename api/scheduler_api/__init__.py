@@ -88,6 +88,12 @@ def create_app():
     def get_blocked_dates_route(current_user):
         return get_blocked_dates(current_user)
     
+    @app.route("/api/debug/users")
+    def debug_users():
+        from .models import User
+        users = User.query.all()
+        return {"users": [u.email for u in users]}
+
     @app.route("/", defaults={"path": ""})
     @app.route("/<path:path>")
     def serve_react(path):
