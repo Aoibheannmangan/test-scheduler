@@ -53,8 +53,8 @@ const LogIn = () => {
     setIsSubmitting(true);
 
     try {
-      const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000"
-      const response = await axios.post(`${API_URL}/api/login`, {
+      const API_URL = "/api";  // <-- put it here
+      const response = await axios.post(`${API_URL}/login`, {
         email,
         password,
       });
