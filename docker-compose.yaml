@@ -10,10 +10,9 @@ services:
       - backend
   backend:
     build:
-      context: ./api
+      context: .
     init: true
     environment:
-      - FLASK_APP=run.py
       - PYTHONPATH=/app
     env_file:
       - .env
