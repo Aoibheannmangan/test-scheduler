@@ -24,12 +24,8 @@ def create_app():
     if app.config.get('SECRET_KEY') is None:
         app.config.from_pyfile('config.py', silent=True)
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
     # Initialize Flask extensions
     db.init_app(app)
-    migrate.init_app(app, db, directory=app.config['MIGRATION_DIR'])
 
     with app.app_context():
         from . import models
