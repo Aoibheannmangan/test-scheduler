@@ -22,6 +22,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY api ./api
 COPY --from=build-frontend /app/build ./build
+COPY seed_rooms.py /app/
+
 
 ENV FLASK_APP=api.wsgi
 ENV FLASK_ENV=production
