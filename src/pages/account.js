@@ -19,37 +19,49 @@ const Account = () => {
 
   // Map API fields to appointment fields (same as AppointView)
   useEffect(() => {
-    if (apiUserList && Array.isArray(apiUserList)) {
-      const mapped = apiUserList.map((rec) => ({
-        id: rec.record_id || "",
-        visitNum: rec.visitNum || 1,
-        OutOfArea:
-          rec.OutOfArea !== undefined ? rec.OutOfArea : rec.nicu_ooa === "1",
-        DOB: rec.DOB || rec.nn_dob || "",
-        Sex:
-          {
-            1: "Male",
-            2: "Female",
-          }[rec.nn_sex] || "Unknown",
-        site:
-          {
-            1: "CUMH",
-            2: "Coombe",
-            3: "Rotunda",
-          }[rec.nicu_dag] || "Unknown",
-        DaysEarly: rec.reg_days_early ? Number(rec.reg_days_early) : 0,
-        participantGroup:
-          {
-            1: "High Risk Infant",
-            2: "Control",
-          }[rec.nicu_participant_group] || "Unknown",
-        gestWeeks: rec.reg_gest_age_w,
-        gestDays: rec.reg_gest_age_d,
-        Study: rec.Study || ["AIMHIGH"], // No info on this (Depends on API eg: this is from an AIMHIGH REDCap)
-        notes: rec.notes || rec.reg_email || "", // No info on this
-        Info: rec.Info || "", // No info on this
-        room: rec.room || "", // No info on this (room requirements??)
-      }));
+     if (userList && Array.isArray(apiUserList)) {
+      // Map API fields to appointment fields
+      const mapped = apiUserList.map((rec) => {
+        return {
+          id: rec.record_id || "",
+          type: rec.type || "window", // All are windows unless you have appointment info
+          OutOfArea: rec.reg_ooa === "1",
+          DOB: rec.nn_dob || "",
+          Sex:
+            {
+              1: "Male",
+              2: "Female",
+            }[rec.nicu_sex] || "Unknown",
+          site:
+            {
+              1: "CUMH",
+              2: "Coombe",
+              3: "Rotunda",
+            }[rec.reg_dag] || "Unknown",
+          Study: ["AIMHIGH"], // Hardcoded as it pulls from the REDCap on AIMHIGH
+          DaysEarly: rec.reg_days_early ? Number(rec.reg_days_early) : 0,
+          Info: "", // Any aditional info field to import??**
+          notes: rec.nicu_email || "", // Use email as contact OR GET NUMBER?
+          email: rec.nicu_email || "",
+          participantGroup:
+            {
+              1: "Control",
+              2: "High Risk Infant",
+            }[rec.reg_participant_group] || "Unknown",
+          gestWeeks: rec.reg_gest_age_w,
+          gestDays: rec.reg_gest_age_d,
+          reg_date1: rec.reg_date1,
+          reg_date2: rec.reg_date2,
+          reg_9_month_window: rec.reg_9_month_window,
+          reg_12_month_window: rec.reg_12_month_window,
+          reg_17_month_window: rec.reg_17_month_window,
+          reg_19_month_window: rec.reg_19_month_window,
+          reg_23_month_window: rec.reg_23_month_window,
+          reg_25_month_window: rec.reg_25_month_window,
+          reg_30_month_window: rec.reg_30_month_window,
+          reg_31_month_window: rec.reg_31_month_window,
+        };
+      });
       setUserList(mapped);
     } else {
       setUserList([]);
@@ -81,6 +93,15 @@ const Account = () => {
     localStorage.setItem("editPatient", JSON.stringify(user));
     navigate("/info");
   };
+
+  const daysNegative = (daysEarly, isNegative) => {
+    if (isNegative) {
+      return "Birth on time";
+    } else {
+      return daysEarly;
+    }
+  };
+
 
   //------------------------------------------------ HTML ------------------------------------------------------------
 
@@ -141,10 +162,17 @@ const Account = () => {
           <hr className="divider" />
           <ul>
             <li>
-              <strong>Date of Birth:</strong> {user.DOB}
+              <strong>Date of Birth: </strong>
+              {/*Format date of birth*/}
+              {new Date(user.DOB).toLocaleDateString(undefined, {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
             </li>
             <li>
-              <strong>Days Early:</strong> {user.DaysEarly}
+              <strong>Days Early:</strong>{" "}
+              {daysNegative(user.DaysEarly, user.DaysEarly < 0)}
             </li>
             <li>
               <strong>Sex:</strong> {user.Sex}
