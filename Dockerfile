@@ -29,4 +29,6 @@ ENV PYTHONUNBUFFERED=1
 
 EXPOSE 5000
 
-CMD ["gunicorn", "api.wsgi:app", "--bind", "0.0.0.0:5000", "--chdir", "/app"]
+CMD flask db upgrade && \
+    python seed_rooms.py && \
+    gunicorn api.wsgi:app --bind 0.0.0.0:$PORT --chdir /app
