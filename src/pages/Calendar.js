@@ -52,12 +52,14 @@ const MyCalendar = () => {
   // Create array for blocked dates and show blocked dates state
   const [blockedDates, setBlockedDates] = useState([]);
 
+  const API_URL = (process.env.REACT_APP_API_URL || "").replace(/\/+$/, "") + "/api";
+
   useEffect(() => {
     const fetchBlockedDates = async () => {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          "http://localhost:5000/api/blocked-dates",
+          `${API_URL}/blocked-dates`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -114,8 +116,8 @@ const MyCalendar = () => {
   const fetchBookings = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.get(
-        "http://localhost:5000/api/appointments",
+      const response = await axios.get( 
+        `${API_URL}/appointments`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -169,7 +171,7 @@ const MyCalendar = () => {
       try {
         const token = localStorage.getItem("token");
         await axios.post(
-          "http://localhost:5000/api/block-date",
+          `${API_URL}/block-date`,
           { date: selectedDate },
           {
             headers: {
@@ -180,7 +182,7 @@ const MyCalendar = () => {
 
         // Refetch blocked dates to update the calendar
         const response = await axios.get(
-          "http://localhost:5000/api/blocked-dates",
+          `${API_URL}/blocked-dates`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -283,7 +285,7 @@ const MyCalendar = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:5000/api/appointment/${selectedEvent.event_id}`,
+        `${API_URL}/appointment/${selectedEvent.event_id}`,
         {
           start: updatedEvent.start.toISOString(),
           end: updatedEvent.end.toISOString(),
@@ -519,7 +521,7 @@ const MyCalendar = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.delete(
-        `http://localhost:5000/api/appointment/${eventToDelete.event_id}`,
+        `${API_URL}/appointment/${eventToDelete.event_id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -578,7 +580,7 @@ const MyCalendar = () => {
     }
 
     try {
-      await axios.post("http://localhost:5000/api/book", appointment, {
+      await axios.post(`${API_URL}/book`, appointment, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
 
