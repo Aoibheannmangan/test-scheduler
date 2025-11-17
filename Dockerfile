@@ -32,4 +32,5 @@ ENV FLASK_APP=api.wsgi
 EXPOSE 5000
 
 #Start gunicorn
-CMD ["sh", "-c", "flask db upgrade && gunicorn api.wsgi:app --bind 0.0.0.0:5000 --chdir /app"]
+CMD flask db upgrade && \
+    gunicorn api.wsgi:app --bind 0.0.0.0:5000 --chdir /app
