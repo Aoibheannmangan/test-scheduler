@@ -41,7 +41,7 @@ def get_data():
         'fields[4]': 'reg_dag', # Site
         'fields[5]': 'nicu_email',# Contact email
         'fields[6]': 'reg_days_early',
-        'fields[7]': 'nicu_sex',
+        'fields[7]': 'nn_sex',
         # gest days/ weeks
         'fields[8]': 'reg_gest_age_w',
         'fields[9]': 'reg_gest_age_d',

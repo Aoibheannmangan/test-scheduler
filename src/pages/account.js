@@ -32,7 +32,7 @@ const Account = () => {
             {
               1: "Male",
               2: "Female",
-            }[rec.nicu_sex] || "Unknown",
+            }[rec.nn_sex] || "Unknown",
           site:
             {
               1: "CUMH",
