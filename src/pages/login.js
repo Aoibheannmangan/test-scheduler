@@ -18,6 +18,8 @@ const LogIn = () => {
 
   const navigate = useNavigate();
 
+  const API_URL = process.env.REACT_APP_API_URL + "/api";
+  
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -53,7 +55,6 @@ const LogIn = () => {
     setIsSubmitting(true);
 
     try {
-      const API_URL = "/api";  // <-- put it here
       const response = await axios.post(`${API_URL}/login`, {
         email,
         password,
