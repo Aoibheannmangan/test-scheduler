@@ -27,13 +27,13 @@ def create_app():
     # Initialize Flask extensions
     db.init_app(app)
     migrate.init_app(app, db, directory=app.config['MIGRATION_DIR'])
-    
+
     with app.app_context():
         from . import models
         db.create_all()
 
     # Enable CORS
-    CORS(app, origins=["https://test-scheduler-2.onrender.com/"])
+    CORS(app, origins=["https://test-scheduler-2.onrender.com/", "http://localhost:3000"])
 
     # Import models here to avoid circular imports
     from . import models
