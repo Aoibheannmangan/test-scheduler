@@ -18,8 +18,8 @@ const LogIn = () => {
 
   const navigate = useNavigate();
 
-  const API_URL = process.env.REACT_APP_API_URL + "/api";
-  
+  const API_URL = (process.env.REACT_APP_API_URL || "").replace(/\/+$/, "") + "/api";
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {

@@ -21,33 +21,8 @@ const SignUp = () => {
   });
 
   const [alert, setAlert] = useState(null);
-
-  const [capsLockOn, setCapsLockOn] = useState(false);
-
   const passwordInputRef = useRef(null);
   const navigate = useNavigate();
-
-  //Checking if caps lock is on
-  useEffect(() => {
-    const handleKeyUp = (event) => {
-      if (event.getModifierState("CapsLock")) {
-        setCapsLockOn(true);
-      } else {
-        setCapsLockOn(false);
-      }
-    };
-
-    const input = passwordInputRef.current;
-    if (input) {
-      input.addEventListener("keyup", handleKeyUp);
-    }
-
-    return () => {
-      if (input) {
-        input.removeEventListener("keyup", handleKeyUp);
-      }
-    };
-  }, []);
 
   // Password Validation for making sure the password has the different requirements
   const handlePasswordChange = (e) => {
@@ -93,7 +68,7 @@ const SignUp = () => {
       return;
     }
 
-    const API_URL = process.env.REACT_APP_API_URL + "/api";
+    const API_URL = (process.env.REACT_APP_API_URL || "").replace(/\/+$/, "") + "/api";
 
     // For ID validation, makes sure it is exactly 5 numbers long
     const staffIdPattern = /^\d{5}$/;
@@ -231,16 +206,6 @@ const SignUp = () => {
                     autoComplete="off"
                     required
                   />
-
-                  {/* Caplocks Warning */}
-                  {capsLockOn && (
-                    <div
-                      className="caps-warning"
-                      style={{ color: "red", marginTop: "5px" }}
-                    >
-                      Warning: Caps Lock is ON
-                    </div>
-                  )}
                 </div>
               </div>
 
