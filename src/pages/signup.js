@@ -93,6 +93,8 @@ const SignUp = () => {
       return;
     }
 
+    const API_URL = process.env.REACT_APP_API_URL + "/api";
+
     // For ID validation, makes sure it is exactly 5 numbers long
     const staffIdPattern = /^\d{5}$/;
     if (!staffIdPattern.test(staffId)) {
@@ -112,8 +114,7 @@ const SignUp = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/register", {
-        // TODO: Hardcoded - Must change later. Same in Login **
+      const response = await axios.post(`${API_URL}/register`, {
         email,
         staff_number: staffId,
         password,
