@@ -57,6 +57,8 @@ const Forecast = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  const API_URL = (process.env.REACT_APP_API_URL || "").replace(/\/+$/, "") + "/api";
+
   /**
    * Loads booked events from localStorage and parses the dates into Date objects.
    * This effect runs only once when the component is mounted.
@@ -72,7 +74,7 @@ const Forecast = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        "http://localhost:5000/api/appointments",
+        `${API_URL}/appointment`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
