@@ -25,8 +25,8 @@ const Navbar = () => {
             <Link to="/calender">Calendar</Link>
           </li>
           <li>
-            <Link to="https://redcap.ucc.ie/index.php?action=myprojects">
-              REDCap
+            <Link to="/forecast">
+              Forecast
             </Link>
           </li>
         </ul>
