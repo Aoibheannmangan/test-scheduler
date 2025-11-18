@@ -578,9 +578,13 @@ const MyCalendar = () => {
     }
 
     try {
-      await axios.post("http://localhost:5000/api/book", appointment, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
+      await axios.post(
+        "http://localhost:5000/api/book",
+        { ...appointment, patient: match },
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
 
       await fetchBookings();
       refetchData(); // Re-fetch patient data to update visit windows and visit numbers

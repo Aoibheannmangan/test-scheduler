@@ -83,17 +83,59 @@ def get_data():
         logger.error(f"Failed to fetch data from REDCap. Status Code: {response.status_code}, Response: {response.text}")
         return jsonify({'error': 'Failed to fetch data', 'status_code': response.status_code}), response.status_code
     
+# Helper functions
+def fetch_visit_data(patient_id: str) -> dict:
+    payload = {
+        'token': API_TOKEN,
+        'content': 'record',
+        'format': 'json',
+        'type': 'flat',
+        'records[0]': patient_id,
+        'fields[0]': 'visit_1_nicu_discharge_complete',
+        'fields[1]': 'v2_attend',
+        'fields[2]': 'v3_attend',
+        'fields[3]': 'v4_attend',
+        'fields[4]': 'v5_attend',
+        'fields[5]': 'v6_attend',
+    }
+    response = requests.post(REDCAP_API_URL, data=payload, verify=False)
+    if response.status_code == 200:
+        data = response.json()
+        if data:
+            return data[0]  # return first record
+    return {}
+
+def calculate_visit_num(patient_data: dict) -> int:
+    if not patient_data:
+        return 1
+    
+    visit_num = 1
+    if patient_data.get("visit_1_nicu_discharge_complete") == "1":
+        visit_num = 2
+        for i in range(2, 7):
+            if patient_data.get(f"v{i}_attend") == "1":
+                visit_num = i + 1
+            else:
+                break
+    return visit_num
+    
 # Booking funcs
 def book_appointment(current_user):
     """Handles the booking of a new appointment."""
     logger.info(f"Appointment booking request by user: {current_user.email}")
     data = request.get_json()
     patient_id = data.get('patientId')
-    title = f"ID: {patient_id}"
     start_str = data.get('start')
     end_str = data.get('end')
     notes = data.get('notes', '')
     room_id = data.get('roomId')
+
+    # Calculate visit number using REDCap data
+    visit_data = fetch_visit_data(patient_id) 
+    visit_num = calculate_visit_num(visit_data)
+
+    # Build title with correct visit number
+    title = f"ID: {patient_id} | Visit: {visit_num}"
 
     # Validate required input fields
     if not all([patient_id, start_str, end_str, room_id]):
@@ -115,20 +157,12 @@ def book_appointment(current_user):
             return jsonify({"error": "The selected time slot is blocked."}), 409
 
         # Create a new Event entry
-        # Find the highest visit_num for the patient
-        last_booking_event = db.session.query(Event).join(Booking).filter(Booking.patient_id == patient_id, Event.event_type == 'booked').order_by(Event.visit_num.desc()).first()
-
-        if last_booking_event and last_booking_event.visit_num is not None:
-            new_visit_num = last_booking_event.visit_num + 1
-        else:
-            new_visit_num = 2 # First visit in the system starts at 2
-
         new_event = Event(
             event_title=title,
             start_date=start_obj,
             end_date=end_obj,
             event_type='booked', 
-            visit_num=new_visit_num # Use calculated visit_num
+            visit_num=visit_num # Use calculated visit_num
         )   
         db.session.add(new_event)
         db.session.flush() # Flush to get the event_id before committing
