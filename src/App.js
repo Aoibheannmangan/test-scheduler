@@ -12,7 +12,7 @@ import "@fontsource/sansation";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Forecast  from "./pages/forecast";
+import Reports  from "./pages/Reports";
 
 function App() {
   const location = useLocation();
@@ -32,7 +32,7 @@ function App() {
             <Route path="/info" element={<UserInfo />} />
             <Route path="/calender" element={<MyCalendar />} />
             <Route path="/account" element={<Account />} />
-            <Route path ="/forecast" element={<Forecast />} />
+            <Route path ="/forecast" element={<Reports />} />
             <Route path="/toggleAppointment" element={<ToggleAppointment />} />
           </Route>
         </Routes>

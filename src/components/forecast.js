@@ -8,6 +8,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TablePagination from "@mui/material/TablePagination";
 import { useData } from "../hooks/DataContext";
+import "./forecast.css";
 import axios from "axios";
 
 /**
@@ -57,8 +58,6 @@ const Forecast = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const API_URL = (process.env.REACT_APP_API_URL || "").replace(/\/+$/, "") + "/api";
-
   /**
    * Loads booked events from localStorage and parses the dates into Date objects.
    * This effect runs only once when the component is mounted.
@@ -74,7 +73,7 @@ const Forecast = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        `${API_URL}/appointment`,
+        "http://localhost:5000/api/appointments",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -225,13 +224,11 @@ const Forecast = () => {
   };
 
   return (
-    <div style={{ padding: "1.5rem" }}>
-      <h1>Appointment Forecast</h1>
-
+    <div className="forecast-container">
       {appointmentRows.length === 0 ? (
         <p>There are currently no appointments booked</p>
       ) : (
-        <Paper sx={{ width: "100%", overflow: "hidden" }}>
+        <Paper className="forecast-paper">
           <TableContainer sx={{ maxHeight: 440 }}>
             <Table stickyHeader aria-label="appointments table">
               <TableHead>
