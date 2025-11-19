@@ -9,6 +9,7 @@ import SignUp from "./pages/signup";
 import ForgotPsw from "./components/forgotpsw";
 import ToggleAppointment from "./pages/Appointment";
 import Reports from "./pages/Reports";
+import Footer from "./components/Footer";
 import "@fontsource/sansation";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -37,6 +38,7 @@ function App() {
           </Route>
         </Routes>
       </div>
+      <Footer />
     </LocalizationProvider>
   );
 }
