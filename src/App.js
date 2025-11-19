@@ -8,7 +8,7 @@ import LogIn from "./pages/login";
 import SignUp from "./pages/signup";
 import ForgotPsw from "./components/forgotpsw";
 import ToggleAppointment from "./pages/Appointment";
-import Forecast from "./pages/Forecast";
+import Reports from "./pages/Reports";
 import "@fontsource/sansation";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -26,7 +26,7 @@ function App() {
           <Route path="/login" element={<LogIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgotpsw" element={<ForgotPsw />} />
-          <Route path="/forecast" element={<Forecast />} />
+          <Route path="/reports" element={<Reports />} />
           <Route path="/" element={<ProtectedRoute />}>
             <Route path="/" element={<Navigate to="/calender" replace />} />
             <Route path="/appoint" element={<Appointments />} />

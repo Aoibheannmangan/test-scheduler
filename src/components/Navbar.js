@@ -25,7 +25,7 @@ const Navbar = () => {
             <Link to="/calender">Calendar</Link>
           </li>
           <li>
-            <Link to="/forecast">Forecast</Link>
+            <Link to="/reports">Reports</Link>
           </li>
         </ul>
       </div>

@@ -8,6 +8,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TablePagination from "@mui/material/TablePagination";
 import { useData } from "../hooks/DataContext";
+import "./forecast.css";
 import axios from "axios";
 
 /**
@@ -223,13 +224,11 @@ const Forecast = () => {
   };
 
   return (
-    <div style={{ padding: "1.5rem" }}>
-      <h1>Appointment Forecast</h1>
-
+    <div className="forecast-container">
       {appointmentRows.length === 0 ? (
         <p>There are currently no appointments booked</p>
       ) : (
-        <Paper sx={{ width: "100%", overflow: "hidden" }}>
+        <Paper className="forecast-paper">
           <TableContainer sx={{ maxHeight: 440 }}>
             <Table stickyHeader aria-label="appointments table">
               <TableHead>
