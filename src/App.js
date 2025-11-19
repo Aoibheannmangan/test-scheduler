@@ -28,13 +28,13 @@ function App() {
           <Route path="/login" element={<LogIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/forgotpsw" element={<ForgotPsw />} />
-          <Route path="/reports" element={<Reports />} />
           <Route path="/" element={<ProtectedRoute />}>
             <Route path="/" element={<Navigate to="/calender" replace />} />
             <Route path="/appoint" element={<Appointments />} />
             <Route path="/info" element={<UserInfo />} />
             <Route path="/calender" element={<MyCalendar />} />
             <Route path="/account" element={<Account />} />
+            <Route path="/reports" element={<Reports />} />
             <Route path="/toggleAppointment" element={<ToggleAppointment />} />
           </Route>
         </Routes>
