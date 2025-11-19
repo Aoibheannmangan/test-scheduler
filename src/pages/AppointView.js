@@ -217,7 +217,6 @@ const Appointments = () => {
 
   return (
     <div className="App">
-      <h1 classname="appointTitle">Visit Overview</h1>
       {/*Container for searchbar and filter*/}
       <div className="searchContainer" role="region">
         <label htmlFor="searchInput" className="searchBarTitle">
