@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Navbar.css";
+import infantLogo from "../assets/infantNavLogo.png";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-left">
-        <a className="logo">INFANT</a>
+        <img src={infantLogo} className="logo" alt="Infant Logo"></img>
       </div>
 
       <div className="navbar-center">
