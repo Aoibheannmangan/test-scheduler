@@ -18,6 +18,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 function App() {
   const location = useLocation();
   const hideNavbarPaths = ["/signup", "/login", "/forgotpsw"];
+  const hideFooter = ["/signup", "/login", "/forgotpsw"];
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -38,7 +39,7 @@ function App() {
           </Route>
         </Routes>
       </div>
-      <Footer />
+      {!hideFooter.includes(location.pathname) && <Footer />}
     </LocalizationProvider>
   );
 }

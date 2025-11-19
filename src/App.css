@@ -1,4 +1,4 @@
-.App{
+.App {
   background: #f3f3f3;
   text-align: center;
   font-family: Arial, sans-serif;
@@ -23,7 +23,7 @@
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: #FFEAEC;
+  color: #ffeaec;
 }
 
 .App-link {
@@ -38,5 +38,3 @@
     transform: rotate(360deg);
   }
 }
-
-
