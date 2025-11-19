@@ -6,7 +6,7 @@
   color: #000000;
 }
 
-.forecastContainer {
+.chart-container {
   min-width: 220px;
   max-width: 1000px;
   margin: 24px auto 0 auto;
