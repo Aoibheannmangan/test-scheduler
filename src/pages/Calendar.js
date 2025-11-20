@@ -653,14 +653,35 @@ const MyCalendar = () => {
   };
 
   const shouldDisableDate = (date) => {
-    return isDateBlocked(date);
+    const blocksForDay = blockedDates.filter(b => moment(date).isSame(b.start, "day"));
+    return blocksForDay.some(b => {
+      const start = moment(b.start);
+      const end = moment(b.end);
+
+      return(
+        start.hour() === 0 &&
+        start.minute() === 0 &&
+        end.hour() === 23 &&
+        end.minute() === 59
+      );
+    });
   };
 
   const shouldDisableTime = (time, clockType) => {
-    if (isTimeSlotBooked(time, selectedEvent?.event_id)) {
-      return true;
-    }
-    return false;
+    const dateTime = moment(selectedDate).set({
+      hour: moment(time).hour(),
+      minute: moment(time).minute(),
+    });
+
+    const isBlocked = blockedDates.some(b => {
+      const start = moment(b.start);
+      const end = moment(b.end);
+      return dateTime.isBetween(start, end, null, "[)");
+    });
+
+    if (isBlocked) return true;
+
+    return isTimeSlotBooked(time, selectedEvent?.event_id);
   };
 
   // Array of all avents
