@@ -22,15 +22,13 @@ export const DataProvider = ({ children }) => {
   const [error, setError] = useState(null);
 
   // Use a configurable API base url so the same build can work in Docker/K8s/locally
-  const apiUrl = process.env.REACT_APP_API_URL?.replace(/\/$/, "");
+  const apiUrl = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
   useEffect(() => {
     const fetchData = async () => {
       // Tries to load data from flask where the API stored data
       try {
-        const response = await axios.get(`${apiUrl}/api/data`, {
-          timeout: 20000,
-        });
+        const response = await axios.get(`${apiUrl}/api/data`, { timeout: 20000 });
         if (Array.isArray(response.data)) {
           const processedData = response.data.map((patient) => ({
             ...patient,
@@ -69,9 +67,7 @@ export const DataProvider = ({ children }) => {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${apiUrl}/api/data`, {
-        timeout: 20000,
-      });
+      const response = await axios.get(`${apiUrl}/api/data`, { timeout: 20000 });
       const processedData = response.data.map((patient) => ({
         ...patient,
         DOB: patient.nn_dob ? new Date(patient.nn_dob) : null, // Convert to Date object, handle empty
@@ -86,7 +82,7 @@ export const DataProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [apiUrl]);
+  }, []);
 
   useEffect(() => {
     fetchData();

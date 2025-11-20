@@ -20,11 +20,14 @@ def create_app():
     db.init_app(app)
     migrate.init_app(app, db, directory=app.config['MIGRATION_DIR'])
 
+    with app.app_context():
+        db.create_all()
     # Enable CORS
     CORS(app)
 
     # Import models here to avoid circular imports
     from . import models
+
 
     # --- Register Routes ---
 

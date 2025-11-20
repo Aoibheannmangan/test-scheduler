@@ -23,6 +23,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import axios from "axios";
 
 const MyCalendar = () => {
@@ -51,13 +52,15 @@ const MyCalendar = () => {
   /* Blocked dates portion */
   // Create array for blocked dates and show blocked dates state
   const [blockedDates, setBlockedDates] = useState([]);
+  const [blockStartTime, setBlockStartTime] = useState(null);
+  const [blockEndTime, setBlockEndTime] = useState(null);
 
   useEffect(() => {
     const fetchBlockedDates = async () => {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          "http://localhost:5000/api/blocked-dates",
+          "/api/blocked-dates",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -115,7 +118,7 @@ const MyCalendar = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        "http://localhost:5000/api/appointments",
+        "/api/appointments",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -168,9 +171,22 @@ const MyCalendar = () => {
     if (selectedDate) {
       try {
         const token = localStorage.getItem("token");
+
+        const startISO = moment(
+          `${selectedDate} ${blockStartTime}`,
+          "YYYY-MM-DD HH:mm"
+        ).toISOString();
+
+        const endISO = moment(
+          `${selectedDate} ${blockEndTime}`,
+          "YYYY-MM-DD HH:mm"
+        ).toISOString();
+
         await axios.post(
-          "http://localhost:5000/api/block-date",
-          { date: selectedDate },
+          "/api/block-date",
+          { start: startISO,
+            end: endISO,
+            date: selectedDate },
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -180,7 +196,7 @@ const MyCalendar = () => {
 
         // Refetch blocked dates to update the calendar
         const response = await axios.get(
-          "http://localhost:5000/api/blocked-dates",
+          "/api/blocked-dates",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -283,7 +299,7 @@ const MyCalendar = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:5000/api/appointment/${selectedEvent.event_id}`,
+        `/api/appointment/${selectedEvent.event_id}`,
         {
           start: updatedEvent.start.toISOString(),
           end: updatedEvent.end.toISOString(),
@@ -519,7 +535,7 @@ const MyCalendar = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.delete(
-        `http://localhost:5000/api/appointment/${eventToDelete.event_id}`,
+        `/api/appointment/${eventToDelete.event_id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -579,7 +595,7 @@ const MyCalendar = () => {
 
     try {
       await axios.post(
-        "http://localhost:5000/api/book",
+        "/api/book",
         { ...appointment, patient: match },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -776,6 +792,14 @@ const MyCalendar = () => {
                       }}
                     />
                   </label>
+                  <label>
+                    Select Start Time to Block
+                    <TimePicker value={blockStartTime} onChange={setBlockStartTime} />
+                  </label>
+                  <label>
+                    Select End Time to Block
+                    <TimePicker value={blockEndTime} onChange={setBlockEndTime} />
+                  </label>
                   <div className="button-row">
                     <button onClick={handleBlockDate} className="block-button">
                       {" "}
@@ -792,7 +816,7 @@ const MyCalendar = () => {
                     <ul>
                       {blockedDates.map((date, index) => (
                         <li key={index}>
-                          {moment(date.start).format("YYYY-MM-DD")}
+                          {moment(date.start).format("YYYY-MM-DD HH:mm")} -  {moment(date.end).format("HH:mm")}
                         </li>
                       ))}
                     </ul>

@@ -26,7 +26,7 @@ const Appointments = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        "http://localhost:5000/api/appointments",
+        "/api/appointments",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -85,8 +85,8 @@ const Appointments = () => {
           Study: ["AIMHIGH"], // Hardcoded as it pulls from the REDCap on AIMHIGH
           DaysEarly: rec.reg_days_early ? Number(rec.reg_days_early) : 0,
           Info: "", // Any aditional info field to import??**
-          notes: rec.nicu_email || "", // Use email as contact OR GET NUMBER?
-          email: rec.nicu_email || "",
+          notes: rec.reg_email || "", // Use email as contact OR GET NUMBER?
+          email: rec.reg_email || "",
           participantGroup: rec.reg_participant_group || "",
           reg_date1: rec.reg_date1,
           reg_date2: rec.reg_date2,

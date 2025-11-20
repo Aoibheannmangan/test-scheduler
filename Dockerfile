@@ -1,6 +1,5 @@
 # build environment
 FROM node:20-alpine as build
-ARG REACT_APP_API_URL
 WORKDIR /app
 COPY package.json .
 COPY package-lock.json .

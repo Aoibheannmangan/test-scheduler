@@ -8,7 +8,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TablePagination from "@mui/material/TablePagination";
 import { useData } from "../hooks/DataContext";
-import "./Forecast.css";
+import "./forecast.css";
 import axios from "axios";
 
 /**
@@ -73,7 +73,7 @@ const Forecast = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        "http://localhost:5000/api/appointments",
+        "api/appointments",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -122,8 +122,8 @@ const Forecast = () => {
         study: ["AIMHIGH"], // Hardcoded for REDCap study
         daysEarly: p.reg_days_early ? Number(p.reg_days_early) : 0,
         info: "",
-        notes: p.nicu_email || "",
-        email: p.nicu_email || "",
+        notes: p.reg_email || "",
+        email: p.reg_email || "",
         participantGroup: p.reg_participant_group || "",
         reg_date1: p.reg_date1,
         reg_date2: p.reg_date2,
