@@ -11,12 +11,14 @@
   gap: 10px;
   padding: 10px;
   margin-bottom: auto;
+  padding-inline: 20%;
 }
 
 .box {
   flex: 1;
   text-align: center;
   box-sizing: border-box;
+  margin-left: 50px;
 }
 
 .contact-info {
