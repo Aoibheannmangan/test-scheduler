@@ -1,7 +1,7 @@
+import "./BookedChart.css";
 import { useState } from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
-import { Box, RadioGroup, Radio } from "@mui/material";
-import { radioClasses } from "@mui/material/Radio";
+import { Box, RadioGroup, Radio, FormControlLabel } from "@mui/material";
 
 const BookedChart = () => {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -42,45 +42,19 @@ const BookedChart = () => {
       <RadioGroup
         value={alignment}
         onChange={handleYearChange}
-        sx={{
-          marginBottom: 2,
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "center",
-        }}
+        className="radio-group"
+        row={true}
       >
-        {Object.keys(appointmentData).map((year, index) => (
-          <Box
+        {Object.keys(appointmentData).map((year) => (
+          <FormControlLabel
             key={year}
-            sx={{
-              position: "relative",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              width: 48,
-              height: 48,
-              ...(index > 0 && {
-                borderLeft: "1px solid",
-                borderColor: "divider",
-              }),
-            }}
-          >
-            <Radio
-              value={year}
-              checked={alignment === year}
-              onChange={() => {
-                setSelectedYear(year);
-                setAlignment(year);
-              }}
-              sx={{
-                "&.Mui-checked": {
-                  color: "primary.main",
-                },
-              }}
-            >
-              {year}
-            </Radio>
-          </Box>
+            value={year}
+            control={<Radio className="hidden-radio" />}
+            label={year}
+            className={
+              alignment === year ? "year-label selected" : "year-label"
+            }
+          />
         ))}
       </RadioGroup>
 
@@ -114,13 +88,6 @@ const BookedChart = () => {
           ]}
           margin={{ left: 50, right: 50, top: 30, bottom: 50 }}
           height={400}
-          slotProps={{
-            container: {
-              style: {
-                width: "100%",
-              },
-            },
-          }}
         />
       </Box>
     </Box>
