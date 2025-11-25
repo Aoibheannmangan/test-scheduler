@@ -5,19 +5,19 @@ import "./Reports.css";
 import axios from "axios";
 
 const Reports = () => {
-  return (
-    <div className="reportPage">
-      <h1 className="heading">Window and Booking Forecast</h1>
-      <div className="chart-container">
-        <Forecast />
-      </div>
+	return (
+		<div className="reportPage">
+			<h1 className="heading">Window and Booking Forecast</h1>
+			<div className="chart-container">
+				<Forecast />
+			</div>
 
-      <h1 className="heading">Booking Statistics</h1>
-      <div className="chart-container">
-        <BookedChart />
-      </div>
-    </div>
-  );
+			<h1 className="heading">Booking Statistics</h1>
+			<div className="chart-container">
+				<BookedChart />
+			</div>
+		</div>
+	);
 };
 
 export default Reports;
