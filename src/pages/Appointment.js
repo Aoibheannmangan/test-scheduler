@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import "./Appointment.css";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import dayjs from "dayjs";
@@ -12,6 +12,7 @@ const ToggleAppointment = ({
   bookedEvents,
   blockedDates,
   roomList,
+  userList,
 }) => {
   // States vars for appointment booking
   const [appPatID, setAppPatID] = useState("");
@@ -21,6 +22,7 @@ const ToggleAppointment = ({
   const [patientStudy, setPatientStudy] = useState("");
   const [appRoom, setAppRoom] = useState("");
   const [appNote, setAppNote] = useState("");
+  const [isEndTimeEditable, setIsEndTimeEditable] = useState(false);
 
   // Function to check if room is available at selected time
   const isRoomAvailable = (roomId, startTime, endTime, appointments) => {
@@ -33,6 +35,70 @@ const ToggleAppointment = ({
       return startTime < eventEnd && endTime > eventStart;
     });
   };
+
+  // Calculate time with visit num
+  useEffect(() => {
+    if (appTimeStart && appPatID && userList && !isEndTimeEditable) {
+      const patient = userList.find((p) => p.record_id === appPatID);
+      if (!patient) {
+        setAppTimeEnd(null);
+        return;
+      }
+
+      const calculateVisitNum = (patient) => {
+        let visit_num = 1;
+        if (patient.visit_1_nicu_discharge_complete === "1") {
+          visit_num = 2;
+          for (let i = 2; i <= 6; i++) {
+            if (patient[`v${i}_attend`] === "1") {
+              visit_num = i + 1;
+            } else {
+              break;
+            }
+          }
+        }
+        return visit_num;
+      };
+
+      const visitNum = calculateVisitNum(patient);
+      let defaultDuration = 2; // Default duration
+
+      switch (visitNum) {
+        case 2:
+          defaultDuration = 3.5;
+          break;
+        case 3:
+          defaultDuration = 2;
+          break;
+        case 4:
+          defaultDuration = 2.5;
+          break;
+        case 5:
+          defaultDuration = 2.5;
+          break;
+        case 6:
+          defaultDuration = 2;
+          break;
+        default:
+          defaultDuration = 2; // Default for visit 1 or others
+          break;
+      }
+
+      const calculatedEndTime = dayjs(appTimeStart).add(
+        defaultDuration,
+        "hour"
+      );
+      setAppTimeEnd(calculatedEndTime);
+    }
+  }, [appTimeStart, appPatID, userList, isEndTimeEditable]);
+
+  // If start > end time
+  useEffect(() => {
+    if (appTimeStart && appTimeEnd && appTimeEnd.isBefore(appTimeStart)) {
+      // Reset end time if it's before start time
+      setAppTimeEnd(dayjs(appTimeStart).add(1, "hour"));
+    }
+  }, [appTimeStart, appTimeEnd]);
 
   // Gray out blocked out dates
   const isDateBlocked = (date) => {
@@ -188,12 +254,12 @@ const ToggleAppointment = ({
               <TimePicker
                 label="End Time"
                 value={appTimeEnd}
+                readOnly={!isEndTimeEditable}
                 minutesStep={30}
                 skipDisabled={true}
                 views={["hours", "minutes"]}
                 format="HH:mm"
                 onChange={(newValue) => {
-                  // No need to wrap in dayjs() if newValue is already a dayjs object
                   setAppTimeEnd(newValue);
                 }}
                 slotProps={{
@@ -211,7 +277,17 @@ const ToggleAppointment = ({
                   },
                 }}
               />
-              <br />
+              <div className="checkbox-container">
+                <label>
+                  <input
+                    type="checkbox"
+                    className="override-checkbox"
+                    checked={isEndTimeEditable}
+                    onChange={(e) => setIsEndTimeEditable(e.target.checked)}
+                  />
+                  Override calculated end time
+                </label>
+              </div>
 
               <label htmlFor="room">Assessment Room:</label>
               <select

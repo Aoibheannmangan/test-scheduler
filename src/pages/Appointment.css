@@ -74,3 +74,12 @@
     }
   }
 }
+
+.override-checkbox {
+  appearance: auto !;
+  -webkit-appearance: auto !;
+  -moz-appearance: auto !;
+  width: 16px !;
+  height: 16px !;
+  margin-right: 8px !;
+}
