@@ -1,5 +1,13 @@
-.heading {
-	margin-top: 2.5rem;
+.chart-heading {
+	margin-top: 3rem;
+	font-size: x-large;
+	text-align: center;
+	font-family: "Sansation";
+	color: #000000;
+}
+
+.window-heading {
+	padding-top: 80px;
 	font-size: x-large;
 	text-align: center;
 	font-family: "Sansation";
