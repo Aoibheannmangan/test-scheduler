@@ -1037,6 +1037,7 @@ const MyCalendar = () => {
           bookedEvents={bookedEvents}
           blockedDates={blockedDates}
           roomList={roomList}
+          userList={userList}
         />
       </div>
 
