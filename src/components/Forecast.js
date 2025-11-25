@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useState, useMemo } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -9,273 +9,261 @@ import TableRow from "@mui/material/TableRow";
 import TablePagination from "@mui/material/TablePagination";
 import { useData } from "../hooks/DataContext";
 import "./Forecast.css";
-import axios from "axios";
-
-/**
- * Forecast component that displays a forecast of booked appointments per month.
- *
- * Fetches booked events from `localStorage`, counts appointments per month, and
- * displays the data in a paginated table.
- *
- * @component
- * @example
- * <Route path="/forecast" element={<Forecast />} />
- * @returns {JSX.Element} The Forecast component that renders the appointment forecast table.
- */
-import { getAppointmentsPerMonth } from "../hooks/forecast";
+import { useBookings } from "../hooks/useBookings";
 
 // Table column definitions
 const columns = [
-  { id: "monthYear", label: "Month", minWidth: 170 },
-  { id: "booked", label: "Booked", minWidth: 100, align: "right" },
-  { id: "window", label: "Window", minWidth: 100, align: "right" },
+	{ id: "monthYear", label: "Month", minWidth: 170 },
+	{ id: "booked", label: "Booked", minWidth: 100, align: "right" },
+	{ id: "window", label: "Window", minWidth: 100, align: "right" },
+	{ id: "total", label: "Total", minWidth: 100, align: "right" },
 ];
 
-/**
- * Creates a data row for the table.
- *
- * @param {string} monthYear - The month and year (e.g., "January 2025").
- * @param {number} count - The number of appointments booked in that month.
- * @returns {Object} A data row object containing the monthYear and count.
- */
-const createData = (monthYear, booked, window) => ({
-  monthYear,
-  booked,
-  window,
+const createData = (monthYear, booked, window, total) => ({
+	monthYear,
+	booked,
+	window,
+	total,
 });
 
 /**
- * Forecast component for displaying appointments.
- * @returns {JSX.Element} The Forecast component that displays the forecast of booked appointments per month.
+ * Helper function to get window dates for a specific visit number
  */
+const getWindowDates = (patient, visitNum) => {
+	switch (visitNum) {
+		case 2:
+			return { start: patient.reg_date1, end: patient.reg_date2 };
+		case 3:
+			return {
+				start: patient.reg_9_month_window,
+				end: patient.reg_12_month_window,
+			};
+		case 4:
+			return {
+				start: patient.reg_17_month_window,
+				end: patient.reg_19_month_window,
+			};
+		case 5:
+			return {
+				start: patient.reg_23_month_window,
+				end: patient.reg_25_month_window,
+			};
+		case 6:
+			return {
+				start: patient.reg_30_month_window,
+				end: patient.reg_31_month_window,
+			};
+		default:
+			return null;
+	}
+};
+
+/**
+ * Helper function to calculate visit number for a patient
+ */
+const calculateVisitNum = (patient) => {
+	let visit_num = 1;
+	if (patient.visit_1_nicu_discharge_complete === "1") {
+		visit_num = 2;
+		for (let i = 2; i <= 6; i++) {
+			if (patient[`v${i}_attend`] === "1") {
+				visit_num = i + 1;
+			} else {
+				break;
+			}
+		}
+	}
+	return visit_num;
+};
+
 const Forecast = () => {
-  const [bookedEvents, setBookedEvents] = useState([]);
-  const { data: apiPatients } = useData();
-  const [patientList, setPatientList] = useState([]);
-  const [displayEvents, setDisplayEvents] = useState([]);
-  const [monthlyCounts, setMonthlyCounts] = useState({});
-  const [appointmentRows, setAppointmentRows] = useState([]);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+	const { data: apiPatients, loading: patientsLoading } = useData();
+	const { bookings, loading: bookingsLoading } = useBookings({
+		autoFetch: true,
+	});
+	const [page, setPage] = useState(0);
+	const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  /**
-   * Loads booked events from localStorage and parses the dates into Date objects.
-   * This effect runs only once when the component is mounted.
-   *
-   * @returns {void}
-   */
-  useEffect(() => {
-    if (apiPatients) setPatientList(apiPatients);
-  }, [apiPatients]);
+	// Calculate monthly counts from bookings and patient windows - memoized
+	const monthlyCounts = useMemo(() => {
+		const counts = {};
 
-  /** Fetch bookings from backend */
-  const fetchBookings = useCallback(async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const response = await axios.get(
-        "http://localhost:5000/api/appointments",
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+		// Count booked appointments
+		if (bookings && bookings.length > 0) {
+			bookings.forEach((booking) => {
+				if (booking.event_type === "booked" && booking.start) {
+					const date = new Date(booking.start);
+					const key = `${date.toLocaleString("default", {
+						month: "long",
+					})} ${date.getFullYear()}`;
 
-      const events = response.data.events.map((event) => ({
-        ...event,
-        start: new Date(event.start),
-        end: new Date(event.end),
-        patientId: event.patient_id,
-        id: event.event_id,
-      }));
+					if (!counts[key]) {
+						counts[key] = { booked: 0, window: 0 };
+					}
+					counts[key].booked += 1;
+				}
+			});
+		}
 
-      setBookedEvents(events);
-    } catch (err) {
-      console.error("Error fetching bookings:", err);
-    }
-  }, []);
+		// Count patient windows
+		if (apiPatients && apiPatients.length > 0) {
+			apiPatients.forEach((patient) => {
+				// Calculate current visit number
+				const visitNum = calculateVisitNum(patient);
 
-  /** Fetch bookings on mount */
-  useEffect(() => {
-    fetchBookings();
-  }, [fetchBookings]);
+				// Only count if patient has upcoming visits (visit 1-6)
+				if (visitNum >= 1 && visitNum <= 6) {
+					const windowDates = getWindowDates(patient, visitNum);
 
-  /** Map API patients to internal structure */
-  useEffect(() => {
-    if (!patientList || !Array.isArray(apiPatients)) return;
+					if (windowDates && windowDates.start) {
+						const windowStart = new Date(windowDates.start);
 
-    const mappedPatients = apiPatients.map((p) => {
-      let visitNum = 1;
-      if (p.visit_1_nicu_discharge_complete === "1") {
-        visitNum = 2;
-        for (let i = 2; i <= 6; i++) {
-          if (p[`v${i}_attend`] === "1") visitNum = i + 1;
-          else break;
-        }
-      }
+						// Only count future windows or current month windows
+						const today = new Date();
+						today.setHours(0, 0, 0, 0);
 
-      return {
-        id: p.record_id || "",
-        type: p.type || "window",
-        visitNum,
-        outOfArea: p.reg_ooa === "1",
-        dob: p.nn_dob || "",
-        site: { 1: "CUMH", 2: "Coombe", 3: "Rotunda" }[p.reg_dag] || "Unknown",
-        study: ["AIMHIGH"], // Hardcoded for REDCap study
-        daysEarly: p.reg_days_early ? Number(p.reg_days_early) : 0,
-        info: "",
-        notes: p.nicu_email || "",
-        email: p.nicu_email || "",
-        participantGroup: p.reg_participant_group || "",
-        reg_date1: p.reg_date1,
-        reg_date2: p.reg_date2,
-        reg_9_month_window: p.reg_9_month_window,
-        reg_12_month_window: p.reg_12_month_window,
-        reg_17_month_window: p.reg_17_month_window,
-        reg_19_month_window: p.reg_19_month_window,
-        reg_23_month_window: p.reg_23_month_window,
-        reg_25_month_window: p.reg_25_month_window,
-        reg_30_month_window: p.reg_30_month_window,
-        reg_31_month_window: p.reg_31_month_window,
-      };
-    });
+						// Check if window is current or future
+						const windowEnd = windowDates.end
+							? new Date(windowDates.end)
+							: windowStart;
 
-    setPatientList(mappedPatients);
-  }, [apiPatients]);
+						if (windowEnd >= today) {
+							const key = `${windowStart.toLocaleString(
+								"default",
+								{
+									month: "long",
+								}
+							)} ${windowStart.getFullYear()}`;
 
-  /** Combine patients with their booked/window events */
-  useEffect(() => {
-    if (!patientList.length) return;
+							if (!counts[key]) {
+								counts[key] = { booked: 0, window: 0 };
+							}
 
-    const combinedEvents = [];
+							// Check if this patient already has a booking for this visit
+							const hasBooking =
+								bookings &&
+								bookings.some(
+									(b) =>
+										b.patient_id === patient.record_id &&
+										b.event_type === "booked" &&
+										b.visit_num === visitNum
+								);
 
-    patientList.forEach((patient) => {
-      const patientBookings = bookedEvents.filter(
-        (e) => e.patientId === patient.id
-      );
+							// Only count as window if they don't have a booking
+							if (!hasBooking) {
+								counts[key].window += 1;
+							}
+						}
+					}
+				}
+			});
+		}
 
-      const upcomingBooked = patientBookings.find(
-        (e) => e.event_type === "booked" && e.end >= new Date()
-      );
-      const windowEvent = patientBookings.find(
-        (e) => e.event_type === "window"
-      );
+		return counts;
+	}, [apiPatients, bookings]); // Only recalculate when data changes
 
-      const eventToDisplay = upcomingBooked || windowEvent || null;
+	// Prepare table rows sorted chronologically - memoized
+	const appointmentRows = useMemo(() => {
+		return Object.entries(monthlyCounts)
+			.sort(([a], [b]) => {
+				const [monthA, yearA] = a.split(" ");
+				const [monthB, yearB] = b.split(" ");
+				return (
+					new Date(`${monthA} 1, ${yearA}`) -
+					new Date(`${monthB} 1, ${yearB}`)
+				);
+			})
+			.map(([monthYear, counts]) =>
+				createData(
+					monthYear,
+					counts.booked,
+					counts.window,
+					counts.booked + counts.window
+				)
+			);
+	}, [monthlyCounts]);
 
-      combinedEvents.push({
-        ...patient,
-        ...eventToDisplay,
-        id: eventToDisplay?.id || patient.id,
-        displayId: patient.id,
-        type: eventToDisplay?.event_type || "window",
-        visitNum: patient.visitNum,
-        start: eventToDisplay?.start || null,
-      });
-    });
+	const handleChangePage = (_event, newPage) => setPage(newPage);
 
-    setDisplayEvents(combinedEvents);
-  }, [patientList, bookedEvents]);
+	const handleChangeRowsPerPage = (event) => {
+		setRowsPerPage(+event.target.value);
+		setPage(0);
+	};
 
-  /** Compute monthly counts for table */
-  useEffect(() => {
-    const counts = getAppointmentsPerMonth(displayEvents);
-    setMonthlyCounts(counts);
-  }, [displayEvents]);
+	if (patientsLoading || bookingsLoading) {
+		return (
+			<div className="forecast-container">
+				<p>Loading forecast data...</p>
+			</div>
+		);
+	}
 
-  /**
-   * Prepares the table rows based on the monthly appointment counts.
-   * The rows are sorted chronologically by month and year.
-   *
-   * @returns {void}
-   */
-  useEffect(() => {
-    const sorted = Object.entries(monthlyCounts)
-      .sort(([a], [b]) => {
-        const [monthA, yearA] = a.split(" ");
-        const [monthB, yearB] = b.split(" ");
-        return (
-          new Date(`${monthA} 1, ${yearA}`) - new Date(`${monthB} 1, ${yearB}`)
-        );
-      })
-      .map(([monthYear, counts]) =>
-        createData(monthYear, counts.booked, counts.window)
-      );
+	if (appointmentRows.length === 0) {
+		return (
+			<div className="forecast-container">
+				<p>
+					There are currently no appointments or upcoming visit
+					windows
+				</p>
+			</div>
+		);
+	}
 
-    setAppointmentRows(sorted);
-  }, [monthlyCounts]);
-
-  /**
-   * Handles page change in the table pagination.
-   *
-   * @param {Event} _event - The pagination event.
-   * @param {number} newPage - The new page number to display.
-   * @returns {void}
-   */
-  const handleChangePage = (_event, newPage) => setPage(newPage);
-
-  /**
-   * Handles the change in the number of rows per page in the table pagination.
-   *
-   * @param {React.ChangeEvent} event - The event triggering the change in rows per page.
-   * @returns {void}
-   */
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
-
-  return (
-    <div className="forecast-container">
-      {appointmentRows.length === 0 ? (
-        <p>There are currently no appointments booked</p>
-      ) : (
-        <Paper className="forecast-paper">
-          <TableContainer sx={{ maxHeight: 440 }}>
-            <Table stickyHeader aria-label="appointments table">
-              <TableHead>
-                <TableRow>
-                  {columns.map((column) => (
-                    <TableCell
-                      key={column.id}
-                      align={column.align}
-                      style={{ minWidth: column.minWidth }}
-                    >
-                      {column.label}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {appointmentRows
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => (
-                    <TableRow hover tabIndex={-1} key={row.monthYear}>
-                      {columns.map((column) => (
-                        <TableCell key={column.id} align={column.align}>
-                          {row[column.id]}
-                        </TableCell>
-                      ))}
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[10, 25, 100]}
-            component="div"
-            count={appointmentRows.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
-        </Paper>
-      )}
-
-      {console.log("Booked Events:", bookedEvents)}
-      {console.log("Display Events:", displayEvents)}
-      {console.log("Monthly Counts:", monthlyCounts)}
-    </div>
-  );
+	return (
+		<div className="forecast-container">
+			<Paper className="forecast-paper">
+				<TableContainer sx={{ maxHeight: 440 }}>
+					<Table stickyHeader aria-label="appointments table">
+						<TableHead>
+							<TableRow>
+								{columns.map((column) => (
+									<TableCell
+										key={column.id}
+										align={column.align}
+										style={{ minWidth: column.minWidth }}
+									>
+										{column.label}
+									</TableCell>
+								))}
+							</TableRow>
+						</TableHead>
+						<TableBody>
+							{appointmentRows
+								.slice(
+									page * rowsPerPage,
+									page * rowsPerPage + rowsPerPage
+								)
+								.map((row) => (
+									<TableRow
+										hover
+										tabIndex={-1}
+										key={row.monthYear}
+									>
+										{columns.map((column) => (
+											<TableCell
+												key={column.id}
+												align={column.align}
+											>
+												{row[column.id]}
+											</TableCell>
+										))}
+									</TableRow>
+								))}
+						</TableBody>
+					</Table>
+				</TableContainer>
+				<TablePagination
+					rowsPerPageOptions={[10, 25, 100]}
+					component="div"
+					count={appointmentRows.length}
+					rowsPerPage={rowsPerPage}
+					page={page}
+					onPageChange={handleChangePage}
+					onRowsPerPageChange={handleChangeRowsPerPage}
+				/>
+			</Paper>
+		</div>
+	);
 };
 
 export default Forecast;
