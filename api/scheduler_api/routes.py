@@ -129,6 +129,7 @@ def book_appointment(current_user):
     end_str = data.get('end')
     notes = data.get('notes', '')
     room_id = data.get('roomId')
+    out_of_window = data.get('out_of_window', False)
 
     # Calculate visit number using REDCap data
     visit_data = fetch_visit_data(patient_id) 
@@ -174,7 +175,8 @@ def book_appointment(current_user):
             note=notes,
             no_show=False,
             event_id=new_event.event_id,
-            room_id=room_id
+            room_id=room_id,
+            out_of_window=out_of_window
         )
         db.session.add(new_booking)
         db.session.commit() # Commit both event and booking to the database
@@ -245,6 +247,7 @@ def get_all_events(current_user):
                     event_data["patient_id"] = booking.patient_id
                     event_data["note"] = booking.note
                     event_data["no_show"] = booking.no_show
+                    event_data["out_of_window"] = booking.out_of_window
                     event_data["room_id"] = booking.room_id
             elif selected_event.event_type == 'window':
                 event_data["patient_id"] = patient_id # Already extracted
@@ -306,6 +309,9 @@ def update_appointment(current_user, event_id):
 
         if 'no_show' in data:
             booking_to_update.no_show = data['no_show']
+            
+        if 'out_of_window' in data:
+            booking_to_update.out_of_window = data['out_of_window']
 
         if 'roomId' in data:
             booking_to_update.room_id = data['roomId']

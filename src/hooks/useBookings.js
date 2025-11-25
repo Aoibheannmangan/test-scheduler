@@ -43,6 +43,7 @@ export const useBookings = (options = {}) => {
           visit_num: event.visit_num,
           note: event.note,
           no_show: event.no_show,
+          out_of_window: event.out_of_window,
           room_id: event.room_id,
         };
       });

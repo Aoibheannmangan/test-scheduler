@@ -271,12 +271,29 @@ const MyCalendar = () => {
     console.log("Saving Edited Info:", editedInfo); // DEBUG
     if (!selectedEvent || !editedInfo) return;
 
+    const patientId = selectedEvent.patient_id;
+    const patient = userList.find((p) => p.record_id === patientId);
+
+    if (!patient) {
+      setAlert({
+        message: "Patient data not found for this booking.",
+        type: "error",
+      });
+      return;
+    }
+
+    const isOutOfWindow = !isAppointmentWithinVisitWindow(
+      { start: editedInfo.start },
+      patient
+    );
+
     // Prepare updated event object
     const updatedEvent = {
       ...selectedEvent,
       ...editedInfo,
       start: new Date(editedInfo.start),
       end: new Date(editedInfo.end),
+      out_of_window: isOutOfWindow,
     };
 
     // Pull slected booking using JWT
@@ -288,8 +305,9 @@ const MyCalendar = () => {
           start: updatedEvent.start.toISOString(),
           end: updatedEvent.end.toISOString(),
           title: updatedEvent.title,
-          note: updatedEvent.notes,
+          note: editedInfo.note,
           no_show: updatedEvent.noShow,
+          out_of_window: updatedEvent.out_of_window,
           roomId: roomList.find((r) => r.id === updatedEvent.room)?.dbId,
         },
         {
@@ -497,7 +515,7 @@ const MyCalendar = () => {
   // If confirm on outside study window pop up
   const proceedWithOutOfWindowBooking = () => {
     if (!pendingAppointment) return;
-    handleAddAppointment(pendingAppointment, true); // override
+    handleAddAppointment({ ...pendingAppointment, out_of_window: true }, true); // override
     setOutsideWindowPopupOpen(false);
     setPopupOpen(false);
     setPendingAppointment(null);

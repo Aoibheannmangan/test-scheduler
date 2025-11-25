@@ -25,8 +25,9 @@ class Booking(db.Model):
     booking_id = db.Column(db.String, primary_key=True, default=generate_uuid) # Unique ID for the room booking
     patient_id = db.Column(db.String) # Identifier for the patient
     blocked = db.Column(db.Boolean, default=False) # Flag if the slot is blocked (In case date is blocked after booking)
-    note = db.Column(db.String, nullable=False) # Notes related to the booking
+    note = db.Column(db.String, nullable=True) # Notes related to the booking
     no_show = db.Column(db.Boolean, default=False) # Flag if the patient was a no-show
+    out_of_window = db.Column(db.Boolean, default=False) # Flag if the patient was booked outside of visit window
     event_id = db.Column(db.String, db.ForeignKey('event.event_id'), nullable=False) # Foreign key to the Event table
     room_id = db.Column(db.Integer, db.ForeignKey('rooms.room_id'), nullable=False) # Foreign key to the Rooms table
 
