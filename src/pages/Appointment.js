@@ -37,11 +37,17 @@ const ToggleAppointment = ({
   // Gray out blocked out dates
   const isDateBlocked = (date) => {
     if (!blockedDates) return false;
-    const formattedDate = dayjs(date).startOf("day");
+    
     return blockedDates.some((blockedDate) => {
-      const start = dayjs(blockedDate.start).startOf("day");
-      return formattedDate.isSame(start);
-    });
+      const start = dayjs(blockedDate.start);
+      const end = dayjs(blockedDate.end);
+
+      const isFullDay = start.hour() === 0 && start.minute === 0 && end.hour() === 23 && end.minute() === 59;
+
+      if (!isFullDay) return false;
+
+      return dayjs(date).isSame(start, "day");
+    })
   };
 
   // Calculate selected start and end times

@@ -172,21 +172,25 @@ const MyCalendar = () => {
       try {
         const token = localStorage.getItem("token");
 
-        const startISO = moment(
-          `${selectedDate} ${blockStartTime}`,
-          "YYYY-MM-DD HH:mm"
-        ).toISOString();
+        const startISO = moment(selectedDate) 
+          .set({
+            hour: moment(blockStartTime).hour(),
+            minute: moment(blockStartTime).minute(),
+          }) 
+          .toISOString();
 
-        const endISO = moment(
-          `${selectedDate} ${blockEndTime}`,
-          "YYYY-MM-DD HH:mm"
-        ).toISOString();
+        const endISO = moment(selectedDate)
+          .set({
+            hour: moment(blockEndTime).hour(),
+            minute: moment(blockEndTime).minute(),
+          })
+          .toISOString();
 
         await axios.post(
           "/api/block-date",
           { start: startISO,
             end: endISO,
-            date: selectedDate },
+          },
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -658,12 +662,10 @@ const MyCalendar = () => {
       const start = moment(b.start);
       const end = moment(b.end);
 
-      return(
-        start.hour() === 0 &&
-        start.minute() === 0 &&
-        end.hour() === 23 &&
-        end.minute() === 59
-      );
+      const sameDay = start.isSame(date, "day");
+      const fullDay = end.diff(start, "minutes") >= (24 * 60 - 1);
+
+      return fullDay;
     });
   };
 

@@ -324,27 +324,29 @@ def add_blocked_date(current_user):
     """Handles the blocking of a date."""
     logger.info(f"Blocked date request by user: {current_user.email}")
     data = request.get_json()
-    date_str = data.get('date')
-    title = "Blocked"
 
-    if not date_str:
-        return jsonify({"error": "Missing date"}), 400
+    start_str = data.get('start')
+    end_str = data.get('end')
 
+    if not start_str or not end_str:
+        return jsonify({ "error": "Missing start or end time"}), 400
     try:
-        # For a full-day event, use the start of the day for both start and end
-        start_of_day = datetime.fromisoformat(date_str.replace('Z', '+00:00')).replace(hour=0, minute=0, second=0, microsecond=0)
-        end_of_day = datetime.fromisoformat(date_str.replace('Z', '+00:00')).replace(hour=23, minute=59, second=59, microsecond=999999)
+        start_dt = datetime.fromisoformat(start_str.replace('Z', '+00:00'))
+        end_dt = datetime.fromisoformat(end_str.replace('Z', '+00:00'))
 
         new_event = Event(
             event_title='Blocked',
-            start_date=start_of_day,
-            end_date=end_of_day,
+            start_date=start_dt,
+            end_date=end_dt,
             event_type='blocked',
             visit_num=None
         )
+
         db.session.add(new_event)
         db.session.commit()
-        return jsonify({"ok": True, "eventId": new_event.event_id}), 201
+
+        return jsonify({"ok": True, "eventId": new_event.event_id}), 201    
+   
     except Exception as e:
         db.session.rollback()
         logger.error(f"Error blocking date: {e}")
