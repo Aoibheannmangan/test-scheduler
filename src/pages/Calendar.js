@@ -49,33 +49,42 @@ const MyCalendar = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const isFirstRender = useRef(true);
 
-  /* Blocked dates portion */
-  // Create array for blocked dates and show blocked dates state
+  const [blockStart, setBlockStart] = useState(null);
+  const [blockEnd, setBlockEnd] = useState(null);
   const [blockedDates, setBlockedDates] = useState([]);
-  const [blockStartTime, setBlockStartTime] = useState(null);
-  const [blockEndTime, setBlockEndTime] = useState(null);
+
+
 
   useEffect(() => {
     const fetchBlockedDates = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get(
-          "/api/blocked-dates",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setBlockedDates(response.data.blockedDates);
-      } catch (error) {
-        console.error("Error fetching blocked dates:", error);
+
+        const response = await axios.get("/api/blocked-dates", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        // Convert incoming ISO strings → real JS Date objects
+        const formatted = response.data.blockedDates.map((b) => ({
+          ...b,
+          start: new Date(b.start),
+          end: new Date(b.end),
+          blocked: true,
+          event_type: "blocked",
+        }));
+
+        setBlockedDates(formatted);
+      } catch (err) {
+        console.error("Error fetching blocked:", err);
       }
     };
 
     fetchBlockedDates();
   }, []);
+
+
   const [showBlockedDates, setShowBlockedDates] = useState(false);
+
 
   /* Appointment portion */
   // Create array to store booked appointments
@@ -168,57 +177,44 @@ const MyCalendar = () => {
   };
 
   const handleBlockDate = async () => {
-    if (selectedDate) {
-      try {
-        const token = localStorage.getItem("token");
+    if (!blockStart || !blockEnd) {
+      setAlert({ message: "Please select a start and end", type: "error" });
+      return;
+    }
 
-        const startISO = moment(selectedDate) 
-          .set({
-            hour: moment(blockStartTime).hour(),
-            minute: moment(blockStartTime).minute(),
-          }) 
-          .toISOString();
+    if (blockEnd.isSameOrBefore(blockStart)) {
+      setAlert({ message: "End must be after start", type: "error" });
+      return;
+    }
 
-        const endISO = moment(selectedDate)
-          .set({
-            hour: moment(blockEndTime).hour(),
-            minute: moment(blockEndTime).minute(),
-          })
-          .toISOString();
+    const startISO = blockStart.toISOString();
+    const endISO = blockEnd.toISOString();
 
-        await axios.post(
-          "/api/block-date",
-          { start: startISO,
-            end: endISO,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+    try {
+      const token = localStorage.getItem("token");
 
-        // Refetch blocked dates to update the calendar
-        const response = await axios.get(
-          "/api/blocked-dates",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setBlockedDates(response.data.blockedDates);
+      const response = await axios.post(
+        "/api/block-date",
+        { start: startISO, end: endISO },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-        setAlert({
-          message: `Blocked ${moment(selectedDate).format("YYYY-MM-DD")}`,
-          type: "success",
-        });
-      } catch (error) {
-        console.error("Error blocking date:", error);
-        setAlert({ message: "Error blocking date", type: "error" });
-      }
-    } else {
-      setAlert({ message: "Please select a date to block", type: "error" });
+      const newEvent = {
+        title: "Blocked",
+        start: new Date(startISO),
+        end: new Date(endISO),
+        blocked: true,
+        allDay: false,
+        event_type: "blocked",
+        eventId: response.data.eventId,
+      };
+
+      setBlockedDates((prev) => [...prev, newEvent]);
+
+      setAlert({ message: "Date blocked", type: "success" });
+    } catch (err) {
+      console.error("Error blocking:", err);
+      setAlert({ message: "Error blocking date", type: "error" });
     }
   };
 
@@ -226,9 +222,17 @@ const MyCalendar = () => {
     setShowBlockedDates((prev) => !prev);
   };
 
-  const handleDateChange = (event) => {
-    setSelectedDate(event);
+  // Handle changing the block start or end datetime
+  const handleDateChange = (type, newValue) => {
+    if (!newValue) return;
+
+    if (type === "start") {
+      setBlockStart(newValue);
+    } else if (type === "end") {
+      setBlockEnd(newValue);
+    }
   };
+
 
   const blockedEventGetter = (event) => {
     if (event.blocked) {
@@ -686,12 +690,22 @@ const MyCalendar = () => {
     return isTimeSlotBooked(time, selectedEvent?.event_id);
   };
 
-  // Array of all avents
-  const allEvents = [...bookedEvents, ...windowEvents, ...blockedDates];
+  console.log("DEBUG bookedEvents =", bookedEvents);
+  console.log("DEBUG windowEvents =", windowEvents);
+  console.log("DEBUG blockedDates =", blockedDates);
+
+
+  // Array of all events
+  const allEvents = [
+  ...bookedEvents,
+  ...windowEvents,
+  ...(blockedDates || []),
+];
+
 
   const filteredAppointments = useMemo(() => {
     return allEvents.filter((event) => {
-      if (event.blocked) return true;
+      if (event.blocked || event.event_type === "blocked") return true;
       if (event.type === "window") return true; // Always show windows
       return selectedRooms.includes(event.room); // Filter booked by room
     });
@@ -799,51 +813,48 @@ const MyCalendar = () => {
                   </button>
                 </div>
                 <div className="blockContainer">
-                  <label>
-                    Select Date to Block:
-                    <DatePicker // date input for app
-                      views={["day", "month", "year"]}
-                      value={selectedDate}
-                      onChange={handleDateChange}
-                      format="DD/MM/YYYY"
-                      slotProps={{
-                        textField: {
-                          id: "date",
-                          required: true,
-                          fullWidth: true,
-                        },
-                      }}
-                    />
-                  </label>
-                  <label>
-                    Select Start Time to Block
-                    <TimePicker value={blockStartTime} onChange={setBlockStartTime} />
-                  </label>
-                  <label>
-                    Select End Time to Block
-                    <TimePicker value={blockEndTime} onChange={setBlockEndTime} />
-                  </label>
-                  <div className="button-row">
-                    <button onClick={handleBlockDate} className="block-button">
-                      {" "}
-                      Block Date
-                    </button>
-                    <button
-                      onClick={handleShowBlockedDates}
-                      className="block-button"
-                    >
-                      {showBlockedDates ? "Hide" : "Show"} blocked dates
-                    </button>
-                  </div>
-                  {showBlockedDates && (
-                    <ul>
-                      {blockedDates.map((date, index) => (
-                        <li key={index}>
-                          {moment(date.start).format("YYYY-MM-DD HH:mm")} -  {moment(date.end).format("HH:mm")}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+                  <div className="blockContainer">
+                    <LocalizationProvider dateAdapter={AdapterMoment}>
+                      <label>
+                        Select start date & time
+                        <DateTimePicker
+                          value={blockStart}
+                          onChange={(val) => setBlockStart(val)}
+                          renderInput={(params) => <input {...params} />}
+                          ampm={false}
+                        />
+                      </label>
+
+                      <label>
+                        Select end date & time
+                        <DateTimePicker
+                          value={blockEnd}
+                          onChange={(val) => setBlockEnd(val)}
+                          renderInput={(params) => <input {...params} />}
+                          ampm={false}
+                        />
+                      </label>
+                    </LocalizationProvider>
+                        <div className="button-row">
+                          <button onClick={handleBlockDate} className="block-button">
+                            Block Date
+                          </button>
+                          <button onClick={handleShowBlockedDates} className="block-button">
+                            {showBlockedDates ? "Hide" : "Show"} blocked dates
+                          </button>
+                        </div>
+
+                        {showBlockedDates && (
+                          <ul>
+                            {blockedDates.map((date, index) => (
+                              <li key={index}>
+                                {moment(date.start).format("YYYY-MM-DD HH:mm")} -{" "}
+                                {moment(date.end).format("HH:mm")}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
                 </div>
               </label>
               {/**DISPLAYS PATIENT WHEN SEARCHED IN WINDOW*/}
