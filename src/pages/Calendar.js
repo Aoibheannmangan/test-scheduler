@@ -51,20 +51,33 @@ const MyCalendar = () => {
   /* Blocked dates portion */
   // Create array for blocked dates and show blocked dates state
   const [blockedDates, setBlockedDates] = useState([]);
+  const [blockStart, setBlockStart] = useState(null);
+  const [blockEnd, setBlockEnd] = useState(null);
 
   useEffect(() => {
     const fetchBlockedDates = async () => {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          "http://localhost:5000/api/blocked-dates",
+          "/api/blocked-dates",
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        setBlockedDates(response.data.blockedDates);
+
+        //Convert ISO strings into real JS Date objects
+
+        const formatted = response.data.blockedDates.map((b) => ({
+          ...b,
+          start: new Date(b.start),
+          end: new Date(b.end),
+          blocked: true,
+          event_type: "blocked",
+        }));
+
+        setBlockedDates(formatted);
       } catch (error) {
         console.error("Error fetching blocked dates:", error);
       }
@@ -72,6 +85,7 @@ const MyCalendar = () => {
 
     fetchBlockedDates();
   }, []);
+
   const [showBlockedDates, setShowBlockedDates] = useState(false);
 
   /* Appointment portion */
@@ -115,7 +129,7 @@ const MyCalendar = () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        "http://localhost:5000/api/appointments",
+        "/api/appointments",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -165,40 +179,41 @@ const MyCalendar = () => {
   };
 
   const handleBlockDate = async () => {
-    if (selectedDate) {
-      try {
-        const token = localStorage.getItem("token");
-        await axios.post(
-          "http://localhost:5000/api/block-date",
-          { date: selectedDate },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+    if (!blockStart || !blockEnd) {
+      setAlert({message: "Please select a start and an end", type: "error"});
+      return;
+    }
 
-        // Refetch blocked dates to update the calendar
-        const response = await axios.get(
-          "http://localhost:5000/api/blocked-dates",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setBlockedDates(response.data.blockedDates);
+    if(blockEnd.isSameOrBefore(blockStart)) {
+      setAlert({ message: "End must be after start", type: "error"});
+      return;
+    }
 
-        setAlert({
-          message: `Blocked ${moment(selectedDate).format("YYYY-MM-DD")}`,
-          type: "success",
-        });
-      } catch (error) {
-        console.error("Error blocking date:", error);
-        setAlert({ message: "Error blocking date", type: "error" });
-      }
-    } else {
-      setAlert({ message: "Please select a date to block", type: "error" });
+    const startISO = blockStart.toISOString();
+    const endISO = blockEnd.toISOString();
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        "/api/block-date",
+        {start: startISO, end: endISO},
+        {headers: {Authorization: `Bearer ${token}`}}
+      );
+
+      const newEvent = {
+        title: "Blocked",
+        start: new Date(startISO),
+        end: new Date(endISO),
+        blocked: true,
+        allDay: false,
+        event_type: "blocked",
+        eventId: response.data.eventId,
+      };
+
+      setBlockedDates((prev) => [...prev, newEvent]);
+      setAlert({message: "Date blocked successfully", type: "success"});
+    } catch (err) {
+      setAlert({message: "Error blocking date", type: "error"});
     }
   };
 
@@ -206,8 +221,14 @@ const MyCalendar = () => {
     setShowBlockedDates((prev) => !prev);
   };
 
-  const handleDateChange = (event) => {
-    setSelectedDate(event);
+  const handleDateChange = (type, newValue) => {
+    if (!newValue) return;
+
+    if (type=== "start") {
+      setBlockStart(newValue);
+    } else if (type==="end") {
+      setBlockEnd(newValue);
+    }
   };
 
   const blockedEventGetter = (event) => {
@@ -655,7 +676,16 @@ const MyCalendar = () => {
   };
 
   const shouldDisableDate = (date) => {
-    return isDateBlocked(date);
+    const blocksForDay = blockedDates.filter(b => moment(date).isSame(b.start, "day"));
+    return blocksForDay.some(b => {
+      const start = moment(b.start);
+      const end = moment(b.end);
+
+      const sameDay = start.isSame(date, "day");
+      const fullDay = end.diff(start, "minutes") >= (24 * 60 - 1);
+
+      return fullDay;
+    });
   };
 
   const shouldDisableTime = (time, clockType) => {
@@ -666,7 +696,7 @@ const MyCalendar = () => {
   };
 
   // Array of all avents
-  const allEvents = [...bookedEvents, ...windowEvents, ...blockedDates];
+  const allEvents = [...bookedEvents, ...windowEvents, ...(blockedDates || [])];
 
   const filteredAppointments = useMemo(() => {
     return allEvents.filter((event) => {
@@ -778,31 +808,31 @@ const MyCalendar = () => {
                   </button>
                 </div>
                 <div className="blockContainer">
-                  <label>
-                    Select Date to Block:
-                    <DatePicker // date input for app
-                      views={["day", "month", "year"]}
-                      value={selectedDate}
-                      onChange={handleDateChange}
-                      format="DD/MM/YYYY"
-                      slotProps={{
-                        textField: {
-                          id: "date",
-                          required: true,
-                          fullWidth: true,
-                        },
-                      }}
-                    />
-                  </label>
+                  <LocalizationProvider dateAdapter={AdapterMoment}>
+                    <label>
+                      Select start date and time
+                       <DateTimePicker
+                          value={blockStart}
+                          onChange={(val) => setBlockStart(val)}
+                          renderInput={(params) => <input {...params} />}
+                          ampm={false}
+                        />
+                    </label>
+                    <label>
+                        Select end date & time
+                        <DateTimePicker
+                          value={blockEnd}
+                          onChange={(val) => setBlockEnd(val)}
+                          renderInput={(params) => <input {...params} />}
+                          ampm={false}
+                        />
+                      </label>
+                  </LocalizationProvider>
                   <div className="button-row">
                     <button onClick={handleBlockDate} className="block-button">
-                      {" "}
                       Block Date
                     </button>
-                    <button
-                      onClick={handleShowBlockedDates}
-                      className="block-button"
-                    >
+                    <button onClick={handleShowBlockedDates} className="block-button">
                       {showBlockedDates ? "Hide" : "Show"} blocked dates
                     </button>
                   </div>
@@ -810,7 +840,8 @@ const MyCalendar = () => {
                     <ul>
                       {blockedDates.map((date, index) => (
                         <li key={index}>
-                          {moment(date.start).format("YYYY-MM-DD")}
+                          {moment(date.start).format("YYYY-MM-DD HH:mm")} -{" "}
+                          {moment(date.end).format("HH:mm")}
                         </li>
                       ))}
                     </ul>

@@ -368,7 +368,7 @@ def get_blocked_dates(current_user):
             "title": event.event_title,
             "start": event.start_date.isoformat(),
             "end": event.end_date.isoformat(),
-            "allDay": True,
+            "allDay": False,
             "blocked": True,
             "event_type": event.event_type
         })
