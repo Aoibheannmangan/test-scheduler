@@ -10,22 +10,22 @@ export function eventPropGetter(event) {
 
   // Apply base color based on room
   if (event.room === 'TeleRoom') {
-    style.backgroundColor = '#af4c4c'; 
+    style.backgroundColor = '#9E3C3C'; 
   } 
   else if (event.room === 'room1') {
-    style.backgroundColor = '#4caf50'; 
+    style.backgroundColor = '#3C8C42'; 
   } 
   else if (event.room === 'room2') {
-    style.backgroundColor = '#09ccc2a4'; 
+    style.backgroundColor = '#077C78'; 
   } 
   else if (event.room === 'room3') {
-    style.backgroundColor = '#cc8821c0'; 
+    style.backgroundColor = '#B6711A'; 
   } 
   else if (event.room === 'room4') {
-    style.backgroundColor = '#8c14a1cb'; 
+    style.backgroundColor = '#76148E'; 
   } 
   else if (event.room === 'devRoom') {
-    style.backgroundColor = '#138392c9'; 
+    style.backgroundColor = '#0E6C7A'; 
   }
 
 

@@ -3,6 +3,18 @@ import { useNavigate} from 'react-router-dom';
 import Alert from './Alert'; 
 import {FaUser, FaLock} from 'react-icons/fa'; 
 
+/**
+ * 
+ * ForgotPsw component that renders the password reset form and handles password resetting
+ * validates new password, checks for existing user email,
+ * navigates to calendar page on success, displays alert if failed
+ * 
+ * @component
+ * @example
+ * <Route path="/forgot-password" element={<ForgotPsw />} />
+ * @returns  {JSX.Element} The ForgotPsw component
+ */
+
 const ForgotPsw = () => { 
     const [email, setEmail] = useState(''); 
     const [newPassword, setNewPassword] = useState(''); 

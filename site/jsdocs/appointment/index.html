@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://aoibheannmangan.github.io/test-scheduler/jsdocs/appointment/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Appointment - Test Scheduler Documentation</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/python.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/bash.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">Test Scheduler Documentation</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../../about/" class="nav-link">About</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">User Guide</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../user-guide/getting-started/" class="dropdown-item">Getting Started</a>
+</li>
+                                    
+<li>
+    <a href="../../user-guide/requirements/" class="dropdown-item">Requirements</a>
+</li>
+                                    
+<li>
+    <a href="../../user-guide/license/" class="dropdown-item">License</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Scheduler Guide</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../login/" class="dropdown-item">Login</a>
+</li>
+                                    
+<li>
+    <a href="../signup/" class="dropdown-item">Signup</a>
+</li>
+                                    
+<li>
+    <a href="../forgotpsw/" class="dropdown-item">Forgot Password</a>
+</li>
+                                    
+<li>
+    <a href="../forecast/" class="dropdown-item">Forecast</a>
+</li>
+                                    
+<li>
+    <a href="../appointview/" class="dropdown-item">Appointment View</a>
+</li>
+                                    
+<li>
+    <a href="../calendar/" class="dropdown-item">Calendar</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">Appointment</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Components Guide</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../alert/" class="dropdown-item">Alert</a>
+</li>
+                                    
+<li>
+    <a href="../clickablecell/" class="dropdown-item">Clickable Cell</a>
+</li>
+                                    
+<li>
+    <a href="../customtoolbar/" class="dropdown-item">Custom Toolbar</a>
+</li>
+                                    
+<li>
+    <a href="../navbar/" class="dropdown-item">Navbar</a>
+</li>
+                                    
+<li>
+    <a href="../popup/" class="dropdown-item">Pop Up</a>
+</li>
+                                    
+<li>
+    <a href="../rebooking/" class="dropdown-item">Rebooking Form</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                            <li class="nav-item">
+                                <a rel="prev" href="../calendar/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../alert/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/Aoibheannmangan/test-scheduler.git/edit/master/docs/jsdocs/appointment.md" class="nav-link"><i class="fa-brands fa-github"></i> Edit on GitHub</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="2"><a href="#toggleappointment-void" class="nav-link">ToggleAppointment() =&gt; void</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<p><a name="ToggleAppointment"></a></p>
+<h2 id="toggleappointment-void">ToggleAppointment() =&gt; <code>void</code></h2>
+<p>Toggle is not visible by default</p>
+<p><strong>Kind</strong>: global function<br />
+<strong>Returns</strong>: <code>void</code> - Does not return a value  </p>
+<ul>
+<li><a href="#ToggleAppointment">ToggleAppointment()</a> =&gt; <code>void</code><ul>
+<li><a href="#ToggleAppointment..selectedStart">~selectedStart</a> =&gt; <code>Date</code> | <code>null</code> | <code>Date</code> | <code>null</code></li>
+<li><a href="#ToggleAppointment..roomOptions">~roomOptions</a> =&gt; <code>Array.&lt;Object&gt;</code></li>
+<li><a href="#ToggleAppointment..isRoomAvailable">~isRoomAvailable(roomId, startTime, endTime, appointments)</a> =&gt; <code>Boolean</code></li>
+<li><a href="#ToggleAppointment..handleSubmit">~handleSubmit(e)</a> =&gt; <code>void</code></li>
+</ul>
+</li>
+</ul>
+<p><a name="ToggleAppointment..selectedStart"></a></p>
+<h3 id="toggleappointmentselectedstart-date-null-date-null">ToggleAppointment~selectedStart =&gt; <code>Date</code> | <code>null</code> | <code>Date</code> | <code>null</code></h3>
+<p>Calculates the selected start and end times based on the provided date and time.
+These values are memoized to avoid recalculating unless dependencies change.</p>
+<p><strong>Kind</strong>: inner constant of <a href="#ToggleAppointment"><code>ToggleAppointment</code></a><br />
+<strong>Returns</strong>: <code>Date</code> | <code>null</code> - The selected start time or <code>null</code> if invalid inputs.<code>Date</code> | <code>null</code> - The selected end time or <code>null</code> if invalid inputs.<br />
+<a name="ToggleAppointment..roomOptions"></a></p>
+<h3 id="toggleappointmentroomoptions-arrayobject">ToggleAppointment~roomOptions =&gt; <code>Array.&lt;Object&gt;</code></h3>
+<p>Generates the room options with avaliability based on selected start times</p>
+<p><strong>Kind</strong>: inner constant of <a href="#ToggleAppointment"><code>ToggleAppointment</code></a><br />
+<strong>Returns</strong>: <code>Array.&lt;Object&gt;</code> - - A list of rooms with their avaliabilty status<br />
+<a name="ToggleAppointment..isRoomAvailable"></a></p>
+<h3 id="toggleappointmentisroomavailableroomid-starttime-endtime-appointments-boolean">ToggleAppointment~isRoomAvailable(roomId, startTime, endTime, appointments) =&gt; <code>Boolean</code></h3>
+<p>Checks if a room is avaliable at a time</p>
+<p><strong>Kind</strong>: inner method of <a href="#ToggleAppointment"><code>ToggleAppointment</code></a><br />
+<strong>Returns</strong>: <code>Boolean</code> - - Returns true if avaliable, false if not  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>roomId</td>
+<td><code>string</code></td>
+<td>The ID of the room</td>
+</tr>
+<tr>
+<td>startTime</td>
+<td><code>Date</code></td>
+<td>Appointment start time</td>
+</tr>
+<tr>
+<td>endTime</td>
+<td><code>Date</code></td>
+<td>Appointment end time</td>
+</tr>
+<tr>
+<td>appointments</td>
+<td><code>Array.&lt;Object&gt;</code></td>
+<td>List of current appointments</td>
+</tr>
+</tbody>
+</table>
+<p><a name="ToggleAppointment..handleSubmit"></a></p>
+<h3 id="toggleappointmenthandlesubmite-void">ToggleAppointment~handleSubmit(e) =&gt; <code>void</code></h3>
+<p>Handles form submission for new appointments
+Validates the start and end times
+Constructs a new appointment object and calls onAddAppointment
+Resets form state after submission</p>
+<p><strong>Kind</strong>: inner method of <a href="#ToggleAppointment"><code>ToggleAppointment</code></a>  </p>
+<table>
+<thead>
+<tr>
+<th>Param</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>e</td>
+<td><code>Event</code></td>
+<td>Event triggered by form submission</td>
+</tr>
+</tbody>
+</table></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+
+        <div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

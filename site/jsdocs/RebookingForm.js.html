@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: RebookingForm.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: RebookingForm.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState, useMemo } from 'react';
+import './RebookingForm.css';
+import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import dayjs from 'dayjs';
+
+/**
+ * A form component that allows user to reschedule and event
+ * Users can select a new start and end time, and provide a reason for the no-show
+ * 
+ * @param {Object} param0 - The props object
+ * @param {Object} param0.event - The event to be rebooked, with details such as start and end time
+ * @param {Function} param0.onSave - A function to save the updated event with new details
+ * @param {Function} param0.onCancel - A function to cancel the rebooking process and close the form
+ * @returns {JSX.Element} The JSX for rendering the rebooking form
+ */
+const RebookingForm = ({ event, onSave, onCancel }) => {
+    const [newDate, setNewDate] = useState(dayjs(event.start).format("YYYY-MM-DD"));
+    const [newStart, setNewStart] = useState(dayjs(event.start));
+    const [newEnd, setNewEnd] = useState(dayjs(event.end));
+    const [noShowComment, setNoShowComment] = useState(event.noShowComment || "");
+
+     const start = useMemo(() => {
+        if (!newDate || !newStart || !dayjs.isDayjs(newStart)) return null;
+        return dayjs(`${newDate}T${newStart.format("HH:mm")}`).toDate();
+      }, [newDate, newStart]);
+    
+      const end = useMemo(() => {
+        if (!newDate || !newEnd || !dayjs.isDayjs(newEnd)) return null;
+        return dayjs(`${newDate}T${newEnd.format("HH:mm")}`).toDate();
+      }, [newDate, newEnd]);
+    
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        if (!newStart || !dayjs.isDayjs(newStart)) {
+            alert("Please select a start time");
+            return;
+        }
+        if (!newEnd || !dayjs.isDayjs(newEnd)) {
+            alert("Please select an end time");
+            return;
+        }
+
+        const start = dayjs(newDate)
+            .set("hour", newStart.hour())
+            .set("minute", newStart.minute())
+            .set("second", 0)
+            .set("millisecond", 0)
+            .toDate();
+        
+        const end = dayjs(newDate)
+            .set("hour", newEnd.hour())
+            .set("minute", newEnd.minute())
+            .set("second", 0)
+            .set("millisecond", 0)
+            .toDate();
+
+        const updatedEvent = {
+            ...event,
+            start,
+            end,
+            noShow: true,
+            noShowComment,
+        };
+        onSave(updatedEvent);
+    };
+
+    return ( 
+        &lt;div className="modal-overlay">
+            &lt;div className = "modal-content">
+                &lt;h3 className="title">Reschedule Event&lt;/h3>
+                &lt;p>&lt;strong>Title: &lt;/strong>{event.title}&lt;/p>
+
+                &lt;label>New Start Time:&lt;/label>
+                &lt;TimePicker
+                    label="New Start Time"
+                    value={newStart}
+                    minutesStep={30}
+                    skipDisabled={true}
+                    views={["hours", "minutes"]}
+                    format="HH:mm"
+                    onChange={(newValue) => {setNewStart(newValue)}}
+                    slotProps={{
+                        textField: {
+                            id: "newStartTime",
+                            required: true,
+                            fullWidth: true,
+                        },
+                        digitalClockSectionItem: {
+                            sx: {
+                                '&amp;[data-mui-seconds="15"], &amp;[data-mui-seconds="45"]': {
+                                display: "none",
+                                },
+                            },
+                        },
+                    }}
+                />
+
+                &lt;label>New End Time:&lt;/label>
+                &lt;TimePicker 
+                    label="New End Time"
+                    value={newEnd}
+                    minutesStep={30}
+                    skipDisabled={true} 
+                    views={["hours", "minutes"]}
+                    format="HH:mm"
+                    onChange={(newValue) => { setNewEnd(newValue)}}
+                    slotProps = {{
+                        textField: {
+                            id: "newEndTime",
+                            required: true,
+                            fullWidth: true,
+                        },
+                        digitalClockSectionItem: {
+                            sx: {
+                                '&amp;[data-mui-seconds="15"], &amp;[data-mui-seconds="45"]': {
+                                display: "none",
+                                },
+                            },
+                        },
+                    }}
+                />
+                &lt;br />
+
+                &lt;label>Reason for Cancellation / No-Show: &lt;/label>
+                &lt;input 
+                    type="text"
+                    value={noShowComment}
+                    onChange={(e) => setNoShowComment(e.target.value)}
+                    placeholder="e.g. Unexpected emergency"
+                />
+
+                &lt;div className="modal-buttons">
+                    &lt;button onClick={handleSubmit} className="resubmit-button">Save&lt;/button>
+                    &lt;button onClick={onCancel} className="recancel-button">Cancel&lt;/button>
+                &lt;/div>
+            &lt;/div>
+        &lt;/div>
+        
+    );
+};
+
+export default RebookingForm;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#RebookingForm">RebookingForm</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Nov 10 2025 14:59:42 GMT+0000 (Greenwich Mean Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

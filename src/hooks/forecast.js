@@ -9,19 +9,21 @@
  * @returns {Object} Object with month-year keys and appointment counts as values
  */
 export function getAppointmentsPerMonth(events) {
-  const counts = {};
+	const counts = {};
 
-  events.forEach((event) => {
-    if (!event.start) return;
-    const date = new Date(event.start);
-    if (isNaN(date)) return;
+	events.forEach((event) => {
+		if (!event.start) return;
+		const date = new Date(event.start);
+		if (isNaN(date)) return;
 
-    const key = `${date.toLocaleString("default", { month: "long" })} ${date.getFullYear()}`;
-    if (!counts[key]) counts[key] = { booked: 0, window: 0 };
+		const key = `${date.toLocaleString("default", {
+			month: "long",
+		})} ${date.getFullYear()}`;
+		if (!counts[key]) counts[key] = { booked: 0, window: 0 };
 
-    if (event.type === "booked") counts[key].booked += 1;
-    else counts[key].window += 1;
-  });
+		if (event.type === "booked") counts[key].booked += 1;
+		else counts[key].window += 1;
+	});
 
-  return counts;
+	return counts;
 }

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: Appointment.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: Appointment.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState, useMemo } from "react";
+import "./Appointment.css";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import dayjs from "dayjs";
+
+/**
+ * Toggle is not visible by default
+ * @returns {void} Does not return a value
+ */
+// Toggle is not visible by default
+const ToggleAppointment = ({
+  onAddAppointment,
+  isOpen,
+  onClose,
+  bookedEvents,
+}) => {
+  // States vars for appointment booking
+  const [appPatID, setAppPatID] = useState("");
+  const [appDate, setAppDate] = useState("");
+  const [appTimeStart, setAppTimeStart] = useState(null); // Changed from "" to null
+  const [appTimeEnd, setAppTimeEnd] = useState(null); // Changed from "" to null
+  const [patientStudy, setPatientStudy] = useState("");
+  const [appRoom, setAppRoom] = useState("");
+  const [appNote, setAppNote] = useState("");
+
+  const roomList = {
+    TeleRoom: "Telemetry Room (Room 2.10)",
+    room1: "Assessment Room 1",
+    room2: "Assessment Room 2",
+    room3: "Assessment Room 3",
+    room4: "Assessment Room 4",
+    devRoom: "Developmental Assessment Room (Room 2.07)",
+  };
+
+  /**
+   * Checks if a room is avaliable at a time
+   * @param {string} roomId - The ID of the room
+   * @param {Date} startTime - Appointment start time
+   * @param {Date} endTime  - Appointment end time
+   * @param {Array&lt;Object>} appointments - List of current appointments
+   * @returns {Boolean} - Returns true if avaliable, false if not
+   */
+  // Function to check if room is available at selected time
+  const isRoomAvailable = (roomId, startTime, endTime, appointments) => {
+    if (!startTime || !endTime) return true; // If no time selected, show all as available
+
+    return !appointments.some((event) => {
+      if (event.room !== roomId) return false;
+      const eventStart = new Date(event.start);
+      const eventEnd = new Date(event.end);
+      return startTime &lt; eventEnd &amp;&amp; endTime > eventStart;
+    });
+  };
+
+  /**
+ * Calculates the selected start and end times based on the provided date and time.
+ * These values are memoized to avoid recalculating unless dependencies change.
+ * 
+ * @returns {Date|null} The selected start time or `null` if invalid inputs.
+ * @returns {Date|null} The selected end time or `null` if invalid inputs.
+ */
+
+  // Calculate selected start and end times
+  const selectedStart = useMemo(() => {
+    if (!appDate || !appTimeStart || !dayjs.isDayjs(appTimeStart)) return null;
+    return dayjs(`${appDate}T${appTimeStart.format("HH:mm")}`).toDate();
+  }, [appDate, appTimeStart]);
+
+  const selectedEnd = useMemo(() => {
+    if (!appDate || !appTimeEnd || !dayjs.isDayjs(appTimeEnd)) return null;
+    return dayjs(`${appDate}T${appTimeEnd.format("HH:mm")}`).toDate();
+  }, [appDate, appTimeEnd]);
+
+  /**
+   * Generates the room options with avaliability based on selected start times
+   * 
+   * @returns {Array&lt;Object>} - A list of rooms with their avaliabilty status
+   */
+  const roomOptions = useMemo(() => {
+    return Object.entries(roomList).map(([roomId, roomName]) => {
+      const available = isRoomAvailable(
+        roomId,
+        selectedStart,
+        selectedEnd,
+        bookedEvents
+      );
+      return {
+        id: roomId,
+        name: roomName,
+        available,
+      };
+    });
+  }, [selectedStart, selectedEnd, bookedEvents]);
+
+  /**
+   * Handles form submission for new appointments
+   * Validates the start and end times
+   * Constructs a new appointment object and calls onAddAppointment
+   * Resets form state after submission
+   * 
+   * @param {Event} e - Event triggered by form submission 
+   * @returns {void}
+   */
+  // Handles putting in a booking
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // Validation to ensure times are selected
+    if (!appTimeStart || !dayjs.isDayjs(appTimeStart)) {
+      alert("Please select a start time");
+      return;
+    }
+    if (!appTimeEnd || !dayjs.isDayjs(appTimeEnd)) {
+      alert("Please select an end time");
+      return;
+    }
+
+    const start = dayjs(appDate)
+      .set("hour", appTimeStart.hour())
+      .set("minute", appTimeStart.minute())
+      .set("second", 0)
+      .set("millisecond", 0)
+      .toDate();
+
+    const end = dayjs(appDate)
+      .set("hour", appTimeEnd.hour())
+      .set("minute", appTimeEnd.minute())
+      .set("second", 0)
+      .set("millisecond", 0)
+      .toDate();
+
+    const appTitle = `${patientStudy.toUpperCase()} | ID: ${appPatID}`;
+
+    const newAppointment = {
+      title: appTitle,
+      patientId: appPatID,
+      start,
+      end,
+      type: "booked",
+      Study: [patientStudy] || "",
+      room: appRoom,
+      notes: appNote,
+    };
+
+    onAddAppointment(newAppointment);
+
+    // Reset form
+    setAppPatID("");
+    setAppDate("");
+    setAppTimeStart(null); // Reset to null instead of ""
+    setAppTimeEnd(null); // Reset to null instead of ""
+    setPatientStudy("");
+    setAppRoom("");
+    setAppNote("");
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    &lt;div className="Appointment-overlay">
+      &lt;div className="Appointment-content">
+        &lt;fieldset>
+          &lt;div className="form-border">
+            &lt;form onSubmit={handleSubmit}>
+              &lt;label htmlFor="patientID">Patient ID&lt;/label>
+              &lt;input // input for ID
+                type="text"
+                id="patID"
+                value={appPatID}
+                onChange={(e) => setAppPatID(e.target.value)}
+                placeholder="Enter Patient ID"
+                required
+              />
+
+              &lt;label htmlFor="date">Appointment Date&lt;/label>
+              &lt;input // date input for app
+                type="date"
+                id="date"
+                value={appDate}
+                onChange={(e) => setAppDate(e.target.value)}
+                required
+              />
+
+              &lt;label htmlFor="startTime">Start Time&lt;/label>
+              &lt;TimePicker
+                label="Start Time"
+                value={appTimeStart}
+                minutesStep={30}
+                skipDisabled={true}
+                views={["hours", "minutes"]}
+                format="HH:mm"
+                onChange={(newValue) => {
+                  // No need to wrap in dayjs() if newValue is already a dayjs object
+                  setAppTimeStart(newValue);
+                }}
+                slotProps={{
+                  textField: {
+                    id: "startTime",
+                    required: true,
+                    fullWidth: true,
+                  },
+                  digitalClockSectionItem: {
+                    sx: {
+                      '&amp;[data-mui-seconds="15"], &amp;[data-mui-seconds="45"]': {
+                        display: "none",
+                      },
+                    },
+                  },
+                }}
+              />
+
+              &lt;label htmlFor="endTime">End Time&lt;/label>
+              &lt;TimePicker
+                label="End Time"
+                value={appTimeEnd}
+                minutesStep={30}
+                skipDisabled={true}
+                views={["hours", "minutes"]}
+                format="HH:mm"
+                onChange={(newValue) => {
+                  // No need to wrap in dayjs() if newValue is already a dayjs object
+                  setAppTimeEnd(newValue);
+                }}
+                slotProps={{
+                  textField: {
+                    id: "endTime",
+                    required: true,
+                    fullWidth: true,
+                  },
+                  digitalClockSectionItem: {
+                    sx: {
+                      '&amp;[data-mui-seconds="15"], &amp;[data-mui-seconds="45"]': {
+                        display: "none",
+                      },
+                    },
+                  },
+                }}
+              />
+              &lt;br />
+
+              &lt;label htmlFor="room">Assessment Room:&lt;/label>
+              &lt;select
+                id="room"
+                name="room"
+                value={appRoom}
+                onChange={(e) => setAppRoom(e.target.value)}
+                required
+              >
+                &lt;option value="" disabled>
+                  -- Select Room --
+                &lt;/option>
+                {roomOptions.map((room) => (
+                  &lt;option
+                    key={room.id}
+                    value={room.id}
+                    disabled={!room.available}
+                    style={{
+                      color: room.available ? "black" : "#999",
+                      backgroundColor: room.available ? "white" : "#f5f5f5",
+                    }}
+                  >
+                    {room.name} {room.available ? "" : "(Unavailable)"}
+                  &lt;/option>
+                ))}
+              &lt;/select>
+
+              &lt;label htmlFor="Comments">Visit Note&lt;/label>
+              &lt;textarea // input for comment
+                type="text"
+                id="comment"
+                value={appNote}
+                onChange={(e) => setAppNote(e.target.value)}
+                placeholder="Enter notes on visit"
+              />
+
+              &lt;button className="submit-button" type="submit">
+                Submit
+              &lt;/button>
+              &lt;button className="cancel-button" onClick={onClose}>
+                Close
+              &lt;/button>
+            &lt;/form>
+          &lt;/div>
+        &lt;/fieldset>
+      &lt;/div>
+    &lt;/div>
+  );
+};
+
+export default ToggleAppointment;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#ToggleAppointment">ToggleAppointment</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Nov 10 2025 13:27:25 GMT+0000 (Greenwich Mean Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

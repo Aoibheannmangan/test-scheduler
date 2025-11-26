@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        <link rel="canonical" href="https://aoibheannmangan.github.io/test-scheduler/user-guide/getting-started/">
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Getting Started - Test Scheduler Documentation</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../../css/brands.min.css" rel="stylesheet">
+        <link href="../../css/solid.min.css" rel="stylesheet">
+        <link href="../../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/python.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/languages/bash.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">Test Scheduler Documentation</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href="../.." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../../about/" class="nav-link">About</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle active" aria-current="page" role="button" data-bs-toggle="dropdown"  aria-expanded="false">User Guide</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="./" class="dropdown-item active" aria-current="page">Getting Started</a>
+</li>
+                                    
+<li>
+    <a href="../requirements/" class="dropdown-item">Requirements</a>
+</li>
+                                    
+<li>
+    <a href="../license/" class="dropdown-item">License</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Scheduler Guide</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../jsdocs/login/" class="dropdown-item">Login</a>
+</li>
+                                    
+<li>
+    <a href="../../jsdocs/signup/" class="dropdown-item">Signup</a>
+</li>
+                                    
+<li>
+    <a href="../../jsdocs/forgotpsw/" class="dropdown-item">Forgot Password</a>
+</li>
+                                    
+<li>
+    <a href="../../jsdocs/forecast/" class="dropdown-item">Forecast</a>
+</li>
+                                    
+<li>
+    <a href="../../jsdocs/appointview/" class="dropdown-item">Appointment View</a>
+</li>
+                                    
+<li>
+    <a href="../../jsdocs/calendar/" class="dropdown-item">Calendar</a>
+</li>
+                                    
+<li>
+    <a href="../../jsdocs/appointment/" class="dropdown-item">Appointment</a>
+</li>
+                                </ul>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown"  aria-expanded="false">Components Guide</a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../../jsdocs/alert/" class="dropdown-item">Alert</a>
+</li>
+                                    
+<li>
+    <a href="../../jsdocs/clickablecell/" class="dropdown-item">Clickable Cell</a>
+</li>
+                                    
+<li>
+    <a href="../../jsdocs/customtoolbar/" class="dropdown-item">Custom Toolbar</a>
+</li>
+                                    
+<li>
+    <a href="../../jsdocs/navbar/" class="dropdown-item">Navbar</a>
+</li>
+                                    
+<li>
+    <a href="../../jsdocs/popup/" class="dropdown-item">Pop Up</a>
+</li>
+                                    
+<li>
+    <a href="../../jsdocs/rebooking/" class="dropdown-item">Rebooking Form</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                            <li class="nav-item">
+                                <a rel="prev" href="../../about/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../requirements/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="https://github.com/Aoibheannmangan/test-scheduler.git/edit/master/docs/user-guide/getting-started.md" class="nav-link"><i class="fa-brands fa-github"></i> Edit on GitHub</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="2"><a href="#api.routes.get_data" class="nav-link">get_data</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            
+            <li class="nav-item" data-bs-level="2"><a href="#api.app.serve" class="nav-link">serve</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<p>Getting Started</p>
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="api.routes.get_data" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">api</span><span class="o">.</span><span class="n">routes</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents first">
+
+        <p>Fetches data from the REDCap API and returns it ias JSON.
+This endpoint sends a POST request to the REDCap API the API_TOKEN 
+and REDCap url provided in the config.py file. It retrieves selected 
+fields such as site, date of birth and gestational age in weeks + days.</p>
+<p><strong>Request:</strong>
+- Method: GET
+- Endpoint: <code>/api/data</code>
+- No request parameters required.</p>
+<p><strong>Behavior:</strong>
+ - If <code>REDCAP_API_URL</code> or <code>API_TOKEN</code> are missing, returns a 500 error with an 
+ appropriate message.
+ - Constructs a payload specifying which REDCap fields to retrieve.
+ - Makes a POST request to the REDCap API to fetch the data.
+ - If successful, returns the records in JSON format.
+ - If the API request fails, returns an error message and HTTP 500.</p>
+<p><strong>Returns:</strong>
+ - <code>200 OK</code> and JSON array of REDCap records on success.
+ - <code>500 Internal Server Error</code> and JSON error message if configuration or API 
+ request fails.</p>
+<p><strong>Example Response:</strong>
+ <code>json
+ [
+     {
+         "record_id": "001",
+         "nicu_dob": "2020-05-12",
+         "nicu_sex": "F",
+         "v2_next_visit_range": "2021-06-01 to 2021-06-15",
+         ...
+     },
+     ...
+ ]</code></p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>api\routes.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/api/data&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;GET&#39;</span><span class="p">])</span>
+<span class="c1">#If REDCAP credentials are missing, return an error</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_data</span><span class="p">():</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fetches data from the REDCap API and returns it ias JSON.</span>
+<span class="sd">       This endpoint sends a POST request to the REDCap API the API_TOKEN </span>
+<span class="sd">       and REDCap url provided in the config.py file. It retrieves selected </span>
+<span class="sd">       fields such as site, date of birth and gestational age in weeks + days.</span>
+
+<span class="sd">       **Request:**</span>
+<span class="sd">       - Method: GET</span>
+<span class="sd">       - Endpoint: `/api/data`</span>
+<span class="sd">       - No request parameters required.</span>
+
+<span class="sd">       **Behavior:**</span>
+<span class="sd">        - If `REDCAP_API_URL` or `API_TOKEN` are missing, returns a 500 error with an </span>
+<span class="sd">        appropriate message.</span>
+<span class="sd">        - Constructs a payload specifying which REDCap fields to retrieve.</span>
+<span class="sd">        - Makes a POST request to the REDCap API to fetch the data.</span>
+<span class="sd">        - If successful, returns the records in JSON format.</span>
+<span class="sd">        - If the API request fails, returns an error message and HTTP 500.</span>
+
+<span class="sd">        **Returns:**</span>
+<span class="sd">        - `200 OK` and JSON array of REDCap records on success.</span>
+<span class="sd">        - `500 Internal Server Error` and JSON error message if configuration or API </span>
+<span class="sd">        request fails.</span>
+
+<span class="sd">        **Example Response:**</span>
+<span class="sd">        ```json</span>
+<span class="sd">        [</span>
+<span class="sd">            {</span>
+<span class="sd">                &quot;record_id&quot;: &quot;001&quot;,</span>
+<span class="sd">                &quot;nicu_dob&quot;: &quot;2020-05-12&quot;,</span>
+<span class="sd">                &quot;nicu_sex&quot;: &quot;F&quot;,</span>
+<span class="sd">                &quot;v2_next_visit_range&quot;: &quot;2021-06-01 to 2021-06-15&quot;,</span>
+<span class="sd">                ...</span>
+<span class="sd">            },</span>
+<span class="sd">            ...</span>
+<span class="sd">        ]</span>
+<span class="sd">        ```       </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">REDCAP_API_URL</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">API_TOKEN</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;Missing REDCAP_API_URL or API_TOKEN&quot;</span><span class="p">}),</span> <span class="mi">500</span>
+
+    <span class="c1"># Define the payload with the required parameters</span>
+    <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;token&#39;</span><span class="p">:</span> <span class="n">API_TOKEN</span><span class="p">,</span>
+        <span class="s1">&#39;content&#39;</span><span class="p">:</span> <span class="s1">&#39;record&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;format&#39;</span><span class="p">:</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;flat&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;fields[0]&#39;</span><span class="p">:</span> <span class="s1">&#39;record_id&#39;</span><span class="p">,</span> <span class="c1"># Record id</span>
+        <span class="s1">&#39;fields[1]&#39;</span><span class="p">:</span> <span class="s1">&#39;nicu_ooa&#39;</span><span class="p">,</span> <span class="c1"># Kildare?</span>
+        <span class="s1">&#39;fields[2]&#39;</span><span class="p">:</span> <span class="s1">&#39;nicu_participant_group&#39;</span><span class="p">,</span> <span class="c1"># Part group</span>
+        <span class="s1">&#39;fields[3]&#39;</span><span class="p">:</span> <span class="s1">&#39;nicu_dob&#39;</span><span class="p">,</span> <span class="c1"># Dat of birth</span>
+        <span class="s1">&#39;fields[4]&#39;</span><span class="p">:</span> <span class="s1">&#39;nicu_dag&#39;</span><span class="p">,</span> <span class="c1"># Site</span>
+        <span class="s1">&#39;fields[5]&#39;</span><span class="p">:</span> <span class="s1">&#39;nicu_email&#39;</span><span class="p">,</span><span class="c1"># Contact email</span>
+        <span class="s1">&#39;fields[6]&#39;</span><span class="p">:</span> <span class="s1">&#39;nicu_days_early&#39;</span><span class="p">,</span><span class="c1"># Days early</span>
+        <span class="s1">&#39;fields[7]&#39;</span><span class="p">:</span> <span class="s1">&#39;nicu_sex&#39;</span><span class="p">,</span><span class="c1"># Sex of patient</span>
+        <span class="s1">&#39;fields[9]&#39;</span><span class="p">:</span> <span class="s1">&#39;nicu_gest_age_w&#39;</span><span class="p">,</span><span class="c1"># Weeks of gestation</span>
+        <span class="s1">&#39;fields[10]&#39;</span><span class="p">:</span> <span class="s1">&#39;nicu_gest_age_d&#39;</span><span class="p">,</span><span class="c1"># Days of gestation (Additional days of gestation)</span>
+        <span class="s1">&#39;fields[11]&#39;</span><span class="p">:</span> <span class="s1">&#39;v2_next_visit_range&#39;</span><span class="p">,</span> <span class="c1"># visit 2 window</span>
+        <span class="s1">&#39;fields[12]&#39;</span><span class="p">:</span> <span class="s1">&#39;v3_next_visit_between&#39;</span><span class="p">,</span> <span class="c1"># visit 3 window</span>
+        <span class="s1">&#39;fields[13]&#39;</span><span class="p">:</span> <span class="s1">&#39;v4_next_visit_range&#39;</span><span class="p">,</span> <span class="c1"># visit 4 window</span>
+        <span class="s1">&#39;fields[14]&#39;</span><span class="p">:</span> <span class="s1">&#39;v5_next_visit_range&#39;</span><span class="p">,</span> <span class="c1"># visit 5 window</span>
+    <span class="p">}</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Make the POST request to the REDCap API</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">REDCAP_API_URL</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">)</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>  <span class="c1"># Raise an error for bad status codes</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># Return the data as a JSON response</span>
+    <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">RequestException</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jsonify</span><span class="p">({</span><span class="s1">&#39;error&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)}),</span> <span class="mi">500</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<a id="api.app.serve"></a>
+    <div class="doc doc-contents first">
+
+        <p>Serve: </p>
+<p>This serves the React frontend and static files for it to be hosted.</p>
+<p>Any request that is not an API endpoint is routed to <code>index.html</code>
+to support client-side routing in React.
+If the requested static file exists, it serves that file.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>path</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The requested path from the URL.</p>
+              </div>
+            </td>
+            <td>
+                <em>required</em>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>Response</code></td>            <td>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <ul>
+<li>The requested static file if it exists.</li>
+<li><code>index.html</code> for client-side routing.</li>
+<li>404 error if the file or index.html is missing.</li>
+<li>500 error if an unexpected exception occurs.</li>
+</ul>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <p>Get /                     -&gt; serve index.html</p>
+<p>Get /static/js/main.js    -&gt; serve static/js/main.js</p>
+</details>
+
+            <details class="quote">
+              <summary>Source code in <code>api\app.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">defaults</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;path&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">})</span>
+<span class="nd">@app</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s1">&#39;/&lt;path:path&gt;&#39;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">serve</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Serve: </span>
+
+<span class="sd">    This serves the React frontend and static files for it to be hosted.</span>
+
+<span class="sd">    Any request that is not an API endpoint is routed to `index.html`</span>
+<span class="sd">    to support client-side routing in React.</span>
+<span class="sd">    If the requested static file exists, it serves that file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        path (str): The requested path from the URL.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      Response: </span>
+<span class="sd">          - The requested static file if it exists.</span>
+<span class="sd">          - `index.html` for client-side routing.</span>
+<span class="sd">          - 404 error if the file or index.html is missing.</span>
+<span class="sd">          - 500 error if an unexpected exception occurs.</span>
+
+<span class="sd">    Example: </span>
+<span class="sd">        Get /                     -&gt; serve index.html</span>
+
+<span class="sd">        Get /static/js/main.js    -&gt; serve static/js/main.js</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span> 
+        <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;api/&quot;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;API endpoint not found&quot;</span><span class="p">,</span> <span class="mi">404</span>
+
+        <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">static_folder</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">path</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">send_from_directory</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">static_folder</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+
+        <span class="n">index_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">static_folder</span><span class="p">,</span> <span class="s2">&quot;index.html&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">index_path</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">send_from_directory</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">static_folder</span><span class="p">,</span> <span class="s2">&quot;index.html&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="s2">&quot;index.html not found&quot;</span><span class="p">,</span> <span class="mi">404</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Internal Server Error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="mi">500</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js"></script>
+
+        <div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

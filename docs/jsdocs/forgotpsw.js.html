@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: forgotpsw.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: forgotpsw.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React, { useState} from 'react'; 
+import { useNavigate} from 'react-router-dom'; 
+import Alert from './Alert'; 
+import {FaUser, FaLock} from 'react-icons/fa'; 
+
+/**
+ * 
+ * ForgotPsw component that renders the password reset form and handles password resetting
+ * validates new password, checks for existing user email,
+ * navigates to calendar page on success, displays alert if failed
+ * 
+ * @component
+ * @example
+ * &lt;Route path="/forgot-password" element={&lt;ForgotPsw />} />
+ * @returns  {JSX.Element} The ForgotPsw component
+ */
+
+const ForgotPsw = () => { 
+    const [email, setEmail] = useState(''); 
+    const [newPassword, setNewPassword] = useState(''); 
+    const [alert, setAlert] = useState(null); 
+    const [showPasswordMessage, setShowPasswordMessage] = useState(false); 
+    const [passwordValidations, setPasswordValidations] = useState({ 
+        lowercase: false, 
+        uppercase: false,
+        number: false, 
+        length: false, 
+    }); 
+
+    const navigate = useNavigate(); 
+
+    const handlePasswordChange = (e) => { 
+        const value = e.target.value; 
+        setNewPassword(value); 
+
+        setPasswordValidations({ 
+            lowercase: /[a-z]/.test(value), 
+            uppercase: /[A-Z]/.test(value), 
+            number: /[0-9]/.test(value), 
+            length: value.length >= 8, 
+        }); 
+    }; 
+
+    const handleReset = (e) => { 
+        e.preventDefault(); 
+        const users = JSON.parse(localStorage.getItem('users')) || []; 
+        const userIndex = users.findIndex(user => user.email === email) 
+
+        const isValid =  
+            passwordValidations.lowercase &amp;&amp; 
+            passwordValidations.uppercase &amp;&amp; 
+            passwordValidations.number &amp;&amp; 
+            passwordValidations.length; 
+
+            if (!isValid) { 
+                setAlert({ message: "Invalid Password. Must contain at least 8 character, including an uppercase letter, a lowercase letter and a number", type:"error"}); 
+                return; 
+            } 
+
+        if (userIndex !== -1) { 
+            const currentPassword = users[userIndex].password; 
+            if (newPassword === currentPassword) { 
+                setAlert({ message: "New password cannot be the same as the old password", type:"error"}); 
+                return; 
+            } 
+
+            users[userIndex].password = newPassword; 
+            localStorage.setItem('users', JSON.stringify(users)); 
+            setAlert({message: 'Password reset successful!', type: 'success'}); 
+            navigate('/calender'); 
+        } 
+    }; 
+
+    return ( 
+        &lt;div className="login-container"> 
+            &lt;div className="form-wrapper"> 
+                &lt;div className="login-card"> 
+                    {alert &amp;&amp; ( 
+                        &lt;Alert  
+                            message={alert.message} 
+                            type={alert.type} 
+                            onClose={() => setAlert(null)} 
+                        /> 
+                    )} 
+
+                &lt;form onSubmit={handleReset}> 
+                    &lt;h1 className="title">Reset Password&lt;/h1> 
+                    &lt;div className="form-body"> 
+                        &lt;div className="input-group"> 
+                        &lt;label htmlFor='email'>Email&lt;/label> 
+                        &lt;div className="input-icon-wrapper"> 
+                            &lt;FaUser className="icon" /> 
+                            &lt;input  
+                                type="email" 
+                                id='email'
+                                value={email} 
+                                onChange={(e) => setEmail(e.target.value)} 
+                                required 
+                            /> 
+                        &lt;/div> 
+                    &lt;/div> 
+
+                    &lt;div className="input-group"> 
+                        &lt;label htmlFor='password'>New Password&lt;/label> 
+                        &lt;div className="input-icon-wrapper"> 
+                             &lt;FaLock className="icon" /> 
+                             &lt;input  
+                                type="password" 
+                                id='password'
+                                value={newPassword} 
+                                placeholder="Enter Password"
+                                onChange={handlePasswordChange} 
+                                onFocus={() => setShowPasswordMessage(true)} 
+                                onBlur ={() => setShowPasswordMessage(false)} 
+                                required 
+                            /> 
+                        &lt;/div> 
+                    &lt;/div> 
+                    {showPasswordMessage &amp;&amp; ( 
+                        &lt;div id="message"> 
+                            &lt;h3>Password must contain the following:&lt;/h3> 
+                            &lt;p className={passwordValidations.lowercase ? 'valid' : 'invalid'}> 
+                                A &lt;b>lowercase&lt;/b> letter 
+                            &lt;/p> 
+                            &lt;p className={passwordValidations.uppercase ? 'valid' : 'invalid'}> 
+                                An &lt;b>uppercase&lt;/b> letter 
+                            &lt;/p> 
+                            &lt;p className={passwordValidations.number ? 'valid' : 'invalid'}> 
+                                A &lt;b>number&lt;/b> 
+                            &lt;/p> 
+                            &lt;p className={passwordValidations.length ? 'valid' : 'invalid'}> 
+                                Minimum &lt;b>8 characters&lt;/b>  
+                            &lt;/p> 
+                        &lt;/div> 
+                    )} 
+                    &lt;button type="submit" className="login-button">Reset Password&lt;/button> 
+                    &lt;/div>  
+                &lt;/form> 
+                &lt;/div> 
+            &lt;/div> 
+        &lt;/div> 
+    ); 
+}; 
+
+export default ForgotPsw; </code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#ForgotPsw">ForgotPsw</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.5</a> on Mon Nov 10 2025 10:39:19 GMT+0000 (Greenwich Mean Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

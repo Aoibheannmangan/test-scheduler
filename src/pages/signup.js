@@ -5,287 +5,357 @@ import { FaUser, FaLock, FaEnvelope } from "react-icons/fa";
 import Alert from "../components/Alert";
 import axios from "axios";
 
+/**
+ * SignUp component that renders the SignUp form and handles user registration
+ *
+ * Validates user input, checks for existing users, creates new user accounts,
+ * navigates to the calendar page on success, displays alert if failed
+ *
+ * @component
+ * @example
+ * <Route path="/signup" element={<SignUp />} />
+ *
+ * @returns {JSX.Element} The SignUp component
+ */
+
 const SignUp = () => {
-  const [email, setEmail] = useState("");
-  const [staffId, setStaffId] = useState("");
-  const [password, setPassword] = useState("");
-  const [repeatPassword, setRepeatPassword] = useState("");
+	const [email, setEmail] = useState("");
+	const [staffId, setStaffId] = useState("");
+	const [password, setPassword] = useState("");
+	const [repeatPassword, setRepeatPassword] = useState("");
 
-  const [showPasswordMessage, setShowPasswordMessage] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [passwordValidations, setPasswordValidations] = useState({
-    lowercase: false,
-    uppercase: false,
-    number: false,
-    length: false,
-  });
+	const [showPasswordMessage, setShowPasswordMessage] = useState(false);
+	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [passwordValidations, setPasswordValidations] = useState({
+		lowercase: false,
+		uppercase: false,
+		number: false,
+		length: false,
+	});
 
-  const [alert, setAlert] = useState(null);
+	const [alert, setAlert] = useState(null);
 
-  const [capsLockOn, setCapsLockOn] = useState(false);
+	const [capsLockOn, setCapsLockOn] = useState(false);
 
-  const passwordInputRef = useRef(null);
-  const navigate = useNavigate();
+	const passwordInputRef = useRef(null);
+	const navigate = useNavigate();
 
-  //Checking if caps lock is on
-  useEffect(() => {
-    const handleKeyUp = (event) => {
-      if (event.getModifierState("CapsLock")) {
-        setCapsLockOn(true);
-      } else {
-        setCapsLockOn(false);
-      }
-    };
+	/**
+	 *
+	 * Event handler to check if caps lock is on
+	 * @param {KeyboardEvent} event - The keyboard event/
+	 */
+	//Checking if caps lock is on
+	useEffect(() => {
+		const handleKeyUp = (event) => {
+			if (event.getModifierState("CapsLock")) {
+				setCapsLockOn(true);
+			} else {
+				setCapsLockOn(false);
+			}
+		};
 
-    const input = passwordInputRef.current;
-    if (input) {
-      input.addEventListener("keyup", handleKeyUp);
-    }
+		const input = passwordInputRef.current;
+		if (input) {
+			input.addEventListener("keyup", handleKeyUp);
+		}
 
-    return () => {
-      if (input) {
-        input.removeEventListener("keyup", handleKeyUp);
-      }
-    };
-  }, []);
+		return () => {
+			if (input) {
+				input.removeEventListener("keyup", handleKeyUp);
+			}
+		};
+	}, []);
 
-  // Password Validation for making sure the password has the different requirements
-  const handlePasswordChange = (e) => {
-    const value = e.target.value;
-    setPassword(value);
+	/**
+	 *
+	 * Password validation handler to validate password requirements
+	 *
+	 * @param {React.ChangeEvent<HTMLInputElement>} e - The event from the password input
+	 */
 
-    setPasswordValidations({
-      // Password needs a lowercase letter, an uppercase letter, a number and needs to be longer than eight characters
-      lowercase: /[a-z]/.test(value),
-      uppercase: /[A-Z]/.test(value),
-      number: /[0-9]/.test(value),
-      length: value.length >= 8,
-    });
-  };
+	// Password Validation for making sure the password has the different requirements
+	const handlePasswordChange = (e) => {
+		const value = e.target.value;
+		setPassword(value);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+		setPasswordValidations({
+			// Password needs a lowercase letter, an uppercase letter, a number and needs to be longer than eight characters
+			lowercase: /[a-z]/.test(value),
+			uppercase: /[A-Z]/.test(value),
+			number: /[0-9]/.test(value),
+			length: value.length >= 8,
+		});
+	};
 
-    //Makes sure the password is valid
-    const isValid =
-      passwordValidations.lowercase &&
-      passwordValidations.uppercase &&
-      passwordValidations.number &&
-      passwordValidations.length;
+	const handlePasswordBlur = () => {
+		setShowPasswordMessage(false);
+	};
 
-    //Alert if it's not valid and make them try again
-    if (!isValid) {
-      setAlert({
-        message:
-          "Invalid Password. Must contain at least 8 characters, including uppercase and lowercase letters and a number",
-        type: "warning",
-      });
-      return;
-    }
+	const handleSubmit = async (e) => {
+		e.preventDefault();
 
-    // For email validation, makes sure it ends in @ucc.ie
-    const emailPattern = /^[a-zA-Z0-9._+-]+@ucc\.ie$/;
-    if (!emailPattern.test(email)) {
-      setAlert({
-        message: "Invalid format. Please use your UCC Email",
-        type: "warning",
-      });
-      return;
-    }
+		//Makes sure the password is valid
+		const isValid =
+			passwordValidations.lowercase &&
+			passwordValidations.uppercase &&
+			passwordValidations.number &&
+			passwordValidations.length;
 
-    // For ID validation, makes sure it is exactly 5 numbers long
-    const staffIdPattern = /^\d{5}$/;
-    if (!staffIdPattern.test(staffId)) {
-      setAlert({ message: "Invalid Staff ID Format", type: "warning" });
-      return;
-    }
+		//Alert if it's not valid and make them try again
+		if (!isValid) {
+			setAlert({
+				message:
+					"Invalid Password. Must contain at least 8 characters, including uppercase and lowercase letters and a number",
+				type: "warning",
+			});
+			return;
+		}
 
-    // Makes sure password and initial password works
-    if (password !== repeatPassword) {
-      setAlert({
-        message: "Passwords do not match. Please try again",
-        type: "error",
-      });
-      return;
-    }
+		// For email validation, makes sure it ends in @ucc.ie
+		const emailPattern = /^[a-zA-Z0-9._+-]+@ucc\.ie$/;
+		if (!emailPattern.test(email)) {
+			setAlert({
+				message: "Invalid format. Please use your UCC Email",
+				type: "warning",
+			});
+			return;
+		}
 
-    setIsSubmitting(true);
+		// For ID validation, makes sure it is exactly 5 numbers long
+		const staffIdPattern = /^\d{5}$/;
+		if (!staffIdPattern.test(staffId)) {
+			setAlert({ message: "Invalid Staff ID Format", type: "warning" });
+			return;
+		}
 
-    try {
-      const response = await axios.post("http://localhost:5000/api/register", {
-        // TODO: Hardcoded - Must change later. Same in Login **
-        email,
-        staff_number: staffId,
-        password,
-      });
+		// Makes sure password and initial password works
+		if (password !== repeatPassword) {
+			setAlert({
+				message: "Passwords do not match. Please try again",
+				type: "error",
+			});
+			return;
+		}
 
-      if (response.data.message) {
-        setAlert({ message: response.data.message, type: "success" });
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
-      }
-    } catch (error) {
-      if (error.response && error.response.data && error.response.data.error) {
-        setAlert({ message: error.response.data.error, type: "error" });
-      } else {
-        setAlert({ message: "An unexpected error occurred.", type: "error" });
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+		setIsSubmitting(true);
 
-  return (
-    <div className="login-container">
-      <div className="form-wrapper">
-        <div className="login-card">
-          {alert && (
-            <Alert
-              role="alert"
-              message={alert.message}
-              type={alert.type}
-              onClose={() => setAlert(null)}
-            />
-          )}
-          {/* Signup Form */}
-          <form onSubmit={handleSubmit}>
-            <div className="form-header">
-              <h1 className="title">Sign Up</h1>
-            </div>
-            <div className="form-body">
-              {/* User inputs email */}
-              <div className="input-group">
-                <label htmlFor="email">
-                  <b>Email</b>
-                </label>
-                <div className="input-icon-wrapper">
-                  <FaEnvelope className="icon" />
-                  <input
-                    type="email"
-                    id="email"
-                    placeholder="Enter Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    autoComplete="off"
-                    required
-                  />
-                </div>
-              </div>
+		try {
+			const response = await axios.post(
+				"http://localhost:5000/api/register",
+				{
+					// TODO: Hardcoded - Must change later. Same in Login **
+					email,
+					staff_number: staffId,
+					password,
+				}
+			);
 
-              {/* User inputs staff ID */}
-              <div className="input-group">
-                <label htmlFor="staffId">
-                  <b>Staff ID</b>
-                </label>
-                <div className="input-icon-wrapper">
-                  <FaUser className="icon" />
-                  <input
-                    type="number"
-                    id="staffId"
-                    placeholder="Enter Staff ID"
-                    value={staffId}
-                    onChange={(e) => setStaffId(e.target.value)}
-                    autoComplete="off"
-                    required
-                  />
-                </div>
-              </div>
+			if (response.data.message) {
+				setAlert({ message: response.data.message, type: "success" });
+				setTimeout(() => {
+					navigate("/login");
+				}, 2000);
+			}
+		} catch (error) {
+			if (
+				error.response &&
+				error.response.data &&
+				error.response.data.error
+			) {
+				setAlert({ message: error.response.data.error, type: "error" });
+			} else {
+				setAlert({
+					message: "An unexpected error occurred.",
+					type: "error",
+				});
+			}
+		} finally {
+			setIsSubmitting(false);
+		}
+	};
 
-              {/* User inputs password */}
-              <div className="input-group">
-                <label htmlFor="password">
-                  <b>Password</b>
-                </label>
-                <div className="input-icon-wrapper">
-                  <FaLock className="icon" />
-                  <input
-                    type="password"
-                    id="password"
-                    placeholder="Enter Password"
-                    value={password}
-                    onChange={handlePasswordChange}
-                    onFocus={() => setShowPasswordMessage(true)}
-                    onBlur={() => setShowPasswordMessage(false)}
-                    ref={passwordInputRef}
-                    autoComplete="off"
-                    required
-                  />
-                </div>
-              </div>
+	return (
+		<div className="login-container">
+			<div className="form-wrapper">
+				<div className="login-card">
+					{alert && (
+						<Alert
+							role="alert"
+							message={alert.message}
+							type={alert.type}
+							onClose={() => setAlert(null)}
+						/>
+					)}
+					{/* Signup Form */}
+					<form onSubmit={handleSubmit}>
+						<div className="form-header">
+							<h1 className="title">Sign Up</h1>
+						</div>
+						<div className="form-body">
+							{/* User inputs email */}
+							<div className="input-group">
+								<label htmlFor="email">
+									<b>Email</b>
+								</label>
+								<div className="input-icon-wrapper">
+									<FaEnvelope className="icon" />
+									<input
+										type="email"
+										id="email"
+										placeholder="Enter Email"
+										value={email}
+										onChange={(e) =>
+											setEmail(e.target.value)
+										}
+										autoComplete="off"
+										required
+									/>
+								</div>
+							</div>
 
-              {/* User re-enters password */}
-              <div className="input-group">
-                <label htmlFor="passwordRepeat">
-                  <b>Repeat Password</b>
-                </label>
-                <div className="input-icon-wrapper">
-                  <FaLock className="icon" />
-                  <input
-                    type="password"
-                    id="passwordRepeat"
-                    placeholder="Please re-enter your password"
-                    value={repeatPassword}
-                    onChange={(e) => setRepeatPassword(e.target.value)}
-                    autoComplete="off"
-                    required
-                  />
+							{/* User inputs staff ID */}
+							<div className="input-group">
+								<label htmlFor="staffId">
+									<b>Staff ID</b>
+								</label>
+								<div className="input-icon-wrapper">
+									<FaUser className="icon" />
+									<input
+										type="number"
+										id="staffId"
+										placeholder="Enter Staff ID"
+										value={staffId}
+										onChange={(e) =>
+											setStaffId(e.target.value)
+										}
+										autoComplete="off"
+										required
+									/>
+								</div>
+							</div>
 
-                  {/* Caplocks Warning */}
-                  {capsLockOn && (
-                    <div
-                      className="caps-warning"
-                      style={{ color: "red", marginTop: "5px" }}
-                    >
-                      Warning: Caps Lock is ON
-                    </div>
-                  )}
-                </div>
-              </div>
+							{/* User inputs password */}
+							<div className="input-group">
+								<label htmlFor="password">
+									<b>Password</b>
+								</label>
+								<div className="input-icon-wrapper">
+									<FaLock className="icon" />
+									<input
+										type="password"
+										id="password"
+										placeholder="Enter Password"
+										value={password}
+										onChange={handlePasswordChange}
+										onFocus={() =>
+											setShowPasswordMessage(true)
+										}
+										onBlur={handlePasswordBlur}
+										ref={passwordInputRef}
+										autoComplete="off"
+										required
+									/>
+								</div>
+							</div>
 
-              <div className="clearfix">
-                <div className="button-row">
-                  <button
-                    type="submit"
-                    className="login-button"
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? <div className="spinner"></div> : "Sign Up"}
-                  </button>
-                </div>
-              </div>
-            </div>
-            {/* Password Validation Box */}
-            {showPasswordMessage && (
-              <div id="message">
-                <h3>Password must contain the following:</h3>
-                <p
-                  className={
-                    passwordValidations.lowercase ? "valid" : "invalid"
-                  }
-                >
-                  A <b>lowercase</b> letter
-                </p>
-                <p
-                  className={
-                    passwordValidations.uppercase ? "valid" : "invalid"
-                  }
-                >
-                  A <b>capital (uppercase)</b> letter
-                </p>
-                <p className={passwordValidations.number ? "valid" : "invalid"}>
-                  A <b>number</b>
-                </p>
-                <p className={passwordValidations.length ? "valid" : "invalid"}>
-                  Minimum <b>8 characters</b>
-                </p>
-              </div>
-            )}
-          </form>
-        </div>
-      </div>
-    </div>
-  );
+							{/* User re-enters password */}
+							<div className="input-group">
+								<label htmlFor="passwordRepeat">
+									<b>Repeat Password</b>
+								</label>
+								<div className="input-icon-wrapper">
+									<FaLock className="icon" />
+									<input
+										type="password"
+										id="passwordRepeat"
+										placeholder="Please re-enter your password"
+										value={repeatPassword}
+										onChange={(e) =>
+											setRepeatPassword(e.target.value)
+										}
+										autoComplete="off"
+										required
+									/>
+
+									{/* Caplocks Warning */}
+									{capsLockOn && (
+										<div
+											className="caps-warning"
+											style={{
+												color: "red",
+												marginTop: "5px",
+											}}
+										>
+											Warning: Caps Lock is ON
+										</div>
+									)}
+								</div>
+							</div>
+
+							<div className="clearfix">
+								<div className="button-row">
+									<button
+										type="submit"
+										className="login-button"
+										disabled={isSubmitting}
+									>
+										{isSubmitting ? (
+											<div className="spinner"></div>
+										) : (
+											"Sign Up"
+										)}
+									</button>
+								</div>
+							</div>
+						</div>
+						{/* Password Validation Box */}
+						{showPasswordMessage && (
+							<div id="message">
+								<h3>Password must contain the following:</h3>
+								<p
+									className={
+										passwordValidations.lowercase
+											? "valid"
+											: "invalid"
+									}
+								>
+									A <b>lowercase</b> letter
+								</p>
+								<p
+									className={
+										passwordValidations.uppercase
+											? "valid"
+											: "invalid"
+									}
+								>
+									A <b>capital (uppercase)</b> letter
+								</p>
+								<p
+									className={
+										passwordValidations.number
+											? "valid"
+											: "invalid"
+									}
+								>
+									A <b>number</b>
+								</p>
+								<p
+									className={
+										passwordValidations.length
+											? "valid"
+											: "invalid"
+									}
+								>
+									Minimum <b>8 characters</b>
+								</p>
+							</div>
+						)}
+					</form>
+				</div>
+			</div>
+		</div>
+	);
 };
 
 export default SignUp;
