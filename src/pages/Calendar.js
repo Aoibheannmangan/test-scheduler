@@ -24,6 +24,7 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import axios from "axios";
+import LeaveForm from "../components/LeaveForm";
 
 /**
  * Calendar component that renders the main calendar view and handles appointment management.
@@ -1443,6 +1444,13 @@ const MyCalendar = () => {
 					userList={userList}
 				/>
 			</div>
+			{/** Pop up for leave form */}
+			{leaveOpen && (
+				<LeaveForm
+				 onSave={handleAddLeave}
+					onClose={() => setLeaveOpen(false)}
+				/>
+			)}
 
 			{/**Pop up for window booking warning*/}
 			<PopUp
