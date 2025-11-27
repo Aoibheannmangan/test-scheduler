@@ -370,3 +370,39 @@ def get_blocked_dates(current_user):
         })
     
     return jsonify({"blockedDates": blocked_dates_list}), 200
+
+def add_leave(current_user):
+    logger.info(f"Leave request by user: {current_user.email}")
+    data = request.get_json()
+
+    name = data.get('name')
+    start_str = data.get('start')
+    end_str = data.get('end')
+
+    if not name or not start_str or not end_str:
+        return jsonify({"error": "Missing name, start ot end time"}), 400
+    
+    try: 
+        start_dt = datetime.fromisoformat(start_str.replace('Z', '+00:00'))
+        end_dt = datetime.fromisoformat(end_str.replace('Z', '+00:00'))
+
+        new_event = Event(
+            event_title=f"Leave - {name}",
+            start_date=start_dt,
+            end_date=end_dt,
+            event_type='leave',
+            visit_num=None
+        )
+
+        db.session.add(new_event)
+        db.session.commit()
+
+        return jsonify({
+            "ok": True,
+            "eventId": new_event.event_title
+        }), 201
+    
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"Error adding leave: {e}")
+        return jsonify({"ok": False, "error": str(e)}), 500

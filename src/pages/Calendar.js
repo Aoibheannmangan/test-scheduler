@@ -25,6 +25,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import axios from "axios";
+import LeaveForm from "../components/LeaveForm";
 
 const MyCalendar = () => {
   const [view, setView] = useState("month");
@@ -53,7 +54,8 @@ const MyCalendar = () => {
   const [blockEnd, setBlockEnd] = useState(null);
   const [blockedDates, setBlockedDates] = useState([]);
 
-
+  const [leaveOpen, setLeaveOpen] = useState(false);
+  const [leaveEvents, setLeaveEvents] = useState([]);
 
   useEffect(() => {
     const fetchBlockedDates = async () => {
@@ -690,6 +692,31 @@ const MyCalendar = () => {
     return isTimeSlotBooked(time, selectedEvent?.event_id);
   };
 
+  const handleAddLeave = async (leaveEvent) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await axios.post(
+        "/api/leave",
+        {start: leaveEvent.start, end: leaveEvent.end, name: leaveEvent.name},
+        {headers: {Authorization: `Bearer ${token}`}}
+      );
+
+      const saved = {
+        ...leaveEvent,
+        event_id: response.data.event_id,
+      };
+
+      setLeaveEvents((prev) => [...prev, saved]);
+      setAlert({type: "success", message: "Leave added."});
+    } catch (error) {
+      console.error("Error adding leave:", error);
+      setAlert({ type: "error", message: "Failed to add leave"});
+    }
+
+    setLeaveOpen(false);
+  };
+
   console.log("DEBUG bookedEvents =", bookedEvents);
   console.log("DEBUG windowEvents =", windowEvents);
   console.log("DEBUG blockedDates =", blockedDates);
@@ -700,6 +727,7 @@ const MyCalendar = () => {
   ...bookedEvents,
   ...windowEvents,
   ...(blockedDates || []),
+  ...leaveEvents,
 ];
 
 
@@ -812,6 +840,9 @@ const MyCalendar = () => {
                     Clear Window
                   </button>
                 </div>
+                <button className="leaveButton" onClick={(handleAddLeave) => setLeaveOpen(true)}>
+                  Add Leave
+                </button>
                 <div className="blockContainer">
                   <div className="blockContainer">
                     <LocalizationProvider dateAdapter={AdapterMoment}>
@@ -857,6 +888,9 @@ const MyCalendar = () => {
                       </div>
                 </div>
               </label>
+
+              
+
               {/**DISPLAYS PATIENT WHEN SEARCHED IN WINDOW*/}
               {currentPatient && (
                 <div className="patientInfo">
@@ -1089,6 +1123,15 @@ const MyCalendar = () => {
         option1="Confirm"
         option2="Cancel"
       />
+
+      {/** Pop up for leave form */}
+      {leaveOpen && (
+        <LeaveForm
+          onSave={handleAddLeave}
+          onClose={() => setLeaveOpen(false)}
+        />
+      )}
+
     </div>
   );
 };

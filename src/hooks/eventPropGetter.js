@@ -39,7 +39,16 @@ export function eventPropGetter(event) {
       style.backgroundColor = '#f4511e'; // orange
     }
   }
-
+  
+  if (event.event_type === "leave") {
+    return {
+      style: {
+        backgroundColor: "#FFA500",
+        border: "1px solid #cc8400",
+        color: "white",
+      }
+    };
+  }
 
   return {style};
 }
