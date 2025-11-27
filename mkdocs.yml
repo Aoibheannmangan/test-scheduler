@@ -30,28 +30,28 @@ nav:
           - Rebooking Form: jsdocs/rebooking.md
 
 theme:
-    name: mkdocs
-    highlightjs: true
-    hljs_languages:
-        - python
-        - bash
+    name: material
+    palette:
+        # Palette toggle for light mode
+        - scheme: default
+          primary: blue
+          toggle:
+              icon: material/brightness-7
+              name: Switch to dark mode
+
+        # Palette toggle for dark mode
+        - scheme: slate
+          primary: indigo
+          toggle:
+              icon: material/brightness-4
+              name: Switch to light mode
 
 plugins:
+    - search # Added search plugin
     - mkdocstrings:
+          default_handler: python
           handlers:
               python:
                   paths: ["."]
-
-palette:
-    - scheme: default
-      primary: indigo
-      accent: indigo
-      toggle:
-          icon: material/toggle-switch-off-outline
-          name: Switch to dark mode
-    - scheme: slate
-      primary: blue
-      accent: blue
-      toggle:
-          icon: material/toggle-switch
-          name: Switch to light mode
+                  options:
+                      docstring_style: google
