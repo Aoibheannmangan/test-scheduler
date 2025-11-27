@@ -127,6 +127,20 @@ def fetch_visit_data(patient_id: str) -> dict:
         patient_id (str):
             The REDCap record ID for which visit attendance fields should be
             retrieved.
+            
+    Example Response: 
+        ```json
+        [
+            {
+                'visit_1_nicu_discharge_complete': '1'
+                'v2_attend': '1'
+                'v3_attend': '1'
+                'v4_attend': '1'
+                'v5_attend': '0'
+                'v6_attend': '0'
+            }
+        ]
+        ```
 
     Returns:
         dict:
@@ -188,7 +202,28 @@ def calculate_visit_num(patient_data: dict) -> int:
     
 # Booking funcs
 def book_appointment(current_user):
-    """Handles the booking of a new appointment."""
+    """Handles the booking of a new appointment.
+    
+    Grabs all the information the user input on the appointment form and does simple operations such as concatinating the patient id and the visit number and setting it as a title.  
+    Performs checks such as overlapping visits and blocked dates. This function utilises other functions such as `calculate_visit_num` and `fetch_visit_data` to pass the visit number of that patient.
+    
+    Args:
+        current_user (object):
+            The user requesting the booking. Must have an `email` attribute
+            for logging and auditing purposes.
+
+    Returns:
+      Response: 
+        - 201 Created: JSON object containing `ok: True` and `eventId` on
+          successful booking.
+        - 400 Bad Request: JSON object with `error` if required fields are
+        missing.
+        - 409 Conflict: JSON object with `error` if the selected time slot
+          is blocked.            
+        - 500 Internal Server Error: JSON object with `ok: False` and `error
+        message if an exception occurs.
+    """
+    
     logger.info(f"Appointment booking request by user: {current_user.email}")
     data = request.get_json()
     patient_id = data.get('patientId')
@@ -325,7 +360,19 @@ def get_all_events(current_user):
 
 
 def delete_appointment(current_user, event_id):
-    """Handles the deletion of an appointment by event_id."""
+    """
+    Handles the deletion of an appointment by event_id.
+    
+    Args:
+        current_user (object): The user requesting the booking. Must have an email attribute for logging and auditing purposes.  
+        event_id (uuid): This unique id is used to identify which event to delete from the database.
+    
+    Returns:
+        Response (HTTP Status Code):
+            - 200 Success: Creates a JSON containing `ok: True` and the `eventId` on deletion.
+            - 404 Not Found: Creates a JSON object with `error: Appointment not found` if the eventId is incorrect.
+            - 500 internal Server Error: JSON object with ok: False and performs a rollback on the database.
+    """
     logger.info(f"Appointment deletion requested by {current_user.email} for event {event_id}")
     
     try:
