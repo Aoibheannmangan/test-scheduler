@@ -65,8 +65,10 @@ const MyCalendar = () => {
 	 *
 	 */
 	const [blockedDates, setBlockedDates] = useState([]);
-  const [blockStart, setBlockStart] = useState(null);
-  const [blockEnd, setBlockEnd] = useState(null);
+    const [blockStart, setBlockStart] = useState(null);
+    const [blockEnd, setBlockEnd] = useState(null);
+	const [leaveOpen, setLeaveOpen] = useState(false);
+  	const [leaveEvents, setLeaveEvents] = useState([]);
 
   useEffect(() => {
     const fetchBlockedDates = async () => {
@@ -94,6 +96,31 @@ const MyCalendar = () => {
 
     fetchBlockedDates();
   }, []);
+  
+   useEffect(() => {
+		const fetchLeaveDates = async () => {
+		try {
+			const token = localStorage.getItem("token");
+
+			const response = await axios.get("/api/leave", {
+			headers: { Authorization: `Bearer ${token}` },
+			});
+
+			// Use the correct key 'leaveEvents' from backend
+			const formatted = response.data.leaveEvents.map((b) => ({
+			...b,
+			start: new Date(b.start),
+			end: new Date(b.end),
+			}));
+
+			setLeaveEvents(formatted);
+		} catch (err) {
+			console.error("Error fetching Leave:", err);
+		}
+		};
+
+		fetchLeaveDates();
+	}, []);
 
 
 	const [showBlockedDates, setShowBlockedDates] = useState(false);
@@ -907,13 +934,39 @@ const MyCalendar = () => {
     return isTimeSlotBooked(time, selectedEvent?.event_id);
   };
 
+   const handleAddLeave = async (leaveEvent) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await axios.post(
+        "/api/leave",
+        {start: leaveEvent.start, end: leaveEvent.end, name: leaveEvent.name},
+        {headers: {Authorization: `Bearer ${token}`}}
+      );
+
+      const saved = {
+        ...leaveEvent,
+        event_id: response.data.event_id,
+      };
+
+      setLeaveEvents((prev) => [...prev, saved]);
+      setAlert({type: "success", message: "Leave added."});
+    } catch (error) {
+      console.error("Error adding leave:", error);
+      setAlert({ type: "error", message: "Failed to add leave"});
+    }
+
+    setLeaveOpen(false);
+  };
+
+
 	/**
 	 * Combines all event types into a single array for calendar display and applies filtering based on selected rooms.
 	 * @returns {Array<Object>} Array of filtered appointment objects for calendar display.
 	 *
 	 */
 	// Array of all avents
-	const allEvents = [...bookedEvents, ...windowEvents, ...blockedDates];
+	const allEvents = [...bookedEvents, ...windowEvents, ...blockedDates, leaveEvents];
 
 	/**
 	 * Filters appointments based on selected rooms and ensures date objects are properly formatted.
@@ -1073,28 +1126,33 @@ const MyCalendar = () => {
 										Clear Window
 									</button>
 								</div>
+								<h4>Input Leave</h4>
+								<button className="save-button" onClick={(handleAddLeave) => setLeaveOpen(true)}>
+									Add Leave
+								</button>
 								<div className="blockContainer">
+									<h4>Block Dates</h4>
 									<LocalizationProvider dateAdapter={AdapterMoment}>
-                      <label>
-                        Select start date & time
-                        <DateTimePicker
-                          value={blockStart}
-                          onChange={(val) => setBlockStart(val)}
-                          renderInput={(params) => <input {...params} />}
-                          ampm={false}
-                        />
-                      </label>
+									<label>
+										Select start date & time
+										<DateTimePicker
+										value={blockStart}
+										onChange={(val) => setBlockStart(val)}
+										renderInput={(params) => <input {...params} />}
+										ampm={false}
+										/>
+									</label>
 
-                      <label>
-                        Select end date & time
-                        <DateTimePicker
-                          value={blockEnd}
-                          onChange={(val) => setBlockEnd(val)}
-                          renderInput={(params) => <input {...params} />}
-                          ampm={false}
-                        />
-                      </label>
-                    </LocalizationProvider>
+									<label>
+										Select end date & time
+										<DateTimePicker
+										value={blockEnd}
+										onChange={(val) => setBlockEnd(val)}
+										renderInput={(params) => <input {...params} />}
+										ampm={false}
+										/>
+									</label>
+									</LocalizationProvider>
 									<div className="button-row">
 										<button
 											onClick={handleBlockDate}
