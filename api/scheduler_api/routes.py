@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, current_app, request
+from flask import Flask, jsonify, current_app, request, Response
 from flask_cors import CORS
 import requests
 from config import REDCAP_API_URL, API_TOKEN
@@ -12,46 +12,44 @@ from .tokenDecorator import token_required
 logger = logging.getLogger(__name__)
 
 # API func
-def get_data():
+def get_data() -> Response:
     """
     Data Retrieval Route  
-    Fetches data from the REDCap API and returns it ias JSON.
-       This endpoint sends a POST request to the REDCap API the API_TOKEN 
-       and REDCap url provided in the config.py file. It retrieves selected 
-       fields such as site, date of birth and gestational age in weeks + days.
+    Fetches data from the REDCap API and returns it as JSON.
 
-       **Request:**
-       - Method: GET
-       - Endpoint: `/api/data`
-       - No request parameters required.
+    This endpoint sends a POST request to the REDCap API using the `API_TOKEN` 
+    and `REDCap URL` provided in `config.py`. It retrieves fields such as site, 
+    date of birth, and gestational age.
 
-       **Behavior:**
-        - If `REDCAP_API_URL` or `API_TOKEN` are missing, returns a 500 error with an 
-        appropriate message.
+    Request:
+        Method: GET  
+        Endpoint: /api/data  
+        No request parameters required.
+
+    Behavior:
+        - If REDCAP_API_URL or API_TOKEN are missing, returns a 500 error.
         - Constructs a payload specifying which REDCap fields to retrieve.
-        - Makes a POST request to the REDCap API to fetch the data.
-        - If successful, returns the records in JSON format.
-        - If the API request fails, returns an error message and HTTP 500.
+        - Makes a POST request to the REDCap API.
+        - Returns the data as JSON on success.
+        - Returns 500 on API failure.
 
-        **Returns:**
-        - `200 OK` and JSON array of REDCap records on success.
-        - `500 Internal Server Error` and JSON error message if configuration or API 
-        request fails.
+    Returns:
+        200 OK: JSON array of REDCap records.  
+        500 Internal Server Error: JSON error message.
 
-        **Example Response:**
+    Example Response:
         ```json
-        [  
-            {  
-                "record_id": "001",  
-                "nicu_dob": "2020-05-12",  
-                "nicu_sex": "F",  
-                "v2_next_visit_range": "2021-06-01 to 2021-06-15",  
-                ...  
-            },  
-            ...  
-        ]  
-        ```  
-        """
+        [
+            {
+                "record_id": "001",
+                "nicu_dob": "2020-05-12",
+                "nicu_sex": "F",
+                "v2_next_visit_range": "2021-06-01 to 2021-06-15"
+            }
+        ]
+        ```
+    """
+
     
     # Basic validation
     token = API_TOKEN
@@ -120,6 +118,23 @@ def get_data():
     
 # Helper functions
 def fetch_visit_data(patient_id: str) -> dict:
+    """This is a helper function which retrieves boolean fields from REDCap.  
+    These fields determine whether the participant has attended a certain visit. 
+    After these are retrieved, a loop is initialised and it loops through all the fields to see which visit was not attended. For every loop, a counter for the visit number is being incremented.  
+    When there is a `field == 0`, the loop terminates and the `visit_num` is returned.  
+
+    Args:
+        patient_id (str):
+            The REDCap record ID for which visit attendance fields should be
+            retrieved.
+
+    Returns:
+        dict:
+            A dictionary containing attendance fields for the specified patient.
+            If the REDCap request fails or returns no data, an empty dictionary
+            is returned.
+    """
+
     payload = {
         'token': API_TOKEN,
         'content': 'record',
@@ -141,6 +156,23 @@ def fetch_visit_data(patient_id: str) -> dict:
     return {}
 
 def calculate_visit_num(patient_data: dict) -> int:
+    """Determine the next visit number based on REDCap attendance fields.
+
+    The first visit (`visit_1_nicu_discharge_complete`) is checked. If it is
+    completed, the function iterates through visits 2-6 and increments the visit counter for each completed visit.
+    The loop stops at the first missing ("0") visit.
+
+    Args:
+        patient_data (dict):
+            A dictionary of visit attendance fields returned from
+            `fetch_visit_data`.
+
+    Returns:
+        int:
+            The next expected visit number for the participant.
+            Defaults to 1 if no data is provided.
+    """
+
     if not patient_data:
         return 1
     

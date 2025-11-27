@@ -1,14 +1,14 @@
-API Documentation
+# API Helper Functions
 
-::: api.scheduler_api.routes.get_data
+::: api.scheduler_api.routes.fetch_visit_data
     handler: python
     options:
-        show_root_heading: false
+        show_root_heading: true
         show_source: true
 
 ---
 
-::: api.app.serve
+::: api.scheduler_api.routes.calculate_visit_num
     handler: python
     options:
         show_root_heading: true
