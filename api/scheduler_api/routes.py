@@ -13,8 +13,9 @@ logger = logging.getLogger(__name__)
 
 # API func
 def get_data():
-
-    """Fetches data from the REDCap API and returns it ias JSON.
+    """
+    Data Retrieval Route  
+    Fetches data from the REDCap API and returns it ias JSON.
        This endpoint sends a POST request to the REDCap API the API_TOKEN 
        and REDCap url provided in the config.py file. It retrieves selected 
        fields such as site, date of birth and gestational age in weeks + days.
@@ -39,16 +40,17 @@ def get_data():
 
         **Example Response:**
         ```json
-        [
-            {
-                "record_id": "001",
-                "nicu_dob": "2020-05-12",
-                "nicu_sex": "F",
-                "v2_next_visit_range": "2021-06-01 to 2021-06-15",
-                ...
-            },
-            ...
-        ]
+        [  
+            {  
+                "record_id": "001",  
+                "nicu_dob": "2020-05-12",  
+                "nicu_sex": "F",  
+                "v2_next_visit_range": "2021-06-01 to 2021-06-15",  
+                ...  
+            },  
+            ...  
+        ]  
+        ```  
         """
     
     # Basic validation
