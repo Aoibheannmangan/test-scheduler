@@ -10,7 +10,7 @@ nav:
     - Home: index.md
     - About: about.md
     - User Guide:
-          - Getting Started: user-guide/getting-started.md
+          - API Documentation: user-guide/api-documentation.md
           - Requirements: user-guide/requirements.md
           - License: user-guide/license.md
     - Scheduler Guide:

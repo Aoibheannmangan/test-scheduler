@@ -1,6 +1,4 @@
 ---
-*Welcome*
----
 
 ## Description
 

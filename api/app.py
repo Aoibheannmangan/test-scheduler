@@ -18,7 +18,8 @@ def get_data_route():
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve(path):
-    """Serve: 
+    """
+    Serve: 
     
     This serves the React frontend and static files for it to be hosted.
 
