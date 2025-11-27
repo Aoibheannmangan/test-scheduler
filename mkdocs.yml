@@ -61,3 +61,4 @@ plugins:
                   paths: ["."]
                   options:
                       docstring_style: google
+                      show_root_full_path: false
