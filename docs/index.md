@@ -4,7 +4,6 @@
 
 This project is a React.Js web application with a Python and SQLite backend used for grabbing and storing REDCap data.
 Initially this was just a tool for conducting Aimhigh visits and appointment bookings but this has now been expanded to a multitude of studies as a way to replace the google calendar.  
-Click <a href=https://github.com/Aoibheannmangan/test-scheduler >here</a> to go to the scheduler repository.
 
 ---
 
