@@ -3,14 +3,14 @@
 ## Description
 
 This project is a React.Js web application with a Python and SQLite backend used for grabbing and storing REDCap data.
-This project was created as part of our residency from Immersive Software Engineering in the University of Limerick.  
-Initially this was just a tool for conducting Aimhigh visits and appointment bookings but this has now been expanded to a multitude of studies as a way to replace the google calendar. (Implementation of this google calendar is not yet integrated.)
+Initially this was just a tool for conducting Aimhigh visits and appointment bookings but this has now been expanded to a multitude of studies as a way to replace the google calendar.
 
 ---
 
 ## Further Details
 
-Please see the [getting started](user-guide/getting-started.md) for further details.
+Please see table of contents to view topics such as API Documentation, Component Guide and Scheduler Guide for further details.  
+This documentation is for helping developers who may be adding to the Infant scheduler. In this version, there is many functional portions as well as areas which do need improvement
 
 ## Reference Guide
 

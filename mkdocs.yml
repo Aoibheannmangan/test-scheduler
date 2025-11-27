@@ -10,7 +10,6 @@ nav:
     - Home: index.md
     - About: about.md
     - User Guide:
-          - API Documentation: user-guide/api-documentation.md
           - Requirements: user-guide/requirements.md
           - License: user-guide/license.md
     - Scheduler Guide:
@@ -28,6 +27,13 @@ nav:
           - Navbar: jsdocs/navbar.md
           - Pop Up: jsdocs/popup.md
           - Rebooking Form: jsdocs/rebooking.md
+    - API Documentation: 
+          - Entry Point: jsdocs/entrypoint.md
+          - Routes: 
+            - Overview: jsdocs/routes.md
+            - Appointment: jsdocs/appointmentRoutes.md
+            - Blocked: jsdocs/blockedRoutes.md
+          - Helper Functions: jsdocs/helpers.md 
 
 theme:
     name: material
