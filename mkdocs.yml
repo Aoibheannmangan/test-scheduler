@@ -28,16 +28,16 @@ nav:
           - Pop Up: jsdocs/popup.md
           - Rebooking Form: jsdocs/rebooking.md
     - API Documentation: 
-          - Entry Point: jsdocs/entrypoint.md
+          - Entry Point: python_docs/entrypoint.md
           - Routes: 
-            - Overview: jsdocs/routes.md
-            - Appointment: jsdocs/appointmentRoutes.md
-            - Block/Leave: jsdocs/blockLeaveRoutes.md
-          - Helper Functions: jsdocs/helpers.md 
-          - Authentication: jsdocs/auth.md
+            - Overview: python_docs/routes.md
+            - Appointment: python_docs/appointmentRoutes.md
+            - Block/Leave: python_docs/blockLeaveRoutes.md
+          - Helper Functions: python_docs/helpers.md 
+          - Authentication: python_docs/auth.md
     - Database: 
-          - Overview: jsdocs/databaseOverview.md
-          - Model: jsdocs/models.md
+          - Overview: python_docs/databaseOverview.md
+          - Model: python_docs/models.md
 
 theme:
     name: material
