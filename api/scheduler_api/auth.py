@@ -37,11 +37,13 @@ def register_user():
     
     Example:
         POST /register  
+        ```json        
         {  
             "email": "staff@ucc.ie",  
             "password": "securePassword123",  
             "staff_number": "12345"  
         }
+        ```
     """
     
     # Get required fields for validation/ signing in
@@ -112,10 +114,12 @@ def login():
     
     Example:
         POST /login  
+        ```json
         {  
             "email": "staff@ucc.ie",  
             "password": "correctPassword"  
         }
+        ```
     """
     data = request.get_json()
     email = data.get("email")

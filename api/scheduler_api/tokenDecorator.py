@@ -4,6 +4,31 @@ import jwt
 from .models import User
 
 def token_required(f): # f is the function being decorated
+    """
+    This is a decorator to secure Flask routes using JWT-based authentication.
+
+    This decorator checks for a Bearer token in the request's Authorization header.
+    If a token is provided, it is decoded using the application's `SECRET_KEY`.
+    The token must be valid, not expired, and correspond to an existing user in the database.
+
+    On success:
+        - Retrieves the current user based on the email in the token.
+        - Passes the current user as the first argument to the decorated function.
+
+    Handles errors and returns `401 Unauthorized` in the following cases:
+        - Missing token
+        - Expired token
+        - Invalid token
+        - User not found in the database
+
+    Example:
+        ```python
+        @app.route("/protected")  
+        @token_required  
+        def protected_route(current_user):  
+            return jsonify({"message": f"Hello {current_user.email}"})  
+        ```
+    """
     @wraps(f) # Copies original metadeta + maintains original function's identity
     def decorated(*args, **kwargs): 
         token = None
