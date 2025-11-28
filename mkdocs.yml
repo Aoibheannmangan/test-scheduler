@@ -32,8 +32,10 @@ nav:
           - Routes: 
             - Overview: jsdocs/routes.md
             - Appointment: jsdocs/appointmentRoutes.md
-            - Blocked: jsdocs/blockedRoutes.md
+            - Block/Leave: jsdocs/blockLeaveRoutes.md
           - Helper Functions: jsdocs/helpers.md 
+          - Authentication: jsdocs/auth.md
+          - Model: jsdocs/models.md
 
 theme:
     name: material
