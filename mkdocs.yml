@@ -35,6 +35,8 @@ nav:
             - Block/Leave: jsdocs/blockLeaveRoutes.md
           - Helper Functions: jsdocs/helpers.md 
           - Authentication: jsdocs/auth.md
+    - Database: 
+          - Overview: jsdocs/databaseOverview.md
           - Model: jsdocs/models.md
 
 theme:
