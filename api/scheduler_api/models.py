@@ -29,7 +29,9 @@ class Room(db.Model):
             * name must be unique and cannot be null
 
     Example:
+    ```python
         room = Room(name="Assessment Room 1")
+    ```
     """
     __tablename__ = 'rooms'
     room_id = db.Column(db.Integer, primary_key=True)
@@ -64,11 +66,13 @@ class User(db.Model):
         - Uses UUID for user identification to enhance security
 
     Example:
+        ```python
         user = User(  
             email="john.doe@example.com",   
             staff_number="12345",  
             password_hash=hash_password("securepassword")  
         )
+        ```
     """
     __tablename__ = 'users'
     user_id = db.Column(db.String, primary_key=True, default=generate_uuid) # User Id serving as primary key
@@ -102,6 +106,7 @@ class Booking(db.Model):
         - Many-to-One with Rooms table
 
     Example:
+        ```python
         booking = Booking(  
             patient_id="230-135",  
             blocked=False,  
@@ -111,6 +116,7 @@ class Booking(db.Model):
             event_id="event_uuid",  
             room_id=1  
         )
+        ```
     """
     __tablename__ = 'bookings'
     booking_id = db.Column(db.String, primary_key=True, default=generate_uuid) # Unique ID for the room booking
@@ -141,7 +147,8 @@ class Event(db.Model):
             * event_type is a required Enum value
             
     Example:
-        event = Event(  
+        ```python
+            event = Event(  
             event_id=f47ac10b-58cc-4372-a567-0e02b2c3d479,  
             event_title="ID: 230136 | Visit: 3",  
             start_date=2025-11-28T14:30:00+00:00,  
@@ -149,6 +156,7 @@ class Event(db.Model):
             event_type="booked",  
             visit_num=3  
         )
+        ```
     """
     __tablename__ = 'event'
     event_id = db.Column(db.String, primary_key=True, default=generate_uuid) # Unique ID for the event
