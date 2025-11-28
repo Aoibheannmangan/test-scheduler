@@ -48,6 +48,10 @@ def get_data() -> Response:
             }
         ]
         ```
+        
+    Logging:
+        - Logs an informational message with the current user's email when 
+          retrieving events
     """
 
     
@@ -222,6 +226,10 @@ def book_appointment(current_user):
           is blocked.            
         - 500 Internal Server Error: JSON object with `ok: False` and `error
         message if an exception occurs.
+    
+    Logging:
+        - Logs an informational message with the current user's email when 
+        retrieving events
     """
     
     logger.info(f"Appointment booking request by user: {current_user.email}")
@@ -291,7 +299,45 @@ def book_appointment(current_user):
 
 
 def get_all_events(current_user):
-    """Retrieves all events from the database with prioritization."""
+    """
+    Retrieve and prioritize events from the database for all patients.
+
+    This function grabs events from the database with a prioritization 
+    strategy. It groups events by patient ID and selects the most relevant event for each 
+    patient based on event type and visit number.
+
+    The prioritization follows these rules:
+    1. Prefer 'booked' events over 'window' events
+    2. Within each event type, select the event with the highest visit number
+    3. If no suitable event is found, the patient is skipped
+
+    Args:
+        current_user (object): The authenticated user object used for logging and auditing API calls.
+
+    Returns:
+        Response (JSON):
+            * event_id (int): Unique identifier for the event
+            * title (str): Event title
+            * start (str): ISO 8601 formatted start date and time
+            * end (str): ISO 8601 formatted end date and time
+            * event_type (str): Type of event ('booked' or 'window')
+            * visit_num (int): Visit number associated with the event
+            * patient_id (str, optional): Patient identifier
+            * note (str, optional): Additional notes for booked events
+            * no_show (bool, optional): No-show status for booked events
+            * out_of_window (bool, optional): Window status for booked events
+            * room_id (str, optional): Room identifier for booked events
+            - HTTP status code 200 (OK)
+
+    Logging:
+        - Logs an informational message with the current user's email when 
+          retrieving events
+
+    Note:
+        - Requires SQLAlchemy models: Event, Booking
+        - Assumes events can be of type 'booked' or 'window'
+        - Extracts patient ID differently for 'booked' and 'window' events
+    """
     logger.info(f"Fetching all events for user: {current_user.email}")
     events = Event.query.all()
 
@@ -363,15 +409,21 @@ def delete_appointment(current_user, event_id):
     """
     Handles the deletion of an appointment by event_id.
     
+    First appointments are filtered by the event id that was passed, this appointment is then deleted from the data base and the event of the patient is returned to a 'window'.
+    
     Args:
-        current_user (object): The user requesting the booking. Must have an email attribute for logging and auditing purposes.  
+        current_user (object): The user requesting the deletion. Must have an email attribute for logging and auditing purposes.  
         event_id (uuid): This unique id is used to identify which event to delete from the database.
     
     Returns:
-        Response (HTTP Status Code):
+        Response (JSON):
             - 200 Success: Creates a JSON containing `ok: True` and the `eventId` on deletion.
-            - 404 Not Found: Creates a JSON object with `error: Appointment not found` if the eventId is incorrect.
+            - 404 Not Found: Creates a JSON object with `{error: Appointment not found}` if the eventId is incorrect.
             - 500 internal Server Error: JSON object with ok: False and performs a rollback on the database.
+            
+    Logging:
+        - Logs an informational message with the current user's email when 
+          retrieving events
     """
     logger.info(f"Appointment deletion requested by {current_user.email} for event {event_id}")
     
@@ -398,7 +450,25 @@ def delete_appointment(current_user, event_id):
 
 
 def update_appointment(current_user, event_id):
-    """Handles the updating of an appointment by event_id."""
+    """
+    Handles the updating of an appointment by event_id.
+    
+    Firstly, all events are filtered by the inputted event id. The fields of this appointment are checked and returned so the user can update them as they wish.
+    
+    Args:
+        current_user (object): The user requesting the update. Must have an email attribute for logging and auditing purposes.
+        event_id (uuid): This unique id is used to identify which event to update from the database.
+
+    Returns:
+        Response (JSON):
+            - 200 Success: Creates a JSON containing `ok: True` and the `eventId` on deletion.
+            - 404 Not Found: Creates a JSON containing `{error: Appointment not found}`
+            - 500 Internal Server Error: Returns a JSON containing `{"ok": False, "error": str(e)}`. (str(e) returns the error log)
+    
+    Logging:
+        - Logs an informational message with the current user's email when 
+          retrieving events
+    """
     logger.info(f"Appointment update requested by {current_user.email} for event {event_id}")
     data = request.get_json()
 
@@ -441,7 +511,21 @@ def update_appointment(current_user, event_id):
 # Blocking funcs
 
 def add_blocked_date(current_user):
-    """Handles the blocking of a date."""
+    """
+    Handles the blocking of a date. 
+    
+    
+    
+    Args: 
+        current_user (object): Current user object passed for logging and auditing. Recalls the users email.
+        
+    Returns:
+
+        
+    Logging:
+        - Logs an informational message with the current user's email when 
+          retrieving events
+    """
     logger.info(f"Blocked date request by user: {current_user.email}")
     data = request.get_json()
     date_str = data.get('date')
