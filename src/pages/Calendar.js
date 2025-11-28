@@ -979,6 +979,7 @@ const MyCalendar = () => {
 			.filter((event) => {
 				if (event.blocked) return true;
 				if (event.type === "window") return true; // Always show windows
+				if (event.event_type === "leave") return true;
 				return selectedRooms.includes(event.room); // Filter booked by room
 			})
 			.map((evt) => ({
