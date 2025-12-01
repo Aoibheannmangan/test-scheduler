@@ -95,7 +95,7 @@ const LogIn = () => {
 				setAlert({ message: "Login Successful!", type: "success" });
 				setTimeout(() => {
 					navigate("/calender");
-				}, 2000);
+				});
 			}
 		} catch (error) {
 			if (
