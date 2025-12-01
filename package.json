@@ -42,7 +42,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --transformIgnorePatterns \"node_modules/(?!@toolz/allow-react)/\" --env=jsdom",
+    "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -63,16 +63,21 @@
       "last 1 safari version"
     ]
   },
+   "jest": {
+    "moduleNameMapper": {
+      "^axios$": "axios/dist/node/axios.cjs"
+    }
+  },
   "devDependencies": {
     "@babel/core": "^7.28.0",
     "@babel/plugin-transform-modules-commonjs": "^7.12.13",
-    "@babel/preset-env": "^7.28.0",
-    "@babel/preset-react": "^7.27.1",
+    "@babel/preset-env": "^7.28.5",
+    "@babel/preset-react": "^7.28.5",
     "@babel/preset-typescript": "^7.27.1",
     "@testing-library/jest-dom": "^6.6.4",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
-    "babel-jest": "^30.0.5",
+    "babel-jest": "^30.2.0",
     "drizzle-kit": "^0.31.5",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.5.1",

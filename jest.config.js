@@ -1,44 +1,33 @@
 /** @type {import('jest').Config} */
 module.exports = {
   verbose: false,
-    testEnvironment: 'jsdom',
+  testEnvironment: "jsdom",
 
-  // CSS/SCSS module mocking
   moduleNameMapper: {
-    "\\.(css|less|scss|sass)$": "identity-obj-proxy"
+    "\\.(css|less|scss|sass)$": "identity-obj-proxy",
   },
-  
-  // Run setup file after environment is ready
+
   setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
+  setupFiles: ["jest-localstorage-mock"],
 
-  // Enable modern JSX/TSX transform with Next.js presets
   transform: {
-  "^.+\\.(js|jsx|ts|tsx)$": [
-    "babel-jest",
-    {
-      presets: [
-        ["@babel/preset-env", { targets: { node: "current" } }],
-        ["@babel/preset-react", { runtime: "automatic" }],
-        "@babel/preset-typescript"
-      ]
-    }
-  ]
-},
+    "^.+\\.(js|jsx|ts|tsx)$": "babel-jest",
+  },
 
-  // Coverage settings
+  testRegex: "(/__tests__/.*|(\\.|/)(test|spec))\\.jsx?$",
+
+  transformIgnorePatterns: [
+    "node_modules/(?!(axios)/)" 
+  ],
+
   collectCoverage: true,
   coverageReporters: ["json", "html"],
   collectCoverageFrom: ["src/**/!(*.test.js)"],
   coverageThreshold: {
-    global: {
-      lines: 90
-    }
+    global: { lines: 90 },
   },
   coveragePathIgnorePatterns: [
     "node_modules",
-    "^.+\\.(test.(js|jsx))$"
+    "^.+\\.(test.(js|jsx))$",
   ],
-
-  setupFiles: ['jest-localstorage-mock'],
-
 };

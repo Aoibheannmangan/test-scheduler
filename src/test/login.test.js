@@ -1,66 +1,87 @@
 import React from 'react';
 import '@testing-library/jest-dom';
-import { render, screen, fireEvent } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { MemoryRouter, useNavigate } from 'react-router-dom';
 import LogIn from '../pages/login';
+import axios from 'axios';
 
-test('renders the login form', () => {
-  render(
-    <MemoryRouter>
-      <LogIn />
-    </MemoryRouter>
-  );
+jest.mock('axios');
 
-  const emailInput = screen.getByLabelText(/email/i);
-  const passwordInput = screen.getByLabelText(/password/i);
-  const submitButton = screen.getByRole('button', { name: /log in/i });
-  expect(emailInput).toBeInTheDocument();
-  expect(passwordInput).toBeInTheDocument();
-  expect(submitButton).toBeInTheDocument();
-});
+const mockNavigate = jest.fn();
+jest.mock("react-router-dom", () => ({
+  ...jest.requireActual("react-router-dom"),
+  useNavigate: () => mockNavigate
+}));
 
-test('shows error when ID is not entered', () => {
-  render(
-    <MemoryRouter>
-      <LogIn />
-    </MemoryRouter>
-  );
-  const submitButton = screen.getByRole('button', { name: /log in/i });
-  fireEvent.click(submitButton);
-  const errorMessage = screen.getByText(/email or password is incorrect/i);
-  expect(errorMessage).toBeInTheDocument();
-});
+describe('Log In Component', () => {
 
-test('submits the form with valid data', () => {
-  const mockUser = { email: 'test@ucc.ie', password: 'Password123' };
-  localStorage.setItem('users', JSON.stringify([mockUser]));
-  render(
-    <MemoryRouter>
-      <LogIn />
-    </MemoryRouter>
-  );
-  const emailInput = screen.getByLabelText(/email/i);
-  const passwordInput = screen.getByLabelText(/password/i);
-  const submitButton = screen.getByRole('button', { name: /log in/i });
-  fireEvent.change(emailInput, { target: { value: 'test@ucc.ie' } });
-  fireEvent.change(passwordInput, { target: { value: 'Password123' } });
-  fireEvent.click(submitButton);
-});
+  test("renders the Log In form", () => {
+    render(
+      <MemoryRouter>
+        <LogIn />
+      </MemoryRouter>
+    );
 
-test('shows error alert with invalid credentials', async () => {
-  const mockUser = { email: 'test@ucc.ie', password: 'Password123'};
-  localStorage.setItem('users', JSON.stringify([mockUser]));
-  render(
-    <MemoryRouter>
-      <LogIn />
-    </MemoryRouter>
-  );
-  const emailInput = screen.getByLabelText(/email/i);
-  const passwordInput = screen.getByLabelText(/password/i);
-  const submitButton = screen.getByRole('button', {name: /log in/i});
-  fireEvent.change(emailInput, { target: { value: 'yeosang@ucc.ie' }});
-  fireEvent.change(passwordInput, { target: { value: 'WrongPassword1'}});
-  fireEvent.click(submitButton);
-  expect(screen.getByText(/email or password is incorrect/i)).toBeInTheDocument;
+    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /log in/i })).toBeInTheDocument();
+  });
+
+  test('shows error when submitting without email or password', async () => {
+    axios.post.mockRejectedValue({
+      response: { data: { error: "Email or password is incorrect" } }
+    });
+
+    render(
+      <MemoryRouter>
+        <LogIn />
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: /log in/i }));
+
+    expect(await screen.findByText(/email or password is incorrect/i)).toBeInTheDocument();
+  });
+
+  test('submits the form with valid data', async () => {
+    axios.post.mockResolvedValue({
+      data: { message: "mockToken123" }
+    });
+
+    render(
+      <MemoryRouter>
+        <LogIn />
+      </MemoryRouter>
+    );
+
+    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'thisisatest@ucc.ie' } });
+    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'Testing123' } });
+
+    const button = screen.getByRole('button', { name: /log in/i });
+    fireEvent.click(button);
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith("/calender");
+    });
+
+  });
+
+  test('shows error alert with invalid credentials', async () => {
+    axios.post.mockRejectedValue({
+      response: { data: { error: "Invalid credentials" } }
+    });
+
+    render(
+      <MemoryRouter>
+        <LogIn />
+      </MemoryRouter>
+    );
+
+    fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'yeosang@ucc.ie' } });
+    fireEvent.change(screen.getByLabelText(/password/i), { target: { value: 'WrongPassword1' } });
+    fireEvent.click(screen.getByRole('button', { name: /log in/i }));
+
+    expect(await screen.findByText(/invalid credentials/i)).toBeInTheDocument();
+  });
 
 });
