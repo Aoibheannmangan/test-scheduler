@@ -3,90 +3,94 @@ import "@testing-library/jest-dom";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import Account from "../pages/account";
+import axios from 'axios';
+import { FaLeaf } from "react-icons/fa";
 
-test("displays message when no patient data is available", () => {
-  localStorage.removeItem("userInfoList");
-  render(
-    <MemoryRouter>
-      <Account />
-    </MemoryRouter>
-  );
-  expect(screen.getByText(/no patient/i)).toBeInTheDocument();
-  expect(screen.getByText(/add patient information/i)).toBeInTheDocument();
+jest.mock('axios');
+
+const mockNavigate = jest.fn();
+jest.mock("react-router-dom", () => ({
+  ...jest.requireActual("react-router-dom"),
+  useNavigate: () => mockNavigate
+}));
+
+const mockUseData = jest.fn();
+jest.mock("../hooks/DataContext", () => ({
+  useData: () => mockUseData(),
+}));
+
+describe('Account Component', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test("renders the account page", () => {
+    mockUseData.mockReturnValue({
+      data: [],
+      loading: true,
+      error: null,
+      updatedPatient: jest.fn(),
+    });
+
+    render(
+      <MemoryRouter>
+        <Account />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText(/loading appointments/i)).toBeInTheDocument();
+  });
+
+  test("displays message when no patient data is available", () => {
+    mockUseData.mockReturnValue({
+      data: [],
+      loading: false,
+      error: null,
+      updatedPatient: jest.fn(),
+    });
+
+    render(
+      <MemoryRouter>
+        <Account />
+      </MemoryRouter>
+    );
+    expect(screen.getByText(/no patient/i)).toBeInTheDocument();
+  });
+
+  test("displays patient list when available", () => {
+    mockUseData.mockReturnValue({
+      loading: false,
+      error: null,
+      updatedPatient: jest.fn(),
+      data: [
+        {
+          record_id: "123",
+          nn_dob: "2020-05-01",
+          nn_sex: "1",
+          reg_ooa: "0",
+          reg_dag: "2",
+          reg_patient_group: "1",
+          reg_gest_age_w: 35,
+          reg_gest_age_d: 2,
+        },
+      ],
+    });
+
+    render(
+      <MemoryRouter>
+        <Account />
+      </MemoryRouter>
+    );
+
+    const idMatches = screen.getAllByText((content, node) => {
+      const text = node.textContent;
+      return text && text.match(/Id:\s*123/i);
+    });
+
+    expect(idMatches.length).toBeGreaterThan(0);
+
+    expect(screen.getByText(/male/i)).toBeInTheDocument();
+    expect(screen.getByText(/coombe/i)).toBeInTheDocument();
+  });
 });
 
-test("displays data when patient data is available", () => {
-  const mockData = [
-    {
-      id: "1",
-      Name: "Lily Morrow",
-      DOB: "2025-08-07",
-      DaysEarly: "5",
-      Sex: "Female",
-      Group: "High Risk Infant",
-      Study: ["EDI"],
-      site: "Cork",
-      Info: "No additional notes",
-    },
-  ];
-  localStorage.setItem("userInfoList", JSON.stringify(mockData));
-  render(
-    <MemoryRouter>
-      <Account />
-    </MemoryRouter>
-  );
-  expect(screen.getByText(/lily morrow/i)).toBeInTheDocument();
-  expect(screen.getByText(/female/i)).toBeInTheDocument();
-  expect(screen.getByText(/edi/i)).toBeInTheDocument();
-  expect(screen.getByText(/no additional notes/i)).toBeInTheDocument();
-});
-
-test("clicking edit stores user and navigates to the info page", () => {
-  const mockData = [
-    {
-      id: "1",
-      Name: "Minnie",
-      DOB: "2025-08-07",
-      DaysEarly: "5",
-      Sex: "Female",
-      Group: "High Risk Infant",
-      Study: ["EDI"],
-      site: "Cork",
-      Info: "No additional notes",
-    },
-  ];
-  localStorage.setItem("userInfoList", JSON.stringify(mockData));
-  render(
-    <MemoryRouter>
-      <Account />
-    </MemoryRouter>
-  );
-  const editButton = screen.getByTitle("Edit");
-  fireEvent.click(editButton);
-  const storedUser = JSON.parse(localStorage.getItem("editPatient"));
-  expect(storedUser.Name).toBe("Minnie");
-});
-
-test("clicking delete opens confirmation popup", () => {
-  const mockData = [
-    {
-      id: "2",
-      Name: "Mark Lee",
-      DOB: "2025-07-12",
-      DaysEarly: "2",
-      Group: "Control",
-      Study: ["EDI"],
-      site: "Coombe",
-      Info: "",
-    },
-  ];
-  localStorage.setItem("userInfoList", JSON.stringify(mockData));
-  render(
-    <MemoryRouter>
-      <Account />
-    </MemoryRouter>
-  );
-  const deleteButton = screen.getByTitle("Delete");
-  fireEvent.click(deleteButton);
-  expect(screen.getByText(/are you sure you want to delete this patient/i));
-});
