@@ -133,15 +133,17 @@ const ToggleAppointment = ({
 	const selectedStart = useMemo(() => {
 		if (!appDate || !appTimeStart || !dayjs.isDayjs(appTimeStart))
 			return null;
+		const dateObj = dayjs(appDate); // <- convert
 		return dayjs(
-			`${appDate.format("YYYY-MM-DD")}T${appTimeStart.format("HH:mm")}`
+			`${dateObj.format("YYYY-MM-DD")}T${appTimeStart.format("HH:mm")}`
 		).toDate();
 	}, [appDate, appTimeStart]);
 
 	const selectedEnd = useMemo(() => {
 		if (!appDate || !appTimeEnd || !dayjs.isDayjs(appTimeEnd)) return null;
+		const dateObj = dayjs(appDate); // <- convert
 		return dayjs(
-			`${appDate.format("YYYY-MM-DD")}T${appTimeEnd.format("HH:mm")}`
+			`${dateObj.format("YYYY-MM-DD")}T${appTimeEnd.format("HH:mm")}`
 		).toDate();
 	}, [appDate, appTimeEnd]);
 
@@ -233,7 +235,7 @@ const ToggleAppointment = ({
 							<label htmlFor="patientID">Patient ID</label>
 							<input // input for ID
 								type="text"
-								id="patID"
+								id="patientID"
 								value={appPatID}
 								onChange={(e) => setAppPatID(e.target.value)}
 								placeholder="Enter Patient ID"
@@ -242,6 +244,7 @@ const ToggleAppointment = ({
 
 							<label htmlFor="date">Appointment Date</label>
 							<DatePicker // date input for app
+								label="Appointment Date"
 								value={appDate}
 								onChange={(e) => setAppDate(e)}
 								shouldDisableDate={isDateBlocked}
@@ -284,7 +287,6 @@ const ToggleAppointment = ({
 								}}
 							/>
 
-							<label htmlFor="endTime">End Time</label>
 							<TimePicker
 								label="End Time"
 								value={appTimeEnd}
@@ -293,14 +295,13 @@ const ToggleAppointment = ({
 								skipDisabled={true}
 								views={["hours", "minutes"]}
 								format="HH:mm"
-								onChange={(newValue) => {
-									setAppTimeEnd(newValue);
-								}}
+								onChange={(newValue) => setAppTimeEnd(newValue)}
 								slotProps={{
 									textField: {
 										id: "endTime",
 										required: true,
 										fullWidth: true,
+										"aria-label": "End Time", // <- this is optional; MUI uses `label` too
 									},
 									digitalClockSectionItem: {
 										sx: {
@@ -312,6 +313,7 @@ const ToggleAppointment = ({
 									},
 								}}
 							/>
+
 							<div className="checkbox-container">
 								<label>
 									<input
@@ -359,7 +361,7 @@ const ToggleAppointment = ({
 								))}
 							</select>
 
-							<label htmlFor="Comments">Visit Note</label>
+							<label htmlFor="comment">Visit Note</label>
 							<textarea // input for comment
 								type="text"
 								id="comment"
