@@ -275,6 +275,7 @@ ul.collapsable li a {
   color: white;
 }
 
+
 .block-button:hover {
   background: #FF6B3D;
 }
@@ -379,4 +380,15 @@ input[type="datetime-local"] {
 
 .rbc-blocked-cell {
   background-color: #f19e9e;  
+}
+
+.blockSelectRow {
+  margin-bottom: 20px;
+}
+
+.blockSelectRow label {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  gap: 8px;
 }
