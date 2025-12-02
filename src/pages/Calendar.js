@@ -1116,32 +1116,9 @@ const MyCalendar = () => {
 					<div className="filter-row">
 						<div className="windowView">
 							<label>
-								View Patient Window:
-								<input
-									type="text"
-									placeholder="Enter Patient ID"
-									value={searchPatientId}
-									onChange={(e) =>
-										setSearchPatientId(e.target.value)
-									}
-								/>
-								<div className="button-row">
-									<button
-										className="search-button"
-										onClick={handleSearchWindow}
-									>
-										Search Window
-									</button>
-									<button
-										className="clear-button"
-										onClick={handleClearWindow}
-									>
-										Clear Window
-									</button>
-								</div>
 								<h4>Input Leave</h4>
 								<button
-									className="save-button"
+									className="leave-button"
 									onClick={(handleAddLeave) =>
 										setLeaveOpen(true)
 									}
@@ -1149,7 +1126,10 @@ const MyCalendar = () => {
 									Add Leave
 								</button>
 								<div className="blockContainer">
-									<h4 data-testid="block-header">
+									<h4
+										data-testid="block-header"
+										className="block-header"
+									>
 										Block Dates
 									</h4>
 									<LocalizationProvider
@@ -1292,7 +1272,7 @@ const MyCalendar = () => {
 					</div>
 				</div>
 				<div className="floatButton">
-					<h4>Book an Appointment</h4>
+					<label>Book an Appointment</label>
 
 					<button className="appButton" onClick={handleEventAdd}>
 						<CiCalendar
@@ -1300,19 +1280,30 @@ const MyCalendar = () => {
 							aria-label="book-appointment"
 						/>
 					</button>
-					<div className="patientInfo">
-						<p>
-							<strong>Tip:</strong> Click the calendar icon to add
-							a new appointment.
-						</p>
-						<p>
-							Use the filter to the left to specify room viewings.
-						</p>
-						<p>
-							And try out the search window or block features or
-							cerate leave dates.
-						</p>
-					</div>
+
+					<label className="patient-window">
+						View Patient Window:
+						<input
+							type="text"
+							placeholder="Enter Patient ID"
+							value={searchPatientId}
+							onChange={(e) => setSearchPatientId(e.target.value)}
+						/>
+						<div className="button-row">
+							<button
+								className="search-button"
+								onClick={handleSearchWindow}
+							>
+								Search Window
+							</button>
+							<button
+								className="clear-button"
+								onClick={handleClearWindow}
+							>
+								Clear Window
+							</button>
+						</div>
+					</label>
 				</div>
 			</div>
 
