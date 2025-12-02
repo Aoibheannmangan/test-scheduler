@@ -1155,39 +1155,38 @@ const MyCalendar = () => {
 									<LocalizationProvider
 										dateAdapter={AdapterMoment}
 									>
-				
 										<div className="blockSelectRow">
-										<label>
-											Select start date & time
-											<DateTimePicker
-												data-testid="start-date-picker"
-												value={blockStart}
-												onChange={(val) =>
-													setBlockStart(val)
-												}
-												renderInput={(params) => (
-													<input {...params} />
-												)}
-												ampm={false}
-											/>
-										</label>
+											<label>
+												Select start date & time
+												<DateTimePicker
+													data-testid="start-date-picker"
+													value={blockStart}
+													onChange={(val) =>
+														setBlockStart(val)
+													}
+													renderInput={(params) => (
+														<input {...params} />
+													)}
+													ampm={false}
+												/>
+											</label>
 										</div>
 
 										<div className="blockSelectRow">
-										<label>
-											Select end date & time
-											<DateTimePicker
-												testid="end-date-picker"
-												value={blockEnd}
-												onChange={(val) =>
-													setBlockEnd(val)
-												}
-												renderInput={(params) => (
-													<input {...params} />
-												)}
-												ampm={false}
-											/>
-										</label>
+											<label>
+												Select end date & time
+												<DateTimePicker
+													data-testid="end-date-picker"
+													value={blockEnd}
+													onChange={(val) =>
+														setBlockEnd(val)
+													}
+													renderInput={(params) => (
+														<input {...params} />
+													)}
+													ampm={false}
+												/>
+											</label>
 										</div>
 									</LocalizationProvider>
 									<div className="button-row">
