@@ -731,3 +731,33 @@ def get_leave(current_user):
 
     return jsonify({"leaveEvents": leave_list}), 200
 
+def unblock_date(current_user, start_str, end_str):
+    logger.info(f"Unblock requested by {current_user.email} from {start_str} to {end_str}")
+
+    try:
+        start_dt = datetime.fromisoformat(start_str)
+        end_dt = datetime.fromisoformat(end_str)
+
+        blocked_in_range = Event.query.filter(
+            Event.event_type == 'blocked',
+            Event.start_date <= end_dt,
+            Event.end_date >= start_dt
+        ).all()
+
+        if not blocked_in_range:
+            return jsonify({"error": "No blocked dates found"}), 404
+        
+        count = 0
+        for blocked in blocked_in_range:
+            db.session.delete(blocked)
+            count += 1
+
+        db.session.commit()
+        logger.info(f"Successfully unblocked {count} dates for {current_user.email}")
+        return jsonify({"ok": True, "unblocked": count}), 200
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"error unblocking dates: {e}")
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+

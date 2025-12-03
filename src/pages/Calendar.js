@@ -289,61 +289,57 @@ const MyCalendar = () => {
 	 * @returns {void}
 	 */
 	//Unblock previously blocked dates
-	const handleUnBlockDate = () => {
-		try {
-			if (!selectedDate) {
-				setAlert({
-					message: "Please select a date to unblock",
-					type: "error",
-				});
-				return;
-			}
-
-			const startOfDay = moment(selectedDate).startOf("day");
-
-			setBlockedDates((prev) => {
-				const safePrev = Array.isArray(prev) ? prev : [];
-
-				// Filter out the blocked event that matches the selected date
-				const updated = safePrev.filter((evt) => {
-					const evtStart = evt?.start ? moment(evt.start) : null;
-					return !evtStart?.isSame(startOfDay, "day");
-				});
-
-				// Save updated blocked dates to localStorage safely
-				try {
-					localStorage.setItem(
-						"blockedDates",
-						JSON.stringify(updated)
-					);
-				} catch (e) {
-					console.error("Error updating localStorage:", e);
-				}
-
-				// Alert user
-				if (updated.length !== safePrev.length) {
-					setAlert({
-						message: `Unblocked ${startOfDay.format("YYYY-MM-DD")}`,
-						type: "success",
-					});
-				} else {
-					setAlert({
-						message: "Selected date was not blocked",
-						type: "warning",
-					});
-				}
-
-				return updated;
+	const handleUnBlockDate = async () => {
+		if (!blockStart || !blockEnd) {
+		setAlert({
+			message: "Please select BOTH start and end dates",
+				type: "error",
 			});
-		} catch (error) {
-			console.error("Error in handleUnblockDate:", error);
+			return;
+		}
+
+		try {
+			const startISO = moment(blockStart).format("YYYY-MM-DDTHH:mm");
+			const endISO = moment(blockEnd).format("YYYY-MM-DDTHH:mm");
+
+			const token = localStorage.getItem("token");
+
+			console.log("UNBLOCK SENDING →", {
+			blockStart,
+			blockEnd,
+			startISO,
+			endISO
+			});
+			// Call backend to remove the block
+			await axios.post(
+			"http://localhost:5000/api/unblock",
+				{ start: startISO, end: endISO },
+				{ headers: { Authorization: `Bearer ${token}` } }
+			);
+
+			// Remove from frontend list
+			const updatedBlockedDates = blockedDates.filter(evt => {
+				if (!evt?.start) return true;
+
+				const date = moment(evt.start);
+				return !date.isBetween(startISO, endISO, undefined, "[]");
+			});
+
+			setBlockedDates(updatedBlockedDates);
+
 			setAlert({
-				message: "An error occurred while unblocking",
+				message: `Unblocked from ${moment(startISO).format("YYYY-MM-DD")} to ${moment(endISO).format("YYYY-MM-DD")}`,
+				type: "success",
+			});
+
+		} catch (error) {
+			console.error("Error unblocking:", error);
+			setAlert({
+				message: "Failed to unblock. Try again.",
 				type: "error",
 			});
 		}
 	};
-
 	/**
 	 * Toggles the display of blocked dates on the calendar.
 	 * @returns {void}
