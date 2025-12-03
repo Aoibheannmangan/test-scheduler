@@ -1052,7 +1052,7 @@ const MyCalendar = () => {
 			)}
 
 			{/**CALENDER*/}
-			<div className="calendar-wrapper">
+			<div className="calendar-wrapper" data-testid="cal-wrapper">
 				<Calendar
 					localizer={localizer}
 					events={filteredAppointments}
@@ -1118,6 +1118,7 @@ const MyCalendar = () => {
 							<label>
 								<h4>Input Leave</h4>
 								<button
+									data-testid="leave-button"
 									className="leave-button"
 									onClick={(handleAddLeave) =>
 										setLeaveOpen(true)
@@ -1180,6 +1181,7 @@ const MyCalendar = () => {
 										<button
 											onClick={handleShowBlockedDates}
 											className="block-button"
+											data-testid="toggle-block"
 										>
 											{showBlockedDates ? "Hide" : "Show"}{" "}
 											blocked dates
@@ -1274,7 +1276,11 @@ const MyCalendar = () => {
 				<div className="floatButton">
 					<label>Book an Appointment</label>
 
-					<button className="appButton" onClick={handleEventAdd}>
+					<button
+						className="appButton"
+						onClick={handleEventAdd}
+						data-testid="booking-button"
+					>
 						<CiCalendar
 							className="bookIcon"
 							aria-label="book-appointment"
@@ -1480,6 +1486,7 @@ const MyCalendar = () => {
 			{/** Pop up for leave form */}
 			{leaveOpen && (
 				<LeaveForm
+					data-testid="leave-form"
 					onSave={handleAddLeave}
 					onClose={() => setLeaveOpen(false)}
 				/>

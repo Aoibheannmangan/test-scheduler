@@ -1,4 +1,3 @@
-import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import MyCalendar from "../pages/Calendar";
@@ -33,6 +32,13 @@ jest.mock("../hooks/DataContext", () => ({
 		refetchData: jest.fn(),
 	}),
 }));
+
+// Mock the child components
+jest.mock("../components/LeaveForm", () => {
+	return function MockLeaveForm() {
+		return <div data-testid="leave-form">Leave Form</div>;
+	};
+});
 
 // Helper function to wrap component with providers
 const renderWithProviders = (component) => {
@@ -104,7 +110,7 @@ describe("MyCalendar Component", () => {
 			renderWithProviders(<MyCalendar />);
 
 			// Check for calendar wrapper
-			const calendarWrapper = document.querySelector(".calendar-wrapper");
+			const calendarWrapper = screen.getByTestId("cal-wrapper");
 			expect(calendarWrapper).toBeInTheDocument();
 		});
 	});
@@ -113,11 +119,8 @@ describe("MyCalendar Component", () => {
 		test("opens appointment form when book button clicked", async () => {
 			renderWithProviders(<MyCalendar />);
 
-			// Find the book appointment button by its container
-			const bookSection = screen
-				.getByText(/book an appointment/i)
-				.closest(".floatButton");
-			const bookButton = bookSection.querySelector("button");
+			// Correct way to find the booking button
+			const bookButton = screen.getByTestId("booking-button");
 
 			fireEvent.click(bookButton);
 
@@ -132,10 +135,7 @@ describe("MyCalendar Component", () => {
 			renderWithProviders(<MyCalendar />);
 
 			// Open booking form
-			const bookSection = screen
-				.getByText(/book an appointment/i)
-				.closest(".floatButton");
-			const bookButton = bookSection.querySelector("button");
+			const bookButton = screen.getByTestId("booking-button");
 			fireEvent.click(bookButton);
 
 			// Wait for form to open
@@ -146,7 +146,7 @@ describe("MyCalendar Component", () => {
 			});
 
 			// Try to submit without filling required fields
-			const submitButton = screen.getByText("Submit");
+			const submitButton = screen.getByText(/submit/i);
 			fireEvent.click(submitButton);
 
 			// Form should still be visible (validation failed)
@@ -182,259 +182,244 @@ describe("MyCalendar Component", () => {
 		test("shows blocked dates when toggle clicked", async () => {
 			renderWithProviders(<MyCalendar />);
 
-			const showButton = screen.getByRole("button", {
-				name: /show blocked dates/i,
-			});
+			const showButton = screen.getByTestId("toggle-block");
 
 			fireEvent.click(showButton);
 
-			await waitFor(() => {
-				expect(
-					screen.getByRole("button", {
-						name: /hide blocked dates/i,
-					})
-				).toBeInTheDocument();
-			});
-		});
-	});
-
-	describe("Patient Window Search", () => {
-		test("searches for patient and displays window", async () => {
-			renderWithProviders(<MyCalendar />);
-
-			// Find search input
-			const searchInput =
-				screen.getByPlaceholderText(/enter patient id/i);
-
-			// Enter patient ID
-			fireEvent.change(searchInput, { target: { value: "001" } });
-
-			// Click search button
-			const searchButton = screen.getByRole("button", {
-				name: /search window/i,
-			});
-			fireEvent.click(searchButton);
-
-			await waitFor(() => {
-				// Should show patient info
-				expect(screen.getByText(/patient info/i)).toBeInTheDocument();
-			});
-		});
-
-		test("handles non-existent patient search", async () => {
-			renderWithProviders(<MyCalendar />);
-
-			const searchInput =
-				screen.getByPlaceholderText(/enter patient id/i);
-			fireEvent.change(searchInput, { target: { value: "999" } });
-
-			const searchButton = screen.getByRole("button", {
-				name: /search window/i,
-			});
-			fireEvent.click(searchButton);
-
-			// Component should handle gracefully
-			await waitFor(() => {
-				expect(searchInput).toBeInTheDocument();
-			});
-		});
-
-		test("clears patient window search", async () => {
-			renderWithProviders(<MyCalendar />);
-
-			// Search for patient first
-			const searchInput =
-				screen.getByPlaceholderText(/enter patient id/i);
-			fireEvent.change(searchInput, { target: { value: "001" } });
-
-			const searchButton = screen.getByRole("button", {
-				name: /search window/i,
-			});
-			fireEvent.click(searchButton);
-
-			// Now clear
-			const clearButton = screen.getByRole("button", {
-				name: /clear window/i,
-			});
-			fireEvent.click(clearButton);
-
-			// Search input should be cleared
-			expect(searchInput.value).toBe("");
-		});
-	});
-
-	describe("Room Filtering", () => {
-		test("renders all room filter checkboxes", () => {
-			renderWithProviders(<MyCalendar />);
-
 			expect(
-				screen.getByLabelText(/telemetry room/i)
-			).toBeInTheDocument();
-			expect(
-				screen.getByLabelText(/assessment room 1/i)
-			).toBeInTheDocument();
-			expect(
-				screen.getByLabelText(/assessment room 2/i)
-			).toBeInTheDocument();
-			expect(
-				screen.getByLabelText(/assessment room 3/i)
-			).toBeInTheDocument();
-			expect(
-				screen.getByLabelText(/assessment room 4/i)
+				screen.getByTestId("toggle-block", {
+					name: /hide blocked dates/i,
+				})
 			).toBeInTheDocument();
 		});
+	});
+});
 
-		test("toggles room filter when checkbox clicked", async () => {
-			renderWithProviders(<MyCalendar />);
+describe("Patient Window Search", () => {
+	test("searches for patient and displays window", async () => {
+		renderWithProviders(<MyCalendar />);
 
-			const room1Checkbox = screen.getByLabelText(/assessment room 1/i);
+		// Find search input
+		const searchInput = screen.getByPlaceholderText(/enter patient id/i);
 
-			// Initially should be checked
-			expect(room1Checkbox).toBeChecked();
+		// Enter patient ID
+		fireEvent.change(searchInput, { target: { value: "001" } });
 
-			// Click to uncheck
-			fireEvent.click(room1Checkbox);
+		// Click search button
+		const searchButton = screen.getByRole("button", {
+			name: /search window/i,
+		});
+		fireEvent.click(searchButton);
 
-			await waitFor(() => {
-				expect(room1Checkbox).not.toBeChecked();
-			});
+		await waitFor(() => {
+			// Should show patient info
+			expect(screen.getByText(/patient info/i)).toBeInTheDocument();
 		});
 	});
 
-	describe("Event Editing", () => {
-		test("opens edit popup when booked event clicked", async () => {
-			const bookedEvent = {
-				event_id: "123",
-				title: "Editable Event",
-				start: new Date().toISOString(),
-				end: new Date(Date.now() + 3600000).toISOString(),
-				event_type: "booked",
-				patient_id: "001",
-				room_id: 2,
-			};
+	test("handles non-existent patient search", async () => {
+		renderWithProviders(<MyCalendar />);
 
-			axios.get.mockResolvedValueOnce({
-				data: {
-					events: [bookedEvent],
-					blockedDates: [],
-					leaveEvents: [],
-				},
-			});
+		const searchInput = screen.getByPlaceholderText(/enter patient id/i);
+		fireEvent.change(searchInput, { target: { value: "999" } });
 
-			renderWithProviders(<MyCalendar />);
+		const searchButton = screen.getByRole("button", {
+			name: /search window/i,
+		});
+		fireEvent.click(searchButton);
 
-			// Wait for event to be rendered and click it
-			await waitFor(() => {
-				const eventElement = screen.queryByText(/editable event/i);
-				if (eventElement) {
-					fireEvent.click(eventElement);
-				}
-			});
+		// Component should handle gracefully
+		await waitFor(() => {
+			expect(searchInput).toBeInTheDocument();
 		});
 	});
 
-	describe("Event Deletion", () => {
-		test("shows confirmation popup before deleting", async () => {
-			const bookedEvent = {
-				event_id: "123",
-				title: "Delete Me",
-				start: new Date().toISOString(),
-				end: new Date(Date.now() + 3600000).toISOString(),
-				event_type: "booked",
-				patient_id: "001",
-			};
+	test("clears patient window search", async () => {
+		renderWithProviders(<MyCalendar />);
 
-			axios.get.mockResolvedValueOnce({
-				data: {
-					events: [bookedEvent],
-					blockedDates: [],
-					leaveEvents: [],
-				},
-			});
+		// Search for patient first
+		const searchInput = screen.getByPlaceholderText(/enter patient id/i);
+		fireEvent.change(searchInput, { target: { value: "001" } });
 
-			renderWithProviders(<MyCalendar />);
-
-			// This test verifies the component renders without errors
-			await waitFor(() => {
-				expect(screen.getByText("Today")).toBeInTheDocument();
-			});
+		const searchButton = screen.getByRole("button", {
+			name: /search window/i,
 		});
+		fireEvent.click(searchButton);
+
+		// Now clear
+		const clearButton = screen.getByRole("button", {
+			name: /clear window/i,
+		});
+		fireEvent.click(clearButton);
+
+		// Search input should be cleared
+		expect(searchInput.value).toBe("");
+	});
+});
+
+describe("Room Filtering", () => {
+	test("renders all room filter checkboxes", () => {
+		renderWithProviders(<MyCalendar />);
+
+		expect(screen.getByLabelText(/telemetry room/i)).toBeInTheDocument();
+		expect(screen.getByLabelText(/assessment room 1/i)).toBeInTheDocument();
+		expect(screen.getByLabelText(/assessment room 2/i)).toBeInTheDocument();
+		expect(screen.getByLabelText(/assessment room 3/i)).toBeInTheDocument();
+		expect(screen.getByLabelText(/assessment room 4/i)).toBeInTheDocument();
+		expect(
+			screen.getByLabelText(/developmental assessment room/i)
+		).toBeInTheDocument();
 	});
 
-	describe("Leave Functionality", () => {
-		test("renders add leave button", () => {
-			renderWithProviders(<MyCalendar />);
+	test("toggles room filter when checkbox clicked", async () => {
+		renderWithProviders(<MyCalendar />);
 
-			expect(screen.getByText(/input leave/i)).toBeInTheDocument();
-			expect(screen.getByText(/add leave/i)).toBeInTheDocument();
-		});
+		const room1Checkbox = screen.getByLabelText(/assessment room 1/i);
 
-		test("opens leave form when button clicked", async () => {
-			renderWithProviders(<MyCalendar />);
+		// Initially should be checked
+		expect(room1Checkbox).toBeChecked();
 
-			const addLeaveButton = screen.getByRole("button", {
-				name: /add leave/i,
-			});
+		// Click to uncheck
+		fireEvent.click(room1Checkbox);
 
-			fireEvent.click(addLeaveButton);
-
-			// Component should handle the click
-			await waitFor(() => {
-				expect(addLeaveButton).toBeInTheDocument();
-			});
+		await waitFor(() => {
+			expect(room1Checkbox).not.toBeChecked();
 		});
 	});
+});
 
-	describe("Error Handling", () => {
-		test("handles API errors gracefully", async () => {
-			// Mock API failure
-			axios.get.mockRejectedValueOnce(new Error("API Error"));
+describe("Event Editing", () => {
+	test("opens edit popup when booked event clicked", async () => {
+		const bookedEvent = {
+			event_id: "123",
+			title: "Editable Event",
+			start: new Date().toISOString(),
+			end: new Date(Date.now() + 3600000).toISOString(),
+			event_type: "booked",
+			patient_id: "001",
+			room_id: 2,
+		};
 
-			renderWithProviders(<MyCalendar />);
-
-			// Component should still render
-			await waitFor(() => {
-				expect(screen.getByText("Today")).toBeInTheDocument();
-			});
+		axios.get.mockResolvedValueOnce({
+			data: {
+				events: [bookedEvent],
+				blockedDates: [],
+				leaveEvents: [],
+			},
 		});
 
-		test("shows alert on booking failure", async () => {
-			axios.post.mockRejectedValueOnce(new Error("Booking failed"));
+		renderWithProviders(<MyCalendar />);
 
-			renderWithProviders(<MyCalendar />);
+		// Wait for event to be rendered and click it
+		await waitFor(() => {
+			const eventElement = screen.queryByText(/editable event/i);
+			if (eventElement) {
+				fireEvent.click(eventElement);
+			}
+		});
+	});
+});
 
-			// Verify component renders despite potential errors
+describe("Event Deletion", () => {
+	test("shows confirmation popup before deleting", async () => {
+		const bookedEvent = {
+			event_id: "123",
+			title: "Delete Me",
+			start: new Date().toISOString(),
+			end: new Date(Date.now() + 3600000).toISOString(),
+			event_type: "booked",
+			patient_id: "001",
+		};
+
+		axios.get.mockResolvedValueOnce({
+			data: {
+				events: [bookedEvent],
+				blockedDates: [],
+				leaveEvents: [],
+			},
+		});
+
+		renderWithProviders(<MyCalendar />);
+
+		// This test verifies the component renders without errors
+		await waitFor(() => {
+			expect(screen.getByText("Today")).toBeInTheDocument();
+		});
+	});
+});
+
+describe("Leave Functionality", () => {
+	test("renders add leave button", () => {
+		renderWithProviders(<MyCalendar />);
+
+		expect(screen.getByText(/input leave/i)).toBeInTheDocument();
+		expect(screen.getByText(/add leave/i)).toBeInTheDocument();
+	});
+
+	test("opens leave form when button clicked", async () => {
+		renderWithProviders(<MyCalendar />);
+
+		const addLeaveButton = screen.getByTestId("leave-button");
+		expect(addLeaveButton).toBeInTheDocument();
+
+		// Simulate button click
+		fireEvent.click(addLeaveButton);
+
+		// Wait for form to appear
+		const leaveForm = screen.getByTestId("leave-form");
+		expect(leaveForm).toBeInTheDocument();
+	});
+});
+
+describe("Error Handling", () => {
+	test("handles API errors gracefully", async () => {
+		// Mock API failure
+		axios.get.mockRejectedValueOnce(new Error("API Error"));
+
+		renderWithProviders(<MyCalendar />);
+
+		// Component should still render
+		await waitFor(() => {
 			expect(screen.getByText("Today")).toBeInTheDocument();
 		});
 	});
 
-	describe("Navigation", () => {
-		test("navigates to today when Today button clicked", () => {
-			renderWithProviders(<MyCalendar />);
+	test("shows alert on booking failure", async () => {
+		axios.post.mockRejectedValueOnce(new Error("Booking failed"));
 
-			const todayButton = screen.getByText("Today");
-			fireEvent.click(todayButton);
+		renderWithProviders(<MyCalendar />);
 
-			// Component should handle navigation
-			expect(todayButton).toBeInTheDocument();
-		});
+		// Verify component renders despite potential errors
+		expect(screen.getByText("Today")).toBeInTheDocument();
+	});
+});
 
-		test("navigates to previous period when Back clicked", () => {
-			renderWithProviders(<MyCalendar />);
+describe("Navigation", () => {
+	test("navigates to today when Today button clicked", () => {
+		renderWithProviders(<MyCalendar />);
 
-			const backButton = screen.getByText("Back");
-			fireEvent.click(backButton);
+		const todayButton = screen.getByText("Today");
+		fireEvent.click(todayButton);
 
-			expect(backButton).toBeInTheDocument();
-		});
+		// Component should handle navigation
+		expect(todayButton).toBeInTheDocument();
+	});
 
-		test("navigates to next period when Next clicked", () => {
-			renderWithProviders(<MyCalendar />);
+	test("navigates to previous period when Back clicked", () => {
+		renderWithProviders(<MyCalendar />);
 
-			const nextButton = screen.getByText("Next");
-			fireEvent.click(nextButton);
+		const backButton = screen.getByText("Back");
+		fireEvent.click(backButton);
 
-			expect(nextButton).toBeInTheDocument();
-		});
+		expect(backButton).toBeInTheDocument();
+	});
+
+	test("navigates to next period when Next clicked", () => {
+		renderWithProviders(<MyCalendar />);
+
+		const nextButton = screen.getByText("Next");
+		fireEvent.click(nextButton);
+
+		expect(nextButton).toBeInTheDocument();
 	});
 });
