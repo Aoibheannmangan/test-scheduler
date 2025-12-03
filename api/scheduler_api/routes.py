@@ -63,7 +63,7 @@ def get_data():
         'fields[19]':'reg_31_month_window',
         
         # visit x attended? (Used for visit num)
-        'fields[20]': 'visit_1_nicu_discharge_complete', # completed visit 1
+        'fields[20]': 'nicu_dc_outcome', # completed visit 1
         'fields[21]': 'v2_attend', # completed visit 2, and so on.. 
         'fields[22]': 'v3_attend',
         'fields[23]': 'v4_attend',
@@ -91,7 +91,7 @@ def fetch_visit_data(patient_id: str) -> dict:
         'format': 'json',
         'type': 'flat',
         'records[0]': patient_id,
-        'fields[0]': 'visit_1_nicu_discharge_complete',
+        'fields[0]': 'nicu_dc_outcome',
         'fields[1]': 'v2_attend',
         'fields[2]': 'v3_attend',
         'fields[3]': 'v4_attend',
@@ -105,12 +105,39 @@ def fetch_visit_data(patient_id: str) -> dict:
             return data[0]  # return first record
     return {}
 
+def fetch_patient_birthdays():
+    payload = {
+        'token': API_TOKEN,
+        'content': 'record',
+        'format': 'json',
+        'type': 'flat',
+        'fields[0]': 'record_id',
+        'fields[1]': 'nn_dob',
+    }
+
+    response = requests.post(REDCAP_API_URL, data=payload, verify=False)
+
+    if response.status_code != 200:
+        return []
+
+    data = response.json()
+    birthdays = []
+
+    for r in data:
+        birthdays.append({
+            "patient_id": r.get("record_id"),
+            "dob": r.get("nn_dob")
+        })
+
+    return birthdays
+
+
 def calculate_visit_num(patient_data: dict) -> int:
     if not patient_data:
         return 1
     
     visit_num = 1
-    if patient_data.get("visit_1_nicu_discharge_complete") == "1":
+    if patient_data.get("nicu_dc_outcome") == "1":
         visit_num = 2
         for i in range(2, 7):
             if patient_data.get(f"v{i}_attend") == "1":
@@ -371,6 +398,8 @@ def get_blocked_dates(current_user):
     
     return jsonify({"blockedDates": blocked_dates_list}), 200
 
+
+
 def add_leave(current_user):
     logger.info(f"Leave request by user: {current_user.email}")
     data = request.get_json()
@@ -406,3 +435,51 @@ def add_leave(current_user):
         db.session.rollback()
         logger.error(f"Error adding leave: {e}")
         return jsonify({"ok": False, "error": str(e)}), 500
+
+def get_leave(current_user):
+    logger.info(f"Fetching leave events for user: {current_user.email}")
+    leave_events = Event.query.filter_by(event_type='leave').all()
+
+    leave_list = []
+    for event in leave_events:
+        leave_list.append({
+            "eventId": event.event_id,
+            "title": event.event_title,
+            "start": event.start_date.isoformat(),
+            "end": event.end_date.isoformat(),  # important
+            "allDay": False,
+            "event_type": event.event_type,
+        })
+
+    return jsonify({"leaveEvents": leave_list}), 200
+
+def unblock_date(current_user, start_str, end_str):
+    logger.info(f"Unblock requested by {current_user.email} from {start_str} to {end_str}")
+
+    try:
+        start_dt = datetime.fromisoformat(start_str)
+        end_dt = datetime.fromisoformat(end_str)
+
+        blocked_in_range = Event.query.filter(
+            Event.event_type == 'blocked',
+            Event.start_date <= end_dt,
+            Event.end_date >= start_dt
+        ).all()
+
+        if not blocked_in_range:
+            return jsonify({"error": "No blocked dates found"}), 404
+        
+        count = 0
+        for blocked in blocked_in_range:
+            db.session.delete(blocked)
+            count += 1
+
+        db.session.commit()
+        logger.info(f"Successfully unblocked {count} dates for {current_user.email}")
+        return jsonify({"ok": True, "unblocked": count}), 200
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"error unblocking dates: {e}")
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+

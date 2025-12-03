@@ -26,6 +26,7 @@ import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import axios from "axios";
 import LeaveForm from "../components/LeaveForm";
+import { type } from "@testing-library/user-event/dist/cjs/utility/type.js";
 
 const MyCalendar = () => {
   const [view, setView] = useState("month");
@@ -53,9 +54,14 @@ const MyCalendar = () => {
   const [blockStart, setBlockStart] = useState(null);
   const [blockEnd, setBlockEnd] = useState(null);
   const [blockedDates, setBlockedDates] = useState([]);
+  const [selectedStart, setSelectedStart] = useState(null);
+  const [selectedEnd, setSelectedEnd] = useState(null);
 
   const [leaveOpen, setLeaveOpen] = useState(false);
   const [leaveEvents, setLeaveEvents] = useState([]);
+
+  const [birthdays, setBirthdays] = useState([]);
+  
 
   useEffect(() => {
     const fetchBlockedDates = async () => {
@@ -86,7 +92,61 @@ const MyCalendar = () => {
 
 
   const [showBlockedDates, setShowBlockedDates] = useState(false);
+ 
+  useEffect(() => {
+    const fetchLeaveDates = async () => {
+      try {
+        const token = localStorage.getItem("token");
 
+        const response = await axios.get("/api/leave", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        // Use the correct key 'leaveEvents' from backend
+        const formatted = response.data.leaveEvents.map((b) => ({
+          ...b,
+          start: new Date(b.start),
+          end: new Date(b.end),
+        }));
+
+        setLeaveEvents(formatted);
+      } catch (err) {
+        console.error("Error fetching Leave:", err);
+      }
+    };
+
+    fetchLeaveDates();
+  }, []);
+
+  useEffect(() => {
+    const fetchBirthdays = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const response = await axios.get("/api/birthdays", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const formatted = response.data.birthdays.map((b) => {
+          const date = new Date(b.dob);
+
+          return {
+            title: ` ${b.patient_id} Birthday`,
+            start: date,
+            end: date,
+            allDay: true,
+            event_type: "birthday",
+          };
+        });
+
+        setBirthdays(formatted);
+      } catch (err) {
+        console.error("Error fetching Birthdays:", err);
+      }
+    };
+
+    fetchBirthdays();
+  }, []);
 
   /* Appointment portion */
   // Create array to store booked appointments
@@ -381,7 +441,7 @@ const MyCalendar = () => {
     }
 
     let visit_num = 1;
-    if (patient.visit_1_nicu_discharge_complete === "1") {
+    if (patient.nicu_dc_outcome === "1") {
       visit_num = 2;
       for (let i = 2; i <= 6; i++) {
         if (patient[`v${i}_attend`] === "1") {
@@ -461,7 +521,7 @@ const MyCalendar = () => {
   // If booking within study window
   const isAppointmentWithinVisitWindow = (appointment, patient) => {
     let visit_num = 1;
-    if (patient.visit_1_nicu_discharge_complete === "1") {
+    if (patient.nicu_dc_outcome === "1") {
       visit_num = 2;
       for (let i = 2; i <= 6; i++) {
         if (patient[`v${i}_attend`] === "1") {
@@ -629,6 +689,8 @@ const MyCalendar = () => {
     roomList.map((room) => room.id)
   );
 
+  
+
   // Handler for room checkbox change
   const handleRoomChange = (roomId) => {
     setSelectedRooms((prev) =>
@@ -645,6 +707,7 @@ const MyCalendar = () => {
         moment(blockedDate.start).format("YYYY-MM-DD") === formattedDate
     );
   };
+
 
   const isTimeSlotBooked = (date, eventIdToExclude) => {
     const selectedStartTime = moment(date).valueOf();
@@ -717,9 +780,57 @@ const MyCalendar = () => {
     setLeaveOpen(false);
   };
 
-  console.log("DEBUG bookedEvents =", bookedEvents);
-  console.log("DEBUG windowEvents =", windowEvents);
-  console.log("DEBUG blockedDates =", blockedDates);
+  const handleUnBlockDate = async () => {
+    if (!blockStart || !blockEnd) {
+      setAlert({
+          message: "Please select BOTH start and end dates",
+            type: "error",
+        });
+        return;
+      }
+
+      try {
+        const startISO = moment(blockStart).format("YYYY-MM-DDTHH:mm");
+        const endISO = moment(blockEnd).format("YYYY-MM-DDTHH:mm");
+
+        const token = localStorage.getItem("token");
+
+        console.log("UNBLOCK SENDING →", {
+          blockStart,
+          blockEnd,
+          startISO,
+          endISO
+        });
+        // Call backend to remove the block
+        await axios.post(
+          "http://localhost:5000/api/unblock",
+            { start: startISO, end: endISO },
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+
+          // Remove from frontend list
+          const updatedBlockedDates = blockedDates.filter(evt => {
+            if (!evt?.start) return true;
+
+            const date = moment(evt.start);
+            return !date.isBetween(startISO, endISO, undefined, "[]");
+          });
+
+          setBlockedDates(updatedBlockedDates);
+
+          setAlert({
+              message: `Unblocked from ${moment(startISO).format("YYYY-MM-DD")} to ${moment(endISO).format("YYYY-MM-DD")}`,
+              type: "success",
+          });
+
+      } catch (error) {
+          console.error("Error unblocking:", error);
+          setAlert({
+              message: "Failed to unblock. Try again.",
+              type: "error",
+          });
+      }
+  };
 
 
   // Array of all events
@@ -728,6 +839,7 @@ const MyCalendar = () => {
   ...windowEvents,
   ...(blockedDates || []),
   ...leaveEvents,
+  ...birthdays,
 ];
 
 
@@ -735,6 +847,7 @@ const MyCalendar = () => {
     return allEvents.filter((event) => {
       if (event.blocked || event.event_type === "blocked") return true;
       if (event.type === "window") return true; // Always show windows
+      if (event.event_type === "leave") return true; //Always show leave
       return selectedRooms.includes(event.room); // Filter booked by room
     });
   }, [allEvents, selectedRooms]);
@@ -840,11 +953,13 @@ const MyCalendar = () => {
                     Clear Window
                   </button>
                 </div>
-                <button className="leaveButton" onClick={(handleAddLeave) => setLeaveOpen(true)}>
+                <h4>Input Leave</h4>
+                <button className="search-Button" onClick={(handleAddLeave) => setLeaveOpen(true)}>
                   Add Leave
                 </button>
                 <div className="blockContainer">
                   <div className="blockContainer">
+                    <h4>Block Dates</h4>
                     <LocalizationProvider dateAdapter={AdapterMoment}>
                       <label>
                         Select start date & time
@@ -872,6 +987,9 @@ const MyCalendar = () => {
                           </button>
                           <button onClick={handleShowBlockedDates} className="block-button">
                             {showBlockedDates ? "Hide" : "Show"} blocked dates
+                          </button>
+                          <button onClick={handleUnBlockDate} className="block-button">
+                            Unblock Date
                           </button>
                         </div>
 

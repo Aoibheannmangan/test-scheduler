@@ -1,7 +1,7 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from .extensions import db, migrate
-from .routes import get_data, book_appointment, delete_appointment, get_all_events, update_appointment, add_blocked_date, get_blocked_dates, add_leave
+from .routes import get_data, book_appointment, delete_appointment, get_all_events, update_appointment, add_blocked_date, get_blocked_dates, add_leave, get_leave, unblock_date, fetch_patient_birthdays
 from .auth import register_user, login
 import os
 import logging
@@ -44,6 +44,13 @@ def create_app():
     def book_appointment_route(current_user):
         return book_appointment(current_user)
     
+    @app.route("/api/birthdays", methods=["GET"])
+    @token_required
+    def get_all_patient_birthdays_route(current_user):
+        birthdays = fetch_patient_birthdays()
+        return jsonify({"birthdays": birthdays}), 200
+
+    
     @app.route("/api/appointment/<event_id>", methods=["DELETE"])
     @token_required
     def delete_appointment_route(current_user, event_id):
@@ -81,4 +88,25 @@ def create_app():
     @token_required
     def add_leave_route(current_user):
         return add_leave(current_user)
+
+    @app.route("/api/leave", methods=["GET"])
+    @token_required
+    def get_leave_route(current_user):
+        return get_leave(current_user)
+
+    @app.route("/api/unblock", methods=["POST"])
+    @token_required
+    def unblock_dates_route(current_user):
+        data = request.get_json()
+        start = data.get("start")
+        end = data.get("end")
+
+        if not start or not end:
+            return jsonify({"error": "Start and End required"}), 400
+
+        return unblock_date(current_user, start, end)
+
+
     return app
+
+

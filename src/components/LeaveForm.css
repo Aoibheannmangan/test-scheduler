@@ -1,0 +1,59 @@
+.Leave-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.Leave-content {
+    background: #fff;
+    padding: 25px 35px;
+    border-radius: 12px;
+    max-width: 400%;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.Leave-content label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.Leave-content input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.Leave-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.save-button {
+  background: #8D5A97;
+  color: white;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.cancel-button {
+  background-color: #f44336;
+  color: white;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}

@@ -104,7 +104,7 @@ const Forecast = () => {
 
     const mappedPatients = apiPatients.map((p) => {
       let visitNum = 1;
-      if (p.visit_1_nicu_discharge_complete === "1") {
+      if (p.nicu_dc_outcome === "1") {
         visitNum = 2;
         for (let i = 2; i <= 6; i++) {
           if (p[`v${i}_attend`] === "1") visitNum = i + 1;

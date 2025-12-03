@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import './LeaveForm.css';
 
 const LeaveForm = ({ onSave, onClose }) => {
   const [leaveName, setLeaveName] = useState("");
@@ -64,8 +65,10 @@ const LeaveForm = ({ onSave, onClose }) => {
             </label>
           </LocalizationProvider>
 
-          <button type="submit">Save Leave</button>
-          <button type="button" onClick={onClose}>Cancel</button>
+          <div className="Leave-buttons">
+            <button className="save-button" type="submit">Save Leave</button>
+            <button className="cancel-button" type="button" onClick={onClose}>Cancel</button>
+          </div>
         </form>
       </div>
     </div>
