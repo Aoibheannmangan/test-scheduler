@@ -43,7 +43,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;       
-  justify-content: center;
   min-width: 220px;
   max-width: 320px;
   max-height: 400px;   
@@ -99,6 +98,9 @@
   background: #A46CAF;
 }
 
+.patient-window {
+  padding-top: 3rem;
+}
 
 /*----------------------------------------Base Calendar Styling----------------------------------------*/
 .rbc-calendar {
@@ -239,10 +241,14 @@ ul.collapsable li a {
   color: #444;
 }   
 
+.block-header {
+  text-align: center;
+}
 
 .search-button,
 .clear-button,
-.block-button {
+.block-button,
+.leave-button {
   padding: 8px 16px;
   margin: 4px;
   border: none;
@@ -250,6 +256,17 @@ ul.collapsable li a {
   cursor: pointer;
   font-weight: bold;
   transition: background 0.2s ease;
+}
+
+.leave-button {
+  background: #8D5A97;
+  color: white;
+  display: block;
+  width: 100%;
+}
+
+.leave-button:hover {
+  background: #A46CAF;
 }
 
 .search-button {
@@ -274,6 +291,7 @@ ul.collapsable li a {
   background: #E4572E;
   color: white;
 }
+
 
 .block-button:hover {
   background: #FF6B3D;
@@ -379,4 +397,15 @@ input[type="datetime-local"] {
 
 .rbc-blocked-cell {
   background-color: #f19e9e;  
+}
+
+.blockSelectRow {
+  margin-bottom: 20px;
+}
+
+.blockSelectRow label {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  gap: 8px;
 }
