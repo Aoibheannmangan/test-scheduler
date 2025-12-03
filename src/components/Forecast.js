@@ -210,7 +210,7 @@ const Forecast = () => {
 	}
 
 	return (
-		<div className="forecast-container">
+		<div className="forecast-container" data-testid="forecast-component">
 			<Paper className="forecast-paper">
 				<TableContainer sx={{ maxHeight: 440 }}>
 					<Table stickyHeader aria-label="appointments table">

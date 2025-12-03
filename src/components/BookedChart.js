@@ -105,7 +105,10 @@ const BookedChart = () => {
 	}
 
 	return (
-		<Box sx={{ width: "100%", padding: 2 }}>
+		<Box
+			sx={{ width: "100%", padding: 2 }}
+			data-testid="forecast-component"
+		>
 			<RadioGroup
 				value={alignment}
 				onChange={handleYearChange}
