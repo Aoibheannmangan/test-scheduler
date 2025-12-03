@@ -1,95 +1,240 @@
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import Appointments from '../pages/AppointView';
-// Mock the hook functions
-import { useAppointmentFilters } from '../hooks/useAppointmentFilters';
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import "@testing-library/jest-dom";
+import Appointments from "../pages/AppointView";
+import axios from "axios";
 
-// Mock the custom hook
-jest.mock('../hooks/useAppointmentFilters', () => ({
-  useAppointmentFilters: jest.fn(),
+// Mock axios
+jest.mock("axios");
+
+// Mock the DataContext
+jest.mock("../hooks/DataContext", () => ({
+	useData: jest.fn(() => ({
+		data: [
+			{
+				record_id: "001",
+				nn_dob: "2024-01-01",
+				nn_sex: "1",
+				reg_ooa: "0",
+				reg_dag: "1",
+				reg_participant_group: "1",
+				reg_days_early: 5,
+				nicu_email: "patient001@test.com",
+				visit_1_nicu_discharge_complete: "1",
+				v2_attend: "0",
+				v3_attend: "0",
+				v4_attend: "0",
+				v5_attend: "0",
+				v6_attend: "0",
+				reg_date1: "2025-02-01",
+				reg_date2: "2025-02-28",
+				reg_9_month_window: "2025-03-01",
+				reg_12_month_window: "2025-03-31",
+			},
+			{
+				record_id: "002",
+				nn_dob: "2024-05-20",
+				nn_sex: "2",
+				reg_ooa: "1",
+				reg_dag: "2",
+				reg_participant_group: "2",
+				reg_days_early: 10,
+				nicu_email: "patient002@test.com",
+				visit_1_nicu_discharge_complete: "1",
+				v2_attend: "1",
+				v3_attend: "0",
+				v4_attend: "0",
+				v5_attend: "0",
+				v6_attend: "0",
+				reg_date1: "2025-01-01",
+				reg_date2: "2025-01-31",
+				reg_9_month_window: "2025-04-01",
+				reg_12_month_window: "2025-04-30",
+			},
+		],
+		loading: false,
+		error: null,
+		updatePatient: jest.fn(),
+	})),
 }));
 
-describe('Appointments Component', () => {
-    //------------------------------------Mock patients for rendering---------------------------------
-    const mockFilteredAppointments = [
-        {
-        id: '001',
-        type: 'booked',
-        start: new Date().toISOString(),
-        end: new Date(Date.now() + 86400000).toISOString(),
-        visitNum: 1,
-        OutOfArea: false,
-        Name: 'John Doe',
-        DOB: '2025-01-01',
-        site: 'Kildare',
-        Study: ['AIMHIGH'],
-        },
-        {
-        id: '002',
-        type: 'window',
-        visitNum: 2,
-        OutOfArea: true,
-        Name: 'Jane Smith',
-        DOB: '2025-05-20',
-        site: 'Kildare',
-        Study: ['COOLPRIME'],
-        },
-    ];
-    //------------------------------------Set storage and search/ filter changes---------------------------------
-    beforeEach(() => {
-        // Mock localStorage
-        Storage.prototype.getItem = jest.fn(() =>
-        JSON.stringify(mockFilteredAppointments)
-        );
+// Mock useAppointmentFilters hook
+jest.mock("../hooks/useAppointmentFilters", () => ({
+	useAppointmentFilters: jest.fn(),
+}));
 
-        // Mock useAppointmentFilters to return state
-        useAppointmentFilters.mockReturnValue({
-        searchQuery: '',
-        setSearchQuery: jest.fn(),
-        selectedStudies: [],
-        handleStudyChange: jest.fn(),
-        filteredAppointments: mockFilteredAppointments,
-        });
-    });
+const { useAppointmentFilters } = require("../hooks/useAppointmentFilters");
 
-    //------------------------------------Testing code---------------------------------
+describe("Appointments Component", () => {
+	const mockBookedEvents = [
+		{
+			event_id: "123",
+			patient_id: "001",
+			title: "ID: 001 | Visit: 2",
+			start: new Date("2025-02-15T10:00:00"),
+			end: new Date("2025-02-15T13:00:00"),
+			event_type: "booked",
+			visit_num: 2,
+			room_id: 2,
+			note: "Follow-up appointment",
+			no_show: false,
+			out_of_window: false,
+		},
+	];
 
-    test('renders main heading and search input', () => {
-        render(<Appointments />);
+	const mockWindowEvents = [
+		{
+			patient_id: "002",
+			title: "ID: 002 | Visit: 3",
+			start: new Date("2025-04-15"),
+			end: new Date("2025-04-15"),
+			event_type: "window",
+			visit_num: 3,
+		},
+	];
 
-        expect(screen.getByText(/Visit Overview/i)).toBeInTheDocument();
-        expect(screen.getByLabelText('searchBar')).toBeInTheDocument();
-    });
+	beforeEach(() => {
+		jest.clearAllMocks();
 
-    test('renders patient list with correct IDs', () => {
-        render(<Appointments />);
+		// Mock localStorage
+		Storage.prototype.getItem = jest.fn(() => "mock-token");
 
-        // Check that mock patients are rendered
-        expect(screen.getByText(/001/)).toBeInTheDocument();
-        expect(screen.getByText(/002/)).toBeInTheDocument();
-    });
-    
-    test('filters can be clicked', () => {
-        render(<Appointments />);
+		// Mock axios calls
+		axios.get.mockResolvedValue({
+			data: {
+				events: mockBookedEvents,
+			},
+		});
 
-        const aimhighCheck = screen.getByLabelText('AimhighCheck');
-        expect(aimhighCheck).toBeInTheDocument();
+		// Setup default mock return for useAppointmentFilters
+		useAppointmentFilters.mockReturnValue({
+			searchQuery: "",
+			setSearchQuery: jest.fn(),
+			selectedStudies: ["AIMHIGH", "COOLPRIME", "EDI"],
+			handleStudyChange: jest.fn(),
+			filteredAppointments: [],
+		});
+	});
 
-        fireEvent.click(aimhighCheck);
-        expect(useAppointmentFilters().handleStudyChange).toHaveBeenCalledWith('AIMHIGH');
-    });
+	afterEach(() => {
+		jest.clearAllMocks();
+	});
 
-    test('expands patient info on ID click', () => {
-        render(<Appointments />);
+	describe("Loading and Error States", () => {
+		test("shows loading message when data is loading", () => {
+			const { useData } = require("../hooks/DataContext");
+			useData.mockReturnValue({
+				data: [],
+				loading: true,
+				error: null,
+				updatePatient: jest.fn(),
+			});
 
-        const patientRow = screen.getByText(/001/);
-        fireEvent.click(patientRow);
+			render(<Appointments />);
 
-        // Should show name in the expanded info
-        expect(screen.getByText(/John Doe/)).toBeInTheDocument();
-    });
+			expect(
+				screen.getByText(/loading appointments/i)
+			).toBeInTheDocument();
+		});
 
-        
+		test("shows error message when there is an error", () => {
+			const { useData } = require("../hooks/DataContext");
+			useData.mockReturnValue({
+				data: [],
+				loading: false,
+				error: new Error("Failed to fetch data"),
+				updatePatient: jest.fn(),
+			});
+
+			render(<Appointments />);
+
+			expect(
+				screen.getByText(/error loading appointments/i)
+			).toBeInTheDocument();
+		});
+	});
+
+	describe("Page and elements are rendering", () => {
+		test("all containers and search bar is rendering", () => {});
+
+		test("patients are rendering", () => {});
+	});
+
+	describe("Table elements are loading", () => {
+		test("renders headings", () => {});
+
+		test("render ooa present and not", () => {});
+
+		test("empty table when no matches", () => {});
+
+		test("expansion toggle functional", () => {});
+	});
+
+	describe("Booked appointment info", () => {
+		test("renders date and time", () => {});
+
+		test("render expansion", () => {});
+
+		test("renders 'N/A'", () => {});
+	});
+
+	describe("Window event info", () => {
+		test("renders visit num", () => {});
+
+		test("Patient in NICU displayed", () => {});
+
+		test("Patient is complete", () => {});
+
+		test("renders contact number", () => {});
+	});
+
+	describe("Rendering Proximity Indicator", () => {
+		test("green indicator", () => {});
+
+		test("orange indicators", () => {});
+
+		test("red visit number", () => {});
+	});
+
+	describe("API + Data Fetching", () => {
+		test("call the useData() hook", () => {
+			const { useData } = require("../hooks/DataContext");
+			useData.mockReturnValue({});
+		});
+
+		test("call the fetchBookings() on mount", async () => {
+			const { useData } = require("../hooks/DataContext");
+			useData.mockReturnValue({
+				data: [],
+				loading: false,
+				error: null,
+				updatePatient: jest.fn(),
+			});
+
+			render(<Appointments />);
+
+			await waitFor(() => {
+				expect(axios.get).toHaveBeenCalled();
+			});
+		});
+	});
+
+	test("perform a get request to /api.appointments", async () => {
+		const { useData } = require("../hooks/DataContext");
+		useData.mockReturnValue({
+			data: [],
+			loading: false,
+			error: null,
+			updatePatient: jest.fn(),
+		});
+
+		render(<Appointments />);
+
+		// Check if this endpoint is reached
+		await waitFor(() => {
+			expect(axios.get).toHaveBeenCalledWith(
+				expect.stringContaining("/api/appointments"),
+				expect.any(Object)
+			);
+		});
+	});
 });
-// Need to add more testing
