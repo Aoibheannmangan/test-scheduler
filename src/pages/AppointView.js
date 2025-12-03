@@ -370,13 +370,16 @@ const Appointments = () => {
 
 			<ul className="appointmentList" aria-label="mainTable">
 				<li className="headings-row">
-					<div className="heading-left">
+					<div className="heading-left" data-testid="patient-heading">
 						<strong>Patient ID</strong>
 					</div>
-					<div className="heading-center">
+					<div className="heading-center" data-testid="visit-heading">
 						<strong>Visit No.</strong>
 					</div>
-					<div className="heading-right">
+					<div
+						className="heading-right"
+						data-testid="kildare-heading"
+					>
 						<strong>Kildare</strong>
 					</div>
 				</li>
@@ -476,11 +479,13 @@ const Appointments = () => {
 									<span
 										className="OoaNotifier"
 										title="Out Of Area"
+										data-testid="indicator"
 									/>
 								) : (
 									<span
 										style={{ visibility: "hidden" }}
 										className="OoaNotifier"
+										data-testid="indicator"
 									></span>
 								)}
 							</div>

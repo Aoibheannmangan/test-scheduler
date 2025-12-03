@@ -1,4 +1,10 @@
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import {
+	render,
+	screen,
+	fireEvent,
+	waitFor,
+	getByText,
+} from "@testing-library/react";
 import "@testing-library/jest-dom";
 import Appointments from "../pages/AppointView";
 import axios from "axios";
@@ -232,11 +238,78 @@ describe("Appointments Component", () => {
 	});
 
 	describe("Table elements are loading", () => {
-		test("renders headings", () => {});
+		// Set up methods for loading table elements:
+		beforeEach(() => {
+			const { useData } = require("../hooks/DataContext");
+			const {
+				useAppointmentFilters,
+			} = require("../hooks/useAppointmentFilters");
 
-		test("render ooa present and not", () => {});
+			// Mock useData
+			useData.mockReturnValue({
+				data: [
+					{ record_id: "001", nn_dob: "2024-01-01", reg_ooa: "1" }, // OOA
+					{ record_id: "002", nn_dob: "2024-05-20", reg_ooa: "0" }, // Not OOA
+				],
+				loading: false,
+				error: null,
+				updatePatient: jest.fn(),
+			});
 
-		test("empty table when no matches", () => {});
+			// Mock useAppointmentFilters
+			useAppointmentFilters.mockReturnValue({
+				searchQuery: "",
+				setSearchQuery: jest.fn(),
+				selectedStudies: ["AIMHIGH", "COOLPRIME", "EDI"],
+				handleStudyChange: jest.fn(),
+				filteredAppointments: [
+					{
+						id: "001",
+						OutOfArea: true,
+						type: "window",
+						visit_num: 2,
+					},
+					{
+						id: "002",
+						OutOfArea: false,
+						type: "window",
+						visit_num: 2,
+					},
+				],
+			});
+		});
+
+		test("renders headings", () => {
+			render(<Appointments />);
+
+			expect(screen.getByTestId("patient-heading")).toBeInTheDocument();
+			expect(screen.getByTestId("visit-heading")).toBeInTheDocument();
+			expect(screen.getByTestId("kildare-heading")).toBeInTheDocument();
+		});
+
+		test("render ooa present and not", () => {
+			render(<Appointments />);
+
+			const ooaIndicators = screen.getAllByTestId("indicator");
+			expect(ooaIndicators[0]).toBeVisible(); // OOA patient
+			expect(ooaIndicators[1]).not.toBeVisible(); // In-area patient
+		});
+
+		test("empty table when no matches", () => {
+			useAppointmentFilters.mockReturnValue({
+				searchQuery: "",
+				setSearchQuery: jest.fn(),
+				selectedStudies: ["AIMHIGH", "COOLPRIME", "EDI"],
+				handleStudyChange: jest.fn(),
+				filteredAppointments: [],
+			});
+
+			render(<Appointments />);
+
+			expect(
+				screen.getByText(/no matching appointments found/i)
+			).toBeInTheDocument();
+		});
 
 		test("expansion toggle functional", () => {});
 	});
