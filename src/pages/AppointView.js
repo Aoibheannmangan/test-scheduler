@@ -301,7 +301,11 @@ const Appointments = () => {
 	return (
 		<div className="App">
 			{/*Container for searchbar and filter*/}
-			<div className="searchContainer" role="region">
+			<div
+				className="searchContainer"
+				role="region"
+				data-testid="search-container"
+			>
 				<label htmlFor="searchInput" className="searchBarTitle">
 					Search Patient:
 				</label>

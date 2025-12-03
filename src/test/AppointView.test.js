@@ -154,9 +154,81 @@ describe("Appointments Component", () => {
 	});
 
 	describe("Page and elements are rendering", () => {
-		test("all containers and search bar is rendering", () => {});
+		test("all containers and search bar is rendering", () => {
+			const { useData } = require("../hooks/DataContext");
 
-		test("patients are rendering", () => {});
+			useData.mockReturnValue({
+				data: [],
+				loading: false,
+				error: null,
+				updatePatient: jest.fn(),
+			});
+
+			render(<Appointments />);
+
+			expect(screen.getByPlaceholderText(/search/i)).toBeInTheDocument();
+			expect(screen.getByTestId("search-container")).toBeInTheDocument();
+			expect(screen.getByLabelText("mainTable")).toBeInTheDocument();
+		});
+
+		test("patients are rendering", async () => {
+			const { useData } = require("../hooks/DataContext");
+			const {
+				useAppointmentFilters,
+			} = require("../hooks/useAppointmentFilters");
+
+			// Mock api call
+			useData.mockReturnValue({
+				data: [
+					{
+						record_id: "001",
+						nn_dob: "2024-01-01",
+						reg_dag: 1, // optional
+					},
+					{
+						record_id: "002",
+						nn_dob: "2024-05-20",
+						reg_dag: 2,
+					},
+				],
+				loading: false,
+				error: null,
+				updatePatient: jest.fn(),
+			});
+
+			// Mock fetchBooking() so component doesn't fail
+			axios.get.mockResolvedValue({
+				data: { events: [] },
+			});
+
+			// Mock useAppointmentFilters to return these patients as filteredAppointments
+			useAppointmentFilters.mockReturnValue({
+				searchQuery: "",
+				setSearchQuery: jest.fn(),
+				selectedStudies: ["AIMHIGH", "COOLPRIME", "EDI"],
+				handleStudyChange: jest.fn(),
+				filteredAppointments: [
+					{
+						displayId: "001",
+						id: "001",
+						visit_num: 1,
+						type: "window",
+					},
+					{
+						displayId: "002",
+						id: "002",
+						visit_num: 1,
+						type: "window",
+					},
+				],
+			});
+
+			render(<Appointments />);
+
+			// Check that patient IDs show up on the page
+			expect(await screen.findByText(/001/)).toBeInTheDocument();
+			expect(await screen.findByText(/002/)).toBeInTheDocument();
+		});
 	});
 
 	describe("Table elements are loading", () => {
