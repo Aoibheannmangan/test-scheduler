@@ -4,7 +4,8 @@
   align-items: flex-start; 
   min-height: 100vh; 
   padding: 2rem 1rem;
-  background: linear-gradient(to right, #663e6e, #b573c2, #c794d1);
+  background: linear-gradient(to right, #663e6e, #7d4caa, #598dbe);
+  overflow: hidden;
 }
 
 
