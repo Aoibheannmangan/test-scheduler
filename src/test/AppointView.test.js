@@ -328,21 +328,216 @@ describe("Appointments Component", () => {
 	});
 
 	describe("Booked appointment info", () => {
-		test("renders date and time", () => {});
+		beforeEach(() => {
+			const { useData } = require("../hooks/DataContext");
+			const {
+				useAppointmentFilters,
+			} = require("../hooks/useAppointmentFilters");
 
-		test("render expansion", () => {});
+			useData.mockReturnValue({
+				data: [],
+				loading: false,
+				error: null,
+				updatePatient: jest.fn(),
+			});
 
-		test("renders 'N/A'", () => {});
+			const start = new Date("2025-01-10T10:00:00");
+			const end = new Date("2025-01-10T11:00:00");
+
+			useAppointmentFilters.mockReturnValue({
+				searchQuery: "",
+				setSearchQuery: jest.fn(),
+				selectedStudies: ["AIMHIGH"],
+				handleStudyChange: jest.fn(),
+				filteredAppointments: [
+					{
+						id: "001",
+						displayId: "001",
+						type: "booked",
+						visit_num: 2,
+						start,
+						end,
+						DOB: "2020-01-02",
+						OutOfArea: false,
+					},
+					{
+						id: "002",
+						displayId: "002",
+						type: "window",
+						visit_num: 7,
+						start: null,
+						end: null,
+						DOB: "2020-01-02",
+						OutOfArea: false,
+					},
+				],
+			});
+		});
+		test("renders date and time", () => {
+			render(<Appointments />);
+
+			const patientLabel = screen.getByText(/001\s*\+/);
+			expect(patientLabel).toBeInTheDocument();
+
+			fireEvent.click(patientLabel); // Expand
+			expect(screen.getByText(/10 January 2025/i)).toBeInTheDocument();
+			expect(screen.getByText(/10:00 - 11:00/i)).toBeInTheDocument();
+		});
+
+		test("render visit num", () => {
+			render(<Appointments />);
+
+			const visitNumContainer = screen.getAllByTestId("visit-number")[0];
+			expect(visitNumContainer).toHaveTextContent("2");
+		});
+
+		test("render complete visit indicator", () => {
+			render(<Appointments />);
+
+			const visitCompleteNumContainer =
+				screen.getAllByTestId("visit-number")[1];
+			expect(visitCompleteNumContainer).toHaveTextContent("Complete");
+		});
+
+		test("renders 'N/A'", () => {
+			// Override the mock test and render blank to see N/A
+			const { useData } = require("../hooks/DataContext");
+			const {
+				useAppointmentFilters,
+			} = require("../hooks/useAppointmentFilters");
+
+			useData.mockReturnValue({
+				data: [],
+				loading: false,
+				error: null,
+				updatePatient: jest.fn(),
+			});
+			useAppointmentFilters.mockReturnValue({
+				searchQuery: "",
+				setSearchQuery: jest.fn(),
+				selectedStudies: ["AIMHIGH"],
+				handleStudyChange: jest.fn(),
+				filteredAppointments: [
+					{
+						id: "001",
+						displayId: "001",
+						type: "booked",
+						visit_num: 2,
+						start: null,
+						end: null,
+						DOB: "2020-01-02",
+						OutOfArea: false,
+					},
+				],
+			});
+
+			render(<Appointments />);
+
+			const patientLabel = screen.getByText(/001\s*\+/);
+			expect(patientLabel).toBeInTheDocument();
+
+			fireEvent.click(patientLabel); // Expand
+			expect(screen.getByText(/N\/A/i)).toBeInTheDocument();
+		});
 	});
 
 	describe("Window event info", () => {
-		test("renders visit num", () => {});
+		beforeEach(() => {
+			// Mock useData
+			const { useData } = require("../hooks/DataContext");
+			useData.mockReturnValue({
+				data: [
+					{
+						record_id: "001",
+						nn_dob: "2020-01-02",
+						reg_ooa: "0",
+						reg_dag: 1,
+						type: "window",
+						visit_num: 2,
+						nicu_email: "test@example.com",
+					},
+					{
+						record_id: "002",
+						nn_dob: "2020-01-02",
+						reg_ooa: "0",
+						reg_dag: 1,
+						type: "window",
+						visit_num: 1, // still in NICU
+						nicu_email: "nicupatient@example.com",
+						visit_1_nicu_discharge_complete: "0",
+					},
+				],
+				loading: false,
+				error: null,
+				updatePatient: jest.fn(),
+			});
 
-		test("Patient in NICU displayed", () => {});
+			// Mock useAppointmentFilters
+			const {
+				useAppointmentFilters,
+			} = require("../hooks/useAppointmentFilters");
+			useAppointmentFilters.mockReturnValue({
+				searchQuery: "",
+				setSearchQuery: jest.fn(),
+				selectedStudies: ["AIMHIGH"],
+				handleStudyChange: jest.fn(),
+				filteredAppointments: [
+					{
+						id: "001",
+						displayId: "001",
+						type: "window",
+						visit_num: 2, // transition visit example
+						DOB: "2020-01-02",
+						OutOfArea: false,
+						Study: ["AIMHIGH"],
+						email: "test@example.com",
+					},
+					{
+						id: "002",
+						displayId: "002",
+						type: "window",
+						visit_num: 1, // transition visit example
+						DOB: "2020-01-02",
+						OutOfArea: false,
+						Study: ["AIMHIGH"],
+					},
+				],
+			});
+		});
+		test("renders transition visit num", () => {
+			render(<Appointments />);
 
-		test("Patient is complete", () => {});
+			const visitNumContainer = screen.getAllByTestId("visit-number")[0];
+			expect(visitNumContainer).toHaveTextContent("1 → 2");
+		});
 
-		test("renders contact number", () => {});
+		test("Patient in NICU displayed", () => {
+			render(<Appointments />);
+
+			const patientLabel = screen.getByText(/002\s*\+/);
+			expect(patientLabel).toBeInTheDocument();
+			fireEvent.click(patientLabel); // Expand
+
+			const statusLabel = screen.getByTestId("status-label");
+			expect(statusLabel).toHaveTextContent(
+				/participant is still in nicu/i
+			);
+		});
+
+		test("renders contact number", () => {
+			render(<Appointments />);
+
+			const patientLabel = screen.getByText(/001\s*\+/);
+			expect(patientLabel).toBeInTheDocument();
+			fireEvent.click(patientLabel); // Expand
+
+			const contactLabel = screen.getByTestId("contact-label");
+			expect(contactLabel).toBeInTheDocument();
+			fireEvent.click(contactLabel); // Expand contact toggle
+
+			const email = screen.getByText(/test@example.com/i);
+			expect(email).toBeInTheDocument();
+		});
 	});
 
 	describe("Rendering Proximity Indicator", () => {

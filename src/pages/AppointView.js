@@ -453,7 +453,10 @@ const Appointments = () => {
 							{event.type === "window" &&
 								(event.visit_num <= 6 ? (
 									<>
-										<span className="visitNumContainer">
+										<span
+											className="visitNumContainer"
+											data-testid="visit-number"
+										>
 											{event.visit_num - 1}
 											{" → "}
 											{event.visit_num}
@@ -461,7 +464,10 @@ const Appointments = () => {
 									</>
 								) : (
 									<>
-										<span className="visitNumContainer">
+										<span
+											className="visitNumContainer"
+											data-testid="visit-number"
+										>
 											<strong>Complete</strong>
 										</span>
 									</>
@@ -470,7 +476,10 @@ const Appointments = () => {
 							{/* Solid visit num for booked */}
 							{event.type === "booked" && (
 								<>
-									<span className="visitNumContainer">
+									<span
+										className="visitNumContainer"
+										data-testid="visit-number"
+									>
 										{event.visit_num}
 									</span>
 								</>
@@ -530,7 +539,7 @@ const Appointments = () => {
 											);
 										} else if (event.visit_num === 1) {
 											return (
-												<div>
+												<div data-testid="status-label">
 													<strong>Status:</strong>{" "}
 													Participant is still in NICU
 												</div>
@@ -706,6 +715,7 @@ const Appointments = () => {
 															})
 														)
 													}
+													data-testid="contact-label"
 												>
 													Contact:{" "}
 													{expandedNotes[toggleKey]
