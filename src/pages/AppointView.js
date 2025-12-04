@@ -413,12 +413,14 @@ const Appointments = () => {
 												<span
 													className="farNotifier"
 													title="More than a month away"
+													data-testid="far-notifier"
 												/>
 											)}
 										{event.start && isMid(event.start) && (
 											<span
 												className="midNotifier"
 												title="Between a week and a month away"
+												data-testid="mid-notifier"
 											/>
 										)}
 										{event.start &&
@@ -426,6 +428,7 @@ const Appointments = () => {
 												<span
 													className="closeNotifier"
 													title="Within a week"
+													data-testid="close-notifier"
 												/>
 											)}
 									</>

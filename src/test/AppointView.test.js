@@ -311,7 +311,20 @@ describe("Appointments Component", () => {
 			).toBeInTheDocument();
 		});
 
-		test("expansion toggle functional", () => {});
+		test("expansion toggle functional", () => {
+			render(<Appointments />);
+
+			const patientLabel = screen.getByText(/001\s*\+/);
+			expect(patientLabel).toBeInTheDocument();
+
+			fireEvent.click(patientLabel); // Expand
+			expect(screen.getByText(/date of birth:/i)).toBeInTheDocument();
+
+			fireEvent.click(patientLabel); // Collapse
+			expect(
+				screen.queryByText(/date of birth:/i)
+			).not.toBeInTheDocument();
+		});
 	});
 
 	describe("Booked appointment info", () => {
@@ -333,11 +346,76 @@ describe("Appointments Component", () => {
 	});
 
 	describe("Rendering Proximity Indicator", () => {
-		test("green indicator", () => {});
+		// Set up methods for loading notifiers:
+		beforeEach(() => {
+			const { useData } = require("../hooks/DataContext");
+			const {
+				useAppointmentFilters,
+			} = require("../hooks/useAppointmentFilters");
 
-		test("orange indicators", () => {});
+			const farDate = new Date();
+			farDate.setMonth(farDate.getMonth() + 2);
 
-		test("red visit number", () => {});
+			const midDate = new Date();
+			midDate.setDate(midDate.getDate() + 14);
+
+			const closeDate = new Date();
+			closeDate.setDate(closeDate.getDate() + 2);
+
+			useData.mockReturnValue({
+				data: [],
+				loading: false,
+				error: null,
+				updatePatient: jest.fn(),
+			});
+
+			useAppointmentFilters.mockReturnValue({
+				searchQuery: "",
+				setSearchQuery: jest.fn(),
+				selectedStudies: ["AIMHIGH", "COOLPRIME", "EDI"],
+				handleStudyChange: jest.fn(),
+				filteredAppointments: [
+					{
+						id: "001",
+						OutOfArea: false,
+						type: "booked",
+						visit_num: 2,
+						start: farDate,
+					},
+					{
+						id: "002",
+						OutOfArea: false,
+						type: "booked",
+						visit_num: 4,
+						start: midDate,
+					},
+					{
+						id: "003",
+						OutOfArea: false,
+						type: "booked",
+						visit_num: 3,
+						start: closeDate,
+					},
+				],
+			});
+		});
+		test("green indicator", () => {
+			render(<Appointments />);
+
+			expect(screen.getByTestId(/far-notifier/i)).toBeInTheDocument();
+		});
+
+		test("orange indicators", () => {
+			render(<Appointments />);
+
+			expect(screen.getByTestId(/mid-notifier/i)).toBeInTheDocument();
+		});
+
+		test("red visit number", () => {
+			render(<Appointments />);
+
+			expect(screen.getByTestId(/far-notifier/i)).toBeInTheDocument();
+		});
 	});
 
 	describe("API + Data Fetching", () => {
