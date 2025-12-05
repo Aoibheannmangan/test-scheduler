@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: linear-gradient(to right,#8d5a97, #40a5d4) ;
+  background: linear-gradient(to right, #663e6e, #7d4caa, #598dbe);
   padding: 1rem 2rem;
   flex-wrap: wrap;
   position: fixed;
