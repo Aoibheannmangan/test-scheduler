@@ -23,6 +23,7 @@ const ToggleAppointment = ({
 	const [appDate, setAppDate] = useState(null);
 	const [appTimeStart, setAppTimeStart] = useState(null); // Changed from "" to null
 	const [appTimeEnd, setAppTimeEnd] = useState(null); // Changed from "" to null
+	const [visitNum, setVisitNum] = useState(null);
 	const [patientStudy, setPatientStudy] = useState("");
 	const [appRoom, setAppRoom] = useState("");
 	const [appNote, setAppNote] = useState("");
@@ -48,61 +49,75 @@ const ToggleAppointment = ({
 		});
 	};
 
-	// Calculate time with visit num
+	// Calculate visit number whenever patient ID changes
 	useEffect(() => {
-		if (appTimeStart && appPatID && userList && !isEndTimeEditable) {
-			const patient = userList.find((p) => p.record_id === appPatID);
-			if (!patient) {
-				setAppTimeEnd(null);
-				return;
-			}
-
-			const calculateVisitNum = (patient) => {
-				let visit_num = 1;
-				if (patient.visit_1_nicu_discharge_complete === "1") {
-					visit_num = 2;
-					for (let i = 2; i <= 6; i++) {
-						if (patient[`v${i}_attend`] === "1") {
-							visit_num = i + 1;
-						} else {
-							break;
-						}
-					}
-				}
-				return visit_num;
-			};
-
-			const visitNum = calculateVisitNum(patient);
-			let defaultDuration = 2; // Default duration
-
-			switch (visitNum) {
-				case 2:
-					defaultDuration = 3.5;
-					break;
-				case 3:
-					defaultDuration = 2;
-					break;
-				case 4:
-					defaultDuration = 2.5;
-					break;
-				case 5:
-					defaultDuration = 2.5;
-					break;
-				case 6:
-					defaultDuration = 2;
-					break;
-				default:
-					defaultDuration = 2; // Default for visit 1 or others
-					break;
-			}
-
-			const calculatedEndTime = dayjs(appTimeStart).add(
-				defaultDuration,
-				"hour"
-			);
-			setAppTimeEnd(calculatedEndTime);
+		if (!appPatID || !userList || userList.length === 0) {
+			setVisitNum(null);
+			return;
 		}
-	}, [appTimeStart, appPatID, userList, isEndTimeEditable]);
+
+		const patient = userList.find((p) => p.record_id === appPatID);
+
+		if (!patient) {
+			setVisitNum(null);
+			return;
+		}
+
+		// Calculate visit number
+		let calculatedVisitNum = 1;
+
+		if (patient.visit_1_nicu_discharge_complete === "1") {
+			calculatedVisitNum = 2;
+			for (let i = 2; i <= 6; i++) {
+				if (patient[`v${i}_attend`] === "1") {
+					calculatedVisitNum = i + 1;
+				} else {
+					break;
+				}
+			}
+		}
+
+		setVisitNum(calculatedVisitNum);
+		console.log("Patient found, visit number:", calculatedVisitNum); // Debug log
+	}, [appPatID, userList]);
+
+	useEffect(() => {
+		// Right at the start of the first useEffect
+		console.log("DEBUG - appPatID:", appPatID);
+		console.log("DEBUG - userList:", userList);
+		console.log(
+			"DEBUG - found patient:",
+			userList?.find((p) => p.record_id === appPatID)
+		);
+
+		// Right at the start of the second useEffect
+		console.log("DEBUG - appTimeStart:", appTimeStart);
+		console.log("DEBUG - visitNum:", visitNum);
+		console.log("DEBUG - isEndTimeEditable:", isEndTimeEditable);
+
+		// Only auto-calculate if start time is set, visitNum is known, and user hasn't overridden
+		if (!appTimeStart || visitNum === null || isEndTimeEditable) return;
+
+		// Map visit number to duration in hours
+		const visitDurations = { 1: 2, 2: 3.5, 3: 2, 4: 2.5, 5: 2.5, 6: 2 };
+		const durationHours = visitDurations[visitNum] || 2;
+
+		// Auto-calculate end time
+		const newEndTime = appTimeStart.add(durationHours, "hour");
+		setAppTimeEnd(newEndTime);
+	}, [appTimeStart, visitNum, isEndTimeEditable]);
+
+	// Safety check: If end time is before start time, fix it
+	useEffect(() => {
+		if (
+			appTimeStart &&
+			appTimeEnd &&
+			dayjs.isDayjs(appTimeEnd) &&
+			appTimeEnd.isBefore(appTimeStart)
+		) {
+			setAppTimeEnd(appTimeStart.add(1, "hour"));
+		}
+	}, [appTimeStart, appTimeEnd]);
 
 	// If start > end time
 	useEffect(() => {
@@ -290,7 +305,7 @@ const ToggleAppointment = ({
 							<TimePicker
 								label="End Time"
 								value={appTimeEnd}
-								readOnly={!isEndTimeEditable}
+								readOnly={!isEndTimeEditable} // Make read-only when auto-calculating
 								minutesStep={30}
 								skipDisabled={true}
 								views={["hours", "minutes"]}
@@ -301,7 +316,15 @@ const ToggleAppointment = ({
 										id: "endTime",
 										required: true,
 										fullWidth: true,
-										"aria-label": "End Time", // <- this is optional; MUI uses `label` too
+										"aria-label": "End Time",
+										InputProps: {
+											style: {
+												backgroundColor:
+													!isEndTimeEditable
+														? "#f5f5f5"
+														: "white",
+											},
+										},
 									},
 									digitalClockSectionItem: {
 										sx: {
@@ -313,6 +336,20 @@ const ToggleAppointment = ({
 									},
 								}}
 							/>
+							{/* display visit num for patient under end time*/}
+							{appTimeEnd && !isEndTimeEditable && visitNum && (
+								<div
+									style={{
+										fontSize: "0.85rem",
+										color: "#666",
+										marginTop: "5px",
+										fontStyle: "italic",
+									}}
+								>
+									Auto-calculated for Visit {visitNum}{" "}
+									appointment
+								</div>
+							)}
 
 							<div className="checkbox-container">
 								<label>

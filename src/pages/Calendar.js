@@ -19,7 +19,7 @@ import PopUp from "../components/PopUp";
 import RebookingForm from "../components/RebookingForm";
 import { CiCalendar } from "react-icons/ci";
 import { useData } from "../hooks/DataContext";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
@@ -146,7 +146,7 @@ const MyCalendar = () => {
 	 */
 	// Run whenever apiUserList changes
 	useEffect(() => {
-		if (apiUserList & (apiUserList !== userList)) {
+		if (apiUserList && apiUserList !== userList) {
 			setUserList(apiUserList);
 		}
 	}, [apiUserList, userList]);
@@ -291,8 +291,8 @@ const MyCalendar = () => {
 	//Unblock previously blocked dates
 	const handleUnBlockDate = async () => {
 		if (!blockStart || !blockEnd) {
-		setAlert({
-			message: "Please select BOTH start and end dates",
+			setAlert({
+				message: "Please select BOTH start and end dates",
 				type: "error",
 			});
 			return;
@@ -305,20 +305,20 @@ const MyCalendar = () => {
 			const token = localStorage.getItem("token");
 
 			console.log("UNBLOCK SENDING →", {
-			blockStart,
-			blockEnd,
-			startISO,
-			endISO
+				blockStart,
+				blockEnd,
+				startISO,
+				endISO,
 			});
 			// Call backend to remove the block
 			await axios.post(
-			"http://localhost:5000/api/unblock",
+				"http://localhost:5000/api/unblock",
 				{ start: startISO, end: endISO },
 				{ headers: { Authorization: `Bearer ${token}` } }
 			);
 
 			// Remove from frontend list
-			const updatedBlockedDates = blockedDates.filter(evt => {
+			const updatedBlockedDates = blockedDates.filter((evt) => {
 				if (!evt?.start) return true;
 
 				const date = moment(evt.start);
@@ -328,10 +328,11 @@ const MyCalendar = () => {
 			setBlockedDates(updatedBlockedDates);
 
 			setAlert({
-				message: `Unblocked from ${moment(startISO).format("YYYY-MM-DD")} to ${moment(endISO).format("YYYY-MM-DD")}`,
+				message: `Unblocked from ${moment(startISO).format(
+					"YYYY-MM-DD"
+				)} to ${moment(endISO).format("YYYY-MM-DD")}`,
 				type: "success",
 			});
-
 		} catch (error) {
 			console.error("Error unblocking:", error);
 			setAlert({
@@ -1272,6 +1273,10 @@ const MyCalendar = () => {
 				<div className="floatButton">
 					<label>Book an Appointment</label>
 
+					{console.log(
+						"Parent userList before passing to ToggleAppointment:",
+						userList
+					)}
 					<button
 						className="appButton"
 						onClick={handleEventAdd}
@@ -1469,15 +1474,17 @@ const MyCalendar = () => {
 
 			{/**APPOINTMENT BOOKING FORM*/}
 			<div className="AppointmentToggle">
-				<ToggleAppointment
-					onAddAppointment={handleAddAppointment}
-					isOpen={appOpen}
-					onClose={() => setAppOpen(false)}
-					bookedEvents={bookedEvents}
-					blockedDates={blockedDates}
-					roomList={roomList}
-					userList={userList}
-				/>
+				<LocalizationProvider dateAdapter={AdapterDayjs}>
+					<ToggleAppointment
+						onAddAppointment={handleAddAppointment}
+						isOpen={appOpen}
+						onClose={() => setAppOpen(false)}
+						bookedEvents={bookedEvents}
+						blockedDates={blockedDates}
+						roomList={roomList}
+						userList={userList}
+					/>
+				</LocalizationProvider>
 			</div>
 			{/** Pop up for leave form */}
 			{leaveOpen && (
