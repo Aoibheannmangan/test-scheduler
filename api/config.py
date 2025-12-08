@@ -1,5 +1,4 @@
 # Keep in different file for security. Should later be encrypted**
-
 import os
 from dotenv import load_dotenv, dotenv_values
 
