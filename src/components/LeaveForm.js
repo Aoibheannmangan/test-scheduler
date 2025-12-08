@@ -32,46 +32,54 @@ const LeaveForm = ({ onSave, onClose }) => {
   };
 
   return (
-    <div className="Leave-overlay">
-      <div className="Leave-content">
-        <form onSubmit={handleSubmit}>
-          <label>
-            Staff Name:
-            <input
-              type="text"
-              value={leaveName}
-              onChange={(e) => setLeaveName(e.target.value)}
-              required
-            />
-          </label>
+		<div className="Leave-overlay">
+			<div className="Leave-content animate-pop">
+				<form onSubmit={handleSubmit}>
+					<label>
+						Staff Name:
+						<input
+							type="text"
+							value={leaveName}
+							onChange={(e) => setLeaveName(e.target.value)}
+							required
+						/>
+					</label>
 
-          <LocalizationProvider dateAdapter={AdapterMoment}>
-            <label>
-              Start:
-              <DateTimePicker
-                value={leaveStart}
-                onChange={(v) => setLeaveStart(v)}
-                ampm={false}
-              />
-            </label>
+					<LocalizationProvider dateAdapter={AdapterMoment}>
+						<label>
+							Start:
+							<DateTimePicker
+								value={leaveStart}
+								onChange={(v) => setLeaveStart(v)}
+								ampm={false}
+							/>
+						</label>
 
-            <label>
-              End:
-              <DateTimePicker
-                value={leaveEnd}
-                onChange={(v) => setLeaveEnd(v)}
-                ampm={false}
-              />
-            </label>
-          </LocalizationProvider>
+						<label>
+							End:
+							<DateTimePicker
+								value={leaveEnd}
+								onChange={(v) => setLeaveEnd(v)}
+								ampm={false}
+							/>
+						</label>
+					</LocalizationProvider>
 
-          <div className="Leave-buttons">
-            <button className="save-button" type="submit">Save Leave</button>
-            <button className="cancel-button" type="button" onClick={onClose}>Cancel</button>
-          </div>
-        </form>
-      </div>
-    </div>
+					<div className="Leave-buttons">
+						<button className="save-button" type="submit">
+							Save Leave
+						</button>
+						<button
+							className="cancel-button"
+							type="button"
+							onClick={onClose}
+						>
+							Cancel
+						</button>
+					</div>
+				</form>
+			</div>
+		</div>
   );
 };
 

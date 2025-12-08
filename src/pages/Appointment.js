@@ -243,7 +243,7 @@ const ToggleAppointment = ({
 
 	return (
 		<div className="Appointment-overlay">
-			<div className="Appointment-content">
+			<div className="Appointment-content animate-pop">
 				<fieldset>
 					<div className="form-border">
 						<form onSubmit={handleSubmit}>

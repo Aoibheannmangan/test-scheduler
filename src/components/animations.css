@@ -1,0 +1,38 @@
+/* Pop Animation for Forms and Modals */
+.animate-pop {
+  animation-name: animate-pop;
+  animation-timing-function: cubic-bezier(0.26, 0.53, 0.74, 1.48);
+  animation-duration: 0.5s;
+  animation-fill-mode: both;
+}
+
+@keyframes animate-pop {
+  0% { 
+    opacity: 0; 
+    transform: scale(0.5, 0.5);
+  }
+  100% { 
+    opacity: 1;
+    transform: scale(1, 1);
+  }
+}
+
+/* Apply to popup content */
+.popup-content.animate-pop {
+  animation-name: animate-pop;
+}
+
+/* Apply to modal content */
+.modal-content.animate-pop {
+  animation-name: animate-pop;
+}
+
+/* Apply to appointment content */
+.Appointment-content.animate-pop {
+  animation-name: animate-pop;
+}
+
+/* Apply to leave form content */
+.Leave-content.animate-pop {
+  animation-name: animate-pop;
+}

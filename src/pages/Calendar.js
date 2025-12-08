@@ -6,6 +6,7 @@ import React, {
 	useCallback,
 } from "react";
 import "./Calendar.css";
+import "../components/animations.css";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -1047,7 +1048,6 @@ const MyCalendar = () => {
 					onClose={() => setAlert(null)}
 				/>
 			)}
-
 			{/**CALENDER*/}
 			<div className="calendar-wrapper" data-testid="cal-wrapper">
 				<Calendar
@@ -1105,7 +1105,6 @@ const MyCalendar = () => {
 					}}
 				/>
 			</div>
-
 			<div className="floatContainer">
 				{/**WINDOW SEARCH*/}
 				<div className="floatChild">
@@ -1317,7 +1316,7 @@ const MyCalendar = () => {
 			{/**EDIT POPUP*/}
 			{selectedEvent && (
 				<div className="popup-overlay">
-					<div className="popup-content">
+					<div className="popup-content animate-pop">
 						<div className="popup-header">
 							<h3>
 								Edit Event for{" "}

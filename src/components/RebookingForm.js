@@ -119,7 +119,7 @@ const RebookingForm = ({
 
 	return (
 		<div className="modal-overlay">
-			<div className="modal-content">
+			<div className="modal-content animate-pop">
 				<h3 className="title">Reschedule Event</h3>
 				<p>
 					<strong>Title: </strong>
