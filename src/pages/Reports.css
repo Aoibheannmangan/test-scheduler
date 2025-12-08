@@ -1,18 +1,27 @@
-.heading {
-  margin-top: 80px;
-  font-size: x-large;
-  text-align: center;
-  font-family: "Sansation";
-  color: #000000;
+.chart-heading {
+	margin-top: 3rem;
+	font-size: x-large;
+	text-align: center;
+	font-family: "Sansation";
+	color: #000000;
 }
 
-.forecastContainer {
-  min-width: 220px;
-  max-width: 1000px;
-  margin: 24px auto 0 auto;
-  background: #f9f9f9;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-  padding: 18px 16px;
-  display: flex;
+.window-heading {
+	padding-top: 80px;
+	font-size: x-large;
+	text-align: center;
+	font-family: "Sansation";
+	color: #000000;
+}
+
+.chart-container {
+	min-width: 220px;
+	max-width: 1000px;
+	margin: 24px auto 0 auto;
+	background: #f9f9f9;
+	border-radius: 10px;
+	box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+	padding: 18px 16px;
+	display: flex;
+	width: 100%;
 }

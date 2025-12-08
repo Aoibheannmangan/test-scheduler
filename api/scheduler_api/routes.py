@@ -1,7 +1,7 @@
-from flask import Flask, jsonify, current_app, request
+from flask import Flask, jsonify, current_app, request, Response
 from flask_cors import CORS
 import requests
-from api.config import REDCAP_API_URL, API_TOKEN
+from config import REDCAP_API_URL, API_TOKEN
 import logging
 import os
 from .extensions import db
@@ -12,11 +12,48 @@ from .tokenDecorator import token_required
 logger = logging.getLogger(__name__)
 
 # API func
-def get_data():
-    # Fetches data from the REDCap API and returns it as JSON
-    
-    # Fetch records from REDCap API. Uses API_TOKEN and REDCAP_API_URL from config.py.
-    # Returns JSON or an error response suitable for the frontend.
+def get_data() -> Response:
+    """
+    Data Retrieval Route  
+    Fetches data from the REDCap API and returns it as JSON.
+
+    This endpoint sends a POST request to the REDCap API using the `API_TOKEN` 
+    and `REDCap URL` provided in `config.py`. It retrieves fields such as site, 
+    date of birth, and gestational age.
+
+    Request:
+        Method: GET  
+        Endpoint: /api/data  
+        No request parameters required.
+
+    Behavior:
+        - If REDCAP_API_URL or API_TOKEN are missing, returns a 500 error.
+        - Constructs a payload specifying which REDCap fields to retrieve.
+        - Makes a POST request to the REDCap API.
+        - Returns the data as JSON on success.
+        - Returns 500 on API failure.
+
+    Returns:
+        200 OK: JSON array of REDCap records.  
+        500 Internal Server Error: JSON error message.
+
+    Example Response:
+        ```json
+        [
+            {
+                "record_id": "001",
+                "nicu_dob": "2020-05-12",
+                "nicu_sex": "F",
+                "v2_next_visit_range": "2021-06-01 to 2021-06-15"
+            }
+        ]
+        ```
+        
+    Logging:
+        - Logs an informational message with the current user's email when 
+          retrieving events
+    """
+
     
     # Basic validation
     token = API_TOKEN
@@ -85,6 +122,37 @@ def get_data():
     
 # Helper functions
 def fetch_visit_data(patient_id: str) -> dict:
+    """This is a helper function which retrieves boolean fields from REDCap.  
+    These fields determine whether the participant has attended a certain visit. 
+    After these are retrieved, a loop is initialised and it loops through all the fields to see which visit was not attended. For every loop, a counter for the visit number is being incremented.  
+    When there is a `field == 0`, the loop terminates and the `visit_num` is returned.  
+
+    Args:
+        patient_id (str):
+            The REDCap record ID for which visit attendance fields should be
+            retrieved.
+            
+    Example Response: 
+        ```json
+        [
+            {
+                'visit_1_nicu_discharge_complete': '1'
+                'v2_attend': '1'
+                'v3_attend': '1'
+                'v4_attend': '1'
+                'v5_attend': '0'
+                'v6_attend': '0'
+            }
+        ]
+        ```
+
+    Returns:
+        dict:
+            A dictionary containing attendance fields for the specified patient.
+            If the REDCap request fails or returns no data, an empty dictionary
+            is returned.
+    """
+
     payload = {
         'token': API_TOKEN,
         'content': 'record',
@@ -106,6 +174,23 @@ def fetch_visit_data(patient_id: str) -> dict:
     return {}
 
 def calculate_visit_num(patient_data: dict) -> int:
+    """Determine the next visit number based on REDCap attendance fields.
+
+    The first visit (`visit_1_nicu_discharge_complete`) is checked. If it is
+    completed, the function iterates through visits 2-6 and increments the visit counter for each completed visit.
+    The loop stops at the first missing ("0") visit.
+
+    Args:
+        patient_data (dict):
+            A dictionary of visit attendance fields returned from
+            `fetch_visit_data`.
+
+    Returns:
+        int:
+            The next expected visit number for the participant.
+            Defaults to 1 if no data is provided.
+    """
+
     if not patient_data:
         return 1
     
@@ -121,7 +206,32 @@ def calculate_visit_num(patient_data: dict) -> int:
     
 # Booking funcs
 def book_appointment(current_user):
-    """Handles the booking of a new appointment."""
+    """Handles the booking of a new appointment.
+    
+    Grabs all the information the user input on the appointment form and does simple operations such as concatinating the patient id and the visit number and setting it as a title.  
+    Performs checks such as overlapping visits and blocked dates. This function utilises other functions such as `calculate_visit_num` and `fetch_visit_data` to pass the visit number of that patient.
+    
+    Args:
+        current_user (object):
+            The user requesting the booking. Must have an `email` attribute
+            for logging and auditing purposes.
+
+    Returns:
+      Response: 
+        - 201 Created: JSON object containing `ok: True` and `eventId` on
+          successful booking.
+        - 400 Bad Request: JSON object with `error` if required fields are
+        missing.
+        - 409 Conflict: JSON object with `error` if the selected time slot
+          is blocked.            
+        - 500 Internal Server Error: JSON object with `ok: False` and `error
+        message if an exception occurs.
+    
+    Logging:
+        - Logs an informational message with the current user's email when 
+        retrieving events
+    """
+    
     logger.info(f"Appointment booking request by user: {current_user.email}")
     data = request.get_json()
     patient_id = data.get('patientId')
@@ -129,6 +239,7 @@ def book_appointment(current_user):
     end_str = data.get('end')
     notes = data.get('notes', '')
     room_id = data.get('roomId')
+    out_of_window = data.get('out_of_window', False)
 
     # Calculate visit number using REDCap data
     visit_data = fetch_visit_data(patient_id) 
@@ -174,7 +285,8 @@ def book_appointment(current_user):
             note=notes,
             no_show=False,
             event_id=new_event.event_id,
-            room_id=room_id
+            room_id=room_id,
+            out_of_window=out_of_window
         )
         db.session.add(new_booking)
         db.session.commit() # Commit both event and booking to the database
@@ -187,7 +299,45 @@ def book_appointment(current_user):
 
 
 def get_all_events(current_user):
-    """Retrieves all events from the database with prioritization."""
+    """
+    Retrieve and prioritize events from the database for all patients.
+
+    This function grabs events from the database with a prioritization 
+    strategy. It groups events by patient ID and selects the most relevant event for each 
+    patient based on event type and visit number.
+
+    The prioritization follows these rules:
+    1. Prefer 'booked' events over 'window' events
+    2. Within each event type, select the event with the highest visit number
+    3. If no suitable event is found, the patient is skipped
+
+    Args:
+        current_user (object): The authenticated user object used for logging and auditing API calls.
+
+    Returns:
+        Response (JSON):
+            * event_id (int): Unique identifier for the event
+            * title (str): Event title
+            * start (str): ISO 8601 formatted start date and time
+            * end (str): ISO 8601 formatted end date and time
+            * event_type (str): Type of event ('booked' or 'window')
+            * visit_num (int): Visit number associated with the event
+            * patient_id (str, optional): Patient identifier
+            * note (str, optional): Additional notes for booked events
+            * no_show (bool, optional): No-show status for booked events
+            * out_of_window (bool, optional): Window status for booked events
+            * room_id (str, optional): Room identifier for booked events
+            - HTTP status code 200 (OK)
+
+    Logging:
+        - Logs an informational message with the current user's email when 
+          retrieving events
+
+    Note:
+        - Requires SQLAlchemy models: Event, Booking
+        - Assumes events can be of type 'booked' or 'window'
+        - Extracts patient ID differently for 'booked' and 'window' events
+    """
     logger.info(f"Fetching all events for user: {current_user.email}")
     events = Event.query.all()
 
@@ -245,6 +395,7 @@ def get_all_events(current_user):
                     event_data["patient_id"] = booking.patient_id
                     event_data["note"] = booking.note
                     event_data["no_show"] = booking.no_show
+                    event_data["out_of_window"] = booking.out_of_window
                     event_data["room_id"] = booking.room_id
             elif selected_event.event_type == 'window':
                 event_data["patient_id"] = patient_id # Already extracted
@@ -255,7 +406,25 @@ def get_all_events(current_user):
 
 
 def delete_appointment(current_user, event_id):
-    """Handles the deletion of an appointment by event_id."""
+    """
+    Handles the deletion of an appointment by event_id.
+    
+    First appointments are filtered by the event id that was passed, this appointment is then deleted from the data base and the event of the patient is returned to a 'window'.
+    
+    Args:
+        current_user (object): The user requesting the deletion. Must have an email attribute for logging and auditing purposes.  
+        event_id (uuid): This unique id is used to identify which event to delete from the database.
+    
+    Returns:
+        Response (JSON):
+            - 200 Success: Creates a JSON containing `ok: True` and the `eventId` on deletion.
+            - 404 Not Found: Creates a JSON object with `{error: Appointment not found}` if the eventId is incorrect.
+            - 500 internal Server Error: JSON object with ok: False and performs a rollback on the database.
+            
+    Logging:
+        - Logs an informational message with the current user's email when 
+          retrieving events
+    """
     logger.info(f"Appointment deletion requested by {current_user.email} for event {event_id}")
     
     try:
@@ -281,7 +450,25 @@ def delete_appointment(current_user, event_id):
 
 
 def update_appointment(current_user, event_id):
-    """Handles the updating of an appointment by event_id."""
+    """
+    Handles the updating of an appointment by event_id.
+    
+    Firstly, all events are filtered by the inputted event id. The fields of this appointment are checked and returned so the user can update them as they wish.
+    
+    Args:
+        current_user (object): The user requesting the update. Must have an email attribute for logging and auditing purposes.
+        event_id (uuid): This unique id is used to identify which event to update from the database.
+
+    Returns:
+        Response (JSON):
+            - 200 Success: Creates a JSON containing `ok: True` and the `eventId` on deletion.
+            - 404 Not Found: Creates a JSON containing `{error: Appointment not found}`
+            - 500 Internal Server Error: Returns a JSON containing `{"ok": False, "error": str(e)}`. (str(e) returns the error log)
+    
+    Logging:
+        - Logs an informational message with the current user's email when 
+          retrieving events
+    """
     logger.info(f"Appointment update requested by {current_user.email} for event {event_id}")
     data = request.get_json()
 
@@ -306,6 +493,9 @@ def update_appointment(current_user, event_id):
 
         if 'no_show' in data:
             booking_to_update.no_show = data['no_show']
+            
+        if 'out_of_window' in data:
+            booking_to_update.out_of_window = data['out_of_window']
 
         if 'roomId' in data:
             booking_to_update.room_id = data['roomId']
@@ -321,7 +511,29 @@ def update_appointment(current_user, event_id):
 # Blocking funcs
 
 def add_blocked_date(current_user):
-    """Handles the blocking of a date."""
+    """
+    Handles the blocking of a date. 
+    
+    Creates an event instance lasting a whole day. The function grabs the 'date' passed from the block date input on the calendar page. 
+    An event with the 'blocked' type is then committed to the database.
+    
+    Args: 
+        current_user (object): Current user object passed for logging and auditing. Recalls the users email.
+        
+    Returns:
+        Response: 
+            - 200 Success: Creates a JSON containing `ok: True` and the `eventId` on block.
+            - 400 Not Found: Creates an error JSON message if the date is not found.
+            - 500 Internal Server Error: Returns a JSON containing `{"ok": False, "error": str(e)}`. (str(e) returns the error log)
+        
+    Logging:
+        - Logs an informational message with the current user's email when 
+          retrieving events
+          
+    Note:
+        - Requires SQLAlchemy Event model
+        - Creates events specifically of type 'blocked'
+    """
     logger.info(f"Blocked date request by user: {current_user.email}")
     data = request.get_json()
     date_str = data.get('date')
@@ -351,7 +563,38 @@ def add_blocked_date(current_user):
         return jsonify({"ok": False, "error": str(e)}), 500
 
 def get_blocked_dates(current_user):
-    """Retrieves all blocked dates from the database."""
+    """
+    Retrieve all blocked dates from the database.
+
+    Fetches events marked as 'blocked' and returns their details in a format 
+    suitable for calendar display. Each blocked date is transformed into a 
+    structured event object.
+
+    Args:
+        current_user (object): The authenticated user object used for logging 
+                                and auditing API calls. Must have an email attribute.
+
+    Returns:
+        Response (JSON):
+            A JSON object containing:  
+            - blockedDates (list): Array of blocked date events with properties:  
+                *  eventId (int): Unique identifier for the blocked event  
+                * title (str): Event title  
+                * start (str): ISO 8601 formatted start date and time  
+                * end (str): ISO 8601 formatted end date and time  
+                * allDay (bool): Whether the event spans an entire day (false)  
+                * blocked (bool): Indicates this is a blocked date (true)  
+                * event_type (str): Type of event ('blocked')  
+        HTTP status code 200 (OK)
+
+    Logging:
+        - Logs an informational message with the current user's email when 
+          retrieving blocked dates
+
+    Note:
+        - Requires SQLAlchemy Event model
+        - Filters events specifically of type 'blocked'
+    """
     logger.info(f"Fetching all blocked dates for user: {current_user.email}")
     blocked_events = Event.query.filter_by(event_type='blocked').all()
 
@@ -362,9 +605,158 @@ def get_blocked_dates(current_user):
             "title": event.event_title,
             "start": event.start_date.isoformat(),
             "end": event.end_date.isoformat(),
-            "allDay": True,
+            "allDay": False,
             "blocked": True,
             "event_type": event.event_type
         })
     
     return jsonify({"blockedDates": blocked_dates_list}), 200
+
+def add_leave(current_user):
+    """
+    Create a new leave event in the database.
+
+    Handles the creation of a leave event with a specified name, start, and end date. 
+    The leave event is stored as an Event with type 'leave'.
+
+    Args:
+        current_user (object): The authenticated user object used for logging 
+                                and auditing API calls. Must have an email attribute.
+
+    Request JSON Payload:
+        - name (str): Name or description of the leave
+        - start (str): ISO 8601 formatted start date and time
+        - end (str): ISO 8601 formatted end date and time
+
+    Returns:
+        Response (JSON):
+            - 201 Created: 
+                * ok (bool): Indicates successful leave creation
+                * eventId (str): Title of the created leave event
+            - 400 Bad Request: 
+                * error (str): Message indicating missing required fields
+            - 500 Internal Server Error:
+                * ok (bool): False
+                * error (str): Detailed error message
+
+    Logging:
+        - Logs an informational message with the current user's email when 
+          creating a leave event
+        - Logs an error message if leave creation fails
+
+    Note:
+        - Requires SQLAlchemy Event model and database session
+        - Converts input dates to datetime objects
+        - Stores leave events with 'leave' event type
+    """
+    logger.info(f"Leave request by user: {current_user.email}")
+    data = request.get_json()
+
+    name = data.get('name')
+    start_str = data.get('start')
+    end_str = data.get('end')
+
+    if not name or not start_str or not end_str:
+        return jsonify({"error": "Missing name, start ot end time"}), 400
+    
+    try: 
+        start_dt = datetime.fromisoformat(start_str.replace('Z', '+00:00'))
+        end_dt = datetime.fromisoformat(end_str.replace('Z', '+00:00'))
+
+        new_event = Event(
+            event_title=f"Leave - {name}",
+            start_date=start_dt,
+            end_date=end_dt,
+            event_type='leave',
+            visit_num=None
+        )
+
+        db.session.add(new_event)
+        db.session.commit()
+
+        return jsonify({
+            "ok": True,
+            "eventId": new_event.event_title
+        }), 201
+    
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"Error adding leave: {e}")
+        return jsonify({"ok": False, "error": str(e)}), 500
+
+def get_leave(current_user):
+    """
+    Retrieve all leave events from the database.
+
+    Fetches events marked as 'leave' and returns their details in a format 
+    suitable for calendar display.
+
+    Args:
+        current_user (object): The authenticated user object used for logging 
+                                and auditing API calls. Must have an email attribute.
+
+    Returns:
+        Response (JSON):
+            A JSON object containing:
+            - leaveEvents (list): Array of leave events with properties:
+                * eventId (int): Unique identifier for the leave event
+                * title (str): Event title (includes leave name)
+                * start (str): ISO 8601 formatted start date and time
+                * end (str): ISO 8601 formatted end date and time
+                * allDay (bool): Whether the event spans an entire day (false)
+                * event_type (str): Type of event ('leave')
+            - HTTP status code 200 (OK)
+
+    Logging:
+        - Logs an informational message with the current user's email when 
+          retrieving leave events
+
+    Note:
+        - Requires SQLAlchemy Event model
+        - Filters events specifically of type 'leave'
+    """
+    logger.info(f"Fetching leave events for user: {current_user.email}")
+    leave_events = Event.query.filter_by(event_type='leave').all()
+
+    leave_list = []
+    for event in leave_events:
+        leave_list.append({
+            "eventId": event.event_id,
+            "title": event.event_title,
+            "start": event.start_date.isoformat(),
+            "end": event.end_date.isoformat(),  # important
+            "allDay": False,
+            "event_type": event.event_type,
+        })
+
+    return jsonify({"leaveEvents": leave_list}), 200
+
+def unblock_date(current_user, start_str, end_str):
+    logger.info(f"Unblock requested by {current_user.email} from {start_str} to {end_str}")
+
+    try:
+        start_dt = datetime.fromisoformat(start_str)
+        end_dt = datetime.fromisoformat(end_str)
+
+        blocked_in_range = Event.query.filter(
+            Event.event_type == 'blocked',
+            Event.start_date <= end_dt,
+            Event.end_date >= start_dt
+        ).all()
+
+        if not blocked_in_range:
+            return jsonify({"error": "No blocked dates found"}), 404
+        
+        count = 0
+        for blocked in blocked_in_range:
+            db.session.delete(blocked)
+            count += 1
+
+        db.session.commit()
+        logger.info(f"Successfully unblocked {count} dates for {current_user.email}")
+        return jsonify({"ok": True, "unblocked": count}), 200
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"error unblocking dates: {e}")
+        return jsonify({"ok": False, "error": str(e)}), 500
+

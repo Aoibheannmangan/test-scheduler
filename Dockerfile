@@ -17,13 +17,14 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc sqlite3 && rm -rf /var/lib/apt/lists/*
 
-COPY api/requirements.txt .
+COPY api/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY api ./api
 COPY --from=build-frontend /app/build ./build
 COPY seed_rooms.py /app/
-
+COPY entrypoint.sh /app/
+RUN chmod +x /app/entrypoint.sh
 
 ENV FLASK_APP=api.wsgi
 ENV FLASK_ENV=production
@@ -31,6 +32,4 @@ ENV PYTHONUNBUFFERED=1
 
 EXPOSE 5000
 
-CMD flask db upgrade && \
-    python seed_rooms.py && \
-    gunicorn api.wsgi:app --bind 0.0.0.0:$PORT --chdir /app
+CMD ["/app/entrypoint.sh"]

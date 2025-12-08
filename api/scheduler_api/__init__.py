@@ -1,7 +1,7 @@
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, jsonify, send_from_directory, request
 from flask_cors import CORS
 from .extensions import db, migrate
-from .routes import get_data, book_appointment, delete_appointment, get_all_events, update_appointment, add_blocked_date, get_blocked_dates
+from .routes import get_data, book_appointment, delete_appointment, get_all_events, update_appointment, add_blocked_date, get_blocked_dates, unblock_date, get_leave, add_leave
 from .auth import register_user, login
 import os
 import logging
@@ -79,11 +79,39 @@ def create_app():
     @token_required
     def add_blocked_date_route(current_user):
         return add_blocked_date(current_user)
+    
+    @app.route("/api/block-date", methods=["POST"])
+    @token_required
+    def add_blocked_date_route(current_user):
+        return add_blocked_date(current_user)
 
     @app.route("/api/blocked-dates", methods=["GET"])
     @token_required
     def get_blocked_dates_route(current_user):
         return get_blocked_dates(current_user)
+    
+    @app.route("/api/leave", methods=["POST"])
+    @token_required
+    def add_leave_route(current_user):
+        return add_leave(current_user)
+
+    @app.route("/api/leave", methods=["GET"])
+    @token_required
+    def get_leave_route(current_user):
+        return get_leave(current_user)
+    
+    @app.route("/api/unblock", methods=["POST"])
+    @token_required
+    def unblock_dates_route(current_user):
+        data = request.get_json()
+        start = data.get("start")
+        end = data.get("end")
+
+        if not start or not end:
+            return jsonify({"error": "Start and End required"}), 400
+
+        return unblock_date(current_user, start, end)
+
     
     @app.route("/api/debug/users")
     def debug_users():

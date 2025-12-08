@@ -1,17 +1,21 @@
-import React from "react";
-import Forecast from "./../components/forecast";
+import Forecast from "../components/forecast";
+import BookedChart from "./../components/BookedChart";
 import "./Reports.css";
-import axios from "axios";
 
 const Reports = () => {
-  return (
-    <div className="reportPage">
-      <h1 className="heading">Window and Booking Forecast</h1>
-      <div className="forecastContainer">
-        <Forecast></Forecast>
-      </div>
-    </div>
-  );
+	return (
+		<div className="reportPage" data-testid="page-container">
+			<h1 className="window-heading">Window and Booking Forecast</h1>
+			<div className="chart-container" data-testid="chart-container">
+				<Forecast data-testid="forecast-component" />
+			</div>
+
+			<h1 className="chart-heading">Booking Statistics</h1>
+			<div className="chart-container" data-testid="chart-container">
+				<BookedChart data-testid="booking-component" />
+			</div>
+		</div>
+	);
 };
 
 export default Reports;
