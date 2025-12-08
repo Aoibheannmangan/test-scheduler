@@ -33,7 +33,7 @@ def create_app():
         db.create_all()
 
     # Enable CORS
-    CORS(app, origins=["https://infant-scheduler-cca1.onrender.com", "http://localhost:3000"], supports_credentials=True)
+    CORS(app, origins=["https://infant-scheduler-cca1.onrender.com", 'https://test-scheduler-2.onrender.com', "http://localhost:3000"], supports_credentials=True)
 
     # Import models here to avoid circular imports
     from . import models
