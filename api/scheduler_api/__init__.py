@@ -74,11 +74,6 @@ def create_app():
     @app.route("/api/login", methods=["POST"])
     def login_route():
         return login()
-
-    @app.route("/api/block-date", methods=["POST"])
-    @token_required
-    def add_blocked_date_route(current_user):
-        return add_blocked_date(current_user)
     
     @app.route("/api/block-date", methods=["POST"])
     @token_required
