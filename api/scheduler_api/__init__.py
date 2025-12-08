@@ -41,7 +41,14 @@ def create_app():
     # --- Register Routes ---
     @app.route("/api/data", methods=["GET"])
     def get_data_route():
-        return get_data()
+        try:
+            data = get_data()
+            if isinstance(data, (dict, list)):
+                return jsonify(data), 200
+            return data
+        except Exception as e:
+            logging.error(f"Error in /api/data: {e}")
+            return jsonify({"error": "Internal Server Error", "detail": str(e)}), 500
 
     @app.route("/api/health", methods=["GET"])
     def health():
