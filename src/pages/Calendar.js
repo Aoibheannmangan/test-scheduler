@@ -71,7 +71,7 @@ const MyCalendar = () => {
 	const [leaveOpen, setLeaveOpen] = useState(false);
 	const [leaveEvents, setLeaveEvents] = useState([]);
 
-   const API_URL = (process.env.REACT_APP_API_URL || "").replace(/\/+$/, "") + "/api";
+  const API_URL = (process.env.REACT_APP_API_URL || "").replace(/\/+$/, "") + "/api";
 
 	useEffect(() => {
 		const fetchBlockedDates = async () => {
