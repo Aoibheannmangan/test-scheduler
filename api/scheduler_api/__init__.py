@@ -6,6 +6,7 @@ from .auth import register_user, login
 import os
 import logging
 from .tokenDecorator import token_required
+from api.scheduler_api.db_fix import fix_db
 
 def create_app():
     """Creates and configures the Flask application."""
@@ -31,6 +32,7 @@ def create_app():
     with app.app_context():
         from . import models
         db.create_all()
+        fix_db()
 
     # Enable CORS
     CORS(app, origins=["https://infant-scheduler-cca1.onrender.com", 'https://test-scheduler-2.onrender.com', "http://localhost:3000"], supports_credentials=True)
