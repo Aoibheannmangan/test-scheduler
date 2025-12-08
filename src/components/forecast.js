@@ -8,7 +8,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TablePagination from "@mui/material/TablePagination";
 import { useData } from "../hooks/DataContext";
-import "./Forecast.css";
+import "./forecast.css";
 import { useBookings } from "../hooks/useBookings";
 
 // Table column definitions
