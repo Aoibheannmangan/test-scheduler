@@ -569,7 +569,7 @@ const MyCalendar = () => {
 		}
 
 		let visit_num = 1;
-		if (patient.visit_1_nicu_discharge_complete === "1") {
+		if (patient.nicu_dc_outcome === "1") {
 			visit_num = 2;
 			for (let i = 2; i <= 6; i++) {
 				if (patient[`v${i}_attend`] === "1") {
@@ -656,7 +656,7 @@ const MyCalendar = () => {
 	// If booking within study window
 	const isAppointmentWithinVisitWindow = (appointment, patient) => {
 		let visit_num = 1;
-		if (patient.visit_1_nicu_discharge_complete === "1") {
+		if (patient.nicu_dc_outcome === "1") {
 			visit_num = 2;
 			for (let i = 2; i <= 6; i++) {
 				if (patient[`v${i}_attend`] === "1") {

@@ -79,7 +79,7 @@ const Appointments = () => {
       // Map API fields to appointment fields
       const mapped = apiUserList.map((rec) => {
         let visit_num = 1;
-        if (rec.visit_1_nicu_discharge_complete === "1") {
+        if (rec.nicu_dc_outcome === "1") {
           visit_num = 2;
           for (let i = 2; i <= 6; i++) {
             if (rec[`v${i}_attend`] === "1") {

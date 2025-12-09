@@ -136,7 +136,7 @@ def fetch_visit_data(patient_id: str) -> dict:
         ```json
         [
             {
-                'visit_1_nicu_discharge_complete': '1'
+                'nicu_dc_outcome': '1'
                 'v2_attend': '1'
                 'v3_attend': '1'
                 'v4_attend': '1'
@@ -159,7 +159,7 @@ def fetch_visit_data(patient_id: str) -> dict:
         'format': 'json',
         'type': 'flat',
         'records[0]': patient_id,
-        'fields[0]': 'visit_1_nicu_discharge_complete',
+        'fields[0]': 'nicu_dc_outcome',
         'fields[1]': 'v2_attend',
         'fields[2]': 'v3_attend',
         'fields[3]': 'v4_attend',
@@ -176,7 +176,7 @@ def fetch_visit_data(patient_id: str) -> dict:
 def calculate_visit_num(patient_data: dict) -> int:
     """Determine the next visit number based on REDCap attendance fields.
 
-    The first visit (`visit_1_nicu_discharge_complete`) is checked. If it is
+    The first visit (`nicu_dc_outcome`) is checked. If it is
     completed, the function iterates through visits 2-6 and increments the visit counter for each completed visit.
     The loop stops at the first missing ("0") visit.
 
@@ -195,7 +195,7 @@ def calculate_visit_num(patient_data: dict) -> int:
         return 1
     
     visit_num = 1
-    if patient_data.get("visit_1_nicu_discharge_complete") == "1":
+    if patient_data.get("nicu_dc_outcome") == "1":
         visit_num = 2
         for i in range(2, 7):
             if patient_data.get(f"v{i}_attend") == "1":

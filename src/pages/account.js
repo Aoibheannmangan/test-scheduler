@@ -41,8 +41,8 @@ const Account = () => {
           Study: ["AIMHIGH"], // Hardcoded as it pulls from the REDCap on AIMHIGH
           DaysEarly: rec.reg_days_early ? Number(rec.reg_days_early) : 0,
           Info: "", // Any aditional info field to import??**
-          notes: rec.nicu_email || "", // Use email as contact OR GET NUMBER?
-          email: rec.nicu_email || "",
+          notes: rec.reg_email || "", // Use email as contact OR GET NUMBER?
+          email: rec.reg_email || "",
           participantGroup:
             {
               1: "Control",
