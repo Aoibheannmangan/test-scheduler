@@ -76,7 +76,7 @@ def get_data() -> Response:
         'fields[2]': 'reg_participant_group', # Part group
         'fields[3]': 'nn_dob', # Dat of birth
         'fields[4]': 'reg_dag', # Site
-        'fields[5]': 'nicu_email',# Contact email
+        'fields[5]': 'reg_email',# Contact email
         'fields[6]': 'reg_days_early',
         'fields[7]': 'nn_sex',
         # gest days/ weeks
@@ -100,7 +100,7 @@ def get_data() -> Response:
         'fields[19]':'reg_31_month_window',
         
         # visit x attended? (Used for visit num)
-        'fields[20]': 'visit_1_nicu_discharge_complete', # completed visit 1
+        'fields[20]': 'nicu_dc_outcome', # completed visit 1
         'fields[21]': 'v2_attend', # completed visit 2, and so on.. 
         'fields[22]': 'v3_attend',
         'fields[23]': 'v4_attend',
