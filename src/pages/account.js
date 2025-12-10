@@ -128,86 +128,93 @@ const Account = () => {
   }
 
   return (
-    <div className="AccountInfo">
-      {alert && (
-        <Alert
-          message={alert.message}
-          type={alert.type}
-          onClose={() => setAlert(null)}
-        />
-      )}
-      <h1>My Patient Information</h1>
-      <a href="info" className="edit">
-        Add Patients
-      </a>
-      {visibleUsers.map((user) => (
-        <div className="display" key={user.id || user.record_id}>
-          <div className="card-header">
-            <h3>
-              <strong>Id: </strong>
-              {user.id || user.record_id}
-            </h3>
-            <div className="icon-actions">
-              <button onClick={() => handleEdit(user)} title="Edit">
-                <FaEdit />
-              </button>
-              <button
-                onClick={() => handleDelete(user.id || user.record_id)}
-                title="Delete"
-              >
-                <FaTrash />
-              </button>
-            </div>
-          </div>
-          <hr className="divider" />
-          <ul>
-            <li>
-              <strong>Date of Birth: </strong>
-              {/*Format date of birth*/}
-              {new Date(user.DOB).toLocaleDateString(undefined, {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-            </li>
-            <li>
-              <strong>Days Early:</strong>{" "}
-              {daysNegative(user.DaysEarly, user.DaysEarly < 0)}
-            </li>
-            <li>
-              <strong>Sex:</strong> {user.Sex}
-            </li>
-            <li>
-              <strong>Group:</strong> {user.participantGroup}
-            </li>
-            <li>
-              <strong>Study:</strong>{" "}
-              {Array.isArray(user.Study) ? user.Study.join(", ") : [user.Study]}
-            </li>
-            <li>
-              <strong>Site:</strong> {user.site}
-            </li>
-            <li>
-              <strong>Gestational Age:</strong> {user.gestWeeks} {"Weeks "}
-              {user.gestDays}
-              {" Days"}
-            </li>
-            {/* Only show this li if Info is not empty */}
-            {user.Info && user.Info.trim() !== "" && (
-              <li>
-                <strong>Additional Notes:</strong> {user.Info}
-              </li>
-            )}
-          </ul>
-        </div>
-      ))}
-      <PopUp
-        isOpen={popupOpen}
-        onClose={() => setPopupOpen(false)}
-        onConfirm={confirmDelete}
-        message="Are you sure you want to delete this patient?"
-      />
-    </div>
+		<div className="AccountInfo">
+			{alert && (
+				<Alert
+					message={alert.message}
+					type={alert.type}
+					onClose={() => setAlert(null)}
+				/>
+			)}
+			<h1>My Patient Information</h1>
+			<a href="info" className="edit">
+				Add Patients
+			</a>
+			{visibleUsers.map((user) => (
+				<div className="display" key={user.id || user.record_id}>
+					<div className="card-header">
+						<h3>
+							<strong>Id: </strong>
+							{user.id || user.record_id}
+						</h3>
+						<div className="icon-actions">
+							<button
+								onClick={() => handleEdit(user)}
+								title="Edit"
+							>
+								<FaEdit />
+							</button>
+							<button
+								onClick={() =>
+									handleDelete(user.id || user.record_id)
+								}
+								title="Delete"
+							>
+								<FaTrash />
+							</button>
+						</div>
+					</div>
+					<hr className="divider" />
+					<ul>
+						<li>
+							<strong>Date of Birth: </strong>
+							{/*Format date of birth*/}
+							{new Date(user.DOB).toLocaleDateString(undefined, {
+								year: "numeric",
+								month: "long",
+								day: "numeric",
+							})}
+						</li>
+						<li>
+							<strong>Days Early:</strong>{" "}
+							{daysNegative(user.DaysEarly, user.DaysEarly < 0)}
+						</li>
+						<li>
+							<strong>Sex:</strong> {user.Sex}
+						</li>
+						<li>
+							<strong>Group:</strong> {user.participantGroup}
+						</li>
+						<li>
+							<strong>Study:</strong>{" "}
+							{Array.isArray(user.Study)
+								? user.Study.join(", ")
+								: [user.Study]}
+						</li>
+						<li>
+							<strong>Site:</strong> {user.site}
+						</li>
+						<li>
+							<strong>Gestational Age:</strong>{" "}
+							{user.gestWeeks || 0} Weeks {user.gestDays || 0}{" "}
+							Days
+						</li>
+						{/* Only show this li if Info is not empty */}
+						{user.Info && user.Info.trim() !== "" && (
+							<li>
+								<strong>Additional Notes:</strong> {user.Info}
+							</li>
+						)}
+					</ul>
+				</div>
+			))}
+			<PopUp
+				isOpen={popupOpen}
+				onClose={() => setPopupOpen(false)}
+				onConfirm={confirmDelete}
+				message="Are you sure you want to delete this patient?"
+			/>
+		</div>
   );
 };
 
