@@ -69,6 +69,7 @@ def get_data() -> Response:
         'token': API_TOKEN,
         'content': 'record',
         'format': 'json',
+        'action': 'export',
         'type': 'flat',
         # general info on infant
         'fields[0]': 'record_id', # Record id
@@ -76,8 +77,8 @@ def get_data() -> Response:
         'fields[2]': 'reg_participant_group', # Part group
         'fields[3]': 'nn_dob', # Dat of birth
         'fields[4]': 'reg_dag', # Site
-        'fields[5]': 'nic_email',# Contact email
-        'fields[6]': 'reg_days_early',
+        'fields[5]': 'reg_email',# Contact email
+        'fields[6]': 'sch_premdays',
         'fields[7]': 'nn_sex',
         # gest days/ weeks
         'fields[8]': 'reg_gest_age_w',
@@ -157,6 +158,7 @@ def fetch_visit_data(patient_id: str) -> dict:
         'token': API_TOKEN,
         'content': 'record',
         'format': 'json',
+        'action': 'export',
         'type': 'flat',
         'records[0]': patient_id,
         'fields[0]': 'nicu_dc_outcome',
@@ -520,90 +522,39 @@ def update_appointment(current_user, event_id):
 # Blocking funcs
 
 def add_blocked_date(current_user):
-    """
-    Handles the blocking of a date. 
-    
-    Creates an event instance lasting a whole day. The function grabs the 'date' passed from the block date input on the calendar page. 
-    An event with the 'blocked' type is then committed to the database.
-    
-    Args: 
-        current_user (object): Current user object passed for logging and auditing. Recalls the users email.
-        
-    Returns:
-        Response: 
-            - 200 Success: Creates a JSON containing `ok: True` and the `eventId` on block.
-            - 400 Not Found: Creates an error JSON message if the date is not found.
-            - 500 Internal Server Error: Returns a JSON containing `{"ok": False, "error": str(e)}`. (str(e) returns the error log)
-        
-    Logging:
-        - Logs an informational message with the current user's email when 
-          retrieving events
-          
-    Note:
-        - Requires SQLAlchemy Event model
-        - Creates events specifically of type 'blocked'
-    """
+    """Handles the blocking of a date."""
     logger.info(f"Blocked date request by user: {current_user.email}")
     data = request.get_json()
-    date_str = data.get('date')
-    title = "Blocked"
 
-    if not date_str:
-        return jsonify({"error": "Missing date"}), 400
+    start_str = data.get('start')
+    end_str = data.get('end')
 
+    if not start_str or not end_str:
+        return jsonify({ "error": "Missing start or end time"}), 400
     try:
-        # For a full-day event, use the start of the day for both start and end
-        start_of_day = datetime.fromisoformat(date_str.replace('Z', '+00:00')).replace(hour=0, minute=0, second=0, microsecond=0)
-        end_of_day = datetime.fromisoformat(date_str.replace('Z', '+00:00')).replace(hour=23, minute=59, second=59, microsecond=999999)
+        start_dt = datetime.fromisoformat(start_str.replace('Z', '+00:00'))
+        end_dt = datetime.fromisoformat(end_str.replace('Z', '+00:00'))
 
         new_event = Event(
             event_title='Blocked',
-            start_date=start_of_day,
-            end_date=end_of_day,
+            start_date=start_dt,
+            end_date=end_dt,
             event_type='blocked',
             visit_num=None
         )
+
         db.session.add(new_event)
         db.session.commit()
-        return jsonify({"ok": True, "eventId": new_event.event_id}), 201
+
+        return jsonify({"ok": True, "eventId": new_event.event_id}), 201    
+   
     except Exception as e:
         db.session.rollback()
         logger.error(f"Error blocking date: {e}")
         return jsonify({"ok": False, "error": str(e)}), 500
 
 def get_blocked_dates(current_user):
-    """
-    Retrieve all blocked dates from the database.
-
-    Fetches events marked as 'blocked' and returns their details in a format 
-    suitable for calendar display. Each blocked date is transformed into a 
-    structured event object.
-
-    Args:
-        current_user (object): The authenticated user object used for logging 
-                                and auditing API calls. Must have an email attribute.
-
-    Returns:
-        Response (JSON):
-            A JSON object containing:  
-            - blockedDates (list): Array of blocked date events with properties:  
-                *  eventId (int): Unique identifier for the blocked event  
-                * title (str): Event title  
-                * start (str): ISO 8601 formatted start date and time  
-                * end (str): ISO 8601 formatted end date and time  
-                * allDay (bool): Whether the event spans an entire day (false)  
-                * blocked (bool): Indicates this is a blocked date (true)  
-                * event_type (str): Type of event ('blocked')  
-        HTTP status code 200 (OK)
-
-    Logging:
-        - Logs an informational message with the current user's email when 
-          retrieving blocked dates
-
-    Note:
-        - Requires SQLAlchemy Event model
-        - Filters events specifically of type 'blocked'
-    """
+    """Retrieves all blocked dates from the database."""
     logger.info(f"Fetching all blocked dates for user: {current_user.email}")
     blocked_events = Event.query.filter_by(event_type='blocked').all()
 
@@ -621,43 +572,9 @@ def get_blocked_dates(current_user):
     
     return jsonify({"blockedDates": blocked_dates_list}), 200
 
+
+
 def add_leave(current_user):
-    """
-    Create a new leave event in the database.
-
-    Handles the creation of a leave event with a specified name, start, and end date. 
-    The leave event is stored as an Event with type 'leave'.
-
-    Args:
-        current_user (object): The authenticated user object used for logging 
-                                and auditing API calls. Must have an email attribute.
-
-    Request JSON Payload:
-        - name (str): Name or description of the leave
-        - start (str): ISO 8601 formatted start date and time
-        - end (str): ISO 8601 formatted end date and time
-
-    Returns:
-        Response (JSON):
-            - 201 Created: 
-                * ok (bool): Indicates successful leave creation
-                * eventId (str): Title of the created leave event
-            - 400 Bad Request: 
-                * error (str): Message indicating missing required fields
-            - 500 Internal Server Error:
-                * ok (bool): False
-                * error (str): Detailed error message
-
-    Logging:
-        - Logs an informational message with the current user's email when 
-          creating a leave event
-        - Logs an error message if leave creation fails
-
-    Note:
-        - Requires SQLAlchemy Event model and database session
-        - Converts input dates to datetime objects
-        - Stores leave events with 'leave' event type
-    """
     logger.info(f"Leave request by user: {current_user.email}")
     data = request.get_json()
 
@@ -685,7 +602,7 @@ def add_leave(current_user):
 
         return jsonify({
             "ok": True,
-            "eventId": new_event.event_title
+            "eventId": new_event.event_id
         }), 201
     
     except Exception as e:
@@ -694,36 +611,6 @@ def add_leave(current_user):
         return jsonify({"ok": False, "error": str(e)}), 500
 
 def get_leave(current_user):
-    """
-    Retrieve all leave events from the database.
-
-    Fetches events marked as 'leave' and returns their details in a format 
-    suitable for calendar display.
-
-    Args:
-        current_user (object): The authenticated user object used for logging 
-                                and auditing API calls. Must have an email attribute.
-
-    Returns:
-        Response (JSON):
-            A JSON object containing:
-            - leaveEvents (list): Array of leave events with properties:
-                * eventId (int): Unique identifier for the leave event
-                * title (str): Event title (includes leave name)
-                * start (str): ISO 8601 formatted start date and time
-                * end (str): ISO 8601 formatted end date and time
-                * allDay (bool): Whether the event spans an entire day (false)
-                * event_type (str): Type of event ('leave')
-            - HTTP status code 200 (OK)
-
-    Logging:
-        - Logs an informational message with the current user's email when 
-          retrieving leave events
-
-    Note:
-        - Requires SQLAlchemy Event model
-        - Filters events specifically of type 'leave'
-    """
     logger.info(f"Fetching leave events for user: {current_user.email}")
     leave_events = Event.query.filter_by(event_type='leave').all()
 
@@ -768,5 +655,3 @@ def unblock_date(current_user, start_str, end_str):
         db.session.rollback()
         logger.error(f"error unblocking dates: {e}")
         return jsonify({"ok": False, "error": str(e)}), 500
-
-

@@ -40,7 +40,7 @@ const Account = () => {
               3: "Rotunda",
             }[rec.reg_dag] || "Unknown",
           Study: ["AIMHIGH"], // Hardcoded as it pulls from the REDCap on AIMHIGH
-          DaysEarly: rec.reg_days_early ? Number(rec.reg_days_early) : 0,
+          DaysEarly: rec.sch_premdays ? Number(rec.sch_premdays) : 0,
           Info: "", // Any aditional info field to import??**
           notes: rec.reg_email || "", // Use email as contact OR GET NUMBER?
           email: rec.reg_email || "",

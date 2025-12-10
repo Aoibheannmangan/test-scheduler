@@ -77,7 +77,7 @@ const MyCalendar = () => {
 			try {
 				const token = localStorage.getItem("token");
 
-				const response = await axios.get("/api/blocked-dates", {
+				const response = await axios.get("http://localhost:5000/api/blocked-dates", {
 					headers: { Authorization: `Bearer ${token}` },
 				});
 
@@ -101,26 +101,22 @@ const MyCalendar = () => {
 
 	useEffect(() => {
 		const fetchLeaveDates = async () => {
-			try {
-				const token = localStorage.getItem("token");
-
-				const response = await axios.get("/api/leave", {
-					headers: { Authorization: `Bearer ${token}` },
-				});
-
-				// Use the correct key 'leaveEvents' from backend
-				const formatted = response.data.leaveEvents.map((b) => ({
-					...b,
-					start: new Date(b.start),
-					end: new Date(b.end),
-				}));
-
-				setLeaveEvents(formatted);
-			} catch (err) {
-				console.error("Error fetching Leave:", err);
-			}
+		try {
+			const token = localStorage.getItem("token");
+			const response = await axios.get("/api/leave", {
+			headers: { Authorization: `Bearer ${token}` },
+			});
+			// Use the correct key 'leaveEvents' from backend
+			const formatted = response.data.leaveEvents.map((b) => ({
+			...b,
+			start: new Date(b.start),
+			end: new Date(b.end),
+			}));
+			setLeaveEvents(formatted);
+		} catch (err) {
+			console.error("Error fetching Leave:", err);
+		}
 		};
-
 		fetchLeaveDates();
 	}, []);
 
@@ -261,7 +257,7 @@ const MyCalendar = () => {
 			const token = localStorage.getItem("token");
 
 			const response = await axios.post(
-				"/api/block-date",
+				"http://localhost:5000/api/block-date",
 				{ start: startISO, end: endISO },
 				{ headers: { Authorization: `Bearer ${token}` } }
 			);
@@ -281,6 +277,8 @@ const MyCalendar = () => {
 			setAlert({ message: "Date blocked", type: "success" });
 		} catch (err) {
 			console.error("Error blocking:", err);
+			console.log(err.response?.data);
+			console.log(err.response?.status);
 			setAlert({ message: "Error blocking date", type: "error" });
 		}
 	};
@@ -975,7 +973,7 @@ const MyCalendar = () => {
 		...bookedEvents,
 		...windowEvents,
 		...blockedDates,
-		leaveEvents,
+		...leaveEvents,
 	];
 
 	/**
