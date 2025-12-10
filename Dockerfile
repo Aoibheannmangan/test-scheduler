@@ -28,4 +28,4 @@ ENV PYTHONUNBUFFERED=1
 
 EXPOSE 5000
 
-CMD ["/app/entrypoint.sh"]
+CMD ["gunicorn", "-b", "0.0.0.0:5000", "api.wsgi:app"]
