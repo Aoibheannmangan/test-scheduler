@@ -13,22 +13,33 @@
 
 .Leave-content {
     background: #fff;
-    padding: 25px 35px;
+    padding: 25px 55px;
     border-radius: 12px;
     max-width: 400%;
     box-shadow: 0 6px 20px rgba(0,0,0,0.15);
 }
 
 .Leave-content label {
-  display: block;
-  margin-bottom: 6px;
+  display: inline-grid;
   font-weight: 600;
+  padding-right:1rem;
+}
+
+.datePicker {
+  display: block;
+}
+
+.formHeading {
+  color: #8D5A97;
+  font-weight: bold;
+  font-size: 2rem;
+  font-family: 'Sansation', serif;
+  text-align: center;
 }
 
 .Leave-content input {
   width: 100%;
   padding: 10px;
-  margin-bottom: 15px;
   border-radius: 6px;
   border: 1px solid #ccc;
 }

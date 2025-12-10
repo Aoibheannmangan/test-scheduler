@@ -35,6 +35,7 @@ const LeaveForm = ({ onSave, onClose }) => {
 		<div className="Leave-overlay">
 			<div className="Leave-content animate-pop">
 				<form onSubmit={handleSubmit}>
+					<h2 className="formHeading">Staff Leave Form</h2>
 					<label>
 						Staff Name:
 						<input
@@ -46,23 +47,25 @@ const LeaveForm = ({ onSave, onClose }) => {
 					</label>
 
 					<LocalizationProvider dateAdapter={AdapterMoment}>
-						<label>
-							Start:
-							<DateTimePicker
-								value={leaveStart}
-								onChange={(v) => setLeaveStart(v)}
-								ampm={false}
-							/>
-						</label>
+						<div className="datePicker">
+							<label>
+								Start:
+								<DateTimePicker
+									value={leaveStart}
+									onChange={(v) => setLeaveStart(v)}
+									ampm={false}
+								/>
+							</label>
 
-						<label>
-							End:
-							<DateTimePicker
-								value={leaveEnd}
-								onChange={(v) => setLeaveEnd(v)}
-								ampm={false}
-							/>
-						</label>
+							<label>
+								End:
+								<DateTimePicker
+									value={leaveEnd}
+									onChange={(v) => setLeaveEnd(v)}
+									ampm={false}
+								/>
+							</label>
+						</div>
 					</LocalizationProvider>
 
 					<div className="Leave-buttons">
