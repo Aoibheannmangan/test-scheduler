@@ -1,17 +1,31 @@
-# build environment
-FROM node:20-alpine as build
-ARG REACT_APP_API_URL
+# FRONTEND BUILD STAGE
+FROM node:18 AS build-frontend
 WORKDIR /app
-COPY package.json .
-COPY package-lock.json .
-RUN apk add --no-cache python3 make g++
-RUN npm ci
-COPY . .
+
+COPY package*.json ./
+RUN npm install
+
+COPY public ./public
+COPY src ./src
+
 RUN npm run build
 
-# production environment
-FROM nginx:stable-alpine
-COPY --from=build /app/build /usr/share/nginx/html
-COPY nginx.default.conf /etc/nginx/conf.d/default.conf
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+# BACKEND STAGE
+FROM python:3.11-slim
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc sqlite3 && rm -rf /var/lib/apt/lists/*
+
+COPY api/requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY api ./api
+COPY --from=build-frontend /app/build ./build
+ENV FLASK_APP=api.wsgi
+ENV FLASK_ENV=production
+ENV PYTHONUNBUFFERED=1
+
+EXPOSE 5000
+
+CMD ["/app/entrypoint.sh"]
