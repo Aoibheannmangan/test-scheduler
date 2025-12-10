@@ -136,7 +136,6 @@ const Account = () => {
 					onClose={() => setAlert(null)}
 				/>
 			)}
-			<h1>My Patient Information</h1>
 			<a href="info" className="edit">
 				Add Patients
 			</a>

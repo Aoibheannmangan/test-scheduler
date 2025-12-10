@@ -47,8 +47,7 @@ ul li strong {
   background-color: #56365c;
 }
 
-.edit,
-.logout {
+.edit {
   background-color: #8d5a97;
   color: white;
   border: none;
@@ -56,7 +55,7 @@ ul li strong {
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  margin: 10px 5px;
+  margin-top: 80px;
   cursor: pointer;
   border-radius: 8px;
   transition: background 0.3s ease;
