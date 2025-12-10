@@ -2,74 +2,102 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://aoibheannmangan.github.io/test-scheduler/</loc>
-         <lastmod>2025-11-10</lastmod>
+         <lastmod>2025-12-10</lastmod>
     </url>
     <url>
          <loc>https://aoibheannmangan.github.io/test-scheduler/about/</loc>
-         <lastmod>2025-11-10</lastmod>
+         <lastmod>2025-12-10</lastmod>
     </url>
     <url>
          <loc>https://aoibheannmangan.github.io/test-scheduler/jsdocs/alert/</loc>
-         <lastmod>2025-11-10</lastmod>
+         <lastmod>2025-12-10</lastmod>
     </url>
     <url>
          <loc>https://aoibheannmangan.github.io/test-scheduler/jsdocs/appointment/</loc>
-         <lastmod>2025-11-10</lastmod>
+         <lastmod>2025-12-10</lastmod>
     </url>
     <url>
          <loc>https://aoibheannmangan.github.io/test-scheduler/jsdocs/appointview/</loc>
-         <lastmod>2025-11-10</lastmod>
+         <lastmod>2025-12-10</lastmod>
     </url>
     <url>
          <loc>https://aoibheannmangan.github.io/test-scheduler/jsdocs/calendar/</loc>
-         <lastmod>2025-11-10</lastmod>
+         <lastmod>2025-12-10</lastmod>
     </url>
     <url>
          <loc>https://aoibheannmangan.github.io/test-scheduler/jsdocs/clickablecell/</loc>
-         <lastmod>2025-11-10</lastmod>
+         <lastmod>2025-12-10</lastmod>
     </url>
     <url>
          <loc>https://aoibheannmangan.github.io/test-scheduler/jsdocs/customtoolbar/</loc>
-         <lastmod>2025-11-10</lastmod>
+         <lastmod>2025-12-10</lastmod>
     </url>
     <url>
          <loc>https://aoibheannmangan.github.io/test-scheduler/jsdocs/forecast/</loc>
-         <lastmod>2025-11-10</lastmod>
+         <lastmod>2025-12-10</lastmod>
     </url>
     <url>
          <loc>https://aoibheannmangan.github.io/test-scheduler/jsdocs/forgotpsw/</loc>
-         <lastmod>2025-11-10</lastmod>
+         <lastmod>2025-12-10</lastmod>
     </url>
     <url>
          <loc>https://aoibheannmangan.github.io/test-scheduler/jsdocs/login/</loc>
-         <lastmod>2025-11-10</lastmod>
+         <lastmod>2025-12-10</lastmod>
     </url>
     <url>
          <loc>https://aoibheannmangan.github.io/test-scheduler/jsdocs/navbar/</loc>
-         <lastmod>2025-11-10</lastmod>
+         <lastmod>2025-12-10</lastmod>
     </url>
     <url>
          <loc>https://aoibheannmangan.github.io/test-scheduler/jsdocs/popup/</loc>
-         <lastmod>2025-11-10</lastmod>
+         <lastmod>2025-12-10</lastmod>
     </url>
     <url>
          <loc>https://aoibheannmangan.github.io/test-scheduler/jsdocs/rebooking/</loc>
-         <lastmod>2025-11-10</lastmod>
+         <lastmod>2025-12-10</lastmod>
     </url>
     <url>
          <loc>https://aoibheannmangan.github.io/test-scheduler/jsdocs/signup/</loc>
-         <lastmod>2025-11-10</lastmod>
+         <lastmod>2025-12-10</lastmod>
     </url>
     <url>
-         <loc>https://aoibheannmangan.github.io/test-scheduler/user-guide/getting-started/</loc>
-         <lastmod>2025-11-10</lastmod>
+         <loc>https://aoibheannmangan.github.io/test-scheduler/python_docs/appointmentRoutes/</loc>
+         <lastmod>2025-12-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoibheannmangan.github.io/test-scheduler/python_docs/auth/</loc>
+         <lastmod>2025-12-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoibheannmangan.github.io/test-scheduler/python_docs/blockLeaveRoutes/</loc>
+         <lastmod>2025-12-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoibheannmangan.github.io/test-scheduler/python_docs/databaseOverview/</loc>
+         <lastmod>2025-12-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoibheannmangan.github.io/test-scheduler/python_docs/entrypoint/</loc>
+         <lastmod>2025-12-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoibheannmangan.github.io/test-scheduler/python_docs/helpers/</loc>
+         <lastmod>2025-12-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoibheannmangan.github.io/test-scheduler/python_docs/models/</loc>
+         <lastmod>2025-12-10</lastmod>
+    </url>
+    <url>
+         <loc>https://aoibheannmangan.github.io/test-scheduler/python_docs/routes/</loc>
+         <lastmod>2025-12-10</lastmod>
     </url>
     <url>
          <loc>https://aoibheannmangan.github.io/test-scheduler/user-guide/license/</loc>
-         <lastmod>2025-11-10</lastmod>
+         <lastmod>2025-12-10</lastmod>
     </url>
     <url>
          <loc>https://aoibheannmangan.github.io/test-scheduler/user-guide/requirements/</loc>
-         <lastmod>2025-11-10</lastmod>
+         <lastmod>2025-12-10</lastmod>
     </url>
 </urlset>
