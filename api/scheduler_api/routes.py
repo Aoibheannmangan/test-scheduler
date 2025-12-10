@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, current_app, request, Response
 from flask_cors import CORS
 import requests
-from config import REDCAP_API_URL, API_TOKEN
+from api.config import REDCAP_API_URL, API_TOKEN
 import logging
 import os
 from .extensions import db
