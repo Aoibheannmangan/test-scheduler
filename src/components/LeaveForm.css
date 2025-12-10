@@ -49,15 +49,32 @@
   justify-content: flex-end;
   gap: 10px;
   margin-top: 10px;
+  width: 100%;
 }
 
 .save-button {
-  background: #8D5A97;
-  color: white;
-  padding: 10px 18px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
+    background-color: #8d5a97;
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 8px;
+    width: 100%;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-size: 18px;
+    font-family: "Sansation", serif;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.save-button:hover {
+  background-color: #4e3253;
+  transform: scale(1.02);
+}
+
+.save-button:focus {
+  outline: 2px solid #4e3253;
+  outline-offset: 2px;
 }
 
 .cancel-button {
