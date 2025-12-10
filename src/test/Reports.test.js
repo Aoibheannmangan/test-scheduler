@@ -32,7 +32,7 @@ jest.mock("../hooks/DataContext", () => ({
 				record_id: "001",
 				nn_dob: "2024-01-01",
 				reg_days_early: 5,
-				visit_1_nicu_discharge_complete: "1",
+				nicu_dc_outcome: "1",
 				v2_attend: "0",
 				reg_date1: "2025-02-01",
 				reg_date2: "2025-02-28",

@@ -568,7 +568,7 @@ const MyCalendar = () => {
 		}
 
 		let visit_num = 1;
-		if (patient.visit_1_nicu_discharge_complete === "1") {
+		if (patient.nicu_dc_outcome === "1") {
 			visit_num = 2;
 			for (let i = 2; i <= 6; i++) {
 				if (patient[`v${i}_attend`] === "1") {
@@ -582,26 +582,26 @@ const MyCalendar = () => {
 		const getWindowDates = (visit_num) => {
 			switch (visit_num) {
 				case 2:
-					return { start: patient.reg_date1, end: patient.reg_date2 };
+					return { start: patient.sch_v2_sd, end: patient.sch_v2_ed };
 				case 3:
 					return {
-						start: patient.reg_9_month_window,
-						end: patient.reg_12_month_window,
+						start: patient.sch_v3_sd,
+						end: patient.sch_v3_ed,
 					};
 				case 4:
 					return {
-						start: patient.reg_17_month_window,
-						end: patient.reg_19_month_window,
+						start: patient.sch_v4_sd,
+						end: patient.sch_v4_ed,
 					};
 				case 5:
 					return {
-						start: patient.reg_23_month_window,
-						end: patient.reg_25_month_window,
+						start: patient.sch_v5_sd,
+						end: patient.sch_v5_ed,
 					};
 				case 6:
 					return {
-						start: patient.reg_30_month_window,
-						end: patient.reg_31_month_window,
+						start: patient.sch_v6_sd,
+						end: patient.sch_v6_ed,
 					};
 				default:
 					return null;
@@ -655,7 +655,7 @@ const MyCalendar = () => {
 	// If booking within study window
 	const isAppointmentWithinVisitWindow = (appointment, patient) => {
 		let visit_num = 1;
-		if (patient.visit_1_nicu_discharge_complete === "1") {
+		if (patient.nicu_dc_outcome === "1") {
 			visit_num = 2;
 			for (let i = 2; i <= 6; i++) {
 				if (patient[`v${i}_attend`] === "1") {
@@ -669,26 +669,26 @@ const MyCalendar = () => {
 		const getWindowDates = (visit_num) => {
 			switch (visit_num) {
 				case 2:
-					return { start: patient.reg_date1, end: patient.reg_date2 };
+					return { start: patient.sch_v2_sd, end: patient.sch_v2_ed };
 				case 3:
 					return {
-						start: patient.reg_9_month_window,
-						end: patient.reg_12_month_window,
+						start: patient.sch_v3_sd,
+						end: patient.sch_v3_ed,
 					};
 				case 4:
 					return {
-						start: patient.reg_17_month_window,
-						end: patient.reg_19_month_window,
+						start: patient.sch_v4_sd,
+						end: patient.sch_v4_ed,
 					};
 				case 5:
 					return {
-						start: patient.reg_23_month_window,
-						end: patient.reg_25_month_window,
+						start: patient.sch_v5_sd,
+						end: patient.sch_v5_ed,
 					};
 				case 6:
 					return {
-						start: patient.reg_30_month_window,
-						end: patient.reg_31_month_window,
+						start: patient.sch_v6_sd,
+						end: patient.sch_v6_ed,
 					};
 				default:
 					return null;

@@ -79,7 +79,7 @@ const Appointments = () => {
 			// Map API fields to appointment fields
 			const mapped = apiUserList.map((rec) => {
 				let visit_num = 1;
-				if (rec.visit_1_nicu_discharge_complete === "1") {
+				if (rec.nicu_dc_outcome === "1") {
 					visit_num = 2;
 					for (let i = 2; i <= 6; i++) {
 						if (rec[`v${i}_attend`] === "1") {
@@ -106,19 +106,19 @@ const Appointments = () => {
 						? Number(rec.reg_days_early)
 						: 0,
 					Info: "", // Any aditional info field to import??**
-					notes: rec.nicu_email || "", // Use email as contact OR GET NUMBER?
-					email: rec.nicu_email || "",
+					notes: rec.reg_email || "", // Use email as contact OR GET NUMBER?
+					email: rec.reg_email || "",
 					participantGroup: rec.reg_participant_group || "",
-					reg_date1: rec.reg_date1,
-					reg_date2: rec.reg_date2,
-					reg_9_month_window: rec.reg_9_month_window,
-					reg_12_month_window: rec.reg_12_month_window,
-					reg_17_month_window: rec.reg_17_month_window,
-					reg_19_month_window: rec.reg_19_month_window,
-					reg_23_month_window: rec.reg_23_month_window,
-					reg_25_month_window: rec.reg_25_month_window,
-					reg_30_month_window: rec.reg_30_month_window,
-					reg_31_month_window: rec.reg_31_month_window,
+					sch_v2_sd: rec.sch_v2_sd,
+					sch_v2_ed: rec.sch_v2_ed,
+					sch_v3_sd: rec.sch_v3_sd,
+					sch_v3_ed: rec.sch_v3_ed,
+					sch_v4_sd: rec.sch_v4_sd,
+					sch_v4_ed: rec.sch_v4_ed,
+					sch_v5_sd: rec.sch_v5_sd,
+					sch_v5_ed: rec.sch_v5_ed,
+					sch_v6_sd: rec.sch_v6_sd,
+					sch_v6_ed: rec.sch_v6_ed,
 				};
 			});
 			setUserList(mapped);
@@ -550,28 +550,28 @@ const Appointments = () => {
 											switch (visit_num) {
 												case 2:
 													return {
-														start: event.reg_date1,
-														end: event.reg_date2,
+														start: event.sch_v2_sd,
+														end: event.sch_v2_ed,
 													};
 												case 3:
 													return {
-														start: event.reg_9_month_window,
-														end: event.reg_12_month_window,
+														start: event.sch_v3_sd,
+														end: event.sch_v3_ed,
 													};
 												case 4:
 													return {
-														start: event.reg_17_month_window,
-														end: event.reg_19_month_window,
+														start: event.sch_v4_sd,
+														end: event.sch_v4_ed,
 													};
 												case 5:
 													return {
-														start: event.reg_23_month_window,
-														end: event.reg_25_month_window,
+														start: event.sch_v5_sd,
+														end: event.sch_v5_ed,
 													};
 												case 6:
 													return {
-														start: event.reg_30_month_window,
-														end: event.reg_31_month_window,
+														start: event.sch_v6_sd,
+														end: event.sch_v6_ed,
 													};
 												default:
 													return null;

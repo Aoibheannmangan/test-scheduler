@@ -42,8 +42,8 @@ const Account = () => {
           Study: ["AIMHIGH"], // Hardcoded as it pulls from the REDCap on AIMHIGH
           DaysEarly: rec.reg_days_early ? Number(rec.reg_days_early) : 0,
           Info: "", // Any aditional info field to import??**
-          notes: rec.nicu_email || "", // Use email as contact OR GET NUMBER?
-          email: rec.nicu_email || "",
+          notes: rec.reg_email || "", // Use email as contact OR GET NUMBER?
+          email: rec.reg_email || "",
           participantGroup:
             {
               1: "Control",
@@ -51,16 +51,16 @@ const Account = () => {
             }[rec.reg_participant_group] || "Unknown",
           gestWeeks: rec.reg_gest_age_w,
           gestDays: rec.reg_gest_age_d,
-          reg_date1: rec.reg_date1,
-          reg_date2: rec.reg_date2,
-          reg_9_month_window: rec.reg_9_month_window,
-          reg_12_month_window: rec.reg_12_month_window,
-          reg_17_month_window: rec.reg_17_month_window,
-          reg_19_month_window: rec.reg_19_month_window,
-          reg_23_month_window: rec.reg_23_month_window,
-          reg_25_month_window: rec.reg_25_month_window,
-          reg_30_month_window: rec.reg_30_month_window,
-          reg_31_month_window: rec.reg_31_month_window,
+          sch_v2_sd: rec.sch_v2_sd,
+          sch_v2_ed: rec.sch_v2_ed,
+          sch_v3_sd: rec.sch_v3_sd,
+          sch_v3_ed: rec.sch_v3_ed,
+          sch_v4_sd: rec.sch_v4_sd,
+          sch_v4_ed: rec.sch_v4_ed,
+          sch_v5_sd: rec.sch_v5_sd,
+          sch_v5_ed: rec.sch_v5_ed,
+          sch_v6_sd: rec.sch_v6_sd,
+          sch_v6_ed: rec.sch_v6_ed,
         };
       });
       setUserList(mapped);

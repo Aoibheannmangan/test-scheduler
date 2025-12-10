@@ -56,7 +56,7 @@ describe("ToggleAppointment Component", () => {
 	const mockUserList = [
 		{
 			record_id: "001",
-			visit_1_nicu_discharge_complete: "1",
+			nicu_dc_outcome: "1",
 			v2_attend: "0",
 		},
 	];

@@ -1,5 +1,3 @@
-# File is similar to a makefile. 
-
 """${message}
 
 Revision ID: ${up_revision}

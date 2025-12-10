@@ -76,7 +76,7 @@ def get_data() -> Response:
         'fields[2]': 'reg_participant_group', # Part group
         'fields[3]': 'nn_dob', # Dat of birth
         'fields[4]': 'reg_dag', # Site
-        'fields[5]': 'nicu_email',# Contact email
+        'fields[5]': 'nic_email',# Contact email
         'fields[6]': 'reg_days_early',
         'fields[7]': 'nn_sex',
         # gest days/ weeks
@@ -84,23 +84,23 @@ def get_data() -> Response:
         'fields[9]': 'reg_gest_age_d',
         # visit x range (for window range)
         
-        'fields[10]':'reg_date1', #v2 window dates
-        'fields[11]':'reg_date2',
+        'fields[10]':'sch_v2_sd', #v2 window dates
+        'fields[11]':'sch_v2_ed',
         
-        'fields[12]':'reg_9_month_window', #v3 window date, and so on...
-        'fields[13]':'reg_12_month_window',
+        'fields[12]':'sch_v3_sd', #v3 window date, and so on...
+        'fields[13]':'sch_v3_ed',
 
-        'fields[14]':'reg_17_month_window',
-        'fields[15]':'reg_19_month_window',
+        'fields[14]':'sch_v4_sd',
+        'fields[15]':'sch_v4_ed',
 
-        'fields[16]':'reg_23_month_window',
-        'fields[17]':'reg_25_month_window',
+        'fields[16]':'sch_v5_sd',
+        'fields[17]':'sch_v5_ed',
 
-        'fields[18]':'reg_30_month_window',
-        'fields[19]':'reg_31_month_window',
+        'fields[18]':'sch_v6_sd',
+        'fields[19]':'sch_v6_ed',
         
         # visit x attended? (Used for visit num)
-        'fields[20]': 'visit_1_nicu_discharge_complete', # completed visit 1
+        'fields[20]': 'nicu_dc_outcome', # completed visit 1
         'fields[21]': 'v2_attend', # completed visit 2, and so on.. 
         'fields[22]': 'v3_attend',
         'fields[23]': 'v4_attend',
@@ -136,7 +136,7 @@ def fetch_visit_data(patient_id: str) -> dict:
         ```json
         [
             {
-                'visit_1_nicu_discharge_complete': '1'
+                'nicu_dc_outcome': '1'
                 'v2_attend': '1'
                 'v3_attend': '1'
                 'v4_attend': '1'
@@ -159,7 +159,7 @@ def fetch_visit_data(patient_id: str) -> dict:
         'format': 'json',
         'type': 'flat',
         'records[0]': patient_id,
-        'fields[0]': 'visit_1_nicu_discharge_complete',
+        'fields[0]': 'nicu_dc_outcome',
         'fields[1]': 'v2_attend',
         'fields[2]': 'v3_attend',
         'fields[3]': 'v4_attend',
@@ -176,7 +176,7 @@ def fetch_visit_data(patient_id: str) -> dict:
 def calculate_visit_num(patient_data: dict) -> int:
     """Determine the next visit number based on REDCap attendance fields.
 
-    The first visit (`visit_1_nicu_discharge_complete`) is checked. If it is
+    The first visit (`nicu_dc_outcome`) is checked. If it is
     completed, the function iterates through visits 2-6 and increments the visit counter for each completed visit.
     The loop stops at the first missing ("0") visit.
 
@@ -195,14 +195,23 @@ def calculate_visit_num(patient_data: dict) -> int:
         return 1
     
     visit_num = 1
-    if patient_data.get("visit_1_nicu_discharge_complete") == "1":
-        visit_num = 2
-        for i in range(2, 7):
-            if patient_data.get(f"v{i}_attend") == "1":
-                visit_num = i + 1
-            else:
-                break
-    return visit_num
+    if patient_data.get("reg_participant_group") == "2":
+        if patient_data.get("reg_consent") == "1":
+            visit_num = 2
+            for i in range(2, 7):
+                if patient_data.get(f"v{i}_attend") == "1":
+                    visit_num = i + 1
+                else:
+                    break
+    elif patient_data.get("reg_participant_group") == "1":
+        if patient_data.get("nicu_dc_outcome") == "1":
+            visit_num = 2
+            for i in range(2, 7):
+                if patient_data.get(f"v{i}_attend") == "1":
+                    visit_num = i + 1
+                else:
+                    break
+        return visit_num
     
 # Booking funcs
 def book_appointment(current_user):

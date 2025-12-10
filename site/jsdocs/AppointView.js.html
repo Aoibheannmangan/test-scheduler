@@ -80,8 +80,8 @@ const Appointments = () => {
         Study: ["AIMHIGH"],
         DaysEarly: rec.nicu_days_early ? Number(rec.nicu_days_early) : 0,
         Info: "", // Any aditional info field to import??**
-        notes: rec.nicu_email || "", // Use email as contact OR GET NUMBER?
-        email: rec.nicu_email || "",
+        notes: rec.reg_email || "", // Use email as contact OR GET NUMBER?
+        email: rec.reg_email || "",
         participantGroup: rec.nicu_participant_group || "",
       }));
       setUserList(mapped);
