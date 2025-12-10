@@ -91,6 +91,8 @@ const SignUp = () => {
 	const handlePasswordBlur = () => {
 		setShowPasswordMessage(false);
 	};
+	
+    const API_URL = (process.env.REACT_APP_API_URL || "").replace(/\/+$/, "") + "/api";
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -142,7 +144,7 @@ const SignUp = () => {
 
 		try {
 			const response = await axios.post(
-				"http://localhost:5000/api/register",
+				`${API_URL}/register`,
 				{
 					// TODO: Hardcoded - Must change later. Same in Login **
 					email,

@@ -19,11 +19,13 @@ export const useBookings = (options = {}) => {
     setLoading(true);
     setError(null);
 
+    const API_URL = (process.env.REACT_APP_API_URL || "").replace(/\/+$/, "") + "/api";
+
     // Perform get request
     try {
       const token = localStorage.getItem("token");
       const response = await axios.get(
-        "http://localhost:5000/api/appointments",
+        `${API_URL}/bookings`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -35,11 +35,13 @@ const Appointments = () => {
 		}
 	}, [apiUserList]);
 
+	const API_URL = (process.env.REACT_APP_API_URL || "").replace(/\/+$/, "") + "/api";
+
 	const fetchBookings = useCallback(async () => {
 		try {
 			const token = localStorage.getItem("token");
 			const response = await axios.get(
-				"http://localhost:5000/api/appointments",
+				`${API_URL}/appointments`,
 				{
 					headers: {
 						Authorization: `Bearer ${token}`,

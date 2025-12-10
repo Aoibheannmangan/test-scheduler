@@ -76,6 +76,8 @@ const LogIn = () => {
 	 * @param {React.FormEvent<HTMLFormElement>} e - The form submission event.
 	 * @returns {void}
 	 */
+	const API_URL = (process.env.REACT_APP_API_URL || "").replace(/\/+$/, "") + "/api";
+
 	const handleLogin = async (e) => {
 		//Login Logic
 		e.preventDefault();
@@ -83,7 +85,7 @@ const LogIn = () => {
 
 		try {
 			const response = await axios.post(
-				"http://localhost:5000/api/login",
+				`${API_URL}/login`,
 				{
 					email,
 					password,

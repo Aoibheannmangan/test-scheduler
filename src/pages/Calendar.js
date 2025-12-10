@@ -72,12 +72,15 @@ const MyCalendar = () => {
 	const [leaveOpen, setLeaveOpen] = useState(false);
 	const [leaveEvents, setLeaveEvents] = useState([]);
 
+	
+  const API_URL = (process.env.REACT_APP_API_URL || "").replace(/\/+$/, "") + "/api";
+
 	useEffect(() => {
 		const fetchBlockedDates = async () => {
 			try {
 				const token = localStorage.getItem("token");
 
-				const response = await axios.get("http://localhost:5000/api/blocked-dates", {
+				const response = await axios.get(`${API_URL}/blocked-dates`, {
 					headers: { Authorization: `Bearer ${token}` },
 				});
 
@@ -103,7 +106,7 @@ const MyCalendar = () => {
 		const fetchLeaveDates = async () => {
 		try {
 			const token = localStorage.getItem("token");
-			const response = await axios.get("/api/leave", {
+			const response = await axios.get(`${API_URL}/leave`, {
 			headers: { Authorization: `Bearer ${token}` },
 			});
 			// Use the correct key 'leaveEvents' from backend
@@ -169,7 +172,7 @@ const MyCalendar = () => {
 		try {
 			const token = localStorage.getItem("token");
 			const response = await axios.get(
-				"http://localhost:5000/api/appointments",
+				`${API_URL}/appointments`,
 				{
 					headers: {
 						Authorization: `Bearer ${token}`,
@@ -257,7 +260,7 @@ const MyCalendar = () => {
 			const token = localStorage.getItem("token");
 
 			const response = await axios.post(
-				"http://localhost:5000/api/block-date",
+				`${API_URL}/block-date`,
 				{ start: startISO, end: endISO },
 				{ headers: { Authorization: `Bearer ${token}` } }
 			);
@@ -311,7 +314,7 @@ const MyCalendar = () => {
 			});
 			// Call backend to remove the block
 			await axios.post(
-				"http://localhost:5000/api/unblock",
+				`${API_URL}/unblock`,
 				{ start: startISO, end: endISO },
 				{ headers: { Authorization: `Bearer ${token}` } }
 			);
@@ -485,7 +488,7 @@ const MyCalendar = () => {
 		try {
 			const token = localStorage.getItem("token");
 			await axios.put(
-				`http://localhost:5000/api/appointment/${selectedEvent.event_id}`,
+				`${API_URL}/appointment/${selectedEvent.event_id}`,
 				{
 					start: updatedEvent.start.toISOString(),
 					end: updatedEvent.end.toISOString(),
@@ -754,7 +757,7 @@ const MyCalendar = () => {
 		try {
 			const token = localStorage.getItem("token");
 			await axios.delete(
-				`http://localhost:5000/api/appointment/${eventToDelete.event_id}`,
+				`${API_URL}/appointment/${eventToDelete.event_id}`,
 				{
 					headers: {
 						Authorization: `Bearer ${token}`,
@@ -833,7 +836,7 @@ const MyCalendar = () => {
 
 		try {
 			await axios.post(
-				"http://localhost:5000/api/book",
+				`${API_URL}/book`,
 				{ ...appointment, patient: match },
 				{
 					headers: {
@@ -939,7 +942,7 @@ const MyCalendar = () => {
 			const token = localStorage.getItem("token");
 
 			const response = await axios.post(
-				"/api/leave",
+				`${API_URL}/leave`,
 				{
 					start: leaveEvent.start,
 					end: leaveEvent.end,
