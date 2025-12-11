@@ -143,7 +143,7 @@ const Account = () => {
 				<div className="display" key={user.id || user.record_id}>
 					<div className="card-header">
 						<h3>
-							<strong>Id: </strong>
+							<strong>ID: </strong>
 							{user.id || user.record_id}
 						</h3>
 						<div className="icon-actions">
