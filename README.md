@@ -100,4 +100,4 @@ __TODO: CHANGE FROM LOCAL STORAGE__
 
 ## Documentation
 
-There is documentation for this project using MKDocs Material. JS functions, API and DB functionality is covered in it. This documentation is throughout this code but may be easier if you clicked [here](https://aoibheannmangan.github.io/test-scheduler/)
+There is documentation for this project using MKDocs Material. JS functions, API and DB functionality is covered in it. This documentation is throughout this code but may be easier if you clicked [here](https://aoibheannmangan.github.io/test-scheduler/).
