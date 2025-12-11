@@ -17,7 +17,7 @@ depends_on = None
 
 
 def upgrade():
-    op.execute("ALTER TYPE event_type_enum ADD VALUE IF NOT EXISTS 'leave';")
+    pass
 
 
 def downgrade():
