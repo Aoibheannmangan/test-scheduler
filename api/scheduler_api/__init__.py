@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from .extensions import db, migrate
 from .routes import get_data, book_appointment, delete_appointment, get_all_events, update_appointment, add_blocked_date, get_blocked_dates, unblock_date, add_leave, get_leave
@@ -30,15 +30,7 @@ def create_app():
     # Import models here to avoid circular imports
     from . import models
 
-    
-    @app.route("/", defaults={"path": ""})
-    @app.route("/<path:path>")
-    def serve_react(path):
-        return send_from_directory(app.static_folder, "index.html")
-
-
     # --- Register Routes ---
-
     @app.route("/api/data", methods=["GET"])
     def get_data_route():
         return get_data()
@@ -107,5 +99,14 @@ def create_app():
 
         return unblock_date(current_user, start, end)
 
+        
+    @app.route("/", defaults={"path": ""})
+    @app.route("/<path:path>")
+    def serve_react(path):
+        return send_from_directory(app.static_folder, "index.html")
+    
+    @app.errorhandler(404)
+    def not_found(e):
+        return send_from_directory(app.static_folder, "index.html")
 
     return app
