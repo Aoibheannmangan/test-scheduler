@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   frontend:
     build:
@@ -8,20 +10,19 @@ services:
       - "3000:80"
     depends_on:
       - backend
+
   backend:
     build:
-      context: ./api
-    init: true
+      context: .
     environment:
-      - FLASK_APP=run.py
+      - FLASK_APP=api.wsgi
       - PYTHONPATH=/app
     env_file:
       - .env
     ports:
       - "5000:5000"
     volumes:
-      - ./api:/app
-      - backend_instance:/app/instance
+      - backend_instance:/app/instance  # For Flask instance folder (SQLite DB, configs, etc.)
     restart: unless-stopped
 
 volumes:

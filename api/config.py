@@ -14,7 +14,7 @@ API_TOKEN = os.getenv('API_TOKEN')
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # Database configuration
-SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', f'sqlite:///{os.path.join(INSTANCE_PATH, "scheduler.db")}')
+SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 # Flask-Migrate configuration
