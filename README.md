@@ -97,3 +97,7 @@ Reports is a page that is used to visualise the window and booking forecast and 
 After Signing up/ logging in, a JWT token will be supplied in local storage. This will be checked and no API or database operations can be performed without it.  
 Forgot password is a page the user can navigate to if they have forgot the password to reset. It is not connected to the database and runs off of the old local storage functionality.  
 __TODO: CHANGE FROM LOCAL STORAGE__
+
+## Documentation
+
+There is documentation for this project using MKDocs Material. JS functions, API and DB functionality is covered in it. This documentation is throughout this code but may be easier if you clicked [here](https://aoibheannmangan.github.io/test-scheduler/)
