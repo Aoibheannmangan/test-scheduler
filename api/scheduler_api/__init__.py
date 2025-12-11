@@ -33,8 +33,12 @@ def create_app():
     # --- Register Routes ---
     @app.route("/api/data", methods=["GET"])
     def get_data_route():
-        return get_data()
-
+        try:
+            return get_data()
+        except Exception as e:
+            import traceback
+            print(traceback.format_exc())
+            return {"error": str(e)}, 500
     @app.route("/api/health", methods=["GET"])
     def health():
         return jsonify({"status": "ok"}), 200
