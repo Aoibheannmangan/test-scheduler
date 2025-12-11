@@ -12,7 +12,7 @@ def create_app():
     app = Flask(__name__, instance_relative_config=True)
 
     # Load configuration from config.py and instance/config.py
-    app.config.from_object('config')
+    app.config.from_object('api.config')
     if app.config.get('SECRET_KEY') is None:
         app.config.from_pyfile('config.py', silent=True)
 
