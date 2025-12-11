@@ -11,6 +11,10 @@ def create_app():
     """Creates and configures the Flask application."""
     app = Flask(__name__, instance_relative_config=True)
 
+    build_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../build"))
+    app = Flask(__name__, static_folder=build_dir, static_url_path="/")
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev_key')
+
     # Load configuration from config.py and instance/config.py
     app.config.from_object('api.config')
     if app.config.get('SECRET_KEY') is None:
@@ -25,6 +29,13 @@ def create_app():
 
     # Import models here to avoid circular imports
     from . import models
+
+    
+    @app.route("/", defaults={"path": ""})
+    @app.route("/<path:path>")
+    def serve_react(path):
+        return send_from_directory(app.static_folder, "index.html")
+
 
     # --- Register Routes ---
 
